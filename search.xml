@@ -3,6 +3,13 @@
   
     
     <entry>
+      <title><![CDATA[Fastnetmon配置与使用]]></title>
+      <url>%2F2016%2F12%2F09%2Ffastnetmon%2F</url>
+      <content type="text"><![CDATA[Fastnetmon介绍FastNetmon是一个基于多种抓包引擎来对数据包进行统计分析的DOS/DDOS工具，可以探测和分析网络中的异常流量情况，同时，也可以对捕获的异常调用外部脚本进行处理警报啊或者进行阻断处理，全靠外部脚本是如何定义。 项目首页http://www.open-open.com/lib/view/home/143193107973 部署架构 安装和配置方法安装 下载自动安装脚本wget https://raw.githubusercontent.com/FastVPSEestiOu/fastnetmon/master/src/fastnetmon_install.pl -Ofastnetmon_install.pl 将整个项目克隆下来https://github.com/FastVPSEestiOu/fastnetmon 安装注意若安装报连接错误，请将DNS改为8.8.8.8或223.5.5.5，因为下载地址都是在国外，有些DNS可能解析不够好。perl fastnetmon_install.pl 启动安装脚本。 配置 配置文件，cd到你刚刚克隆的项目里面。cp src/Fastnetmon.conf 到/etc/cp src/fastnetmon_init_script_centos6 /etc/init.d/fastnetmon #cp启动脚本到/etc/init.d/chmod 755 /etc/init.d/fastnetmon #修改启动脚本权限cp src/notify_about_attack.sh /usr/local/bin/ #cp 通知脚本 /etc/fastentmon配置项ban_time = 1900 #对检测到攻击的ip进行多久封锁。enable_subnet_counters = on #检测每个子网进出流量enable_connection_tracking = on #开启攻击追踪检测，通过这个选项在日志文件里可以详细看见攻击者ip和其他一些详细情况ban_for_pps = on，ban_for_bandwidth = on，ban_for_flows = on #检测的选项pps(每秒包)，bandwidth(带宽)，flows(流量)。threshold_pps = 20000，threshold_mbps = 1000，threshold_flows = 3500 #监控的限定值抓包引擎选择mirrof=off没有安装PF_RING就不要开启，不然会启动报错。pfring_sampling_ratio = 1 #端口镜像采样率mirror_netmap = off没有安装Netmap就不要开启，不然会会启动报错。mirror_snabbswitch=on #开启snabbswitch流量捕获。mirror_afpacket =on #AF_PACKET捕获引擎开启netmap_sampling_ratio = 1 #端口镜像抽样比pcap=on #pcap引擎开启netflopw=on #使用Netflow捕获方法interfaces=enp5s0f1 #监控的端口，我这里使用的是镜像端口,不然监控不到整个网端流量notify_script_path=/usr/local/bin/notify_about_attack.sh #触发脚本位置monitor_local_ip_addresses = on #监控本地地址sort_parameter = packets #在控制台排序单位，包max_ips_in_list =400 #在控制台显示多少地址 编辑要监控的网段vim /etc/networks_list #编辑networks_list加入要监控的网段这里我加入211.156.182.0/24 220.242.2.0/24/etc/init.d/fastnetmon start #启动fastentmon，启动失败查看/var/log/fastnetmon.log/opt/fastnetmon/fastnetmon #打开监控控制台 修改监控脚本1,要先外发邮件必须配置mailx 安装mailx，配置SMTP vim /etc/mail.rc 我这里配置的是我163的邮箱set bsdcompatset from=xxxxx@163.com smtp=smtp.163.comset smpt-auth-user=xxxx@163.com set smtp-auth-user=xxxxxx@163.com smtp-auth-password=xxxxxx smtp-auth=login vim /usr/local/bin/notify_about_attack.sh #这里填要触发监控的脚本修改邮件地址为接受人。cat | mail -s “FastNetMon Guard: IP $1 blocked because $2 attack with power $3 pps” $email_notify; 测试使用低轨道等离子炮（Loic）进行测试这里我对我们211.156.182.143进行Tcp DDOS攻击我们先把这些值调低threshold_pps = 2000，threshold_mbps = 100，threshold_flows = 350 #监控的限定值然后重启Fastnetmon 测试完修改回值]]></content>
+    </entry>
+
+    
+    <entry>
       <title><![CDATA[hello]]></title>
       <url>%2F2016%2F12%2F06%2Fhello%2F</url>
       <content type="text"><![CDATA[你好,欢迎来到我的个人技术博客.]]></content>
