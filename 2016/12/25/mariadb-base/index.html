@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="安全," />
+  <meta name="keywords" content="数据库," />
 
 
 
@@ -84,40 +84,26 @@
 
 
 
-<meta name="description" content="Fastnetmon介绍FastNetmon是一个基于多种抓包引擎来对数据包进行统计分析的DOS/DDOS工具，可以探测和分析网络中的异常流量情况，同时，也可以对捕获的异常调用外部脚本进行处理警报啊或者进行阻断处理，全靠外部脚本是如何定义。  
+<meta name="description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  
 
-项目首页http://www.open-open.com/lib/view/home/143193107973  
-部署架构 
-
-安装和配置方法安装
-下">
+Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Fastnetmon配置与使用">
-<meta property="og:url" content="http://yoursite.com/2016/12/09/fastnetmon/index.html">
+<meta property="og:title" content="Mariadb galera">
+<meta property="og:url" content="http://yoursite.com/2016/12/25/mariadb-base/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="Fastnetmon介绍FastNetmon是一个基于多种抓包引擎来对数据包进行统计分析的DOS/DDOS工具，可以探测和分析网络中的异常流量情况，同时，也可以对捕获的异常调用外部脚本进行处理警报啊或者进行阻断处理，全靠外部脚本是如何定义。  
+<meta property="og:description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  
 
-项目首页http://www.open-open.com/lib/view/home/143193107973  
-部署架构 
-
-安装和配置方法安装
-下">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/fastnetmon.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/fastnetmon3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/fastnetmon4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/fastnetmon5.jpg">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/fastnetmon6.jpg">
-<meta property="og:updated_time" content="2016-12-09T11:51:01.000Z">
+Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-10.png">
+<meta property="og:updated_time" content="2016-12-25T11:50:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Fastnetmon配置与使用">
-<meta name="twitter:description" content="Fastnetmon介绍FastNetmon是一个基于多种抓包引擎来对数据包进行统计分析的DOS/DDOS工具，可以探测和分析网络中的异常流量情况，同时，也可以对捕获的异常调用外部脚本进行处理警报啊或者进行阻断处理，全靠外部脚本是如何定义。  
+<meta name="twitter:title" content="Mariadb galera">
+<meta name="twitter:description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  
 
-项目首页http://www.open-open.com/lib/view/home/143193107973  
-部署架构 
-
-安装和配置方法安装
-下">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/fastnetmon.png">
+Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-8.png">
 
 
 
@@ -135,7 +121,7 @@
   };
 </script>
 
-  <title> Fastnetmon配置与使用 | 我爱西红柿 </title>
+  <title> Mariadb galera | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -307,7 +293,7 @@
             
             
               
-                Fastnetmon配置与使用
+                Mariadb galera
               
             
           </h1>
@@ -319,8 +305,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-12-09T19:50:27+08:00" content="2016-12-09">
-              2016-12-09
+            <time itemprop="dateCreated" datetime="2016-12-25T19:50:44+08:00" content="2016-12-25">
+              2016-12-25
             </time>
           </span>
 
@@ -333,8 +319,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/安全/" itemprop="url" rel="index">
-                    <span itemprop="name">安全</span>
+                  <a href="/categories/数据库/" itemprop="url" rel="index">
+                    <span itemprop="name">数据库</span>
                   </a>
                 </span>
 
@@ -349,8 +335,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/12/09/fastnetmon/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/09/fastnetmon/" itemprop="commentsCount"></span>
+                <a href="/2016/12/25/mariadb-base/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/25/mariadb-base/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -373,31 +359,35 @@
       
 
       
-        <h1 id="Fastnetmon"><a href="#Fastnetmon" class="headerlink" title="Fastnetmon"></a>Fastnetmon</h1><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>FastNetmon是一个基于多种抓包引擎来对数据包进行统计分析的DOS/DDOS工具，可以探测和分析网络中的异常流量情况，同时，也可以对捕获的异常调用外部脚本进行处理警报啊或者进行阻断处理，全靠外部脚本是如何定义。  </p>
+        <h2 id="传统的数据同步方式"><a href="#传统的数据同步方式" class="headerlink" title="传统的数据同步方式"></a>传统的数据同步方式</h2><p>传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  </p>
 <ul>
-<li>项目首页<a href="http://www.open-open.com/lib/view/home/143193107973" target="_blank" rel="external">http://www.open-open.com/lib/view/home/143193107973</a>  </li>
-<li>部署架构 <img src="http://ohx02qrb8.bkt.clouddn.com/fastnetmon.png" alt=""></li>
+<li>Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫codership的公司开发的。</li>
+<li>MGR使用Paxos协议，性能比Galera好，并且性能稳定，Galera实际只能使用三个节点，有性能和稳定性问题。  </li>
+<li>Galera目前只支持linux，MGR支持多个平台。  </li>
 </ul>
-<h3 id="安装和配置方法"><a href="#安装和配置方法" class="headerlink" title="安装和配置方法"></a>安装和配置方法</h3><h5 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h5><ul>
-<li>下载自动安装脚本<br>wget <a href="https://raw.githubusercontent.com/FastVPSEestiOu/fastnetmon/master/src/fastnetmon_install.pl" target="_blank" rel="external">https://raw.githubusercontent.com/FastVPSEestiOu/fastnetmon/master/src/fastnetmon_install.pl</a> -Ofastnetmon_install.pl</li>
-<li><p>将整个项目克隆下来<br><a href="https://github.com/FastVPSEestiOu/fastnetmon" target="_blank" rel="external">https://github.com/FastVPSEestiOu/fastnetmon</a></p>
-</li>
-<li><p>安装<br>注意若安装报连接错误，请将DNS改为8.8.8.8或223.5.5.5，因为下载地址都是在国外，有些DNS可能解析不够好。<br>perl fastnetmon_install.pl 启动安装脚本。   </p>
-</li>
-</ul>
-<h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><ul>
-<li>配置文件，cd到你刚刚克隆的项目里面。<br>cp src/Fastnetmon.conf 到/etc/<br>cp src/fastnetmon_init_script_centos6 /etc/init.d/fastnetmon #cp启动脚本到/etc/init.d/<br>chmod 755 /etc/init.d/fastnetmon     #修改启动脚本权限<br>cp src/notify_about_attack.sh  /usr/local/bin/   #cp 通知脚本  </li>
-<li><p>/etc/fastentmon配置项<br>ban_time = 1900 #对检测到攻击的ip进行多久封锁。<br>enable_subnet_counters = on #检测每个子网进出流量<br>enable_connection_tracking = on #开启攻击追踪检测，通过这个选项在日志文件里可以详细看见攻击者ip和其他一些详细情况<br>ban_for_pps = on，ban_for_bandwidth = on，ban_for_flows = on #检测的选项pps(每秒包)，bandwidth(带宽)，flows(流量)。<br>threshold_pps = 20000，threshold_mbps = 1000，threshold_flows = 3500 #监控的限定值<br>抓包引擎选择<br>mirrof=off<br>没有安装PF_RING就不要开启，不然会启动报错。<br>pfring_sampling_ratio = 1 #端口镜像采样率<br>mirror_netmap = off<br>没有安装Netmap就不要开启，不然会会启动报错。<br>mirror_snabbswitch=on  #开启snabbswitch流量捕获。<br>mirror_afpacket =on #AF_PACKET捕获引擎开启<br>netmap_sampling_ratio = 1 #端口镜像抽样比<br>pcap=on #pcap引擎开启<br>netflopw=on  #使用Netflow捕获方法<br>interfaces=enp5s0f1 #监控的端口，我这里使用的是镜像端口,不然监控不到整个网端流量<br>notify_script_path=/usr/local/bin/notify_about_attack.sh #触发脚本位置<br>monitor_local_ip_addresses = on #监控本地地址<br>sort_parameter = packets #在控制台排序单位，包<br>max_ips_in_list =400 #在控制台显示多少地址  </p>
-<h5 id="编辑要监控的网段"><a href="#编辑要监控的网段" class="headerlink" title="编辑要监控的网段"></a>编辑要监控的网段</h5><p>vim /etc/networks_list #编辑networks_list加入要监控的网段这里我加入<br>211.156.182.0/24 220.242.2.0/24<br>/etc/init.d/fastnetmon start #启动fastentmon，启动失败查看/var/log/fastnetmon.log<br>/opt/fastnetmon/fastnetmon #打开监控控制台  </p>
-</li>
-</ul>
-<h5 id="修改监控脚本"><a href="#修改监控脚本" class="headerlink" title="修改监控脚本"></a>修改监控脚本</h5><p>1,要先外发邮件必须配置mailx</p>
+<h3 id="mysql-5-6下semi-sync数据同步方式"><a href="#mysql-5-6下semi-sync数据同步方式" class="headerlink" title="mysql 5.6下semi-sync数据同步方式"></a>mysql 5.6下semi-sync数据同步方式</h3><p>master的dump进程需要发送binlog日志到slave，master要等待至少一个slave通知，slave将已经接收到传过来的events并写入relay log，salve发送ack信息到master，这个事务才能提交。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-8.png" alt=""></p>
+<p>5.6版semi-sync的缺陷，dump thread要承但两份任务，传送binlog给slave还要等slave的返回，并且这两个任务是串行的，也就是说，dump thread要先传送binlog给slave，并还要slave返回才能传送下一个events事务，这样的dump thread成为性能瓶径。</p>
+<h3 id="mysql-5-7下semi-sync数据同步方式"><a href="#mysql-5-7下semi-sync数据同步方式" class="headerlink" title="mysql 5.7下semi-sync数据同步方式"></a>mysql 5.7下semi-sync数据同步方式</h3><p>5.7.4为解决上述的问题，在master端增加了ack进程。这样事务写发送binlog与接收ack可以并行进行，提高semi-sync的效率。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-9.png" alt=""></p>
+<h2 id="Galera"><a href="#Galera" class="headerlink" title="Galera"></a>Galera</h2><p>Galera cluster是可以实现mariadb多主集群的软件，它目前只能用于linux和只支持XtraDB和Innodb存储引擎 ，mariadb和perconna提供了原生的Galera cluster的支持，所以可以直接使用Galera cluster，mysql要使用Galera cluster需要使用Galera cluster提供的插件。传统主从只能有一个数据库进行写服务，Galera集群，每个节点都可读可写，在Galera上层部署负载均衡软件如lvs和haproxy进行流量分担是常用做法。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-10.png" alt=""></p>
+<p>原理<br>各个节点的数据同步由wsrep接口实现。<br>client发起一个commit命令时，所有本事务内对数据库的操作和primary_key都会打包写入到write-set，write-set随后会复制到其他节点，各个节点接收后，会根据write-set传送的primary key进行检验，检查是否与本地事务种read-write或write-write锁冲突，冲突则回滚，没有冲突就执行，完成后返回success。如果其他节点没有执行成功则存放在队列种，稍后会重新尝式。  </p>
+<p>Galera集群的优点  </p>
 <ul>
-<li>安装mailx，配置SMTP vim /etc/mail.rc  我这里配置的是我163的邮箱<br>set bsdcompat<br>set from=xxxxx@163.com smtp=smtp.163.com<br>set smpt-auth-user=xxxx@163.com  set smtp-auth-user=xxxxxx@163.com  smtp-auth-password=xxxxxx smtp-auth=login</li>
-<li>vim /usr/local/bin/notify_about_attack.sh #这里填要触发监控的脚本<br>修改邮件地址为接受人。<br>cat | mail -s “FastNetMon Guard: IP $1 blocked because $2 attack with power $3 pps” $email_notify;  </li>
+<li>支持多个节点的数据写入，能保证数据的强一致性。</li>
+<li>同步复制，各个节点无延迟，不会因为一台宕机导致数据丢失。</li>
+<li>故障节点将自动从集群中移除</li>
+<li>基于行级的并行复制</li>
 </ul>
-<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>使用低轨道等离子炮（Loic）进行测试这里我对我们211.156.182.143进行Tcp DDOS攻击<br>我们先把这些值调低<br>threshold_pps = 2000，threshold_mbps = 100，threshold_flows = 350 #监控的限定值<br>然后重启Fastnetmon<br><img src="http://ohx02qrb8.bkt.clouddn.com/fastnetmon3.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/fastnetmon4.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/fastnetmon5.jpg" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/fastnetmon6.jpg" alt=""></p>
-<p>测试完修改回值</p>
+<p>缺点  </p>
+<ul>
+<li>只支持Innodb存储引擎</li>
+<li>只支持linux平台，</li>
+<li>集群写入的tps由最弱节点限制，如果一个节点变慢，整的集群就是缓慢的，所以一般情况下部署，要求统一的硬件配置。</li>
+<li>会因为网络抖动造成性能和稳定性问题。</li>
+</ul>
+<p>参考链接:<br><a href="http://www.oschina.net/news/79983/galera-will-die-mysql-group-replication-realease" target="_blank" rel="external">http://www.oschina.net/news/79983/galera-will-die-mysql-group-replication-realease</a><br><a href="http://www.itbaofeng.com/?p=236" target="_blank" rel="external">http://www.itbaofeng.com/?p=236</a></p>
 
       
     </div>
@@ -435,7 +425,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/安全/" rel="tag">#安全</a>
+            <a href="/tags/数据库/" rel="tag">#数据库</a>
           
         </div>
       
@@ -444,17 +434,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/06/hello/" rel="next" title="hello">
-                <i class="fa fa-chevron-left"></i> hello
+              <a href="/2016/12/22/mariadb-galera-2/" rel="next" title="Mariadb galera集群搭建">
+                <i class="fa fa-chevron-left"></i> Mariadb galera集群搭建
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/12/12/openstack-newton-install/" rel="prev" title="openstack newton 安装">
-                openstack newton 安装 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -469,10 +455,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/12/09/fastnetmon/"
-     data-title="Fastnetmon配置与使用"
+        <div class="ds-share flat" data-thread-key="2016/12/25/mariadb-base/"
+     data-title="Mariadb galera"
      data-content=""
-     data-url="http://yoursite.com/2016/12/09/fastnetmon/">
+     data-url="http://yoursite.com/2016/12/25/mariadb-base/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -499,8 +485,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/09/fastnetmon/"
-           data-title="Fastnetmon配置与使用" data-url="http://yoursite.com/2016/12/09/fastnetmon/">
+      <div class="ds-thread" data-thread-key="2016/12/25/mariadb-base/"
+           data-title="Mariadb galera" data-url="http://yoursite.com/2016/12/25/mariadb-base/">
       </div>
     
   </div>
@@ -611,7 +597,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fastnetmon"><span class="nav-number">1.</span> <span class="nav-text">Fastnetmon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">1.0.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装和配置方法"><span class="nav-number">1.0.2.</span> <span class="nav-text">安装和配置方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#安装"><span class="nav-number">1.0.2.0.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#配置"><span class="nav-number">1.0.2.0.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#编辑要监控的网段"><span class="nav-number">1.0.2.0.3.</span> <span class="nav-text">编辑要监控的网段</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改监控脚本"><span class="nav-number">1.0.2.0.4.</span> <span class="nav-text">修改监控脚本</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">测试</span></a></li></ol></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#传统的数据同步方式"><span class="nav-number">1.</span> <span class="nav-text">传统的数据同步方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-5-6下semi-sync数据同步方式"><span class="nav-number">1.1.</span> <span class="nav-text">mysql 5.6下semi-sync数据同步方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-5-7下semi-sync数据同步方式"><span class="nav-number">1.2.</span> <span class="nav-text">mysql 5.7下semi-sync数据同步方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Galera"><span class="nav-number">2.</span> <span class="nav-text">Galera</span></a></li></ol></div>
             
           </div>
         </section>
