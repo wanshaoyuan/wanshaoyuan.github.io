@@ -1,0 +1,1020 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ceph," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="环镜操作系统centos6.5网络规划Cluster_net：192.168.20.0/24Public_net：192.168.2.0/24  
+
+
+
+角色
+Public_net
+Cluster_net
+
+
+
+
+Ceph-mon
+192.168.2.4
+192.168.20.2
+
+
+Ceph-mon2
+192.168.2.5
+192.168.20.5
+
+
+Ceph-mon3
+192.168.2.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手动安装ceph">
+<meta property="og:url" content="http://yoursite.com/2017/01/01/manual_ceph/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环镜操作系统centos6.5网络规划Cluster_net：192.168.20.0/24Public_net：192.168.2.0/24  
+
+
+
+角色
+Public_net
+Cluster_net
+
+
+
+
+Ceph-mon
+192.168.2.4
+192.168.20.2
+
+
+Ceph-mon2
+192.168.2.5
+192.168.20.5
+
+
+Ceph-mon3
+192.168.2.">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-11.png">
+<meta property="og:updated_time" content="2017-01-01T11:50:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="手动安装ceph">
+<meta name="twitter:description" content="环镜操作系统centos6.5网络规划Cluster_net：192.168.20.0/24Public_net：192.168.2.0/24  
+
+
+
+角色
+Public_net
+Cluster_net
+
+
+
+
+Ceph-mon
+192.168.2.4
+192.168.20.2
+
+
+Ceph-mon2
+192.168.2.5
+192.168.20.5
+
+
+Ceph-mon3
+192.168.2.">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6229174250624779000,
+      author: 'admin'
+    }
+  };
+</script>
+
+  <title> 手动安装ceph | 我爱西红柿 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=59881503";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">我爱西红柿</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">已知的已知，已知的未知，未知的未知</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                手动安装ceph
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-01T09:50:44+08:00" content="2017-01-01">
+              2017-01-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ceph/" itemprop="url" rel="index">
+                    <span itemprop="name">ceph</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/01/manual_ceph/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/manual_ceph/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="环镜"><a href="#环镜" class="headerlink" title="环镜"></a>环镜</h2><p>操作系统centos6.5<br>网络规划<br>Cluster_net：192.168.20.0/24<br>Public_net：192.168.2.0/24  </p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th style="text-align:center">Public_net</th>
+<th style="text-align:right">Cluster_net</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ceph-mon</td>
+<td style="text-align:center">192.168.2.4</td>
+<td style="text-align:right">192.168.20.2</td>
+</tr>
+<tr>
+<td>Ceph-mon2</td>
+<td style="text-align:center">192.168.2.5</td>
+<td style="text-align:right">192.168.20.5</td>
+</tr>
+<tr>
+<td>Ceph-mon3</td>
+<td style="text-align:center">192.168.2.6</td>
+<td style="text-align:right">192.168.20.6</td>
+</tr>
+<tr>
+<td>Ceph-osd1</td>
+<td style="text-align:center">192.168.2.7</td>
+<td style="text-align:right">192.168.20.7</td>
+</tr>
+<tr>
+<td>Ceph-osd2</td>
+<td style="text-align:center">192.168.2.8</td>
+<td style="text-align:right">192.168.20.8</td>
+</tr>
+<tr>
+<td>Ceph-osd3</td>
+<td style="text-align:center">192.168.2.9</td>
+<td style="text-align:right">192.168.20.9</td>
+</tr>
+</tbody>
+</table>
+<p>绑定hosts</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">192.168.2.4 ceph-mon.novalocal mon</div><div class="line">192.168.2.5 ceph-mon2.novalocal mon2</div><div class="line">192.168.2.6 ceph-mon3.novalocal mon3</div><div class="line">192.168.2.7 ceph-osd1.novalocal osd1</div><div class="line">192.168.2.8 ceph-osd2.novalocal osd2</div><div class="line">192.168.2.9 ceph-osd3.novalocal osd3</div></pre></td></tr></table></figure>
+<p>osd数规划<br>每台osd节点挂载3块SSD硬盘  </p>
+<h2 id="配置yum源"><a href="#配置yum源" class="headerlink" title="配置yum源"></a>配置yum源</h2><p>根据操作系统版本任意调整(所有节点)<br>vim /etc/yum.repos.d/ceph.repo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">[ceph]</div><div class="line">name=ceph</div><div class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-hammer/el6/x86_64/</div><div class="line">gpgcheck=0</div><div class="line">enablde=1</div><div class="line">[ceph-noarch]</div><div class="line">name=cephnoarch</div><div class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-hammer/el6/x86_64/</div><div class="line">gpgcheck=0</div><div class="line">enablde=1</div></pre></td></tr></table></figure></p>
+<p>yum clean<br>yum makecache  </p>
+<p>在第一台mon节点安装pssh批量执行操作<br>yum install pssh<br>创建hosts（会被批量执行的主机）<br>vim /root/hosts.txt<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">192.168.2.5</div><div class="line">192.168.2.6</div><div class="line">192.168.2.7</div><div class="line">192.168.2.8</div><div class="line">192.168.2.9</div></pre></td></tr></table></figure></p>
+<p>先进行测试<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-1.png" alt="">  </p>
+<p>安装软件（所有节点）<br>pssh  -P -h hosts.txt  yum install ceph –y<br>同步hosts<br>pscp.pssh -h /root/hosts.txt  /etc/hosts /etc/  </p>
+<p>都success进行下一步<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-2.png" alt="">  </p>
+<h2 id="配置ceph-mon"><a href="#配置ceph-mon" class="headerlink" title="配置ceph-mon"></a>配置ceph-mon</h2><p>创建集群fsid<br>uuidgen<br>fdc3d06b-7e05-44a8-b982-e8e04e4156db<br>创建/etc/ceph/ceph.conf将fsid写入配置文件<br>[global]<br>fsid = fdc3d06b-7e05-44a8-b982-e8e04e4156db  </p>
+<p>将ceph-mon写入配置文件(有多个mon，用逗号隔开)<br>mon_initial_members = mon,mon2,mon3<br>将mon节点ip写入ceph配置文件<br>mon_host = 192.168.2.4,192.168.2.5,192.168.2.6<br>为集群创建mon密钥<br><code>ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon &#39;allow *&#39;</code></p>
+<p>生成管理员密钥<br><code>ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon &#39;allow *&#39; --cap osd &#39;allow *&#39; --cap mds &#39;allow&#39;</code></p>
+<p>将client.admin密钥加入到ceph.mon.keyring<br><code>ceph-authtool/tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring</code></p>
+<p>生成mon map<br><code>monmaptool --create --add mon 192.168.2.4 --fsid fdc3d06b-7e05-44a8-b982-e8e04e4156db /tmp/monmap</code><br>在每个mon节点数据目录<br>分别在mon、mon2、mon3上执行<br>格式为(默认cluster-name为ceph)<br><code>mkdir /var/lib/ceph/mon/{cluster-name}-{hostname}</code><br>如mon为<br><code>mkdir /var/lib/ceph/mon/ceph-mon</code><br>mon初始化(-i后接hostname)<br><code>ceph-mon --mkfs -i mon --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring</code>  </p>
+<p>ceph.conf增加如下配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public network = 192.168.2.0/24</div><div class="line">auth cluster required = cephx</div><div class="line">auth service required = cephx</div><div class="line">auth client required = cephx</div></pre></td></tr></table></figure></p>
+<p>创建两个空文件<br><code>touch /var/lib/ceph/mon/ceph-mon/done</code><br><code>touch /var/lib/ceph/mon/ceph-mon/sysvinit</code><br>启动第一个ceph-mon<br><code>/etc/init.d/ceph status mon.mon</code><br>部署第二个mon<br>将keyring复制到mon2<br>scp  /tmp/ceph.mon.keyring  mon2:/tmp/<br>在mon2节点上建立一个/var/lib/ceph/mon/ceph-mon2目录<br>mkdir –p /var/lib/ceph/mon/ceph-mon2/<br>在mon2节点上初始化mon节点<br><code>ceph-mon --mkfs -i mon2  --keyring /tmp/ceph.mon.keyring</code><br>为了防止重新被安装，初始化一个空的done文件<br><code>touch /var/lib/ceph/mon/ceph-mon2/done</code><br><code>touch /var/lib/ceph/mon/ceph-mon2/sysvinit</code><br>/etc/init.d/ceph start mon.mon2<br>检查进程<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-3.png" alt="">  </p>
+<p>第三个mon同上<br>完后检查  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-4.png" alt=""><br>发现有时种偏移问题，默认ceph是0.05s，为了方便同步直接把时钟偏移设置成0.5s<br>修改ceph配置文件增加两条配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[global]</div><div class="line">mon osd down out interval = 900 #设置osd节点down后900s，把此osd节点逐出ceph集群，把之前映射到此节点的数据映射到其他节点。  </div><div class="line">[mon]  </div><div class="line">mon clock drift allowed = .50</div></pre></td></tr></table></figure></p>
+<p>同步配置  </p>
+<p>pscp.pssh -h hosts.txt  /etc/ceph/ceph.conf  /etc/ceph/<br>重启进程<br>pssh -h /root/hosts.txt  /etc/init.d/ceph restart  </p>
+<h2 id="配置osd节点"><a href="#配置osd节点" class="headerlink" title="配置osd节点"></a>配置osd节点</h2><p>将keyring同步到osd节点<br>pscp.pssh -h /root/hosts.txt  /etc/ceph/ceph.client.admin.keyring  /etc/ceph/  </p>
+<p>为osd分配uuid(我每台osd节点有3个osd所以创建3个uuid)<br>uuidgen<br>19ebc47d-9b29-4cf3-9720-b62896ce6f33<br>uuidgen<br>1721ce0b-7f65-43ef-9dfc-c49e6210d375<br>uuidgen<br>f5e0f54b-2ee3-41df-bf25-ad37371ab6ce  </p>
+<p>创建3个osd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ceph osd create 19ebc47d-9b29-4cf3-9720-b62896ce6f33</div><div class="line">ceph osd create 1721ce0b-7f65-43ef-9dfc-c49e6210d375</div><div class="line">ceph osd create f5e0f54b-2ee3-41df-bf25-ad37371ab6ce</div></pre></td></tr></table></figure></p>
+<p>创建数据存储目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">mkdir /var/lib/ceph/osd/&#123;cluster-name&#125;-&#123;osd-number&#125;</div><div class="line">mkdir /var/lib/ceph/osd/ceph-0</div><div class="line">mkdir /var/lib/ceph/osd/ceph-1</div><div class="line">mkdir /var/lib/ceph/osd/ceph-2</div><div class="line">mkfs.xfs /dev/vdb</div><div class="line">mkfs.xfs /dev/vdc</div><div class="line">mkfs.xfs /dev/vdd</div></pre></td></tr></table></figure></p>
+<p>挂载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mount -o defaults,_netdev /dev/vdb /var/lib/ceph/osd/ceph-0</div><div class="line">mount -o defaults,_netdev /dev/vdc /var/lib/ceph/osd/ceph-1</div><div class="line">mount -o defaults,_netdev /dev/vdd /var/lib/ceph/osd/ceph-2</div></pre></td></tr></table></figure></p>
+<p>修改fstable<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-5.png" alt="">  </p>
+<p>初始化osd目录  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ceph-osd -i 0 --mkfs --mkkey --osd-uuid 19ebc47d-9b29-4cf3-9720-b62896ce6f33</div><div class="line">ceph-osd -i 1 --mkfs --mkkey --osd-uuid 1721ce0b-7f65-43ef-9dfc-c49e6210d375</div><div class="line">ceph-osd -i 2 --mkfs --mkkey --osd-uuid f5e0f54b-2ee3-41df-bf25-ad37371ab6ce</div></pre></td></tr></table></figure>
+<p>注册此osd密钥<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ceph auth add osd.0 osd &apos;allow *&apos; mon &apos;allow profile osd&apos; -i /var/lib/ceph/osd/ceph-0/keyring</div><div class="line">ceph auth add osd.1 osd &apos;allow *&apos; mon &apos;allow profile osd&apos; -i /var/lib/ceph/osd/ceph-1/keyring</div><div class="line">ceph auth add osd.2 osd &apos;allow *&apos; mon &apos;allow profile osd&apos; -i /var/lib/ceph/osd/ceph-2/keyring</div></pre></td></tr></table></figure></p>
+<p>加入crush map  </p>
+<p>ceph osd crush add-bucket ceph-osd1 host<br>ceph osd crush move ceph-osd1 root=default  </p>
+<p>设置权重<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ceph osd crush add osd.0 1.0 host=ceph-osd1  </div><div class="line">ceph osd crush add osd.1 1.0 host=ceph-osd1</div><div class="line">ceph osd crush add osd.2 1.0 host=ceph-osd1</div></pre></td></tr></table></figure></p>
+<p>要已守护进程开机启动，须创建一个空文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">touch /var/lib/ceph/osd/ceph-0/sysvinit</div><div class="line">touch /var/lib/ceph/osd/ceph-1/sysvinit</div><div class="line">touch /var/lib/ceph/osd/ceph-2/sysvinit</div></pre></td></tr></table></figure></p>
+<p>启动osd进程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/etc/init.d/ceph start osd.0</div><div class="line">/etc/init.d/ceph start osd.1</div><div class="line">/etc/init.d/ceph start osd.2</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-6.png" alt=""><br>查看osd 树<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-7.png" alt=""><br>按上述方法配置osd2、osd3<br>3台节点添加完毕<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-8.png" alt="">  </p>
+<p>这里有个warn，是pool的pg问题，我们重新计算，修改。<br>查看我们现在拥有的pool<br>ceph osd lspools<br>0 rbd,  </p>
+<p>查看默认的rbd pool的pg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">ceph osd pool get rbd pg_num</div><div class="line">pg_num: 64</div><div class="line">ceph osd pool get rbd pg_num</div><div class="line">pg_num: 64</div><div class="line">修改为128</div><div class="line">ceph osd pool set rbd pg_num 128</div><div class="line">ceph osd pool set rbd pgp_num 128</div></pre></td></tr></table></figure></p>
+<p>再查看<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-9.png" alt="">  </p>
+<p>修改ceph.conf默认数据存两份，默认pg为128<br>同步配置<br>重启ceph</p>
+<h2 id="配置ceph-radosgw"><a href="#配置ceph-radosgw" class="headerlink" title="配置ceph-radosgw"></a>配置ceph-radosgw</h2><p>直接将第一个mon节点当radosgw，ceph在0.80及以上版本可以直接使用civeweb来构建对象网关，可以不需要使用apache或nginx+fastcgi了，所以我这里用civetweb。</p>
+<p>安装软件<br>yum install ceph-radosgw<br>没有www-data用户创建<br>useradd –r –s /sbin/nologin www-data<br>创建gateway keyring并授权  </p>
+<p><code>ceph auth get-or-create client.radosgw.gateway osd &#39;allow rwx&#39; mon &#39;allow rwx&#39; -o /etc/ceph/keyring.radosgw.gateway</code></p>
+<p>编辑ceph.conf文件<br>增加下面内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[client.radosgw.gateway]</div><div class="line">keyring = /etc/ceph/keyring.radosgw.gateway</div><div class="line">rgw_socket_path = /tmp/radosgw.sock</div><div class="line">rgw_frontends= &quot;civetweb port=7480&quot;</div><div class="line">host = ceph-mon</div><div class="line">rgw_dns_name = *.domain.tld</div><div class="line">rgw_print_continue = True</div><div class="line">rgw_data = /var/lib/ceph/radosgw</div><div class="line">user = www-data</div><div class="line">rgw s3 auth use keystone = true</div><div class="line">log file =/var/log/radosgw/client.radosgw.gateway.log</div></pre></td></tr></table></figure></p>
+<p>重启进程<br>/etc/init.d/ceph-radosgw restart<br>查看是否启动成功<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-10.png" alt="">  </p>
+<p>新建用户<br>radosgw-admin user create –uid=”testuser” –display-name=”First User”<br>得到如下结果<br><img src="http://ohx02qrb8.bkt.clouddn.com/maual-ceph-11.png" alt="">  </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ceph/" rel="tag">#ceph</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/25/mariadb-base/" rel="next" title="Mariadb galera">
+                <i class="fa fa-chevron-left"></i> Mariadb galera
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/01/01/manual_ceph/"
+     data-title="手动安装ceph"
+     data-content=""
+     data-url="http://yoursite.com/2017/01/01/manual_ceph/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/01/manual_ceph/"
+           data-title="手动安装ceph" data-url="http://yoursite.com/2017/01/01/manual_ceph/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/image.png"
+               alt="我爱西红柿" />
+          <p class="site-author-name" itemprop="name">我爱西红柿</p>
+          <p class="site-description motion-element" itemprop="description">专注虚拟化、容器、devops</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">8</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanshaoyuan" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/wanshaoyuan" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环镜"><span class="nav-number">1.</span> <span class="nav-text">环镜</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置yum源"><span class="nav-number">2.</span> <span class="nav-text">配置yum源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置ceph-mon"><span class="nav-number">3.</span> <span class="nav-text">配置ceph-mon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置osd节点"><span class="nav-number">4.</span> <span class="nav-text">配置osd节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置ceph-radosgw"><span class="nav-number">5.</span> <span class="nav-text">配置ceph-radosgw</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">我爱西红柿</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+本站总访问量 <span id="busuanzi_value_site_pv"></span> &nbsp&nbsp&nbsp
+您是第<span id="busuanzi_value_site_uv"></span>个来到的小伙伴
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bladen"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
