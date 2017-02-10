@@ -383,8 +383,7 @@
 <p>保存退出<br>修改/etc/sysconfig/docker参数并添加下面一行，目的是为了配置本地镜像仓库。<br><code>other_args=&quot;--insecure-registry 192.168.122.77:4000&quot;</code></p>
 <p>重启docker进程<br>systemctl daemon-reload<br>systemctl enable docker<br>systemctl restart docker  </p>
 <h3 id="制做docker本地镜像仓库"><a href="#制做docker本地镜像仓库" class="headerlink" title="制做docker本地镜像仓库"></a>制做docker本地镜像仓库</h3><p>链接：<a href="http://pan.baidu.com/s/1gf5LTV9" target="_blank" rel="external">http://pan.baidu.com/s/1gf5LTV9</a> 密码：aysu<br>下载解压<br>将已经build好的openstack镜像解压到本地<br>tar -xvf kolla-image-newton-latest.tgz</p>
-<p>加载下载好的docker registry，docker搭建私有镜像仓库使用registry这个软件<br>docker load &lt; ./registry-server.tar<br>将镜像文件放到/home/下<br><code>docker run -d -p 4000:5000 --restart=always -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/tmp/registry -v /home
-/tmp/registry/:/tmp/registry  --name registry registry:2</code></p>
+<p>加载下载好的docker registry，docker搭建私有镜像仓库使用registry这个软件<br>docker load &lt; ./registry-server.tar<br>将镜像文件放到/home/下<br><code>docker run -d -p 4000:5000 --restart=always -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/tmp/registry -v /home/tmp/registry/:/tmp/registry  --name registry registry:2</code></p>
 <p>测试是否搭建本地镜像仓库成功<br>curl -XGET <a href="http://127.0.0.1:4000/v2/_catalog" target="_blank" rel="external">http://127.0.0.1:4000/v2/_catalog</a> #正常情况会输出很多image name。<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_3.png" alt=""><br>仓库里面存在的镜像<br>查看该镜像的tag<br><code>curl -XGET http://127.0.0.1:4000/v2/kolla/centos-binary-nova-compute/tags/list</code></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_4.png" alt=""></p>
 <p>3.0.3是版本号<br>查看仓库数据  </p>
