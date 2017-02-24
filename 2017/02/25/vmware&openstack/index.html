@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="数据库," />
+  <meta name="keywords" content="我爱西红柿, blade" />
 
 
 
@@ -84,26 +84,40 @@
 
 
 
-<meta name="description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  
-
-Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
+<meta name="description" content="openstack版本：libertyvsphere版本：6.0  
+拓扑图
+架构图
+vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
+这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mariadb galera">
-<meta property="og:url" content="http://yoursite.com/2016/12/25/mariadb-base/index.html">
+<meta property="og:title" content="OpenStack对接vmware">
+<meta property="og:url" content="http://yoursite.com/2017/02/25/vmware&openstack/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  
-
-Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-10.png">
-<meta property="og:updated_time" content="2016-12-25T11:50:43.000Z">
+<meta property="og:description" content="openstack版本：libertyvsphere版本：6.0  
+拓扑图
+架构图
+vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
+这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_11.png">
+<meta property="og:updated_time" content="2017-04-17T14:55:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mariadb galera">
-<meta name="twitter:description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  
-
-Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-8.png">
+<meta name="twitter:title" content="OpenStack对接vmware">
+<meta name="twitter:description" content="openstack版本：libertyvsphere版本：6.0  
+拓扑图
+架构图
+vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
+这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
 
 
 
@@ -121,7 +135,7 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
   };
 </script>
 
-  <title> Mariadb galera | 我爱西红柿 </title>
+  <title> OpenStack对接vmware | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -293,7 +307,7 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
             
             
               
-                Mariadb galera
+                OpenStack对接vmware
               
             
           </h1>
@@ -305,8 +319,8 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-12-25T19:50:44+08:00" content="2016-12-25">
-              2016-12-25
+            <time itemprop="dateCreated" datetime="2017-02-25T00:28:50+08:00" content="2017-02-25">
+              2017-02-25
             </time>
           </span>
 
@@ -319,8 +333,8 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/数据库/" itemprop="url" rel="index">
-                    <span itemprop="name">数据库</span>
+                  <a href="/categories/openStack/" itemprop="url" rel="index">
+                    <span itemprop="name">openStack</span>
                   </a>
                 </span>
 
@@ -335,8 +349,8 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/12/25/mariadb-base/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/25/mariadb-base/" itemprop="commentsCount"></span>
+                <a href="/2017/02/25/vmware&openstack/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/25/vmware&openstack/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -359,35 +373,38 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
       
 
       
-        <h2 id="传统的数据同步方式"><a href="#传统的数据同步方式" class="headerlink" title="传统的数据同步方式"></a>传统的数据同步方式</h2><p>传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于  </p>
-<ul>
-<li>Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫codership的公司开发的。</li>
-<li>MGR使用Paxos协议，性能比Galera好，并且性能稳定，Galera实际只能使用三个节点，有性能和稳定性问题。  </li>
-<li>Galera目前只支持linux，MGR支持多个平台。  </li>
-</ul>
-<h3 id="mysql-5-6下semi-sync数据同步方式"><a href="#mysql-5-6下semi-sync数据同步方式" class="headerlink" title="mysql 5.6下semi-sync数据同步方式"></a>mysql 5.6下semi-sync数据同步方式</h3><p>master的dump进程需要发送binlog日志到slave，master要等待至少一个slave通知，slave将已经接收到传过来的events并写入relay log，salve发送ack信息到master，这个事务才能提交。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-8.png" alt=""></p>
-<p>5.6版semi-sync的缺陷，dump thread要承但两份任务，传送binlog给slave还要等slave的返回，并且这两个任务是串行的，也就是说，dump thread要先传送binlog给slave，并还要slave返回才能传送下一个events事务，这样的dump thread成为性能瓶径。</p>
-<h3 id="mysql-5-7下semi-sync数据同步方式"><a href="#mysql-5-7下semi-sync数据同步方式" class="headerlink" title="mysql 5.7下semi-sync数据同步方式"></a>mysql 5.7下semi-sync数据同步方式</h3><p>5.7.4为解决上述的问题，在master端增加了ack进程。这样事务写发送binlog与接收ack可以并行进行，提高semi-sync的效率。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-9.png" alt=""></p>
-<h2 id="Galera"><a href="#Galera" class="headerlink" title="Galera"></a>Galera</h2><p>Galera cluster是可以实现mariadb多主集群的软件，它目前只能用于linux和只支持XtraDB和Innodb存储引擎 ，mariadb和perconna提供了原生的Galera cluster的支持，所以可以直接使用Galera cluster，mysql要使用Galera cluster需要使用Galera cluster提供的插件。传统主从只能有一个数据库进行写服务，Galera集群，每个节点都可读可写，在Galera上层部署负载均衡软件如lvs和haproxy进行流量分担是常用做法。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-10.png" alt=""></p>
-<p>原理<br>各个节点的数据同步由wsrep接口实现。<br>client发起一个commit命令时，所有本事务内对数据库的操作和primary_key都会打包写入到write-set，write-set随后会复制到其他节点，各个节点接收后，会根据write-set传送的primary key进行检验，检查是否与本地事务种read-write或write-write锁冲突，冲突则回滚，没有冲突就执行，完成后返回success。如果其他节点没有执行成功则存放在队列种，稍后会重新尝式。  </p>
-<p>Galera集群的优点  </p>
-<ul>
-<li>支持多个节点的数据写入，能保证数据的强一致性。</li>
-<li>同步复制，各个节点无延迟，不会因为一台宕机导致数据丢失。</li>
-<li>故障节点将自动从集群中移除</li>
-<li>基于行级的并行复制</li>
-</ul>
-<p>缺点  </p>
-<ul>
-<li>只支持Innodb存储引擎</li>
-<li>只支持linux平台，</li>
-<li>集群写入的tps由最弱节点限制，如果一个节点变慢，整的集群就是缓慢的，所以一般情况下部署，要求统一的硬件配置。</li>
-<li>会因为网络抖动造成性能和稳定性问题。</li>
-</ul>
-<p>参考链接:<br><a href="http://www.oschina.net/news/79983/galera-will-die-mysql-group-replication-realease" target="_blank" rel="external">http://www.oschina.net/news/79983/galera-will-die-mysql-group-replication-realease</a><br><a href="http://www.itbaofeng.com/?p=236" target="_blank" rel="external">http://www.itbaofeng.com/?p=236</a></p>
+        <p>openstack版本：liberty<br>vsphere版本：6.0  </p>
+<h3 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_1.png" alt="image"></p>
+<h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_2.png" alt="image"></p>
+<p>vmware对接openstack有两种驱动<br>1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络<br>2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  </p>
+<p>这里采用vcdriver的方式<br>这种方式目前有几个问题<br>1，就是已经存在vmware集群的vm是不能被openstack管理了，只有新创建的机器可以被openstack管理。  </p>
+<p>2，vlan模式下，VCDriver要求vCenter里被使用的VLAN port group的名字必须和OpenStack里integration bridge（默认是br-int）的名字一样，而且vlan 号也得一样，这里我配置port group为0，表示不做限制。</p>
+<p>3，首次创建虚机会花费很长时间，因为需要将镜像从glance通过vcenter 拷贝到cluster后端的datasotre，后面再创建速度就会很快。</p>
+<p>要点：<br>一台计算节点对接vsphere，需要这台计算节点能根vcenter通信。  </p>
+<h3 id="Vsphere上的配置"><a href="#Vsphere上的配置" class="headerlink" title="Vsphere上的配置"></a>Vsphere上的配置</h3><p>配置好对应的openstack计算节点对应的cluster<br>如这个vsphere的cluster_name为UAT_Lenovo_6.0</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_3.png" alt="image"></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_4.png" alt="image"></p>
+<p>cluster对应的storage名字  </p>
+<p>创建对应的port_group  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_5.png" alt="image"></p>
+<h3 id="nova配置"><a href="#nova配置" class="headerlink" title="nova配置"></a>nova配置</h3><p>需要注意对应的物理适配器，待会需要写到配置项内。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">openstack平台对接vcenter配置参考</div><div class="line">compute_driver #对应的驱动</div><div class="line">host_ip #连接vsphere的ip地址</div><div class="line">host_username #管理员帐户</div><div class="line">host_password #管理员密码</div><div class="line">datastore_rege #cluster对应的后端存储</div><div class="line">cluster_name #对应的cluster 名字</div><div class="line">vlan_interface #port group对应的物理网卡</div><div class="line">vmware.integration_bridge #对应的port_group</div><div class="line">insecure=True #关闭ssl连接不然报下面错</div></pre></td></tr></table></figure></p>
+<p>修改/etc/nova/nova.conf配置文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[default]</div><div class="line">compute_driver = vmwareapi.VMwareVCDriver</div><div class="line">[vmware]</div><div class="line">host_ip=10.3.1.11</div><div class="line">host_username=administrator@UAT.com</div><div class="line">host_password=1qaz@WSX</div><div class="line">datastore_regex=Huawei_S5500_01</div><div class="line">cluster_name=UAT_Lenovo_6.0</div><div class="line">api_retry_count=10</div><div class="line">vlan_interface=vmnic0</div><div class="line">vmware.integration_bridge=br-int</div><div class="line">insecure=True</div></pre></td></tr></table></figure></p>
+<p>需要注意这些参数仔细核对。  </p>
+<p>启动openstack-nova-compute服务：<br><code>systemctl restart openstack-nova-compute</code></p>
+<p>此时应该可以看见vmware 对应的hypervisor<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_6.png" alt="image"></p>
+<p>转换镜像将一个qcow2的镜像转换成vmware用的vmdk格式</p>
+<h3 id="glance配置"><a href="#glance配置" class="headerlink" title="glance配置"></a>glance配置</h3><p>转换镜像格式为vmdk：<br><code>qemu-img convert -f raw -O vmdk  centos_6.5.raw  centos_6.5.vmdk</code></p>
+<p>上传镜像：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glance image-create  --name=centos-6.5.vmdk  --disk-format=vmdk  --property hypervisor_type=&quot;vmware&quot;  --property vmware_adaptertype=&quot;ide&quot;  --property vmware_disktype=&quot;sparse&quot;  --is-public=True  --property vmware_ostype=&quot;otherLinuxGuest&quot;  --container-format=bare &lt; centos_6.5.vmdk</div></pre></td></tr></table></figure></p>
+<p>创建虚拟机进行测试  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_7.png" alt="image"><br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_8.png" alt="image"><br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_9.png" alt="image"></p>
+<p>第一次创建时间比较久因为要将镜像从glance 拷贝到vmware 的storage内<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_10.png" alt="image"></p>
+<p>可以看见vsphere内已经有以uuid命名的vm了，表示创建成功  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_11.png" alt="image"></p>
+<p>后面为可选配置，配置cinder对接vmware存储</p>
+<h3 id="cinder配置"><a href="#cinder配置" class="headerlink" title="cinder配置"></a>cinder配置</h3><p>编辑/etc/cinder/cinder.conf配置文件，修改如下参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">volume_driver=cinder.volume.drivers.vmware.vmdk.VMwareVcVmdkDriver</div><div class="line">volume_backend_name=vmware</div><div class="line">vmware_host_ip=10.68.35.24</div><div class="line">vmware_host_username=administrator</div><div class="line">vmware_host_password=admin123</div></pre></td></tr></table></figure></p>
+<p>重启cinder-volume服务：<br><code>/etc/init.d/openstack-cinder-volume restart</code><br>创建多类型存储：<br><code>cinder type-create vmware</code><br><code>cinder type-key vmware set volume_backend_name=vmware</code><br><code>cinder type-create ceph</code><br><code>cinder type-key ceph set volume_backend_name=DEFAULT</code>  </p>
+<p>创建云硬盘，挂在云主机进行测试  </p>
+<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">http://blog.csdn.net/jmilk/article/details/52102020</div><div class="line">http://blog.csdn.net/halcyonbaby/article/details/37818789</div><div class="line">http://www.cnblogs.com/zhoumingang/p/5514556.html</div><div class="line">http://www.iyunv.com/forum.php?mod=viewthread&amp;tid=86702</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -423,28 +440,18 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/数据库/" rel="tag">#数据库</a>
-          
-        </div>
-      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/22/win10_shell/" rel="next" title="win10启用ubuntu子shell">
-                <i class="fa fa-chevron-left"></i> win10启用ubuntu子shell
+              <a href="/2017/02/24/vxlan/" rel="next" title="vxlan">
+                <i class="fa fa-chevron-left"></i> vxlan
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/01/01/manual_ceph/" rel="prev" title="手动安装ceph">
-                手动安装ceph <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -459,10 +466,10 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/12/25/mariadb-base/"
-     data-title="Mariadb galera"
+        <div class="ds-share flat" data-thread-key="2017/02/25/vmware&openstack/"
+     data-title="OpenStack对接vmware"
      data-content=""
-     data-url="http://yoursite.com/2016/12/25/mariadb-base/">
+     data-url="http://yoursite.com/2017/02/25/vmware&openstack/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -489,8 +496,8 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/25/mariadb-base/"
-           data-title="Mariadb galera" data-url="http://yoursite.com/2016/12/25/mariadb-base/">
+      <div class="ds-thread" data-thread-key="2017/02/25/vmware&openstack/"
+           data-title="OpenStack对接vmware" data-url="http://yoursite.com/2017/02/25/vmware&openstack/">
       </div>
     
   </div>
@@ -601,7 +608,7 @@ Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫cod
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#传统的数据同步方式"><span class="nav-number">1.</span> <span class="nav-text">传统的数据同步方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-5-6下semi-sync数据同步方式"><span class="nav-number">1.1.</span> <span class="nav-text">mysql 5.6下semi-sync数据同步方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql-5-7下semi-sync数据同步方式"><span class="nav-number">1.2.</span> <span class="nav-text">mysql 5.7下semi-sync数据同步方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Galera"><span class="nav-number">2.</span> <span class="nav-text">Galera</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑图"><span class="nav-number">1.</span> <span class="nav-text">拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构图"><span class="nav-number">2.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vsphere上的配置"><span class="nav-number">3.</span> <span class="nav-text">Vsphere上的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova配置"><span class="nav-number">4.</span> <span class="nav-text">nova配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glance配置"><span class="nav-number">5.</span> <span class="nav-text">glance配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder配置"><span class="nav-number">6.</span> <span class="nav-text">cinder配置</span></a></li></ol></div>
             
           </div>
         </section>
