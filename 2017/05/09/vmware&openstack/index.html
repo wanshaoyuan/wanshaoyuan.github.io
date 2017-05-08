@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="docker," />
+  <meta name="keywords" content="我爱西红柿, blade" />
 
 
 
@@ -84,34 +84,40 @@
 
 
 
-<meta name="description" content="kolla是什么？容器化部署openstack，简而言之就是openstack里面每个组件都是用docker封装好了，对应docker的一个image。
-容器化好处是什么?通过docker，降低openstack升级的难度，使升级对openstack影响最小，一旦升级失败，直接回滚旧的docker image，升级只需要三步：Pull新版本的容器镜像，停止老版本的容器服务，然后启动新版本容器。回滚">
+<meta name="description" content="openstack版本：libertyvsphere版本：6.0  
+拓扑图
+架构图
+vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
+这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kolla 3.0.3部署openstack newton">
-<meta property="og:url" content="http://yoursite.com/2017/02/09/killo_newton/index.html">
+<meta property="og:title" content="OpenStack对接vmware">
+<meta property="og:url" content="http://yoursite.com/2017/05/09/vmware&openstack/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="kolla是什么？容器化部署openstack，简而言之就是openstack里面每个组件都是用docker封装好了，对应docker的一个image。
-容器化好处是什么?通过docker，降低openstack升级的难度，使升级对openstack影响最小，一旦升级失败，直接回滚旧的docker image，升级只需要三步：Pull新版本的容器镜像，停止老版本的容器服务，然后启动新版本容器。回滚">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_10.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_11.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_12.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_13.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_14.png">
-<meta property="og:updated_time" content="2017-02-09T13:45:59.000Z">
+<meta property="og:description" content="openstack版本：libertyvsphere版本：6.0  
+拓扑图
+架构图
+vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
+这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_11.png">
+<meta property="og:updated_time" content="2017-04-17T14:55:00.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kolla 3.0.3部署openstack newton">
-<meta name="twitter:description" content="kolla是什么？容器化部署openstack，简而言之就是openstack里面每个组件都是用docker封装好了，对应docker的一个image。
-容器化好处是什么?通过docker，降低openstack升级的难度，使升级对openstack影响最小，一旦升级失败，直接回滚旧的docker image，升级只需要三步：Pull新版本的容器镜像，停止老版本的容器服务，然后启动新版本容器。回滚">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/killo_newton_1.png">
+<meta name="twitter:title" content="OpenStack对接vmware">
+<meta name="twitter:description" content="openstack版本：libertyvsphere版本：6.0  
+拓扑图
+架构图
+vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
+这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
 
 
 
@@ -129,7 +135,7 @@
   };
 </script>
 
-  <title> kolla 3.0.3部署openstack newton | 我爱西红柿 </title>
+  <title> OpenStack对接vmware | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -301,7 +307,7 @@
             
             
               
-                kolla 3.0.3部署openstack newton
+                OpenStack对接vmware
               
             
           </h1>
@@ -313,8 +319,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-09T21:45:59+08:00" content="2017-02-09">
-              2017-02-09
+            <time itemprop="dateCreated" datetime="2017-05-09T02:27:17+08:00" content="2017-05-09">
+              2017-05-09
             </time>
           </span>
 
@@ -327,8 +333,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/docker/" itemprop="url" rel="index">
-                    <span itemprop="name">docker</span>
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
                   </a>
                 </span>
 
@@ -343,8 +349,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/02/09/killo_newton/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/09/killo_newton/" itemprop="commentsCount"></span>
+                <a href="/2017/05/09/vmware&openstack/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/09/vmware&openstack/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -367,48 +373,38 @@
       
 
       
-        <h3 id="kolla是什么？"><a href="#kolla是什么？" class="headerlink" title="kolla是什么？"></a>kolla是什么？</h3><p>容器化部署openstack，简而言之就是openstack里面每个组件都是用docker封装好了，对应docker的一个image。</p>
-<h3 id="容器化好处是什么"><a href="#容器化好处是什么" class="headerlink" title="容器化好处是什么?"></a>容器化好处是什么?</h3><p>通过docker，降低openstack升级的难度，使升级对openstack影响最小，一旦升级失败，直接回滚旧的docker image，升级只需要三步：Pull新版本的容器镜像，停止老版本的容器服务，然后启动新版本容器。回滚也不需要重新安装包了，直接启动老版本容器服务就行，非常方便。对比过目前生产环境主流的部署方式，fuel、puppet、ROD，  我个人认为容器化部署将是未来的趋势。kolla底层通过ansoble去启动配置  已经封装好了的docker image。</p>
-<h3 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h3><p>要熟悉kolla，不仅仅是要熟悉openstack那么简单了，还要熟悉docker、和ansiable。</p>
-<p>环境<br>cpu：8核<br>内存：16G<br>根分区大小：100G<br>至少需要2个网络接口（一个管理口，一个外网口）<br>管理地址 192.168.122.77<br>haproxy vip：192.168.122.76  </p>
-<p>安装时注意审查软件版本，我这里是安装newton版对应的是koll 3  ，2月24日发布的ocata版对应的是kolla 4<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_1.png" alt=""></p>
-<p>搭建docker本地镜像库</p>
-<p>安装epel源和python-pip</p>
-<p>安装docker<br>curl -sSL <a href="https://get.docker.io" target="_blank" rel="external">https://get.docker.io</a> | bash</p>
-<p>查看docker版本，确认docker是否安装成功。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_2.png" alt="">  </p>
-<p>修改docker参数，如果没有修改的话，会造成部署 neutron-dhcp-agent container 和访问APIError/HTTPError  </p>
-<p>mkdir -p /etc/systemd/system/docker.service.d</p>
-<p>vi /etc/systemd/system/docker.service.d/koll.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[Service]</div><div class="line">MountFlags=shared</div><div class="line">EnvironmentFile=/etc/sysconfig/docker</div><div class="line">ExecStart=</div><div class="line">ExecStart=/usr/bin/docker daemon $other_args</div></pre></td></tr></table></figure></p>
-<p>保存退出<br>修改/etc/sysconfig/docker参数并添加下面一行，目的是为了配置本地镜像仓库。<br><code>other_args=&quot;--insecure-registry 192.168.122.77:4000&quot;</code></p>
-<p>重启docker进程<br>systemctl daemon-reload<br>systemctl enable docker<br>systemctl restart docker  </p>
-<h3 id="制做docker本地镜像仓库"><a href="#制做docker本地镜像仓库" class="headerlink" title="制做docker本地镜像仓库"></a>制做docker本地镜像仓库</h3><p>链接：<a href="http://pan.baidu.com/s/1gf5LTV9" target="_blank" rel="external">http://pan.baidu.com/s/1gf5LTV9</a> 密码：aysu<br>下载解压<br>将已经build好的openstack镜像解压到本地<br>tar -xvf kolla-image-newton-latest.tgz</p>
-<p>加载下载好的docker registry，docker搭建私有镜像仓库使用registry这个软件<br>docker load &lt; ./registry-server.tar<br>将镜像文件放到/home/下<br><code>docker run -d -p 4000:5000 --restart=always -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/tmp/registry -v /home/tmp/registry/:/tmp/registry  --name registry registry:2</code></p>
-<p>测试是否搭建本地镜像仓库成功<br>curl -XGET <a href="http://127.0.0.1:4000/v2/_catalog" target="_blank" rel="external">http://127.0.0.1:4000/v2/_catalog</a> #正常情况会输出很多image name。<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_3.png" alt=""><br>仓库里面存在的镜像<br>查看该镜像的tag<br><code>curl -XGET http://127.0.0.1:4000/v2/kolla/centos-binary-nova-compute/tags/list</code></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_4.png" alt=""></p>
-<p>3.0.3是版本号<br>查看仓库数据  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_5.png" alt=""></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_6.png" alt=""></p>
-<p>安装ansible<br>yum install ansible<br>clone newton分支<br><code>git clone -b stable/newton https://github.com/openstack/kolla</code><br>cd kolla<br>cp -r etc/kolla /etc/  </p>
-<p>安装kolla<br>pip install kolla  </p>
-<p>vim /etc/kolla/globals.yml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">openstack_release: &quot;3.0.3&quot; #上面搭建的本地仓库里面curl出来的tag号，写错了的话会导致找不到image。</div><div class="line"></div><div class="line">network_interface: &quot;ens3&quot;</div><div class="line">kolla_internal_vip_address: &quot;192.168.123.76&quot;#配置给高可用的vip</div><div class="line">neutron_external_interface: &quot;eth0&quot;</div><div class="line"></div><div class="line">docker_registry: &quot;192.168.122.77:4000&quot; #本地仓库地址</div><div class="line">docker_namespace: &quot;kolla&quot;</div></pre></td></tr></table></figure></p>
-<p>生成密码文件<br> kolla-genpwd<br>路径<br>/etc/kolla/password.yml  </p>
-<p>执行部署<br>cd /root/kolla/tools/<br>./kolla-ansible deploy -i /root/kolla/ansible/inventory/all-in-one<br>这里需要注意的是，我是部署all-in-one，如果需要部署多节点的用multinode 修改一下里面的hostname<br>部署完成查看容器<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_7.png" alt=""><br>pip install  python-openstackclient<br>pip  install python-neutronclient  </p>
-<p>输入以下命令生成一个环境变量文件<br>kolla-ansible post-deploy  </p>
-<p>文件路径为<br>/etc/kolla/admin-openrc.sh  </p>
-<p>cp /etc/kolla/admin-openrc.sh /root/  </p>
-<p>source /root/admin-openrc.sh  </p>
-<p>查看nova service<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_8.png" alt=""><br>查看neutron agent<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_9.png" alt=""></p>
-<p>打开控制台访问</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_10.png" alt=""><br>帐户admin，密码通过刚刚生成的admin-openrc.sh获取  </p>
-<p>执行<br>cd /usr/share/kolla  </p>
-<p>./init-runonce #一个测试脚本，自动下载镜像，上传，创建网络，创建路由器……  </p>
-<p>最后创建虚拟机  </p>
-<p>需要注意的是如果是在虚拟机中测试kolla需要在宿主机上修改nova-compute的配置文件 为virt_type=qemu不然默认用的是kvm，会造成创建云主机失败。<br>vim /etc/kolla/nova-compute/nova.conf<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_11.png" alt=""></p>
-<p>重启这个容器。<br>docker restart nova_compute<br>创建云主机测试<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_12.png" alt=""></p>
-<p>最后</p>
-<p>Docker使用heka来展现收集到的日志信息。这些openstack容器的log都在heka 容器内展现<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_13.png" alt=""><br>默认是没有安装cinder和其他一些软件的，如果需要安装在部署时可以修改/etc/kolla/globals.yml<br><img src="http://ohx02qrb8.bkt.clouddn.com/killo_newton_14.png" alt="">  </p>
-<p>参考链接<br><a href="http://blog.csdn.net/u011211976/article/details/52085891" target="_blank" rel="external">http://blog.csdn.net/u011211976/article/details/52085891</a><br><a href="http://docs.openstack.org/developer/kolla-ansible/quickstart.html" target="_blank" rel="external">http://docs.openstack.org/developer/kolla-ansible/quickstart.html</a><br><a href="http://geek.csdn.net/news/detail/60805?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">http://geek.csdn.net/news/detail/60805?utm_source=tuicool&amp;utm_medium=referral</a>  </p>
+        <p>openstack版本：liberty<br>vsphere版本：6.0  </p>
+<h3 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_1.png" alt="image"></p>
+<h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_2.png" alt="image"></p>
+<p>vmware对接openstack有两种驱动<br>1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络<br>2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  </p>
+<p>这里采用vcdriver的方式<br>这种方式目前有几个问题<br>1，就是已经存在vmware集群的vm是不能被openstack管理了，只有新创建的机器可以被openstack管理。  </p>
+<p>2，vlan模式下，VCDriver要求vCenter里被使用的VLAN port group的名字必须和OpenStack里integration bridge（默认是br-int）的名字一样，而且vlan 号也得一样，这里我配置port group为0，表示不做限制。</p>
+<p>3，首次创建虚机会花费很长时间，因为需要将镜像从glance通过vcenter 拷贝到cluster后端的datasotre，后面再创建速度就会很快。</p>
+<p>要点：<br>一台计算节点对接vsphere，需要这台计算节点能根vcenter通信。  </p>
+<h3 id="Vsphere上的配置"><a href="#Vsphere上的配置" class="headerlink" title="Vsphere上的配置"></a>Vsphere上的配置</h3><p>配置好对应的openstack计算节点对应的cluster<br>如这个vsphere的cluster_name为UAT_Lenovo_6.0</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_3.png" alt="image"></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_4.png" alt="image"></p>
+<p>cluster对应的storage名字  </p>
+<p>创建对应的port_group  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_5.png" alt="image"></p>
+<h3 id="nova配置"><a href="#nova配置" class="headerlink" title="nova配置"></a>nova配置</h3><p>需要注意对应的物理适配器，待会需要写到配置项内。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">openstack平台对接vcenter配置参考</div><div class="line">compute_driver #对应的驱动</div><div class="line">host_ip #连接vsphere的ip地址</div><div class="line">host_username #管理员帐户</div><div class="line">host_password #管理员密码</div><div class="line">datastore_rege #cluster对应的后端存储</div><div class="line">cluster_name #对应的cluster 名字</div><div class="line">vlan_interface #port group对应的物理网卡</div><div class="line">vmware.integration_bridge #对应的port_group</div><div class="line">insecure=True #关闭ssl连接不然报下面错</div></pre></td></tr></table></figure></p>
+<p>修改/etc/nova/nova.conf配置文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[default]</div><div class="line">compute_driver = vmwareapi.VMwareVCDriver</div><div class="line">[vmware]</div><div class="line">host_ip=10.3.1.11</div><div class="line">host_username=administrator@UAT.com</div><div class="line">host_password=1qaz@WSX</div><div class="line">datastore_regex=Huawei_S5500_01</div><div class="line">cluster_name=UAT_Lenovo_6.0</div><div class="line">api_retry_count=10</div><div class="line">vlan_interface=vmnic0</div><div class="line">vmware.integration_bridge=br-int</div><div class="line">insecure=True</div></pre></td></tr></table></figure></p>
+<p>需要注意这些参数仔细核对。  </p>
+<p>启动openstack-nova-compute服务：<br><code>systemctl restart openstack-nova-compute</code></p>
+<p>此时应该可以看见vmware 对应的hypervisor<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_6.png" alt="image"></p>
+<p>转换镜像将一个qcow2的镜像转换成vmware用的vmdk格式</p>
+<h3 id="glance配置"><a href="#glance配置" class="headerlink" title="glance配置"></a>glance配置</h3><p>转换镜像格式为vmdk：<br><code>qemu-img convert -f raw -O vmdk  centos_6.5.raw  centos_6.5.vmdk</code></p>
+<p>上传镜像：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glance image-create  --name=centos-6.5.vmdk  --disk-format=vmdk  --property hypervisor_type=&quot;vmware&quot;  --property vmware_adaptertype=&quot;ide&quot;  --property vmware_disktype=&quot;sparse&quot;  --is-public=True  --property vmware_ostype=&quot;otherLinuxGuest&quot;  --container-format=bare &lt; centos_6.5.vmdk</div></pre></td></tr></table></figure></p>
+<p>创建虚拟机进行测试  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_7.png" alt="image"><br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_8.png" alt="image"><br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_9.png" alt="image"></p>
+<p>第一次创建时间比较久因为要将镜像从glance 拷贝到vmware 的storage内<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_10.png" alt="image"></p>
+<p>可以看见vsphere内已经有以uuid命名的vm了，表示创建成功  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_11.png" alt="image"></p>
+<p>后面为可选配置，配置cinder对接vmware存储</p>
+<h3 id="cinder配置"><a href="#cinder配置" class="headerlink" title="cinder配置"></a>cinder配置</h3><p>编辑/etc/cinder/cinder.conf配置文件，修改如下参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">volume_driver=cinder.volume.drivers.vmware.vmdk.VMwareVcVmdkDriver</div><div class="line">volume_backend_name=vmware</div><div class="line">vmware_host_ip=10.68.35.24</div><div class="line">vmware_host_username=administrator</div><div class="line">vmware_host_password=admin123</div></pre></td></tr></table></figure></p>
+<p>重启cinder-volume服务：<br><code>/etc/init.d/openstack-cinder-volume restart</code><br>创建多类型存储：<br><code>cinder type-create vmware</code><br><code>cinder type-key vmware set volume_backend_name=vmware</code><br><code>cinder type-create ceph</code><br><code>cinder type-key ceph set volume_backend_name=DEFAULT</code>  </p>
+<p>创建云硬盘，挂在云主机进行测试  </p>
+<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">http://blog.csdn.net/jmilk/article/details/52102020</div><div class="line">http://blog.csdn.net/halcyonbaby/article/details/37818789</div><div class="line">http://www.cnblogs.com/zhoumingang/p/5514556.html</div><div class="line">http://www.iyunv.com/forum.php?mod=viewthread&amp;tid=86702</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -444,28 +440,18 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/docker/" rel="tag">#docker</a>
-          
-        </div>
-      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/02/06/openstac&ceph/" rel="next" title="openstack N版对接ceph jewel版">
-                <i class="fa fa-chevron-left"></i> openstack N版对接ceph jewel版
+              <a href="/2017/05/09/boot_from_volume/" rel="next" title="">
+                <i class="fa fa-chevron-left"></i> 
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/02/24/vxlan/" rel="prev" title="vxlan">
-                vxlan <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -480,10 +466,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/02/09/killo_newton/"
-     data-title="kolla 3.0.3部署openstack newton"
+        <div class="ds-share flat" data-thread-key="2017/05/09/vmware&openstack/"
+     data-title="OpenStack对接vmware"
      data-content=""
-     data-url="http://yoursite.com/2017/02/09/killo_newton/">
+     data-url="http://yoursite.com/2017/05/09/vmware&openstack/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -510,8 +496,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/02/09/killo_newton/"
-           data-title="kolla 3.0.3部署openstack newton" data-url="http://yoursite.com/2017/02/09/killo_newton/">
+      <div class="ds-thread" data-thread-key="2017/05/09/vmware&openstack/"
+           data-title="OpenStack对接vmware" data-url="http://yoursite.com/2017/05/09/vmware&openstack/">
       </div>
     
   </div>
@@ -622,7 +608,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#kolla是什么？"><span class="nav-number">1.</span> <span class="nav-text">kolla是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容器化好处是什么"><span class="nav-number">2.</span> <span class="nav-text">容器化好处是什么?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点："><span class="nav-number">3.</span> <span class="nav-text">缺点：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#制做docker本地镜像仓库"><span class="nav-number">4.</span> <span class="nav-text">制做docker本地镜像仓库</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑图"><span class="nav-number">1.</span> <span class="nav-text">拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构图"><span class="nav-number">2.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vsphere上的配置"><span class="nav-number">3.</span> <span class="nav-text">Vsphere上的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova配置"><span class="nav-number">4.</span> <span class="nav-text">nova配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glance配置"><span class="nav-number">5.</span> <span class="nav-text">glance配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder配置"><span class="nav-number">6.</span> <span class="nav-text">cinder配置</span></a></li></ol></div>
             
           </div>
         </section>
