@@ -1,0 +1,971 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="neutron," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="环境 fuel8.0
+介绍DVR简称分布式路由，M版前的neutron网络结构。 
+ 无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="neutron-高可用(1)--DVR">
+<meta property="og:url" content="http://yoursite.com/2017/07/23/dvr/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环境 fuel8.0
+介绍DVR简称分布式路由，M版前的neutron网络结构。 
+ 无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同com">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-16.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-17.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-18.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-19.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-20.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-21.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-22.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-23.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-24.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-25.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-26.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-27.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-28.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-29.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-30.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-31.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-32.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-33.png">
+<meta property="og:updated_time" content="2017-07-23T07:19:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="neutron-高可用(1)--DVR">
+<meta name="twitter:description" content="环境 fuel8.0
+介绍DVR简称分布式路由，M版前的neutron网络结构。 
+ 无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同com">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/dvr-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6229174250624779000,
+      author: 'admin'
+    }
+  };
+</script>
+
+  <title> neutron-高可用(1)--DVR | 我爱西红柿 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=59881503";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">我爱西红柿</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">已知的已知，已知的未知，未知的未知</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                neutron-高可用(1)--DVR
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-07-23T15:19:59+08:00" content="2017-07-23">
+              2017-07-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/neutron/" itemprop="url" rel="index">
+                    <span itemprop="name">neutron</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/07/23/dvr/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/07/23/dvr/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>环境 fuel8.0</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>DVR简称分布式路由，M版前的neutron网络结构。<br> <img src="http://ohx02qrb8.bkt.clouddn.com/dvr-1.png" alt=""></p>
+<p> 无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。<br>在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同compute节点，在同一个compute节点就直接通过本机就能直接转发了。直接就通过tunnel到达另外一个compute节点，不在需要通过网络节点去做转发了，而配置了floatting ip的主机，直接通过本compute节点的L3 agent 通过br-ex连接外网。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-2.png" alt=""><br>进行深入前的一些基本概念的讲解：<br>路由策略<br>引用百科里的一句话<br>路由策略是一种基于目标网络进行路由更加灵活的数据包路由转发机制。应用了路由策略，路由器将通过路由图决定如何对需要路由的数据包进行处理，路由图决定了一个数据包的下一跳转发路由器。 路由策略的种类 大体上分为两种：一种是根据路由的目的地址来进行的策略称为：目的地址路由； 另一种是根据路由源地址来进行策略实施的称为：源地址路由！ 随着路由策略的发展现在有了第三种路由方式：智能均衡的策略方式！</p>
+<p>使用 ip rule 操作策略路由</p>
+<p>基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。<br>ip rule  查看策略路由表<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-3.png" alt=""></p>
+<p>数字越小，优先级越高</p>
+<p>规则0，它是优先级别最高的规则，规则规定，所有的包，都必须首先使用local表（254）进行路由。本规则不能被更改和删除。</p>
+<p>规则32766，规定所有的包，使用表main进行路由。本规则可以被更改和删除。</p>
+<p>规则32767，规定所有的包，使用表default进行路由。本规则可以被更改和删除。</p>
+<p>在默认情况下进行路由时，首先会根据规则0在本地路由表里寻找路由，如果目的地址是本网络，或是广播地址的话，在这里就可以找到合适的路由；如果路由失败，就会匹配下一个不空的规则，在这里只有32766规则，在这里将会在主路由表里寻找路由;如果失败，就会匹配32767规则，即寻找默认路由表。如果失败，路由将失败。重这里可以看出，策略性路由是往前兼容的。</p>
+<p>3232243201:    from 192.168.30.1/24 lookup 3232243201 #这条规则的含义是规则3232243201 源ip为192.168.30.1/24的包，使用local表3232243201 进行路由</p>
+<p>linux二层网络中一些基本名词</p>
+<p>TAP设备：如kvm创建虚拟机后，宿主机上的vnet0、vnet1等，是操作系统内核中的虚拟网络设备。<br>veth配对设备（veth pair）或ovs配对设备，它其实是一对网卡把一块叫veth，另外一块叫peer，当一个数据真被发送到其中一端中，veth的另外一端也会收到此帧。在虚拟化中常用veth pair来连接两个bridge，比如qbr网桥跟br-int网桥上的qvb-xxx和qvo-xxx就是一对veth pair。</p>
+<h3 id="启用DVR"><a href="#启用DVR" class="headerlink" title="启用DVR"></a>启用DVR</h3><p>以下配置的前提是开启了l2_population<br>l2population原理介绍如下<br><a href="http://blog.csdn.net/cloudman6/article/details/53167522" target="_blank" rel="external">http://blog.csdn.net/cloudman6/article/details/53167522</a></p>
+<h3 id="1，安装"><a href="#1，安装" class="headerlink" title="1，安装"></a>1，安装</h3><h4 id="compute节点"><a href="#compute节点" class="headerlink" title="compute节点"></a>compute节点</h4><p>(1)安装l3-agent<br>(2)修改的内核参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vi /etc/sysctl.conf</div><div class="line">net.ipv4.ip_forward = 1</div><div class="line">net.ipv4.conf.all.rp_filter = 0</div><div class="line">net.ipv4.conf.default.rp_filter = 0</div><div class="line"></div><div class="line">sysctl -p</div></pre></td></tr></table></figure></p>
+<p>（3）增加一块能上外网的网卡，并创建个br-ex网桥把这块网卡桥接到br-ex上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-br br-ex</div><div class="line">ovs-vsctl add-port br-ex ethx</div></pre></td></tr></table></figure></p>
+<p>(4)配置l3agent.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vim /etc/neutron/l3_agent.ini</div><div class="line"></div><div class="line">interface_driver =neutron.agent.linux.interface.OVSInterfaceDriver</div><div class="line">use_namespaces = True</div><div class="line">agent_mode = dvr</div><div class="line">`</div></pre></td></tr></table></figure></p>
+<p>vim /etc/neutron/plugins/ml2/ml2_conf.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[agent]</div><div class="line">enable_distributed_routing=True</div></pre></td></tr></table></figure></p>
+<p>重新启动 neutron-openvswitch-agent, netron-l3-agent ,openvswitch-switch 服务。</p>
+<h4 id="网络节点"><a href="#网络节点" class="headerlink" title="网络节点"></a>网络节点</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vim /etc/neutron/l3_agent.ini</div><div class="line">agent_mode = dvr_snat</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vim /etc/neutron/plugins/ml2/ml2_conf.ini</div><div class="line">[agent]</div><div class="line">enable_distributed_routing=True</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">重启neutron-server、netron-l3-agent ,openvswitch-switch 服务。</div></pre></td></tr></table></figure>
+<p>配置成功后可以neutron agent-list 看见compute的l3-agent。<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-4.png" alt=""></p>
+<h3 id="原理解释"><a href="#原理解释" class="headerlink" title="原理解释"></a>原理解释</h3><p>1台control节点（server-4），2台compute（server-5、server-6）、外网为192.168.122.0/24<br>在control节点上在控制台创建个网络，创建个路由器，设置网关，在路由器上将网络端口添加进去。在基于此网络创建个主机。<br>可以发现在control节点上创建路由器时，会同时在namespace里面创建qroute-xxx和snat-xxx两个命名空间，snat-xxx命名空间会根据创建的子网来添加接口，qg-xxx和sg-xxx，其中qg-xxx上面配置了外网ip，sg-xxx配置的是本子网可用的第一个ip（前两个为网关和dhcp）</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-5.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-6.png" alt=""></p>
+<p>当该网络内其他主机需要上外网时，源ip会已postrouting形式，snat成路由器的网关，这步操作会在snat-xx命名空间内做</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-7.png" alt=""><br>在传统网络架构下，snat操作本来是应该在qroute下进行，而在DVR模式下qroute-xxx完全是连接内网的网关。</p>
+<p>当创建一个实例时，会自动在实例所在的compute节点创建一个qroute-xxx 此qrouter-xxx的ip和mac都与control节点的一样。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-8.png" alt=""></p>
+<p>当给实例分配一个floating_ip时，在自动在实例所在的计算节点namespace里面生成fip-xxx命名空间</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-9.png" alt=""></p>
+<p>需要注意的是fip-xxx这个id是与你的public网络id是一致<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-10.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-11.png" alt=""></p>
+<p>也就是说一个public网络对应一个fip-xxx namespace,在下面会解释为什么这样做<br>节点fg-xxx对应的是外网接口，fpr接口与qrouter接口一对veth pair</p>
+<h3 id="DVR模式下流量的走向"><a href="#DVR模式下流量的走向" class="headerlink" title="DVR模式下流量的走向"></a>DVR模式下流量的走向</h3><h4 id="南北流量（1：N）"><a href="#南北流量（1：N）" class="headerlink" title="南北流量（1：N）"></a>南北流量（1：N）</h4><p>所谓南北流量（1：N）实际上就是指SNAT就是子网内的主机通过路由器的floatingIP去上外网<br>1，首先需要确认router已经发到compute节点，我这router叫test2<br>可以看见已经在server-6上有了</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-12.png" alt=""></p>
+<p>我在vm（192.168.50.4）上面ping百度<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-13.png" alt=""></p>
+<p>因为是跨网段的，所以发送给默认路由，就是网关。<br>在网关上路由策略可以看见发现，发给默认路由192.168.50.1的数据，最终会发给192.168.50.3</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-14.png" alt=""></p>
+<p>那192.168.50.3在哪呢，通过前面分析，我们知道，192.168.50.3在control节点snat-xx命名空间里面<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-15.png" alt=""></p>
+<p>然后在iptables里面做一次snat<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-16.png" alt=""></p>
+<p>就出外网了，因为我这是KVM虚拟机里面所以还要nat一层。</p>
+<p>ping public网络 192.168.122.1 然后抓包分析</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-17.png" alt=""></p>
+<p>所以SNAT流程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">                    （compute节点）         vxlan    （network节点）</div><div class="line">vm---&gt;qr-xxx---&gt;br-int----&gt;br-tun---&gt;  br-tun-----&gt;br-int-----&gt;snat-xxx----br-ex</div></pre></td></tr></table></figure></p>
+<h4 id="南北流量（1：1）"><a href="#南北流量（1：1）" class="headerlink" title="南北流量（1：1）"></a>南北流量（1：1）</h4><p>给主机192.168.50.4绑定一个floating_ip</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-18.png" alt=""><br>观察control节点和compute节点的namespace发现<br>control节点<br>没有发生变化，而vm所在的compute的节点的namespace发现多了一个<br>fip命名空间<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-19.png" alt=""></p>
+<p>注意看这个fip的ip是我们创建的外网网络id，这个在上面已经说过了。<br>查看一个这个fip-xxx的内容</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-20.png" alt=""></p>
+<p>vm绑定floating_ip后如何跟外网进行通信</p>
+<p>1，vm ping外网，首先数据包丢给默认路由，qroute，<br>2，查找路由表<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-21.png" alt=""></p>
+<p>命中table 16<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-22.png" alt=""></p>
+<p>走rfp端口</p>
+<p>3，然后进行snat</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-23.png" alt=""><br>4，然后发送给fip-xxx命名空间</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-24.png" alt=""></p>
+<p>因为已经进行snat了地址变成外网的，所以这里都default route 直接给外网网关，完成</p>
+<p>如下图<br>来源<a href="http://www.cnblogs.com/sammyliu/p/4713562.html" target="_blank" rel="external">http://www.cnblogs.com/sammyliu/p/4713562.html</a></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-25.png" alt=""><br>vm绑定vip后外网DNAT进入内网主机<br>1，arp-proxy<br>外网ip要ping通内网，首先需要知道内网ip的mac，fip，并没有直接绑定在一个特定的端口是怎么知道mac的呢<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-26.png" alt=""></p>
+<p>进行路由追踪发现<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-27.png" alt=""></p>
+<p>arping发现mac地址为 尾数为C7:C3的</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-28.png" alt=""></p>
+<p>那这个mac地址为谁的</p>
+<p>竟然是fip-xxx的fg端口<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-29.png" alt=""></p>
+<p>原来是fip-xxx在fg这个端口上做了arp-proxy，这样，fg既可以响应发给它自己的arp请求，也可以响应发给经过它路由的端的arp请求</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-30.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-31.png" alt=""><br>可以看见内核参数里面已经开启了</p>
+<p>2，将包丢给路由器</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-32.png" alt=""><br>我们从fip-xxx ip route 可以看见包被丢给169.254.93.254这个接口了，这个接口是qroute-xxx的一个接口</p>
+<p>3，qroute–xxx做DNAT<br><img src="http://ohx02qrb8.bkt.clouddn.com/dvr-33.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">流程如下</div><div class="line"></div><div class="line">        arp欺骗           通过fpr       DNAT</div><div class="line">extra-----&gt;fip--xxx----&gt;qroute-----&gt; VM</div></pre></td></tr></table></figure>
+<p>为什么要独立出一个snat namespace来做SNAT，而不继续之前的qrouter多SNAT方案？</p>
+<p>因为 当创建子网的第一台主机时，会同时在compute节点上也创建个qrouter-xxx的namespace，但computer节点上的qrouter并不做snat功能，只做当有绑定float_ip时 连接FIPnamespace中转，所以需要将SNAT功能独立出来，于是就有了SNATnamespace当然这个也只会在网络节点的namespace里面创建。</p>
+<p>当虚拟机绑定fip时，为什么compute要多出一个fip namespace，不直接在qrouter上的qg直接连接br-ex？<br>是为了减少暴露在外部网络上的mac和ip地址，所以才需要有fip的出现。由于传统router只在网络节点上，数量很少，直接在传统router的qg上配floating ip和用其mac地址应答arp请求，所以没这个问题。但是dvr router由于分布到大量的compute node（每个私有网络都可能有一个router），如果再这么做，会导致有大量router的qg接口暴露在外部网络上，因此分离出fip，而fip是按照（compute node，external network）分配的，数量少很多。一个external_network就一个另外fip也可以做集中的arp proxy，不需要把floating ip真正绑到fip的接口上。同时也可以减少交换机MAC地址表的占用，减轻交换机的负担。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/neutron/" rel="tag">#neutron</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/23/vmware&openstack/" rel="next" title="OpenStack对接vmware">
+                <i class="fa fa-chevron-left"></i> OpenStack对接vmware
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2017/07/23/dvr/"
+     data-title="neutron-高可用(1)--DVR"
+     data-content=""
+     data-url="http://yoursite.com/2017/07/23/dvr/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/07/23/dvr/"
+           data-title="neutron-高可用(1)--DVR" data-url="http://yoursite.com/2017/07/23/dvr/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/image.png"
+               alt="我爱西红柿" />
+          <p class="site-author-name" itemprop="name">我爱西红柿</p>
+          <p class="site-description motion-element" itemprop="description">专注虚拟化、容器、devops</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">15</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanshaoyuan" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/wanshaoyuan" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#启用DVR"><span class="nav-number">1.1.</span> <span class="nav-text">启用DVR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1，安装"><span class="nav-number">1.2.</span> <span class="nav-text">1，安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#compute节点"><span class="nav-number">1.2.1.</span> <span class="nav-text">compute节点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络节点"><span class="nav-number">1.2.2.</span> <span class="nav-text">网络节点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理解释"><span class="nav-number">1.3.</span> <span class="nav-text">原理解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DVR模式下流量的走向"><span class="nav-number">1.4.</span> <span class="nav-text">DVR模式下流量的走向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#南北流量（1：N）"><span class="nav-number">1.4.1.</span> <span class="nav-text">南北流量（1：N）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#南北流量（1：1）"><span class="nav-number">1.4.2.</span> <span class="nav-text">南北流量（1：1）</span></a></li></ol></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">我爱西红柿</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+本站总访问量 <span id="busuanzi_value_site_pv"></span> &nbsp&nbsp&nbsp
+您是第<span id="busuanzi_value_site_uv"></span>个来到的小伙伴
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bladen"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js"></script>
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
