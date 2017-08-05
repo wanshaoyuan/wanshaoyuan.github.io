@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="我爱西红柿, blade" />
+  <meta name="keywords" content="ceph," />
 
 
 
@@ -87,7 +87,7 @@
 <meta name="description" content="前言通过crushmap划分性能型池和容量型池。在实际生产环境中，考虑到成本因素，很少土豪公司会将osd全部用ssd，但私有云上有部分业务需要高性能存储，部分业务只需要普通的sas盘做容量性存储，在公有云中也经常有，不同性能的存储卖不同的价格。在ceph中的解决方法就是通过修改crushmap，创建多种host，将osd加入到host中，在创建多个pool，每个pool对应不同的rule
 本例中两">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我爱西红柿">
+<meta property="og:title" content="ceph crushmap">
 <meta property="og:url" content="http://yoursite.com/2017/08/05/crush/index.html">
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="前言通过crushmap划分性能型池和容量型池。在实际生产环境中，考虑到成本因素，很少土豪公司会将osd全部用ssd，但私有云上有部分业务需要高性能存储，部分业务只需要普通的sas盘做容量性存储，在公有云中也经常有，不同性能的存储卖不同的价格。在ceph中的解决方法就是通过修改crushmap，创建多种host，将osd加入到host中，在创建多个pool，每个pool对应不同的rule
@@ -103,9 +103,9 @@
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/crush_9.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/crush_10.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/crush_11.png">
-<meta property="og:updated_time" content="2017-08-05T10:37:41.000Z">
+<meta property="og:updated_time" content="2017-08-05T07:19:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
+<meta name="twitter:title" content="ceph crushmap">
 <meta name="twitter:description" content="前言通过crushmap划分性能型池和容量型池。在实际生产环境中，考虑到成本因素，很少土豪公司会将osd全部用ssd，但私有云上有部分业务需要高性能存储，部分业务只需要普通的sas盘做容量性存储，在公有云中也经常有，不同性能的存储卖不同的价格。在ceph中的解决方法就是通过修改crushmap，创建多种host，将osd加入到host中，在创建多个pool，每个pool对应不同的rule
 本例中两">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/crush_1.png">
@@ -126,7 +126,7 @@
   };
 </script>
 
-  <title>  | 我爱西红柿 </title>
+  <title> ceph crushmap | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -298,7 +298,7 @@
             
             
               
-                
+                ceph crushmap
               
             
           </h1>
@@ -310,11 +310,30 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-08-05T19:09:52+08:00" content="2017-08-05">
+            <time itemprop="dateCreated" datetime="2017-08-05T15:19:59+08:00" content="2017-08-05">
               2017-08-05
             </time>
           </span>
 
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/ceph/" itemprop="url" rel="index">
+                    <span itemprop="name">ceph</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
           
 
           
@@ -434,13 +453,19 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/ceph/" rel="tag">#ceph</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/05/ceph_clone/" rel="next" title="ceph crushmap">
-                <i class="fa fa-chevron-left"></i> ceph crushmap
+              <a href="/2017/08/05/ceph_clone/" rel="next" title="openstack秒级创建云主级秒级创建快照原理">
+                <i class="fa fa-chevron-left"></i> openstack秒级创建云主级秒级创建快照原理
               </a>
             
           </div>
@@ -465,7 +490,7 @@
     <div class="post-spread">
       
         <div class="ds-share flat" data-thread-key="2017/08/05/crush/"
-     data-title=""
+     data-title="ceph crushmap"
      data-content=""
      data-url="http://yoursite.com/2017/08/05/crush/">
   <div class="ds-share-inline">
@@ -495,7 +520,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2017/08/05/crush/"
-           data-title="" data-url="http://yoursite.com/2017/08/05/crush/">
+           data-title="ceph crushmap" data-url="http://yoursite.com/2017/08/05/crush/">
       </div>
     
   </div>

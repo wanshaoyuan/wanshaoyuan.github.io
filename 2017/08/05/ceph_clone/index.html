@@ -87,7 +87,7 @@
 <meta name="description" content="概念cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。
 ceph快照是基于cow（copy on write）ceph 使用 COW （c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ceph crushmap">
+<meta property="og:title" content="openstack秒级创建云主级秒级创建快照原理">
 <meta property="og:url" content="http://yoursite.com/2017/08/05/ceph_clone/index.html">
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概念cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。
@@ -95,7 +95,7 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/ceph%20_clone_1.png">
 <meta property="og:updated_time" content="2017-08-05T07:19:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ceph crushmap">
+<meta name="twitter:title" content="openstack秒级创建云主级秒级创建快照原理">
 <meta name="twitter:description" content="概念cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。
 ceph快照是基于cow（copy on write）ceph 使用 COW （c">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/ceph%20_clone_1.png">
@@ -116,7 +116,7 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
   };
 </script>
 
-  <title> ceph crushmap | 我爱西红柿 </title>
+  <title> openstack秒级创建云主级秒级创建快照原理 | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -288,7 +288,7 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
             
             
               
-                ceph crushmap
+                openstack秒级创建云主级秒级创建快照原理
               
             
           </h1>
@@ -434,8 +434,8 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/08/05/crush/" rel="prev" title="">
-                 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/08/05/crush/" rel="prev" title="ceph crushmap">
+                ceph crushmap <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -452,7 +452,7 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
     <div class="post-spread">
       
         <div class="ds-share flat" data-thread-key="2017/08/05/ceph_clone/"
-     data-title="ceph crushmap"
+     data-title="openstack秒级创建云主级秒级创建快照原理"
      data-content=""
      data-url="http://yoursite.com/2017/08/05/ceph_clone/">
   <div class="ds-share-inline">
@@ -482,7 +482,7 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2017/08/05/ceph_clone/"
-           data-title="ceph crushmap" data-url="http://yoursite.com/2017/08/05/ceph_clone/">
+           data-title="openstack秒级创建云主级秒级创建快照原理" data-url="http://yoursite.com/2017/08/05/ceph_clone/">
       </div>
     
   </div>
