@@ -88,16 +88,16 @@
 拓扑图
 架构图
 vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
-这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
 <meta property="og:type" content="article">
 <meta property="og:title" content="OpenStack对接vmware">
-<meta property="og:url" content="http://yoursite.com/2017/08/05/vmware&openstack/index.html">
+<meta property="og:url" content="http://yoursite.com/2017/09/08/vmware&openstack/index.html">
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="openstack版本：libertyvsphere版本：6.0  
 拓扑图
 架构图
 vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
-这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_2.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_3.png">
@@ -109,14 +109,17 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_9.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_10.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_11.png">
-<meta property="og:updated_time" content="2017-04-17T14:55:00.000Z">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_10">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_11">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_12">
+<meta property="og:updated_time" content="2017-09-08T14:55:00.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenStack对接vmware">
 <meta name="twitter:description" content="openstack版本：libertyvsphere版本：6.0  
 拓扑图
 架构图
 vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
-这里采用vcdriver的方式这种方式目前有几个问题1，就是已经存在vmw">
+需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
 
 
@@ -130,7 +133,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
     motion: true,
     duoshuo: {
       userId: 6229174250624779000,
-      author: 'admin'
+      author: '我爱西红柿'
     }
   };
 </script>
@@ -319,8 +322,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-08-05T19:30:17+08:00" content="2017-08-05">
-              2017-08-05
+            <time itemprop="dateCreated" datetime="2017-09-08T22:55:00+08:00" content="2017-09-08">
+              2017-09-08
             </time>
           </span>
 
@@ -349,8 +352,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/08/05/vmware&openstack/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/08/05/vmware&openstack/" itemprop="commentsCount"></span>
+                <a href="/2017/09/08/vmware&openstack/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/08/vmware&openstack/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -377,6 +380,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
 <h3 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_1.png" alt="image"></p>
 <h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_2.png" alt="image"></p>
 <p>vmware对接openstack有两种驱动<br>1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络<br>2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  </p>
+<p>需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需要对接vmware的dvs的话需要安装另外的包并配置neutron。</p>
 <p>这里采用vcdriver的方式<br>这种方式目前有几个问题<br>1，就是已经存在vmware集群的vm是不能被openstack管理了，只有新创建的机器可以被openstack管理。  </p>
 <p>2，vlan模式下，VCDriver要求vCenter里被使用的VLAN port group的名字必须和OpenStack里integration bridge（默认是br-int）的名字一样，而且vlan 号也得一样，这里我配置port group为0，表示不做限制。</p>
 <p>3，首次创建虚机会花费很长时间，因为需要将镜像从glance通过vcenter 拷贝到cluster后端的datasotre，后面再创建速度就会很快。</p>
@@ -404,7 +408,19 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
 <h3 id="cinder配置"><a href="#cinder配置" class="headerlink" title="cinder配置"></a>cinder配置</h3><p>编辑/etc/cinder/cinder.conf配置文件，修改如下参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">volume_driver=cinder.volume.drivers.vmware.vmdk.VMwareVcVmdkDriver</div><div class="line">volume_backend_name=vmware</div><div class="line">vmware_host_ip=10.68.35.24</div><div class="line">vmware_host_username=administrator</div><div class="line">vmware_host_password=admin123</div></pre></td></tr></table></figure></p>
 <p>重启cinder-volume服务：<br><code>/etc/init.d/openstack-cinder-volume restart</code><br>创建多类型存储：<br><code>cinder type-create vmware</code><br><code>cinder type-key vmware set volume_backend_name=vmware</code><br><code>cinder type-create ceph</code><br><code>cinder type-key ceph set volume_backend_name=DEFAULT</code>  </p>
 <p>创建云硬盘，挂在云主机进行测试  </p>
-<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">http://blog.csdn.net/jmilk/article/details/52102020</div><div class="line">http://blog.csdn.net/halcyonbaby/article/details/37818789</div><div class="line">http://www.cnblogs.com/zhoumingang/p/5514556.html</div><div class="line">http://www.iyunv.com/forum.php?mod=viewthread&amp;tid=86702</div></pre></td></tr></table></figure></p>
+<h3 id="mitaka版本对接vsphere6-5"><a href="#mitaka版本对接vsphere6-5" class="headerlink" title="mitaka版本对接vsphere6.5"></a>mitaka版本对接vsphere6.5</h3><p>mitaka对接vsphere有个bug就是在https的连接情况下会连接失败<br><a href="https://review.openstack.org/#/c/341816/" target="_blank" rel="external">https://review.openstack.org/#/c/341816/</a><br>替换<br><code>/usr/lib/python2.7/site-packages/nova/virt/vmwareapi/vmops.py</code></p>
+<p>重启nova-compute<br><code>systemctl restart openstack-nova-compute</code><br>编辑nova.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[vmware]</div><div class="line">host_port=443</div><div class="line">host_ip=vcenter.xjrccu.com</div><div class="line">host_username=administrator@xjrccu.com</div><div class="line">host_password=Rayking,135</div><div class="line">datastore_regex=Datastore2</div><div class="line">cluster_name=LenovoServer-Cluster</div><div class="line">api_retry_count=10</div><div class="line">vlan_interface=vmnic4</div><div class="line">vmware.integration_bridge=br-int</div><div class="line">insecure=True</div></pre></td></tr></table></figure></p>
+<p>重启nova-compute<br><code>systemctl restart openstack-nova</code><br>输入nova hypervisor-list可以看见vmware这个hypervisor</p>
+<h3 id="cinder对接vmware-datastore"><a href="#cinder对接vmware-datastore" class="headerlink" title="cinder对接vmware datastore"></a>cinder对接vmware datastore</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp /usr/lib/python2.7/site-packages/oslo_vmware/wsdl/6.0   /usr/lib/python2.7/site-packages/oslo_vmware/wsdl/6.5</div></pre></td></tr></table></figure>
+<p>2、修改 enabled_backends = ceph为 enabled_backends = ceph,vmware</p>
+<p>3、创建type-key，其中ceph的也需要创建（web界面也可以做，在全局管理里——云硬盘类型）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cinder type-create vmware</div><div class="line">cinder type-key vmware set volume_backend_name=vmware</div><div class="line">cinder type-create ceph</div><div class="line">cinder type-key ceph set volume_backend_name=ceph</div><div class="line">`</div></pre></td></tr></table></figure></p>
+<p>4、给vmware type-key添加扩展属性，vmware:storage_profile（可以在web页面里添加），但前提条件需要在vmware那边先创建好“虚机存储规则策略”  </p>
+<p>5、登录vsphere web client，先创建一个标签，在主页里，名字和类别随便起。<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_10" alt=""></p>
+<p>6、给要使用datastore分配新建标签<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_11" alt=""></p>
+<p>7、回到主页，点击策略和配置文件，点击虚拟机存储策略，点击创建一个，按照向导做。名字很重要！！<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_12" alt=""></p>
+<p>8、对到云平台<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cinder type-key vmware set vmware:storage_profile=cinder-storage-policy</div></pre></td></tr></table></figure></p>
+<p>即可。=号后是之前创建的策略名字！！<br>另外，M版对接6.5，创建云硬盘，不会出现volume开头的虚机，存储里也看不到volume-id文件夹，只有挂载后才会出现，注意！！</p>
+<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">https://docs.openstack.org/mitaka/config-reference/compute/hypervisor-vmware.html</div><div class="line">http://blog.csdn.net/jmilk/article/details/52102020</div><div class="line">http://blog.csdn.net/halcyonbaby/article/details/37818789</div><div class="line">http://www.cnblogs.com/zhoumingang/p/5514556.html</div><div class="line">http://www.iyunv.com/forum.php?mod=viewthread&amp;tid=86702</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -466,25 +482,6 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/08/05/vmware&openstack/"
-     data-title="OpenStack对接vmware"
-     data-content=""
-     data-url="http://yoursite.com/2017/08/05/vmware&openstack/">
-  <div class="ds-share-inline">
-    <ul  class="ds-share-icons-16">
-
-      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
-      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
-      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
-      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
-      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-
-    </ul>
-    <div class="ds-share-icons-more">
-    </div>
-  </div>
-</div>
-      
     </div>
   </div>
 
@@ -496,8 +493,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/08/05/vmware&openstack/"
-           data-title="OpenStack对接vmware" data-url="http://yoursite.com/2017/08/05/vmware&openstack/">
+      <div class="ds-thread" data-thread-key="2017/09/08/vmware&openstack/"
+           data-title="OpenStack对接vmware" data-url="http://yoursite.com/2017/09/08/vmware&openstack/">
       </div>
     
   </div>
@@ -537,7 +534,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
                src="/images/image.png"
                alt="我爱西红柿" />
           <p class="site-author-name" itemprop="name">我爱西红柿</p>
-          <p class="site-description motion-element" itemprop="description">专注虚拟化、容器、devops</p>
+          <p class="site-description motion-element" itemprop="description">好好学习、天天向上</p>
         </div>
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
@@ -608,7 +605,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑图"><span class="nav-number">1.</span> <span class="nav-text">拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构图"><span class="nav-number">2.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vsphere上的配置"><span class="nav-number">3.</span> <span class="nav-text">Vsphere上的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova配置"><span class="nav-number">4.</span> <span class="nav-text">nova配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glance配置"><span class="nav-number">5.</span> <span class="nav-text">glance配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder配置"><span class="nav-number">6.</span> <span class="nav-text">cinder配置</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑图"><span class="nav-number">1.</span> <span class="nav-text">拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构图"><span class="nav-number">2.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vsphere上的配置"><span class="nav-number">3.</span> <span class="nav-text">Vsphere上的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova配置"><span class="nav-number">4.</span> <span class="nav-text">nova配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glance配置"><span class="nav-number">5.</span> <span class="nav-text">glance配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder配置"><span class="nav-number">6.</span> <span class="nav-text">cinder配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mitaka版本对接vsphere6-5"><span class="nav-number">7.</span> <span class="nav-text">mitaka版本对接vsphere6.5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder对接vmware-datastore"><span class="nav-number">8.</span> <span class="nav-text">cinder对接vmware datastore</span></a></li></ol></div>
             
           </div>
         </section>
@@ -753,10 +750,6 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
   </script>
 
   
-    
-      
-      <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-      <script src="/js/src/hook-duoshuo.js"></script>
     
   
 
