@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="我爱西红柿, blade" />
+  <meta name="keywords" content="Linux," />
 
 
 
@@ -84,43 +84,27 @@
 
 
 
-<meta name="description" content="openstack版本：libertyvsphere版本：6.0  
-拓扑图
-架构图
-vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
-需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
+<meta name="description" content="什么是kdump?kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。kexec是一个快速启动机制，可以通过已经运行的内核，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="OpenStack对接vmware">
-<meta property="og:url" content="http://yoursite.com/2017/09/08/vmware&openstack/index.html">
+<meta property="og:title" content="kdump">
+<meta property="og:url" content="http://yoursite.com/2017/09/21/kdump/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="openstack版本：libertyvsphere版本：6.0  
-拓扑图
-架构图
-vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
-需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_10.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_11.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_10">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_11">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_12">
-<meta property="og:updated_time" content="2017-09-08T14:55:00.000Z">
+<meta property="og:description" content="什么是kdump?kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。kexec是一个快速启动机制，可以通过已经运行的内核，">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_10.png">
+<meta property="og:updated_time" content="2017-09-21T03:50:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="OpenStack对接vmware">
-<meta name="twitter:description" content="openstack版本：libertyvsphere版本：6.0  
-拓扑图
-架构图
-vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  
-需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack&vmware_1.png">
+<meta name="twitter:title" content="kdump">
+<meta name="twitter:description" content="什么是kdump?kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。kexec是一个快速启动机制，可以通过已经运行的内核，">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_1.png">
 
 
 
@@ -138,7 +122,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
   };
 </script>
 
-  <title> OpenStack对接vmware | 我爱西红柿 </title>
+  <title> kdump | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -310,7 +294,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
             
             
               
-                OpenStack对接vmware
+                kdump
               
             
           </h1>
@@ -322,8 +306,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-09-08T22:55:00+08:00" content="2017-09-08">
-              2017-09-08
+            <time itemprop="dateCreated" datetime="2017-09-21T11:50:44+08:00" content="2017-09-21">
+              2017-09-21
             </time>
           </span>
 
@@ -336,8 +320,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
                   </a>
                 </span>
 
@@ -352,8 +336,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/09/08/vmware&openstack/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/08/vmware&openstack/" itemprop="commentsCount"></span>
+                <a href="/2017/09/21/kdump/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/21/kdump/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -376,51 +360,42 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
       
 
       
-        <p>openstack版本：liberty<br>vsphere版本：6.0  </p>
-<h3 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_1.png" alt="image"></p>
-<h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_2.png" alt="image"></p>
-<p>vmware对接openstack有两种驱动<br>1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络<br>2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  </p>
-<p>需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需要对接vmware的dvs的话需要安装另外的包并配置neutron。</p>
-<p>这里采用vcdriver的方式<br>这种方式目前有几个问题<br>1，就是已经存在vmware集群的vm是不能被openstack管理了，只有新创建的机器可以被openstack管理。  </p>
-<p>2，vlan模式下，VCDriver要求vCenter里被使用的VLAN port group的名字必须和OpenStack里integration bridge（默认是br-int）的名字一样，而且vlan 号也得一样，这里我配置port group为0，表示不做限制。</p>
-<p>3，首次创建虚机会花费很长时间，因为需要将镜像从glance通过vcenter 拷贝到cluster后端的datasotre，后面再创建速度就会很快。</p>
-<p>要点：<br>一台计算节点对接vsphere，需要这台计算节点能根vcenter通信。  </p>
-<h3 id="Vsphere上的配置"><a href="#Vsphere上的配置" class="headerlink" title="Vsphere上的配置"></a>Vsphere上的配置</h3><p>配置好对应的openstack计算节点对应的cluster<br>如这个vsphere的cluster_name为UAT_Lenovo_6.0</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_3.png" alt="image"></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_4.png" alt="image"></p>
-<p>cluster对应的storage名字  </p>
-<p>创建对应的port_group  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_5.png" alt="image"></p>
-<h3 id="nova配置"><a href="#nova配置" class="headerlink" title="nova配置"></a>nova配置</h3><p>需要注意对应的物理适配器，待会需要写到配置项内。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">openstack平台对接vcenter配置参考</div><div class="line">compute_driver #对应的驱动</div><div class="line">host_ip #连接vsphere的ip地址</div><div class="line">host_username #管理员帐户</div><div class="line">host_password #管理员密码</div><div class="line">datastore_rege #cluster对应的后端存储</div><div class="line">cluster_name #对应的cluster 名字</div><div class="line">vlan_interface #port group对应的物理网卡</div><div class="line">vmware.integration_bridge #对应的port_group</div><div class="line">insecure=True #关闭ssl连接不然报下面错</div></pre></td></tr></table></figure></p>
-<p>修改/etc/nova/nova.conf配置文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[default]</div><div class="line">compute_driver = vmwareapi.VMwareVCDriver</div><div class="line">[vmware]</div><div class="line">host_ip=10.3.1.11</div><div class="line">host_username=administrator@UAT.com</div><div class="line">host_password=1qaz@WSX</div><div class="line">datastore_regex=Huawei_S5500_01</div><div class="line">cluster_name=UAT_Lenovo_6.0</div><div class="line">api_retry_count=10</div><div class="line">vlan_interface=vmnic0</div><div class="line">vmware.integration_bridge=br-int</div><div class="line">insecure=True</div></pre></td></tr></table></figure></p>
-<p>需要注意这些参数仔细核对。  </p>
-<p>启动openstack-nova-compute服务：<br><code>systemctl restart openstack-nova-compute</code></p>
-<p>此时应该可以看见vmware 对应的hypervisor<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_6.png" alt="image"></p>
-<p>转换镜像将一个qcow2的镜像转换成vmware用的vmdk格式</p>
-<h3 id="glance配置"><a href="#glance配置" class="headerlink" title="glance配置"></a>glance配置</h3><p>转换镜像格式为vmdk：<br><code>qemu-img convert -f raw -O vmdk  centos_6.5.raw  centos_6.5.vmdk</code></p>
-<p>上传镜像：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glance image-create  --name=centos-6.5.vmdk  --disk-format=vmdk  --property hypervisor_type=&quot;vmware&quot;  --property vmware_adaptertype=&quot;ide&quot;  --property vmware_disktype=&quot;sparse&quot;  --is-public=True  --property vmware_ostype=&quot;otherLinuxGuest&quot;  --container-format=bare &lt; centos_6.5.vmdk</div></pre></td></tr></table></figure></p>
-<p>创建虚拟机进行测试  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_7.png" alt="image"><br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_8.png" alt="image"><br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_9.png" alt="image"></p>
-<p>第一次创建时间比较久因为要将镜像从glance 拷贝到vmware 的storage内<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_10.png" alt="image"></p>
-<p>可以看见vsphere内已经有以uuid命名的vm了，表示创建成功  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_11.png" alt="image"></p>
-<p>后面为可选配置，配置cinder对接vmware存储</p>
-<h3 id="cinder配置"><a href="#cinder配置" class="headerlink" title="cinder配置"></a>cinder配置</h3><p>编辑/etc/cinder/cinder.conf配置文件，修改如下参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">volume_driver=cinder.volume.drivers.vmware.vmdk.VMwareVcVmdkDriver</div><div class="line">volume_backend_name=vmware</div><div class="line">vmware_host_ip=10.68.35.24</div><div class="line">vmware_host_username=administrator</div><div class="line">vmware_host_password=admin123</div></pre></td></tr></table></figure></p>
-<p>重启cinder-volume服务：<br><code>/etc/init.d/openstack-cinder-volume restart</code><br>创建多类型存储：<br><code>cinder type-create vmware</code><br><code>cinder type-key vmware set volume_backend_name=vmware</code><br><code>cinder type-create ceph</code><br><code>cinder type-key ceph set volume_backend_name=DEFAULT</code>  </p>
-<p>创建云硬盘，挂在云主机进行测试  </p>
-<h3 id="mitaka版本对接vsphere6-5"><a href="#mitaka版本对接vsphere6-5" class="headerlink" title="mitaka版本对接vsphere6.5"></a>mitaka版本对接vsphere6.5</h3><p>mitaka对接vsphere有个bug就是在https的连接情况下会连接失败<br><a href="https://review.openstack.org/#/c/341816/" target="_blank" rel="external">https://review.openstack.org/#/c/341816/</a><br>替换<br><code>/usr/lib/python2.7/site-packages/nova/virt/vmwareapi/vmops.py</code></p>
-<p>重启nova-compute<br><code>systemctl restart openstack-nova-compute</code><br>编辑nova.conf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[vmware]</div><div class="line">host_port=443</div><div class="line">host_ip=vcenter.xjrccu.com</div><div class="line">host_username=administrator@xjrccu.com</div><div class="line">host_password=Rayking,135</div><div class="line">datastore_regex=Datastore2</div><div class="line">cluster_name=LenovoServer-Cluster</div><div class="line">api_retry_count=10</div><div class="line">vlan_interface=vmnic4</div><div class="line">vmware.integration_bridge=br-int</div><div class="line">insecure=True</div></pre></td></tr></table></figure></p>
-<p>重启nova-compute<br><code>systemctl restart openstack-nova</code><br>输入nova hypervisor-list可以看见vmware这个hypervisor</p>
-<h3 id="cinder对接vmware-datastore"><a href="#cinder对接vmware-datastore" class="headerlink" title="cinder对接vmware datastore"></a>cinder对接vmware datastore</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp /usr/lib/python2.7/site-packages/oslo_vmware/wsdl/6.0   /usr/lib/python2.7/site-packages/oslo_vmware/wsdl/6.5</div></pre></td></tr></table></figure>
-<p>2、修改 enabled_backends = ceph为 enabled_backends = ceph,vmware</p>
-<p>3、创建type-key，其中ceph的也需要创建（web界面也可以做，在全局管理里——云硬盘类型）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cinder type-create vmware</div><div class="line">cinder type-key vmware set volume_backend_name=vmware</div><div class="line">cinder type-create ceph</div><div class="line">cinder type-key ceph set volume_backend_name=ceph</div><div class="line">`</div></pre></td></tr></table></figure></p>
-<p>4、给vmware type-key添加扩展属性，vmware:storage_profile（可以在web页面里添加），但前提条件需要在vmware那边先创建好“虚机存储规则策略”  </p>
-<p>5、登录vsphere web client，先创建一个标签，在主页里，名字和类别随便起。<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_10" alt=""></p>
-<p>6、给要使用datastore分配新建标签<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_11" alt=""></p>
-<p>7、回到主页，点击策略和配置文件，点击虚拟机存储策略，点击创建一个，按照向导做。名字很重要！！<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack&amp;vmware_12" alt=""></p>
-<p>8、对到云平台<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cinder type-key vmware set vmware:storage_profile=cinder-storage-policy</div></pre></td></tr></table></figure></p>
-<p>即可。=号后是之前创建的策略名字！！<br>另外，M版对接6.5，创建云硬盘，不会出现volume开头的虚机，存储里也看不到volume-id文件夹，只有挂载后才会出现，注意！！</p>
-<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">https://docs.openstack.org/mitaka/config-reference/compute/hypervisor-vmware.html</div><div class="line">http://blog.csdn.net/jmilk/article/details/52102020</div><div class="line">http://blog.csdn.net/halcyonbaby/article/details/37818789</div><div class="line">http://www.cnblogs.com/zhoumingang/p/5514556.html</div><div class="line">http://www.iyunv.com/forum.php?mod=viewthread&amp;tid=86702</div></pre></td></tr></table></figure></p>
+        <h3 id="什么是kdump"><a href="#什么是kdump" class="headerlink" title="什么是kdump?"></a>什么是kdump?</h3><p>kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。<br>kexec是一个快速启动机制，可以通过已经运行的内核，启动另外一个内核不需要经过bios</p>
+<h3 id="kdump原理？"><a href="#kdump原理？" class="headerlink" title="kdump原理？"></a>kdump原理？</h3><p>kdump 需要两个不同目的的内核，生产内核和捕获内核。生产内核是捕获内核服务的对像。捕获内核会在生产内核崩溃时启动起来，与相应的 ramdisk 一起组建一个微环境，用以对生产内核下的内存进行收集和转存。</p>
+<p>kdump配置和使用<br>操作系统:centos7.2  </p>
+<p>安装配置分析工具crash<br>yum install crash</p>
+<p>安装kernel-debuginfo(需要根内核版本一一对应)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-327.el7.x86_64.rpm</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">wget http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-327.el7.x86_64.rpm</div><div class="line">`</div></pre></td></tr></table></figure>
+<p>下载完成后安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpm -ivh kernel-debuginfo-common-x86_64-3.10.0-327.el7.x86_64.rpm kernel-debuginfo-3.10.0-327.el7.x86_64.rpm</div></pre></td></tr></table></figure></p>
+<p>安装完后确认是否有<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/lib/debug/lib/modules/3.10.0-327.el7.x86_64/vmlinux此文件</div></pre></td></tr></table></figure></p>
+<h3 id="配置kdump"><a href="#配置kdump" class="headerlink" title="配置kdump"></a>配置kdump</h3><p>可以配置内核崩溃后崩溃日志存到何地</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_1.png" alt=""></p>
+<p>默认是放在本地/var/crash<br>下图为配置scp，表示将log文件放到192.168.2.100/log 目录，同时key文件目录需要指定<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_2.png" alt=""></p>
+<h3 id="测试kdump"><a href="#测试kdump" class="headerlink" title="测试kdump"></a>测试kdump</h3><p>配置捕获占用的内存<br>使用grubby修改grub2.cfg文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">grubby --update-kernel=DEFAULT --args=crashkernel=128M</div></pre></td></tr></table></figure></p>
+<p>重启服务器<br>reboot  </p>
+<p>启动kdump<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start kdump  &amp;&amp; systemctl enable kdump</div></pre></td></tr></table></figure></p>
+<p>ls /boot 会发现生成了一个kdump结尾的文件<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_3.png" alt=""></p>
+<p>执行以下命令让内核crash<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo 1 &gt; /proc/sys/kernel/sysrq</div><div class="line">echo c &gt; /proc/sysrq-trigger</div></pre></td></tr></table></figure></p>
+<p>此时系统会立刻失去连接进入捕获内核</p>
+<p>开机后</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_4.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_5.png" alt=""></p>
+<p>以下参考IBM文档链接见文尾  </p>
+<h3 id="crash解析崩溃日志"><a href="#crash解析崩溃日志" class="headerlink" title="crash解析崩溃日志"></a>crash解析崩溃日志</h3><p>vmcore-dmesg.txt可以查看错误信息<br>(1) 错误类型<br>首先可以在vmcore-dmesg.txt中先查看错误类型，如：<br>divide error: 0000 [#1] SMP，除数为0造成内核崩溃，由1号CPU触发。<br> BUG: unable to handle kernel NULL pointer dereference at 000000000000012c，引用空指针。<br>这样一来就能知道引发内核崩溃的错误类型。  </p>
+<p>(2) 错误地点<br>RIP为造成内核崩溃的指令，Call Trace为函数调用栈，通过RIP和Call Trace可以确定函数的调用路径，以及在<br>哪个函数中的哪条指令引发了错误。</p>
+<p>例如RIP为：[<code>&lt;ffffffff812cdb54&gt;</code>] ? tcp_enter_loss+0x1d3/0x23b</p>
+<p>[<code>&lt;ffffffff812cdb54&gt;</code>]是指令在内存中的虚拟地址。<br>tcp_enter_loss是函数名(symbol)。<br>0x1d3是这条指令相对于tcp_enter_loss入口的偏移，0x23b是函数编译成机器码后的长度。<br>这样一来就能确定在哪个函数中引发了错误，以及错误的大概位置。</p>
+<p>Call Trace为函数的调用栈，是从下往上看的。可以用来分析函数的调用关系。</p>
+<h3 id="vmcore信息"><a href="#vmcore信息" class="headerlink" title="vmcore信息"></a>vmcore信息</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">crash /usr/lib/debug/lib/modules/3.10.0-327.el7.x86_64/vmlinux  /var/crash/127.0.0.1-2017-09-20-13\:09\:30/vmcore</div></pre></td></tr></table></figure>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_6.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">KERNEL: 系统崩溃时运行的 kernel 文件</div><div class="line">DUMPFILE: 内核转储文件</div><div class="line">CPUS: 所在机器的 CPU 数量</div><div class="line">DATE: 系统崩溃的时间</div><div class="line">TASKS: 系统崩溃时内存中的任务数</div><div class="line">NODENAME: 崩溃的系统主机名</div><div class="line">RELEASE: 和 VERSION: 内核版本号</div><div class="line">MACHINE: CPU 架构</div><div class="line">MEMORY: 崩溃主机的物理内存</div><div class="line">PID:3507表示当崩溃时3507这个bash的进程在操作</div><div class="line">PANIC: 崩溃类型，常见的崩溃类型包括：</div><div class="line">SysRq (System Request)：通常是测试使用。通过 echo c &gt; /proc/sysrq-trigger，就可以触发系统崩溃。</div><div class="line">oops：可以看成是内核级的 Segmentation Fault。应用程序如果进行了非法内存访问或执行了非法指令，会得到 Segfault 信号，一般行为是 coredump，应用程序也可以自己截获 Segfault 信号，自行处理。如果内核自己犯了这样的错误，则会弹出 oops 信息。</div></pre></td></tr></table></figure>
+<p>bt(backtrace)<br>显示内核堆栈信息<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_7.png" alt=""></p>
+<p>如上输出中，以“# 数字”开头的行为调用堆栈，即系统崩溃前内核依次调用的一系列函数，通过这个可以迅速推断内核在何处崩溃。</p>
+<p>log - dump system message buffer<br>log 命令可以打印系统消息缓冲区，从而可能找到系统崩溃的线索。log 命令的截图如下（为节省篇幅，已将部分行省略）：</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_8.png" alt=""></p>
+<p>ps 命令用于显示进程的状态，（如图）带 &gt; 标识代表是活跃的进程。ps 命令的截图如下（省略部分行）：</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_9.png" alt=""></p>
+<p>dis - disassembling instruction<br>dis 命令用于对给定地址的内容进行反汇编。dis 命令的截图如下：<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_10.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">参考链接</div><div class="line">http://www.361way.com/centos-kdump/3751.html</div><div class="line">http://blog.csdn.net/zhangskd/article/details/38084337</div><div class="line">https://www.ibm.com/developerworks/cn/linux/l-cn-kdump4/index.html</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -456,22 +431,24 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag">#Linux</a>
+          
+        </div>
+      
 
       
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/08/05/crush/" rel="next" title="ceph crushmap">
-                <i class="fa fa-chevron-left"></i> ceph crushmap
+              <a href="/2017/09/08/vmware&openstack/" rel="next" title="OpenStack对接vmware">
+                <i class="fa fa-chevron-left"></i> OpenStack对接vmware
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/21/kdump/" rel="prev" title="kdump">
-                kdump <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -497,8 +474,8 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/09/08/vmware&openstack/"
-           data-title="OpenStack对接vmware" data-url="http://yoursite.com/2017/09/08/vmware&openstack/">
+      <div class="ds-thread" data-thread-key="2017/09/21/kdump/"
+           data-title="kdump" data-url="http://yoursite.com/2017/09/21/kdump/">
       </div>
     
   </div>
@@ -609,7 +586,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#拓扑图"><span class="nav-number">1.</span> <span class="nav-text">拓扑图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构图"><span class="nav-number">2.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vsphere上的配置"><span class="nav-number">3.</span> <span class="nav-text">Vsphere上的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nova配置"><span class="nav-number">4.</span> <span class="nav-text">nova配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glance配置"><span class="nav-number">5.</span> <span class="nav-text">glance配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder配置"><span class="nav-number">6.</span> <span class="nav-text">cinder配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mitaka版本对接vsphere6-5"><span class="nav-number">7.</span> <span class="nav-text">mitaka版本对接vsphere6.5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cinder对接vmware-datastore"><span class="nav-number">8.</span> <span class="nav-text">cinder对接vmware datastore</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是kdump"><span class="nav-number">1.</span> <span class="nav-text">什么是kdump?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kdump原理？"><span class="nav-number">2.</span> <span class="nav-text">kdump原理？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置kdump"><span class="nav-number">3.</span> <span class="nav-text">配置kdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试kdump"><span class="nav-number">4.</span> <span class="nav-text">测试kdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crash解析崩溃日志"><span class="nav-number">5.</span> <span class="nav-text">crash解析崩溃日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vmcore信息"><span class="nav-number">6.</span> <span class="nav-text">vmcore信息</span></a></li></ol></div>
             
           </div>
         </section>
