@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Linux," />
+  <meta name="keywords" content="Python," />
 
 
 
@@ -84,27 +84,33 @@
 
 
 
-<meta name="description" content="什么是kdump?kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。kexec是一个快速启动机制，可以通过已经运行的内核，">
+<meta name="description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。  
+在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kdump">
-<meta property="og:url" content="http://yoursite.com/2017/09/21/kdump/index.html">
+<meta property="og:title" content="Python socket模块">
+<meta property="og:url" content="http://yoursite.com/2017/10/01/python_socket/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="什么是kdump?kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。kexec是一个快速启动机制，可以通过已经运行的内核，">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_10.png">
-<meta property="og:updated_time" content="2017-09-21T03:50:43.000Z">
+<meta property="og:description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。  
+在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_13.png">
+<meta property="og:updated_time" content="2017-10-01T03:27:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kdump">
-<meta name="twitter:description" content="什么是kdump?kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。kexec是一个快速启动机制，可以通过已经运行的内核，">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kdmup_1.png">
+<meta name="twitter:title" content="Python socket模块">
+<meta name="twitter:description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。  
+在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_1.png">
 
 
 
@@ -122,7 +128,7 @@
   };
 </script>
 
-  <title> kdump | 我爱西红柿 </title>
+  <title> Python socket模块 | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -294,7 +300,7 @@
             
             
               
-                kdump
+                Python socket模块
               
             
           </h1>
@@ -306,8 +312,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-09-21T11:50:44+08:00" content="2017-09-21">
-              2017-09-21
+            <time itemprop="dateCreated" datetime="2017-10-01T11:27:44+08:00" content="2017-10-01">
+              2017-10-01
             </time>
           </span>
 
@@ -320,8 +326,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
+                  <a href="/categories/Python/" itemprop="url" rel="index">
+                    <span itemprop="name">Python</span>
                   </a>
                 </span>
 
@@ -336,8 +342,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/09/21/kdump/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/21/kdump/" itemprop="commentsCount"></span>
+                <a href="/2017/10/01/python_socket/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/10/01/python_socket/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -360,42 +366,187 @@
       
 
       
-        <h3 id="什么是kdump"><a href="#什么是kdump" class="headerlink" title="什么是kdump?"></a>什么是kdump?</h3><p>kdump 是一种的基于 kexec 的内核崩溃转储机制，类似飞机的黑匣子，系统一但崩溃，内核无法正常记录信息了，这时kdump将转入带第二个捕获内核，将第二个内核加载的内存中，对第一个内核的信息进行捕获。由于 kdump 利用 kexec 启动捕获内核，绕过了 BIOS，所以第一个内核的内存得以保留。这是内核崩溃转储的本质。<br>kexec是一个快速启动机制，可以通过已经运行的内核，启动另外一个内核不需要经过bios</p>
-<h3 id="kdump原理？"><a href="#kdump原理？" class="headerlink" title="kdump原理？"></a>kdump原理？</h3><p>kdump 需要两个不同目的的内核，生产内核和捕获内核。生产内核是捕获内核服务的对像。捕获内核会在生产内核崩溃时启动起来，与相应的 ramdisk 一起组建一个微环境，用以对生产内核下的内存进行收集和转存。</p>
-<p>kdump配置和使用<br>操作系统:centos7.2  </p>
-<p>安装配置分析工具crash<br>yum install crash</p>
-<p>安装kernel-debuginfo(需要根内核版本一一对应)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-3.10.0-327.el7.x86_64.rpm</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">wget http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-3.10.0-327.el7.x86_64.rpm</div><div class="line">`</div></pre></td></tr></table></figure>
-<p>下载完成后安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpm -ivh kernel-debuginfo-common-x86_64-3.10.0-327.el7.x86_64.rpm kernel-debuginfo-3.10.0-327.el7.x86_64.rpm</div></pre></td></tr></table></figure></p>
-<p>安装完后确认是否有<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/lib/debug/lib/modules/3.10.0-327.el7.x86_64/vmlinux此文件</div></pre></td></tr></table></figure></p>
-<h3 id="配置kdump"><a href="#配置kdump" class="headerlink" title="配置kdump"></a>配置kdump</h3><p>可以配置内核崩溃后崩溃日志存到何地</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_1.png" alt=""></p>
-<p>默认是放在本地/var/crash<br>下图为配置scp，表示将log文件放到192.168.2.100/log 目录，同时key文件目录需要指定<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_2.png" alt=""></p>
-<h3 id="测试kdump"><a href="#测试kdump" class="headerlink" title="测试kdump"></a>测试kdump</h3><p>配置捕获占用的内存<br>使用grubby修改grub2.cfg文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">grubby --update-kernel=DEFAULT --args=crashkernel=128M</div></pre></td></tr></table></figure></p>
-<p>重启服务器<br>reboot  </p>
-<p>启动kdump<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start kdump  &amp;&amp; systemctl enable kdump</div></pre></td></tr></table></figure></p>
-<p>ls /boot 会发现生成了一个kdump结尾的文件<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_3.png" alt=""></p>
-<p>执行以下命令让内核crash<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo 1 &gt; /proc/sys/kernel/sysrq</div><div class="line">echo c &gt; /proc/sysrq-trigger</div></pre></td></tr></table></figure></p>
-<p>此时系统会立刻失去连接进入捕获内核</p>
-<p>开机后</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_4.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_5.png" alt=""></p>
-<p>以下参考IBM文档链接见文尾  </p>
-<h3 id="crash解析崩溃日志"><a href="#crash解析崩溃日志" class="headerlink" title="crash解析崩溃日志"></a>crash解析崩溃日志</h3><p>vmcore-dmesg.txt可以查看错误信息<br>(1) 错误类型<br>首先可以在vmcore-dmesg.txt中先查看错误类型，如：<br>divide error: 0000 [#1] SMP，除数为0造成内核崩溃，由1号CPU触发。<br> BUG: unable to handle kernel NULL pointer dereference at 000000000000012c，引用空指针。<br>这样一来就能知道引发内核崩溃的错误类型。  </p>
-<p>(2) 错误地点<br>RIP为造成内核崩溃的指令，Call Trace为函数调用栈，通过RIP和Call Trace可以确定函数的调用路径，以及在<br>哪个函数中的哪条指令引发了错误。</p>
-<p>例如RIP为：[<code>&lt;ffffffff812cdb54&gt;</code>] ? tcp_enter_loss+0x1d3/0x23b</p>
-<p>[<code>&lt;ffffffff812cdb54&gt;</code>]是指令在内存中的虚拟地址。<br>tcp_enter_loss是函数名(symbol)。<br>0x1d3是这条指令相对于tcp_enter_loss入口的偏移，0x23b是函数编译成机器码后的长度。<br>这样一来就能确定在哪个函数中引发了错误，以及错误的大概位置。</p>
-<p>Call Trace为函数的调用栈，是从下往上看的。可以用来分析函数的调用关系。</p>
-<h3 id="vmcore信息"><a href="#vmcore信息" class="headerlink" title="vmcore信息"></a>vmcore信息</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">crash /usr/lib/debug/lib/modules/3.10.0-327.el7.x86_64/vmlinux  /var/crash/127.0.0.1-2017-09-20-13\:09\:30/vmcore</div></pre></td></tr></table></figure>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_6.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">KERNEL: 系统崩溃时运行的 kernel 文件</div><div class="line">DUMPFILE: 内核转储文件</div><div class="line">CPUS: 所在机器的 CPU 数量</div><div class="line">DATE: 系统崩溃的时间</div><div class="line">TASKS: 系统崩溃时内存中的任务数</div><div class="line">NODENAME: 崩溃的系统主机名</div><div class="line">RELEASE: 和 VERSION: 内核版本号</div><div class="line">MACHINE: CPU 架构</div><div class="line">MEMORY: 崩溃主机的物理内存</div><div class="line">PID:3507表示当崩溃时3507这个bash的进程在操作</div><div class="line">PANIC: 崩溃类型，常见的崩溃类型包括：</div><div class="line">SysRq (System Request)：通常是测试使用。通过 echo c &gt; /proc/sysrq-trigger，就可以触发系统崩溃。</div><div class="line">oops：可以看成是内核级的 Segmentation Fault。应用程序如果进行了非法内存访问或执行了非法指令，会得到 Segfault 信号，一般行为是 coredump，应用程序也可以自己截获 Segfault 信号，自行处理。如果内核自己犯了这样的错误，则会弹出 oops 信息。</div></pre></td></tr></table></figure>
-<p>bt(backtrace)<br>显示内核堆栈信息<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_7.png" alt=""></p>
-<p>如上输出中，以“# 数字”开头的行为调用堆栈，即系统崩溃前内核依次调用的一系列函数，通过这个可以迅速推断内核在何处崩溃。</p>
-<p>log - dump system message buffer<br>log 命令可以打印系统消息缓冲区，从而可能找到系统崩溃的线索。log 命令的截图如下（为节省篇幅，已将部分行省略）：</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_8.png" alt=""></p>
-<p>ps 命令用于显示进程的状态，（如图）带 &gt; 标识代表是活跃的进程。ps 命令的截图如下（省略部分行）：</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_9.png" alt=""></p>
-<p>dis - disassembling instruction<br>dis 命令用于对给定地址的内容进行反汇编。dis 命令的截图如下：<br><img src="http://ohx02qrb8.bkt.clouddn.com/kdmup_10.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">参考链接</div><div class="line">http://www.361way.com/centos-kdump/3751.html</div><div class="line">http://blog.csdn.net/zhangskd/article/details/38084337</div><div class="line">https://www.ibm.com/developerworks/cn/linux/l-cn-kdump4/index.html</div></pre></td></tr></table></figure>
+        <p>socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。<br>在python中，socket模块来创建套节字。  </p>
+<p>在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也有PID为1的进程，但此问题，tcp/ip协议族已经帮我们解决了，网络层的ip地址可以唯一的确定一台主机，传输层的协议和端口可以唯一确定这台主机上的进程。这样利用三元组(ip+协议+端口）可以与其进程进行交互。  </p>
+<h3 id="python-socket编程思路"><a href="#python-socket编程思路" class="headerlink" title="python socket编程思路"></a>python socket编程思路</h3><p>tcp服务端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">创建socket  [socket.socket(socket.AF_INET,socket.AF_INET)]</div><div class="line">        |</div><div class="line">        |</div><div class="line">将ip和端口与socket绑定 [socket.bind(host,port)]</div><div class="line">        |</div><div class="line">        |</div><div class="line">监听端口 [socket.listen()]</div><div class="line">        |</div><div class="line">        |</div><div class="line">接收连接，建立连接请求[socket.accept()]</div><div class="line">        |</div><div class="line">        |</div><div class="line">接收数据，并发送数据[socket.recv(),socket.send()]</div><div class="line">         |</div><div class="line">         |</div><div class="line">连接结束，关闭连接。[socket.close()]</div></pre></td></tr></table></figure></p>
+<p>tcp客户端  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">创建socket</div><div class="line">      |</div><div class="line">      |</div><div class="line">建立连接[socket.socket(socket.AF_INET,socket.SOCK_STREAM)]</div><div class="line">      |</div><div class="line">      |</div><div class="line">接收数据，同时也发送数据。[socket.recv(),socket.send()]</div><div class="line">      |</div><div class="line">      |</div><div class="line">关闭连接[socket.close()]</div></pre></td></tr></table></figure>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_1.png" alt=""></p>
+<h3 id="socket功能列表"><a href="#socket功能列表" class="headerlink" title="socket功能列表"></a>socket功能列表</h3><p>socket(family,type[,protocal]) 使用给定的地址族、套接字类型、协议编号（默认为0）来创建套接字。  </p>
+<table>
+<thead>
+<tr>
+<th>socket类型</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>socket.AF_UNIX</td>
+<td style="text-align:center">只能够用于单一的Unix系统进程间通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET</td>
+<td style="text-align:center">服务器之间网络通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET6</td>
+<td style="text-align:center">IPv6</td>
+</tr>
+<tr>
+<td>socket.SOCK_STREAM</td>
+<td style="text-align:center">流式socket , for TCP</td>
+</tr>
+<tr>
+<td>socket.SOCK_DGRAM</td>
+<td style="text-align:center">数据报式socket , for UDP</td>
+</tr>
+<tr>
+<td>socket.SOCK_RAW</td>
+<td style="text-align:center">原始套接字，普通的套接字无法处理ICMP、IGMP等网络报文，而SOCK_RAW可以；其次，SOCK_RAW也可以处理特殊的IPv4报文；此外，利用原始套接字，可以通过IP_HDRINCL套接字选项由用户构造IP头</td>
+</tr>
+<tr>
+<td>socket.SOCK_SEQPACKET</td>
+<td style="text-align:center">可靠的连续数据包服务</td>
+</tr>
+<tr>
+<td>创建TCP Socket：</td>
+<td style="text-align:center">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</td>
+</tr>
+<tr>
+<td>创建UDP Socket：</td>
+<td style="text-align:center">s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)</td>
+</tr>
+</tbody>
+</table>
+<p>socket函数<br>服务端函数  </p>
+<table>
+<thead>
+<tr>
+<th>socket函数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s.bind()</td>
+<td style="text-align:center">将套接字绑定到地址, 在AF_INET下,以元组（host,port）的形式表示地址</td>
+</tr>
+<tr>
+<td>s.listen(backlog)</td>
+<td style="text-align:center">开始监听TCP传入连接。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。</td>
+</tr>
+<tr>
+<td>s.accept()</td>
+<td style="text-align:center">接受TCP连接并返回（conn,address）,中conn是新的套接字对象，可以用来接收和发送数据。address是连接客户端的地址。 accept默认是阻塞，当有connect过来时才会打开</td>
+</tr>
+</tbody>
+</table>
+<p>客户端socket函数    </p>
+<table>
+<thead>
+<tr>
+<th>socket函数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s.connect(address)</td>
+<td style="text-align:center">连接到address处的套接字。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</td>
+</tr>
+<tr>
+<td>s.connect_ex(adddress)</td>
+<td style="text-align:center">功能与connect(address)相同，但是成功返回0，失败返回errno的值。</td>
+</tr>
+</tbody>
+</table>
+<p>公共socket函数  </p>
+<table>
+<thead>
+<tr>
+<th>socket函数</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s.recv(bufsize[,flag])</td>
+<td style="text-align:center">接受TCP套接字的数据。数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。</td>
+</tr>
+<tr>
+<td>s.send(string[,flag])</td>
+<td style="text-align:center">发送TCP数据。将string中的数据发送到连接的套接字。返回值是要发送的字节数量，该数量可能小于string的字节大小。</td>
+</tr>
+<tr>
+<td>s.sendall(string[,flag])</td>
+<td style="text-align:center">完整发送TCP数据。将string中的数据发送到连接的套接字，但在返回之前会尝试发送所有数据。成 功返回None，失败则抛出异常。</td>
+</tr>
+<tr>
+<td>s.recvfrom(bufsize[.flag])</td>
+<td style="text-align:center">接受UDP套接字的数据。与recv()类似，但返回值是（data,address）。其中data是包含接收数据的字符串，address是发送数据的套接字地址。</td>
+</tr>
+<tr>
+<td>s.sendto(string[,flag],address)</td>
+<td style="text-align:center">发送UDP数据。将数据发送到套接字，address是形式为（ipaddr，port）的元组，指定远程地址。返回值是发送的字节数。</td>
+</tr>
+<tr>
+<td>s.close()</td>
+<td style="text-align:center">关闭套接字。</td>
+</tr>
+<tr>
+<td>s.getpeername()</td>
+<td style="text-align:center">返回连接套接字的远程地址。返回值通常是元组（ipaddr,port）。</td>
+</tr>
+<tr>
+<td>s.getsockname()</td>
+<td style="text-align:center">返回套接字自己的地址。通常是一个元组(ipaddr,port)</td>
+</tr>
+<tr>
+<td>s.setsockopt(level,optname,value)</td>
+<td style="text-align:center">设置给定套接字选项的值。</td>
+</tr>
+<tr>
+<td>s.getsockopt(level,optname[.buflen])</td>
+<td style="text-align:center">返回套接字选项的值。</td>
+</tr>
+<tr>
+<td>s.settimeout(timeout)</td>
+<td style="text-align:center">设置套接字操作的超时期，timeout是一个浮点数，单位是秒值为None表示没有超时期。一般，超时期应该在刚创建套接字时设置，因为它们可能用于连接的操作（如connect()）</td>
+</tr>
+<tr>
+<td>s.fileno()</td>
+<td style="text-align:center">返回套接字的文件描述符。</td>
+</tr>
+<tr>
+<td>s.setblocking(flag)</td>
+<td style="text-align:center">如果flag为0，则将套接字设为非阻塞模式，否则将套接字设为阻塞模式（默认值）。非阻塞模式下，如果调用recv()没有发现任何数据，或send()调用无法立即发送数据，那么将引起socket.error异常。</td>
+</tr>
+<tr>
+<td>s.makefile()</td>
+<td style="text-align:center">创建一个与该套接字相关连的文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h3><p>server端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_2.png" alt=""></p>
+<p>1、使用一个死循环while True：将会使server端一直处于监听状态。<br>2、children,addr=s.accept 将创建一个新的socket，这样原先的socket继续侦听，而新的socket将接收client端的数据,addr返回的是客户端的ip。那么问题来了，当客户端发送数据关联时是与哪个socket进行连接呢，首先我们需要知道的是客户端发送的数据有两种，一种是请求建立连接的，一种是已经建立好连接后的数据传输，就如上所说tcp/ip有接收缓存和发送缓存，当收到建立连接的请求时，则传给正在监听端口的socket调用accept，当收到连接好连接后的数据传输时，将输据放入接收缓冲区，这样当服务器需要读取数据时调用accept建立的新socket，的recv函数从接收缓冲区读取。<br>3、将socket.accept写在循环里面client新的连接一次将重新创建一个新的socket。  </p>
+<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_3.png" alt=""></p>
+<p>1，s.recv(1024)一次最大接收1024字节<br>输出<br>server端  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_4.png" alt=""></p>
+<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_5.png" alt=""><br>socket.recv()<br>tcp/ip socket在内核中都有一个接收缓冲区和发送缓冲区，当socket接收到数据时，并不是马上调用socket.recv(),而是将数据拷贝到socket中的接收缓冲区中，调用socket.recv()后就是将接收缓冲区的数据，移动到应用层的buff中，并返回。当接收窗口满了后发生的操作是，收端通知发端，停止发送。<br>socket.send()<br>socket.send()是将应用层的buff拷贝到tcp-socket的发送缓冲区中</p>
+<p>UDP<br>server端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_6.png" alt="">  </p>
+<p>client<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_7.png" alt=""></p>
+<p>输出<br>server端  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_8.png" alt=""></p>
+<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_9.png" alt=""></p>
+<h3 id="socket实现tcp简单聊天"><a href="#socket实现tcp简单聊天" class="headerlink" title="socket实现tcp简单聊天"></a>socket实现tcp简单聊天</h3><p>server端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_10.png" alt=""></p>
+<p>需要注意的是这里的socket.accept()是写在while循怀外的，因为写在死循怀里，脚本一直在执行，client调用一次accept后就进入阻塞状态了，而client端用的还是旧的connect所以，如果写在循怀里，就是执行client后建立一个连接后只能进行一次对话，因为server端的accept又重新回到阻塞状态了,重新执行client生成一个新的connec又可以一次对话。</p>
+<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_11.png" alt=""></p>
+<p>结果<br>server端</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_12.png" alt=""></p>
+<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_13.png" alt=""></p>
+<p>优化点：<br>1，目前程序没有多线程，IO复用，还是半双工状态，一次只能一个用户说话，一个发时，另一个只能收，server在说话，client就不能说。</p>
+<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">http://www.oschina.net/question/12_76126?sort=default&amp;p=1</div><div class="line">https://segmentfault.com/q/1010000000591930</div><div class="line">http://www.cnblogs.com/aylin/p/5572104.html</div><div class="line">http://blog.csdn.net/rebelqsp/article/details/22109925</div><div class="line">http://blog.csdn.net/hguisu/article/details/7445768/</div><div class="line">http://blog.csdn.net/rebelqsp/article/details/22191409</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -433,7 +584,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Linux/" rel="tag">#Linux</a>
+            <a href="/tags/Python/" rel="tag">#Python</a>
           
         </div>
       
@@ -442,17 +593,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/08/vmware&openstack/" rel="next" title="OpenStack对接vmware">
-                <i class="fa fa-chevron-left"></i> OpenStack对接vmware
+              <a href="/2017/09/27/python_logging/" rel="next" title="Python logging模块">
+                <i class="fa fa-chevron-left"></i> Python logging模块
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/27/python_logging/" rel="prev" title="Python logging模块">
-                Python logging模块 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -478,8 +625,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/09/21/kdump/"
-           data-title="kdump" data-url="http://yoursite.com/2017/09/21/kdump/">
+      <div class="ds-thread" data-thread-key="2017/10/01/python_socket/"
+           data-title="Python socket模块" data-url="http://yoursite.com/2017/10/01/python_socket/">
       </div>
     
   </div>
@@ -590,7 +737,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是kdump"><span class="nav-number">1.</span> <span class="nav-text">什么是kdump?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kdump原理？"><span class="nav-number">2.</span> <span class="nav-text">kdump原理？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置kdump"><span class="nav-number">3.</span> <span class="nav-text">配置kdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试kdump"><span class="nav-number">4.</span> <span class="nav-text">测试kdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crash解析崩溃日志"><span class="nav-number">5.</span> <span class="nav-text">crash解析崩溃日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vmcore信息"><span class="nav-number">6.</span> <span class="nav-text">vmcore信息</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-socket编程思路"><span class="nav-number">1.</span> <span class="nav-text">python socket编程思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket功能列表"><span class="nav-number">2.</span> <span class="nav-text">socket功能列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单例子"><span class="nav-number">3.</span> <span class="nav-text">简单例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket实现tcp简单聊天"><span class="nav-number">4.</span> <span class="nav-text">socket实现tcp简单聊天</span></a></li></ol></div>
             
           </div>
         </section>
