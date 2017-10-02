@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="我爱西红柿, blade" />
+  <meta name="keywords" content="Linux," />
 
 
 
@@ -84,15 +84,29 @@
 
 
 
-<meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2017/07/index.html">
+<meta name="description" content="监控的重要性：在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。
+监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始构建云平台监控(写在前面)">
+<meta property="og:url" content="http://yoursite.com/2017/10/03/monitor/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="监控的重要性：在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。
+监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、n">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_9.png">
+<meta property="og:updated_time" content="2017-10-03T15:27:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="从零开始构建云平台监控(写在前面)">
+<meta name="twitter:description" content="监控的重要性：在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。
+监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、n">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg">
 
 
 
@@ -110,7 +124,7 @@
   };
 </script>
 
-  <title> 归档 | 我爱西红柿 </title>
+  <title> 从零开始构建云平台监控(写在前面) | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -140,7 +154,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  page-archive  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -261,66 +275,186 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 22 篇日志。 继续努力。
-    </span>
-
+  <div id="posts" class="posts-expand">
     
 
-      
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                从零开始构建云平台监控(写在前面)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-10-03T23:27:44+08:00" content="2017-10-03">
+              2017-10-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/10/03/monitor/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/10/03/monitor/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
       
       
 
       
+        <h3 id="监控的重要性："><a href="#监控的重要性：" class="headerlink" title="监控的重要性："></a>监控的重要性：</h3><p>在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。</p>
+<h3 id="监控的范围"><a href="#监控的范围" class="headerlink" title="监控的范围"></a>监控的范围</h3><p>在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。<br>计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、nova-compute……<br>网络组件：neutron-server、neutron-dhcp-agent、neutron-metadata-agent、neutron-openvswitch-agent、openvswitch……<br>存储组件：cinder-api、cinder-scheduler 、cinder-volume<br> 其他：等还有认证组件keystone、消息队列、镜像组件、还有底层分布式存储ceph、一个这么庞大的系统可想而知如果没有一个比较完善的监控很多并且在不同的角色上所监控的组件也是不一样的，比如控制节点没有nova-compute服务，计算节点没有控制节点服务，所以监控项还得针对不同的角色做区分。</p>
+<p>除了组件上的监控外，其实少不了还有硬件上的监控，比如说，在私有云生产环境中，网卡都是会做bond的，做了bond的好处是当其中一个网卡出现故障时并并不是影响到整个集群，但你也得通过监控发现这个挂了的网卡，然后准备更换，ceph的osd down了，有可能是osd进程被kill掉了，也有可能是硬盘坏了导致osd进程挂了，这也都通过监控去发现。</p>
+<h3 id="组件构成"><a href="#组件构成" class="headerlink" title="组件构成"></a>组件构成</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg" alt=""></p>
+<p>监控节点：nginx、php、mysql、influxdb、grafana、zabbix-server、zabbix-agent<br>控制节点：telegraf、zabbix-agent<br>融合节点：zabbix-agent  </p>
+<h3 id="组件作用"><a href="#组件作用" class="headerlink" title="组件作用"></a>组件作用</h3><p>nginx+php+mysql提供基础的lnmp平台让zabbix可以运行，mysql存储zabbix监控数据<br>zabbix-server：用于接收各个机器agent端发过来的数据<br>zabbix-agent：采集数据发给zabbix-server<br>telegraf：用于采集ceph的监控数据<br>influxdb：存储telegraf的数据<br>grafana：用于对采集数据图形化展示  </p>
+<p>其中需要注意的是因为教程所以监控节点组件都放一起了，并且还是单节点，在生产环境中监控节点要做高可用，根据监控的机器数决定是否将数据库能独立出来。</p>
+<p>以下为最终效果。</p>
+<h3 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h3><p>ceph监控界面<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_2.png" alt=""></p>
+<p>openstack节点性能状态  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_3.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_4.png" alt=""></p>
+<p>控制节点服务状态展示<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_5.png" alt=""></p>
+<p>计算节点服务状态展示</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_6.png" alt=""></p>
+<p>存储节点osd监控</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_7.png" alt=""></p>
+<p>zabbix-server监控</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_8.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_9.png" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2017">2017</h2>
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
         </div>
       
       
+    </div>
+  </div>
+
 
       
+    </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag">#Linux</a>
+          
+        </div>
+      
 
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2017/07/23/dvr/" itemprop="url">
-              
-                <span itemprop="name">neutron-高可用(1)--DVR</span>
-              
-            </a>
-        
-      </h1>
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/01/python_socket/" rel="next" title="Python socket模块">
+                <i class="fa fa-chevron-left"></i> Python socket模块
+              </a>
+            
+          </div>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-23T15:19:59+08:00"
-              content="2017-07-23" >
-          07-23
-        </time>
-      </div>
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/03/monitor_2/" rel="prev" title="从零开始构建云平台监控(一)搭建LNMP">
+                从零开始构建云平台监控(一)搭建LNMP <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
-  </section>
-
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -328,6 +462,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/10/03/monitor/"
+           data-title="从零开始构建云平台监控(写在前面)" data-url="http://yoursite.com/2017/10/03/monitor/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -347,8 +489,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/image.png"
@@ -418,6 +569,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#监控的重要性："><span class="nav-number">1.</span> <span class="nav-text">监控的重要性：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监控的范围"><span class="nav-number">2.</span> <span class="nav-text">监控的范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件构成"><span class="nav-number">3.</span> <span class="nav-text">组件构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件作用"><span class="nav-number">4.</span> <span class="nav-text">组件作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果展示"><span class="nav-number">5.</span> <span class="nav-text">效果展示</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -527,11 +689,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
 
 
   
