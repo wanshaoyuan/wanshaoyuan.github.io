@@ -84,14 +84,14 @@
 
 
 
-<meta name="description" content="监控的重要性：在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。
-监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、n">
+<meta name="description" content="监控的重要性在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。
+监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、no">
 <meta property="og:type" content="article">
 <meta property="og:title" content="从零开始构建云平台监控(写在前面)">
 <meta property="og:url" content="http://yoursite.com/2017/10/03/monitor/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="监控的重要性：在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。
-监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、n">
+<meta property="og:description" content="监控的重要性在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。
+监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、no">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_2.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_3.png">
@@ -104,8 +104,8 @@
 <meta property="og:updated_time" content="2017-10-03T15:27:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从零开始构建云平台监控(写在前面)">
-<meta name="twitter:description" content="监控的重要性：在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。
-监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、n">
+<meta name="twitter:description" content="监控的重要性在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。
+监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、no">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg">
 
 
@@ -362,7 +362,7 @@
       
 
       
-        <h3 id="监控的重要性："><a href="#监控的重要性：" class="headerlink" title="监控的重要性："></a>监控的重要性：</h3><p>在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到初了问题才能发现集群的问题，那时为时以晚。</p>
+        <h3 id="监控的重要性"><a href="#监控的重要性" class="headerlink" title="监控的重要性"></a>监控的重要性</h3><p>在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。</p>
 <h3 id="监控的范围"><a href="#监控的范围" class="headerlink" title="监控的范围"></a>监控的范围</h3><p>在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。<br>计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、nova-compute……<br>网络组件：neutron-server、neutron-dhcp-agent、neutron-metadata-agent、neutron-openvswitch-agent、openvswitch……<br>存储组件：cinder-api、cinder-scheduler 、cinder-volume<br> 其他：等还有认证组件keystone、消息队列、镜像组件、还有底层分布式存储ceph、一个这么庞大的系统可想而知如果没有一个比较完善的监控很多并且在不同的角色上所监控的组件也是不一样的，比如控制节点没有nova-compute服务，计算节点没有控制节点服务，所以监控项还得针对不同的角色做区分。</p>
 <p>除了组件上的监控外，其实少不了还有硬件上的监控，比如说，在私有云生产环境中，网卡都是会做bond的，做了bond的好处是当其中一个网卡出现故障时并并不是影响到整个集群，但你也得通过监控发现这个挂了的网卡，然后准备更换，ceph的osd down了，有可能是osd进程被kill掉了，也有可能是硬盘坏了导致osd进程挂了，这也都通过监控去发现。</p>
 <h3 id="组件构成"><a href="#组件构成" class="headerlink" title="组件构成"></a>组件构成</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg" alt=""></p>
@@ -428,16 +428,16 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/01/python_socket/" rel="next" title="Python socket模块">
-                <i class="fa fa-chevron-left"></i> Python socket模块
+              <a href="/2017/10/03/monitor_1/" rel="next" title="从零开始构建云平台监控(一)搭建LNMP">
+                <i class="fa fa-chevron-left"></i> 从零开始构建云平台监控(一)搭建LNMP
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/10/03/monitor_2/" rel="prev" title="从零开始构建云平台监控(一)搭建LNMP">
-                从零开始构建云平台监控(一)搭建LNMP <i class="fa fa-chevron-right"></i>
+              <a href="/2017/10/15/monitor_3/" rel="prev" title="从零开始构建云平台监控(三)配置基础监控平台">
+                从零开始构建云平台监控(三)配置基础监控平台 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -510,7 +510,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">22</span>
+              <span class="site-state-item-count">24</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -576,7 +576,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#监控的重要性："><span class="nav-number">1.</span> <span class="nav-text">监控的重要性：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监控的范围"><span class="nav-number">2.</span> <span class="nav-text">监控的范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件构成"><span class="nav-number">3.</span> <span class="nav-text">组件构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件作用"><span class="nav-number">4.</span> <span class="nav-text">组件作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果展示"><span class="nav-number">5.</span> <span class="nav-text">效果展示</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#监控的重要性"><span class="nav-number">1.</span> <span class="nav-text">监控的重要性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监控的范围"><span class="nav-number">2.</span> <span class="nav-text">监控的范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件构成"><span class="nav-number">3.</span> <span class="nav-text">组件构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#组件作用"><span class="nav-number">4.</span> <span class="nav-text">组件作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果展示"><span class="nav-number">5.</span> <span class="nav-text">效果展示</span></a></li></ol></div>
             
           </div>
         </section>

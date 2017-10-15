@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Python," />
+  <meta name="keywords" content="Linux," />
 
 
 
@@ -84,33 +84,49 @@
 
 
 
-<meta name="description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。  
-在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
+<meta name="description" content="环境：3台控制节点+2台融合节点 2个osd
+给zabbix-server导入模板模板为分别对应为control、compute、ceph
+
+导入这3个模板
+配置自动注册自动注册就是zabbix-server根据zabbix-agent里面配置的HostMetadata参数的值去进行一系列的操作，和自动发现不一样的是，自动发现只能跟据zabbix-server配置的扫描的网段去添加机器，非常不灵活">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python socket模块">
-<meta property="og:url" content="http://yoursite.com/2017/10/01/python_socket/index.html">
+<meta property="og:title" content="从零开始构建云平台监控(三)配置基础监控平台">
+<meta property="og:url" content="http://yoursite.com/2017/10/15/monitor_3/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。  
-在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_10.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_11.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_12.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_13.png">
-<meta property="og:updated_time" content="2017-10-01T03:27:43.000Z">
+<meta property="og:description" content="环境：3台控制节点+2台融合节点 2个osd
+给zabbix-server导入模板模板为分别对应为control、compute、ceph
+
+导入这3个模板
+配置自动注册自动注册就是zabbix-server根据zabbix-agent里面配置的HostMetadata参数的值去进行一系列的操作，和自动发现不一样的是，自动发现只能跟据zabbix-server配置的扫描的网段去添加机器，非常不灵活">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_16.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_17.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_18.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_19.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_20.png">
+<meta property="og:updated_time" content="2017-10-15T15:27:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Python socket模块">
-<meta name="twitter:description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。  
-在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/socket_1.png">
+<meta name="twitter:title" content="从零开始构建云平台监控(三)配置基础监控平台">
+<meta name="twitter:description" content="环境：3台控制节点+2台融合节点 2个osd
+给zabbix-server导入模板模板为分别对应为control、compute、ceph
+
+导入这3个模板
+配置自动注册自动注册就是zabbix-server根据zabbix-agent里面配置的HostMetadata参数的值去进行一系列的操作，和自动发现不一样的是，自动发现只能跟据zabbix-server配置的扫描的网段去添加机器，非常不灵活">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_3_1.png">
 
 
 
@@ -128,7 +144,7 @@
   };
 </script>
 
-  <title> Python socket模块 | 我爱西红柿 </title>
+  <title> 从零开始构建云平台监控(三)配置基础监控平台 | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -300,7 +316,7 @@
             
             
               
-                Python socket模块
+                从零开始构建云平台监控(三)配置基础监控平台
               
             
           </h1>
@@ -312,8 +328,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-10-01T11:27:44+08:00" content="2017-10-01">
-              2017-10-01
+            <time itemprop="dateCreated" datetime="2017-10-15T23:27:44+08:00" content="2017-10-15">
+              2017-10-15
             </time>
           </span>
 
@@ -326,8 +342,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Python/" itemprop="url" rel="index">
-                    <span itemprop="name">Python</span>
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
                   </a>
                 </span>
 
@@ -342,8 +358,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/10/01/python_socket/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/10/01/python_socket/" itemprop="commentsCount"></span>
+                <a href="/2017/10/15/monitor_3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/10/15/monitor_3/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -366,187 +382,41 @@
       
 
       
-        <p>socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。<br>在python中，socket模块来创建套节字。  </p>
-<p>在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也有PID为1的进程，但此问题，tcp/ip协议族已经帮我们解决了，网络层的ip地址可以唯一的确定一台主机，传输层的协议和端口可以唯一确定这台主机上的进程。这样利用三元组(ip+协议+端口）可以与其进程进行交互。  </p>
-<h3 id="python-socket编程思路"><a href="#python-socket编程思路" class="headerlink" title="python socket编程思路"></a>python socket编程思路</h3><p>tcp服务端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">创建socket  [socket.socket(socket.AF_INET,socket.SOCK_STREAM)]</div><div class="line">        |</div><div class="line">        |</div><div class="line">将ip和端口与socket绑定 [socket.bind((host,port))]</div><div class="line">        |</div><div class="line">        |</div><div class="line">监听端口 [socket.listen()]</div><div class="line">        |</div><div class="line">        |</div><div class="line">接收连接，建立连接请求[socket.accept()]</div><div class="line">        |</div><div class="line">        |</div><div class="line">接收数据，并发送数据[socket.recv(),socket.send()]</div><div class="line">         |</div><div class="line">         |</div><div class="line">连接结束，关闭连接。[socket.close()]</div></pre></td></tr></table></figure></p>
-<p>tcp客户端  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">创建socket</div><div class="line">      |</div><div class="line">      |</div><div class="line">建立连接[socket.socket(socket.AF_INET,socket.SOCK_STREAM)]</div><div class="line">      |</div><div class="line">      |</div><div class="line">接收数据，同时也发送数据。[socket.recv(),socket.send()]</div><div class="line">      |</div><div class="line">      |</div><div class="line">关闭连接[socket.close()]</div></pre></td></tr></table></figure>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_1.png" alt=""></p>
-<h3 id="socket功能列表"><a href="#socket功能列表" class="headerlink" title="socket功能列表"></a>socket功能列表</h3><p>socket(family,type[,protocal]) 使用给定的地址族、套接字类型、协议编号（默认为0）来创建套接字。  </p>
-<table>
-<thead>
-<tr>
-<th>socket类型</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>socket.AF_UNIX</td>
-<td style="text-align:center">只能够用于单一的Unix系统进程间通信</td>
-</tr>
-<tr>
-<td>socket.AF_INET</td>
-<td style="text-align:center">服务器之间网络通信</td>
-</tr>
-<tr>
-<td>socket.AF_INET6</td>
-<td style="text-align:center">IPv6</td>
-</tr>
-<tr>
-<td>socket.SOCK_STREAM</td>
-<td style="text-align:center">流式socket , for TCP</td>
-</tr>
-<tr>
-<td>socket.SOCK_DGRAM</td>
-<td style="text-align:center">数据报式socket , for UDP</td>
-</tr>
-<tr>
-<td>socket.SOCK_RAW</td>
-<td style="text-align:center">原始套接字，普通的套接字无法处理ICMP、IGMP等网络报文，而SOCK_RAW可以；其次，SOCK_RAW也可以处理特殊的IPv4报文；此外，利用原始套接字，可以通过IP_HDRINCL套接字选项由用户构造IP头</td>
-</tr>
-<tr>
-<td>socket.SOCK_SEQPACKET</td>
-<td style="text-align:center">可靠的连续数据包服务</td>
-</tr>
-<tr>
-<td>创建TCP Socket：</td>
-<td style="text-align:center">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</td>
-</tr>
-<tr>
-<td>创建UDP Socket：</td>
-<td style="text-align:center">s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)</td>
-</tr>
-</tbody>
-</table>
-<p>socket函数<br>服务端函数  </p>
-<table>
-<thead>
-<tr>
-<th>socket函数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>s.bind()</td>
-<td style="text-align:center">将套接字绑定到地址, 在AF_INET下,以元组（host,port）的形式表示地址</td>
-</tr>
-<tr>
-<td>s.listen(backlog)</td>
-<td style="text-align:center">开始监听TCP传入连接。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。</td>
-</tr>
-<tr>
-<td>s.accept()</td>
-<td style="text-align:center">接受TCP连接并返回（conn,address）,中conn是新的套接字对象，可以用来接收和发送数据。address是连接客户端的地址。 accept默认是阻塞，当有connect过来时才会打开</td>
-</tr>
-</tbody>
-</table>
-<p>客户端socket函数    </p>
-<table>
-<thead>
-<tr>
-<th>socket函数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>s.connect(address)</td>
-<td style="text-align:center">连接到address处的套接字。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</td>
-</tr>
-<tr>
-<td>s.connect_ex(adddress)</td>
-<td style="text-align:center">功能与connect(address)相同，但是成功返回0，失败返回errno的值。</td>
-</tr>
-</tbody>
-</table>
-<p>公共socket函数  </p>
-<table>
-<thead>
-<tr>
-<th>socket函数</th>
-<th style="text-align:center">描述</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>s.recv(bufsize[,flag])</td>
-<td style="text-align:center">接受TCP套接字的数据。数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。</td>
-</tr>
-<tr>
-<td>s.send(string[,flag])</td>
-<td style="text-align:center">发送TCP数据。将string中的数据发送到连接的套接字。返回值是要发送的字节数量，该数量可能小于string的字节大小。</td>
-</tr>
-<tr>
-<td>s.sendall(string[,flag])</td>
-<td style="text-align:center">完整发送TCP数据。将string中的数据发送到连接的套接字，但在返回之前会尝试发送所有数据。成 功返回None，失败则抛出异常。</td>
-</tr>
-<tr>
-<td>s.recvfrom(bufsize[.flag])</td>
-<td style="text-align:center">接受UDP套接字的数据。与recv()类似，但返回值是（data,address）。其中data是包含接收数据的字符串，address是发送数据的套接字地址。</td>
-</tr>
-<tr>
-<td>s.sendto(string[,flag],address)</td>
-<td style="text-align:center">发送UDP数据。将数据发送到套接字，address是形式为（ipaddr，port）的元组，指定远程地址。返回值是发送的字节数。</td>
-</tr>
-<tr>
-<td>s.close()</td>
-<td style="text-align:center">关闭套接字。</td>
-</tr>
-<tr>
-<td>s.getpeername()</td>
-<td style="text-align:center">返回连接套接字的远程地址。返回值通常是元组（ipaddr,port）。</td>
-</tr>
-<tr>
-<td>s.getsockname()</td>
-<td style="text-align:center">返回套接字自己的地址。通常是一个元组(ipaddr,port)</td>
-</tr>
-<tr>
-<td>s.setsockopt(level,optname,value)</td>
-<td style="text-align:center">设置给定套接字选项的值。</td>
-</tr>
-<tr>
-<td>s.getsockopt(level,optname[.buflen])</td>
-<td style="text-align:center">返回套接字选项的值。</td>
-</tr>
-<tr>
-<td>s.settimeout(timeout)</td>
-<td style="text-align:center">设置套接字操作的超时期，timeout是一个浮点数，单位是秒值为None表示没有超时期。一般，超时期应该在刚创建套接字时设置，因为它们可能用于连接的操作（如connect()）</td>
-</tr>
-<tr>
-<td>s.fileno()</td>
-<td style="text-align:center">返回套接字的文件描述符。</td>
-</tr>
-<tr>
-<td>s.setblocking(flag)</td>
-<td style="text-align:center">如果flag为0，则将套接字设为非阻塞模式，否则将套接字设为阻塞模式（默认值）。非阻塞模式下，如果调用recv()没有发现任何数据，或send()调用无法立即发送数据，那么将引起socket.error异常。</td>
-</tr>
-<tr>
-<td>s.makefile()</td>
-<td style="text-align:center">创建一个与该套接字相关连的文件</td>
-</tr>
-</tbody>
-</table>
-<h3 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h3><p>server端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_2.png" alt=""></p>
-<p>1、使用一个死循环while True：将会使server端一直处于监听状态。<br>2、children,addr=s.accept 将创建一个新的socket，这样原先的socket继续侦听，而新的socket将接收client端的数据,addr返回的是客户端的ip。那么问题来了，当客户端发送数据关联时是与哪个socket进行连接呢，首先我们需要知道的是客户端发送的数据有两种，一种是请求建立连接的，一种是已经建立好连接后的数据传输，就如上所说tcp/ip有接收缓存和发送缓存，当收到建立连接的请求时，则传给正在监听端口的socket调用accept，当收到连接好连接后的数据传输时，将输据放入接收缓冲区，这样当服务器需要读取数据时调用accept建立的新socket，的recv函数从接收缓冲区读取。<br>3、将socket.accept写在循环里面client新的连接一次将重新创建一个新的socket。  </p>
-<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_3.png" alt=""></p>
-<p>1，s.recv(1024)一次最大接收1024字节<br>2,  当收到连接好连接后的数据传输时，将输据放入接收缓冲区，这样当服务器需要读取数据时调用accept建立的新socket，的recv函数从接收缓冲区读取。<br>输出<br>server端  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_4.png" alt=""></p>
-<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_5.png" alt=""><br>socket.recv()<br>tcp/ip socket在内核中都有一个接收缓冲区和发送缓冲区，当socket接收到数据时，并不是马上调用socket.recv(),而是将数据拷贝到socket中的接收缓冲区中，调用socket.recv()后就是将接收缓冲区的数据，移动到应用层的buff中，并返回。当接收窗口满了后发生的操作是，收端通知发端，停止发送。<br>socket.send()<br>socket.send()是将应用层的buff拷贝到tcp-socket的发送缓冲区中</p>
-<p>UDP<br>server端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_6.png" alt="">  </p>
-<p>client<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_7.png" alt=""></p>
-<p>输出<br>server端  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_8.png" alt=""></p>
-<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_9.png" alt=""></p>
-<h3 id="socket实现tcp简单聊天"><a href="#socket实现tcp简单聊天" class="headerlink" title="socket实现tcp简单聊天"></a>socket实现tcp简单聊天</h3><p>server端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_10.png" alt=""></p>
-<p>需要注意的是这里的socket.accept()是写在while循怀外的，因为写在死循怀里，脚本一直在执行，client调用一次accept后就进入阻塞状态了，而client端用的还是旧的connect所以，如果写在循怀里，就是执行client后建立一个连接后只能进行一次对话，因为server端的accept又重新回到阻塞状态了,重新执行client生成一个新的connec又可以一次对话。</p>
-<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_11.png" alt=""></p>
-<p>结果<br>server端</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/socket_12.png" alt=""></p>
-<p>client端<br><img src="http://ohx02qrb8.bkt.clouddn.com/socket_13.png" alt=""></p>
-<p>优化点：<br>1，目前程序没有多线程，IO复用，还是半双工状态，一次只能一个用户说话，一个发时，另一个只能收，server在说话，client就不能说。</p>
-<p>参考链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">http://www.oschina.net/question/12_76126?sort=default&amp;p=1</div><div class="line">https://segmentfault.com/q/1010000000591930</div><div class="line">http://www.cnblogs.com/aylin/p/5572104.html</div><div class="line">http://blog.csdn.net/rebelqsp/article/details/22109925</div><div class="line">http://blog.csdn.net/hguisu/article/details/7445768/</div><div class="line">http://blog.csdn.net/rebelqsp/article/details/22191409</div></pre></td></tr></table></figure></p>
+        <p>环境：<br>3台控制节点+2台融合节点 2个osd</p>
+<h3 id="给zabbix-server导入模板"><a href="#给zabbix-server导入模板" class="headerlink" title="给zabbix-server导入模板"></a>给zabbix-server导入模板</h3><p>模板为分别对应为control、compute、ceph</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_1.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_2.png" alt=""></p>
+<p>导入这3个模板<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_3.png" alt=""></p>
+<h3 id="配置自动注册"><a href="#配置自动注册" class="headerlink" title="配置自动注册"></a>配置自动注册</h3><p>自动注册就是zabbix-server根据zabbix-agent里面配置的HostMetadata参数的值去进行一系列的操作，和自动发现不一样的是，自动发现只能跟据zabbix-server配置的扫描的网段去添加机器，非常不灵活，并且这个操作是zabbix-server发起的机器规模一大，对zabbix-server有很大的负载压力。自动注册是agent端主动将HostMetadata参数的值给server，server根据管理员的配置在做出相应的操作，在这里比如我openstack的控制节点我就在agent端的HostMetadata配置openstack_controler、然后计算节点配置openstack_computer、存储节点openstack_storager、计算和存储融合节点为 openstack_computer&amp;storager,然后在zabbix-server端创建相应的动作如下图(以添加control为例)其他类似。<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_4.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_5.png" alt=""></p>
+<p>操作都填写这些  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_6.png" alt=""><br>最后  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_7.png" alt="">  </p>
+<h3 id="配置zabbix-agent在agent端安装zabbix-agent，并导入脚本"><a href="#配置zabbix-agent在agent端安装zabbix-agent，并导入脚本" class="headerlink" title="配置zabbix-agent在agent端安装zabbix-agent，并导入脚本"></a>配置zabbix-agent在agent端安装zabbix-agent，并导入脚本</h3><p>下载zabbix-agent，agent端就不用源码安装了，直接下载rpm包。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http://repo.zabbix.com/zabbix/3.4/rhel/7/x86_64/zabbix-agent-3.4.2-1.el7.x86_64.rpm</div></pre></td></tr></table></figure></p>
+<p>安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@node-6 ~]# rpm -ivh zabbix-agent-3.4.2-1.el7.x86_64.rpm</div><div class="line">vim /etc/zabbix/zabbix.conf</div><div class="line">PidFile=/var/run/zabbix/zabbix_agentd.pid</div><div class="line">LogFile=/var/log/zabbix/zabbix_agentd.log</div><div class="line">LogFileSize=0</div><div class="line">Server=10.10.1.100</div><div class="line">ListenPort=10050</div><div class="line">ServerActive=10.10.1.100</div><div class="line">HostMetadata=openstack_controler</div><div class="line">Timeout=15</div><div class="line">Include=/etc/zabbix/zabbix_agentd.d/*.conf</div></pre></td></tr></table></figure></p>
+<p>解压<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tar -xvf controller.agent.tar.gz  -C /etc/zabbix/</div><div class="line">[root@node-6 zabbix_agentd.d]# chown zabbix:zabbix *</div><div class="line">[root@node-6 zabbix_agentd.d]# chmod a+x *</div></pre></td></tr></table></figure></p>
+<p>cd /etc/zabbix/script<br>[root@node-6 script]# chown zabbix:zabbix *<br>其他几个节点一样</p>
+<p>注意两个融合节点metadata配置<br>HostMetadata=openstack_computer&amp;storager<br>重启zabbix-agent，等待自动注册。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl restart zabbix-agent</div><div class="line">systemctl enable zabbix-agent</div></pre></td></tr></table></figure></p>
+<p>可以看见机器都自动注册进来了。<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_8.png" alt="">  </p>
+<h3 id="配置邮件告警"><a href="#配置邮件告警" class="headerlink" title="配置邮件告警"></a>配置邮件告警</h3><h4 id="脚本配置"><a href="#脚本配置" class="headerlink" title="脚本配置"></a>脚本配置</h4><p>将发送邮件脚本放置到<br>/usr/local/etc/zabbix/alertscripts</p>
+<p>vim sendmail.py</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_9.png" alt=""></p>
+<p>chmod a+x sendmail.py  </p>
+<h4 id="zabbix-server-web端配置"><a href="#zabbix-server-web端配置" class="headerlink" title="zabbix-server web端配置"></a>zabbix-server web端配置</h4><p>创建报警媒介类型<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_10.png" alt=""></p>
+<p>名字、类型、注意下面三个参数要传递到脚本里面。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_11.png" alt=""></p>
+<p>配置用户<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_12.png" alt=""></p>
+<p>报警媒介<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_13.png" alt=""></p>
+<p>输入联系人<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_14.png" alt=""><br>更新</p>
+<p>创建动作，zabbix在3.4.2版本中对创建动作这块有较大改动，多了确认操作，以前只有故障和恢复时发邮件，触发动作的条件可以自己配置。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_15.png" alt=""></p>
+<p>添加新的动作  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_16.png" alt=""></p>
+<p>添加用户、添加组、选择刚刚创建的发送媒介  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_17.png" alt=""></p>
+<p>恢复操作通知。<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_18.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_19.png" alt="">  </p>
+<p>测试将zabbix-agent关闭等待5分钟。动作日志。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_3_20.png" alt="">  </p>
 
       
     </div>
@@ -584,7 +454,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Python/" rel="tag">#Python</a>
+            <a href="/tags/Linux/" rel="tag">#Linux</a>
           
         </div>
       
@@ -593,16 +463,16 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/27/python_logging/" rel="next" title="Python logging模块">
-                <i class="fa fa-chevron-left"></i> Python logging模块
+              <a href="/2017/10/03/monitor/" rel="next" title="从零开始构建云平台监控(写在前面)">
+                <i class="fa fa-chevron-left"></i> 从零开始构建云平台监控(写在前面)
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/10/03/monitor_1/" rel="prev" title="从零开始构建云平台监控(一)搭建LNMP">
-                从零开始构建云平台监控(一)搭建LNMP <i class="fa fa-chevron-right"></i>
+              <a href="/2017/10/15/monitor_2/" rel="prev" title="从零开始构建云平台监控(二)安装zabbix">
+                从零开始构建云平台监控(二)安装zabbix <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -629,8 +499,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/10/01/python_socket/"
-           data-title="Python socket模块" data-url="http://yoursite.com/2017/10/01/python_socket/">
+      <div class="ds-thread" data-thread-key="2017/10/15/monitor_3/"
+           data-title="从零开始构建云平台监控(三)配置基础监控平台" data-url="http://yoursite.com/2017/10/15/monitor_3/">
       </div>
     
   </div>
@@ -741,7 +611,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#python-socket编程思路"><span class="nav-number">1.</span> <span class="nav-text">python socket编程思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket功能列表"><span class="nav-number">2.</span> <span class="nav-text">socket功能列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单例子"><span class="nav-number">3.</span> <span class="nav-text">简单例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socket实现tcp简单聊天"><span class="nav-number">4.</span> <span class="nav-text">socket实现tcp简单聊天</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#给zabbix-server导入模板"><span class="nav-number">1.</span> <span class="nav-text">给zabbix-server导入模板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置自动注册"><span class="nav-number">2.</span> <span class="nav-text">配置自动注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置zabbix-agent在agent端安装zabbix-agent，并导入脚本"><span class="nav-number">3.</span> <span class="nav-text">配置zabbix-agent在agent端安装zabbix-agent，并导入脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置邮件告警"><span class="nav-number">4.</span> <span class="nav-text">配置邮件告警</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#脚本配置"><span class="nav-number">4.1.</span> <span class="nav-text">脚本配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zabbix-server-web端配置"><span class="nav-number">4.2.</span> <span class="nav-text">zabbix-server web端配置</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
