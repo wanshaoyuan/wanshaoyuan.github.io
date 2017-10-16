@@ -84,20 +84,17 @@
 
 
 
-<meta name="description" content="概念cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。
-ceph快照是基于cow（copy on write）ceph 使用 COW （c">
+<meta name="description" content="概念thin-provisioned： 当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快">
 <meta property="og:type" content="article">
 <meta property="og:title" content="openstack秒级创建云主级秒级创建快照原理">
 <meta property="og:url" content="http://yoursite.com/2017/08/05/ceph_clone/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="概念cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。
-ceph快照是基于cow（copy on write）ceph 使用 COW （c">
+<meta property="og:description" content="概念thin-provisioned： 当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/ceph%20_clone_1.png">
 <meta property="og:updated_time" content="2017-08-05T07:19:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="openstack秒级创建云主级秒级创建快照原理">
-<meta name="twitter:description" content="概念cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。
-ceph快照是基于cow（copy on write）ceph 使用 COW （c">
+<meta name="twitter:description" content="概念thin-provisioned： 当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/ceph%20_clone_1.png">
 
 
@@ -354,11 +351,10 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
       
 
       
-        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。</p>
-<p>ceph快照是基于cow（copy on write）<br>ceph 使用 COW （copy on write）方式实现 snapshot：在写入object 之前，将其拷贝出来，作为 snapshot 的 data object，然后继续修改 拷贝出来的object 中的数据。<br>rbd在创建快照时，并不会向pool中创建对象，也就是说并不会占用实际的存储空间,只是增加了一些对象信息</p>
-<p>Ceph 使用 COW 方式实现 snapshot：在写入object 之前，将其拷贝出来，作为 snapshot 的 data object，然后继续修改 object 中的数据。</p>
-<h3 id="ceph快照"><a href="#ceph快照" class="headerlink" title="ceph快照"></a>ceph快照</h3><p>ceph快照是基于cow（copy on write）<br>ceph 使用 COW （copy on write）方式实现 snapshot：在写入object 之前，将其拷贝出来，作为 snapshot 的 data object，然后继续修改 拷贝出来的object 中的数据。<br>rbd在创建快照时，并不会向pool中创建对象，也就是说并不会占用实际的存储空间,只是增加了一些对象信息</p>
-<p>Ceph 使用 COW 方式实现 snapshot：在写入object 之前，将其拷贝出来，作为 snapshot 的 data object，然后继续修改 object 中的数据。</p>
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="thin-provisioned：-当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配-类似linux中的稀疏文件。"><a href="#thin-provisioned：-当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配-类似linux中的稀疏文件。" class="headerlink" title="thin-provisioned： 当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。"></a>thin-provisioned： 当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。</h3><h3 id="cow-（copy-on-write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜"><a href="#cow-（copy-on-write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜" class="headerlink" title="cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜"></a>cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜</h3><p>像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的时间和减少存储空间，因为snapshot存储的都是发生改变前的区域，其它区域都是与父镜像共享的。</p>
+<p>优点：cow快照，拷贝只是拷贝一些元数据，所以拷贝速度特别快，同时相比全量快照，占用的空间也要少很多</p>
+<p>缺点：cow快照后的第一次数据更新时父镜像每次要写数据，要先将原始数据读出来然后在拷贝到快照卷中，然后在写父镜像，这样进行一次更新操作就需要一次读+两次写，会降低父镜像的写性能，如果父镜像链接更多的快照，那性能会更低。</p>
+<h3 id="ceph快照是基于cow（copy-on-write）"><a href="#ceph快照是基于cow（copy-on-write）" class="headerlink" title="ceph快照是基于cow（copy on write）"></a>ceph快照是基于cow（copy on write）</h3><p>ceph 使用 COW （copy on write）方式实现 snapshot：在写入object 之前，将其拷贝出来，作为 snapshot 的 data object，然后继续修改原始数据。<br>rbd在创建快照时，并不会向pool中创建对象，也就是说并不会占用实际的存储空间,只是增加了一些对象信息</p>
 <h3 id="ceph-clone"><a href="#ceph-clone" class="headerlink" title="ceph clone"></a>ceph clone</h3><p>clone：clone是将一个snapshot变成一个image，它是基于snapshot    创建 Clone 是将 image 的某一个 Snapshot 的状态复制变成一个 image。如 imageA 有一个 Snapshot-1，clone 是根据 ImageA 的 Snapshot-1 克隆得到 imageB。imageB 此时的状态与Snapshot-1完全一致，并且拥有 image 的相应能力，其区别在于 ImageB 此时可写。</p>
 <p>从用户角度来看，一个 clone 和别的 RBD image 完全一样。你可以对它做 snapshot、读/写、改变大小 等等，总之从用户角度来说没什么限制。同时，创建速度很快，这是因为 Ceph 只允许从 snapshot 创建 clone，而 snapshot 需要是只读（protect）的。</p>
 <p>向 clone 的 instance 的object 写数据<br>ceph的克隆也是采用cow技术， 从本质上是 clone 的 RBD image 中读数据，对于不是它自己的 data objects，ceph 会从它的 parent snapshot 上读，如果它也没有，继续找它的parent image，直到一个 data object 存在。从这个过程也看得出来，该过程是缺乏效率的。</p>
@@ -574,7 +570,7 @@ ceph快照是基于cow（copy on write）ceph 使用 COW （c">
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ceph快照"><span class="nav-number">1.1.</span> <span class="nav-text">ceph快照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ceph-clone"><span class="nav-number">1.2.</span> <span class="nav-text">ceph clone</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flatten"><span class="nav-number">1.3.</span> <span class="nav-text">flatten</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用ceph做后端存储，创建虚机"><span class="nav-number">1.4.</span> <span class="nav-text">使用ceph做后端存储，创建虚机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#openstack给云主机做快照"><span class="nav-number">1.5.</span> <span class="nav-text">openstack给云主机做快照</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#thin-provisioned：-当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配-类似linux中的稀疏文件。"><span class="nav-number">1.1.</span> <span class="nav-text">thin-provisioned： 当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cow-（copy-on-write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜"><span class="nav-number">1.2.</span> <span class="nav-text">cow （copy on write）：写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ceph快照是基于cow（copy-on-write）"><span class="nav-number">1.3.</span> <span class="nav-text">ceph快照是基于cow（copy on write）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ceph-clone"><span class="nav-number">1.4.</span> <span class="nav-text">ceph clone</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flatten"><span class="nav-number">1.5.</span> <span class="nav-text">flatten</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用ceph做后端存储，创建虚机"><span class="nav-number">1.6.</span> <span class="nav-text">使用ceph做后端存储，创建虚机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#openstack给云主机做快照"><span class="nav-number">1.7.</span> <span class="nav-text">openstack给云主机做快照</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
