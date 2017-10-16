@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="我爱西红柿, blade" />
+  <meta name="keywords" content="Linux," />
 
 
 
@@ -84,16 +84,20 @@
 
 
 
-<meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="http://yoursite.com/categories/index.html">
+<meta name="description" content="前面四篇文章讲的更多是说这套监控平台是如何一步搭建起来的，但在实际生产中，我们要给客户搭建很多套私有云环境，不可能每个环境手动去装一边，因为zabbix的监控项和grafana的dashboard都可以做成模板导入。剩下就是一些软件安装和zabbix-agent的配置问题了，目前我采用的做法是将monitor-server封装成一个镜像，镜像里面将软件都安装好了monitor-server上有写好">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始搭建云平台监控(五)监控自动化部署">
+<meta property="og:url" content="http://yoursite.com/2017/10/16/monitor_5/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
-<meta property="og:updated_time" content="2016-12-07T20:40:55.000Z">
+<meta property="og:description" content="前面四篇文章讲的更多是说这套监控平台是如何一步搭建起来的，但在实际生产中，我们要给客户搭建很多套私有云环境，不可能每个环境手动去装一边，因为zabbix的监控项和grafana的dashboard都可以做成模板导入。剩下就是一些软件安装和zabbix-agent的配置问题了，目前我采用的做法是将monitor-server封装成一个镜像，镜像里面将软件都安装好了monitor-server上有写好">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_5_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_5_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_5_3.png">
+<meta property="og:updated_time" content="2017-10-16T15:27:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="categories">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="从零开始搭建云平台监控(五)监控自动化部署">
+<meta name="twitter:description" content="前面四篇文章讲的更多是说这套监控平台是如何一步搭建起来的，但在实际生产中，我们要给客户搭建很多套私有云环境，不可能每个环境手动去装一边，因为zabbix的监控项和grafana的dashboard都可以做成模板导入。剩下就是一些软件安装和zabbix-agent的配置问题了，目前我采用的做法是将monitor-server封装成一个镜像，镜像里面将软件都安装好了monitor-server上有写好">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_5_1.png">
 
 
 
@@ -111,13 +115,7 @@
   };
 </script>
 
-  <title>
-  
-
-  
-    分类 | 我爱西红柿
-  
-</title>
+  <title> 从零开始搭建云平台监控(五)监控自动化部署 | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -147,7 +145,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -270,16 +268,176 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
     
-      <div class="category-all-page">
-        <div class="category-all-title">
-            目前共计 10 个分类
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                从零开始搭建云平台监控(五)监控自动化部署
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-10-16T16:27:44+08:00" content="2017-10-16">
+              2017-10-16
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/10/16/monitor_5/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/10/16/monitor_5/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
         </div>
-        <div class="category-all">
-          <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/test/">test</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
-        </div>
-      </div>
+      </header>
     
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面四篇文章讲的更多是说这套监控平台是如何一步搭建起来的，但在实际生产中，我们要给客户搭建很多套私有云环境，不可能每个环境手动去装一边，因为zabbix的监控项和grafana的dashboard都可以做成模板导入。剩下就是一些软件安装和zabbix-agent的配置问题了，目前我采用的做法是将monitor-server封装成一个镜像，镜像里面将软件都安装好了monitor-server上有写好的ansible的playbook，agent端通，过monitor-server上的ansible的playbook去推送安装。</p>
+<p>ansible是一个python写的基于ssh的轻量级的自动化运维工具，它有以下优点<br>优点：<br>(1)、轻量级，无需在客户端安装agent，更新时，只需在操作机上进行一次更新即可；<br>(2)、批量任务执行可以写成脚本，而且不用分发到远程就可以执行；<br>(3)、使用python编写，维护更简单，ruby语法过于复杂；<br>(4)、支持sudo；<br>(5)、基于ssh无需agent端就可以实现自动化配置。  </p>
+<p>缺点：<br>(1)、ansible默认才用轮询的方式，如果节点数量一多，撑不住，相比较基于c/s架构的saltstack 中间还有消息队列辅助在大规模集群中性能确实弱。</p>
+<p>下面主要介绍自己写的playbook，目录结构如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">/etc/ansible/</div><div class="line">|-- ansible.cfg</div><div class="line">|-- hosts</div><div class="line">|-- readme</div><div class="line">|-- roles</div><div class="line">|   |-- ceph</div><div class="line">|   |   |-- handlers</div><div class="line">|   |   |   `-- main.yml</div><div class="line">|   |   |-- tasks</div><div class="line">|   |   |   `-- main.yml</div><div class="line">|   |   |-- templates</div><div class="line">|   |   |   `-- zabbix_agentd.conf.j2</div><div class="line">|   |   `-- vars</div><div class="line">|   |       `-- main.yml</div><div class="line">|   |-- common</div><div class="line">|   |   |-- 1</div><div class="line">|   |   |-- handlers</div><div class="line">|   |   |   `-- main.yml</div><div class="line">|   |   |-- tasks</div><div class="line">|   |   |   |-- 1</div><div class="line">|   |   |   `-- main.yml</div><div class="line">|   |   |-- templates</div><div class="line">|   |   |   `-- zabbix_agentd.conf.j2</div><div class="line">|   |   `-- vars</div><div class="line">|   |       `-- main.yml</div><div class="line">|   `-- telegraf</div><div class="line">|       |-- handlers</div><div class="line">|       |   `-- main.yml</div><div class="line">|       |-- tasks</div><div class="line">|       |   `-- main.yml</div><div class="line">|       |-- templates</div><div class="line">|       |   `-- telegraf.conf.j2</div><div class="line">|       `-- vars</div><div class="line">|           `-- main.yml</div><div class="line">|-- server_ip.sh</div><div class="line">|-- site.retry</div><div class="line">|-- site.yml</div><div class="line">`-- zabbix_agent.tar</div></pre></td></tr></table></figure></p>
+<p>我这里分为3个roles ，ceph、common、telegraf<br>ceph主要做的操作有<br>1、拷贝配置文件  </p>
+<p>common 主要做的操作有<br>1、环境初始化<br>2、拷贝软件包到对应节点<br>3、解压tar包<br>4、安装软件<br>5、修改对应的配置文件<br>6、修改执行权限<br>7、修改防火墙开放端口<br>8、启动服务、设置开机自启  </p>
+<p>telegraf主要做的操作有<br>1、安装telegraf<br>2、修改telegraf systemd的启动用户<br>3、拷贝telegraf配置文件<br>4、重启telegraf并设置开机启动  </p>
+<p>因为每个节点所对应的角色不一样，ansible所跑的脚本也是不一样的，所以定义这3个roles，服务器的角色通过hosts文件控制  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_5_1.png" alt=""></p>
+<p>定义了三组角色，控制节点、计算节点、存储节点、融合节点、每组角色设置了不同的metadata，这个metadata是通过templates/zabbix_agentd.conf.j2传给对应节点zabbix-agent里面的HostMetadata参数，然后zabbix-server根据不同的metadata去调用不同的模板。定义group是为了在task里面调用不同的命令。  </p>
+<p>通过site.yml来控制不同的host调用不同的role<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_5_2.png" alt=""></p>
+<p>可以看见common的hosts是all表示在hosts定义的所有组都会调用common， telegraf roles是只有control的host会去调用 ceph roles是storage的 hosts去调用</p>
+<p>每个roles下面分handlers、tasks、templates、vars 其中，<br>handlers：也是task，但只有其关注的条件满足时，才会被触发执行 ，  </p>
+<p>templates：定义的是配置文件模板，比如我们这里定义好了zabbix_agent、和telegraf的配置文件模板  </p>
+<p>vars：定义变量，我在templates里面定义了zabbix_agent变量，里面的server 和server_active我都是以变量方式存储的，然后在执行ansible前先把变量改好，这样在不同的环境配置文件里的ip也会根着变。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_5_3.png" alt=""></p>
+<p>项目代码先以开源：<br><a href="https://github.com/wanshaoyuan/ansible_monitor" target="_blank" rel="external">https://github.com/wanshaoyuan/ansible_monitor</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag">#Linux</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/13/monitor_4/" rel="next" title="从零开始构建云平台监控(四)图形化展示监控效果">
+                <i class="fa fa-chevron-left"></i> 从零开始构建云平台监控(四)图形化展示监控效果
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -288,6 +446,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/10/16/monitor_5/"
+           data-title="从零开始搭建云平台监控(五)监控自动化部署" data-url="http://yoursite.com/2017/10/16/monitor_5/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -307,8 +473,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/image.png"
@@ -378,6 +553,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -487,6 +673,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
