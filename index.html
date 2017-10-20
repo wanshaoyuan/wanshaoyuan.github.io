@@ -1421,8 +1421,8 @@ logging库提供了多个组件：Logger、Handler、Filter、Form
             
               
                 
-                <a class="post-title-link" href="/2017/09/08/vmware&openstack/" itemprop="url">
-                  OpenStack对接vmware
+                <a class="post-title-link" href="/2017/09/17/neutron_vlan/" itemprop="url">
+                  OpenStack vlan模式下网络流量走向
                 </a>
               
             
@@ -1435,8 +1435,8 @@ logging库提供了多个组件：Logger、Handler、Filter、Form
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-09-08T22:55:00+08:00" content="2017-09-08">
-              2017-09-08
+            <time itemprop="dateCreated" datetime="2017-09-17T11:50:44+08:00" content="2017-09-17">
+              2017-09-17
             </time>
           </span>
 
@@ -1449,8 +1449,8 @@ logging库提供了多个组件：Logger、Handler、Filter、Form
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
+                  <a href="/categories/neutron/" itemprop="url" rel="index">
+                    <span itemprop="name">neutron</span>
                   </a>
                 </span>
 
@@ -1465,8 +1465,8 @@ logging库提供了多个组件：Logger、Handler、Filter、Form
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/09/08/vmware&openstack/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/08/vmware&openstack/" itemprop="commentsCount"></span>
+                <a href="/2017/09/17/neutron_vlan/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/17/neutron_vlan/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -1491,14 +1491,11 @@ logging库提供了多个组件：Logger、Handler、Filter、Form
       
         
           
-          openstack版本：libertyvsphere版本：6.0  
-拓扑图
-架构图
-vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制
+          使用openvswitch+vlan的组网以生产网vlan为101和102为例在openstack上创建个私有网络，创建了 OVS Integration bridge br-int。它的四个 Access 端口中，两个打上了内部 Tag 1，连接接入 network 1 的两个网卡；另两个端口的 
           ...
 
           <div class="post-more-link text-center">
-            <a class="btn" href="/2017/09/08/vmware&openstack/#more" rel="contents">
+            <a class="btn" href="/2017/09/17/neutron_vlan/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1573,7 +1570,7 @@ vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">26</span>
+              <span class="site-state-item-count">27</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>

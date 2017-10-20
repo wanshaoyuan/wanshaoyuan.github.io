@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="我爱西红柿, blade" />
+  <meta name="keywords" content="neutron," />
 
 
 
@@ -84,15 +84,21 @@
 
 
 
-<meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/tags/数据库/index.html">
+<meta name="description" content="使用openvswitch+vlan的组网以生产网vlan为101和102为例在openstack上创建个私有网络，创建了 OVS Integration bridge br-int。它的四个 Access 端口中，两个打上了内部 Tag 1，连接接入 network 1 的两个网卡；另两个端口的 VLAN Tag 为 2。创建了一对 patch port，连接 br-int 和 br-eth0。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenStack vlan模式下网络流量走向">
+<meta property="og:url" content="http://yoursite.com/2017/09/17/neutron_vlan/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="使用openvswitch+vlan的组网以生产网vlan为101和102为例在openstack上创建个私有网络，创建了 OVS Integration bridge br-int。它的四个 Access 端口中，两个打上了内部 Tag 1，连接接入 network 1 的两个网卡；另两个端口的 VLAN Tag 为 2。创建了一对 patch port，连接 br-int 和 br-eth0。">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/vlan_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/vlan_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/vlan_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/vlan_4.png">
+<meta property="og:updated_time" content="2017-09-17T03:50:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="OpenStack vlan模式下网络流量走向">
+<meta name="twitter:description" content="使用openvswitch+vlan的组网以生产网vlan为101和102为例在openstack上创建个私有网络，创建了 OVS Integration bridge br-int。它的四个 Access 端口中，两个打上了内部 Tag 1，连接接入 network 1 的两个网卡；另两个端口的 VLAN Tag 为 2。创建了一对 patch port，连接 br-int 和 br-eth0。">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/vlan_1.png">
 
 
 
@@ -110,7 +116,7 @@
   };
 </script>
 
-  <title> 标签: 数据库 | 我爱西红柿 </title>
+  <title> OpenStack vlan模式下网络流量走向 | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -140,7 +146,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -261,74 +267,178 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2 >
-        数据库
-        <small>标签</small>
-      </h2>
-    </div>
-
+  <div id="posts" class="posts-expand">
     
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/12/25/mariadb-base/" itemprop="url">
-              
-                <span itemprop="name">Mariadb galera</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-12-25T19:50:44+08:00"
-              content="2016-12-25" >
-          12-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/12/22/mariadb-galera-2/" itemprop="url">
-              
-                <span itemprop="name">Mariadb galera集群搭建</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-12-22T23:35:44+08:00"
-              content="2016-12-22" >
-          12-22
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-    
-  </div>
 
   
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                OpenStack vlan模式下网络流量走向
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-09-17T11:50:44+08:00" content="2017-09-17">
+              2017-09-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/neutron/" itemprop="url" rel="index">
+                    <span itemprop="name">neutron</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/09/17/neutron_vlan/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/09/17/neutron_vlan/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="使用openvswitch-vlan的组网"><a href="#使用openvswitch-vlan的组网" class="headerlink" title="使用openvswitch+vlan的组网"></a>使用openvswitch+vlan的组网</h3><p>以生产网vlan为101和102为例在openstack上创建个私有网络，<br>创建了 OVS Integration bridge br-int。它的四个 Access 端口中，两个打上了内部 Tag 1，连接接入 network 1 的两个网卡；另两个端口的 VLAN Tag 为 2。<br>创建了一对 patch port，连接 br-int 和 br-eth0。<br>设置 br-int 中的 flow rules。对从 access ports 进入的数据帧，加上相应的 VLAN Tag，转发到 patch port；从 patch port 进入的数据帧，将 VLAN ID 101 修改为 1, 102 修改为 2，再转发到相应的 Access ports。<br>设置 br-eth0 中的 flow rules。从 patch port 进入的数据帧，将内部 VLAN ID 1 修改为 101，内部 VLAN ID 2 修改为 102，再从 eth1 端口发出。对从 eth1 进入的数据帧做相反的处理。</p>
+<p>br-int上的local_id和vlan_id的转换是实现多租户的主要技术。</p>
+<p>以下介绍在云平台三中情况数据流量的走向  </p>
+<h4 id="相同物理机上的虚拟机"><a href="#相同物理机上的虚拟机" class="headerlink" title="相同物理机上的虚拟机"></a>相同物理机上的虚拟机</h4><p>vm1和vm2在同一个宿主机上同一个项目下同一个子网时，两个虚机之间的流量是不需要经过交换机的，直接通过ovs的br-int桥就可以做转发了,不同项目是不通的因为br-int上有local_id用于多租户隔离。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/vlan_1.png" alt=""></p>
+<h4 id="不同物理机上的虚拟机"><a href="#不同物理机上的虚拟机" class="headerlink" title="不同物理机上的虚拟机"></a>不同物理机上的虚拟机</h4><p>vm1和vm2在同一个宿主机上同一个项目下同一个子网时，两个虚拟机之间的流量是需要通过物理交换机进行转发的<br><img src="http://ohx02qrb8.bkt.clouddn.com/vlan_2.png" alt=""></p>
+<p>vm的流量首先经过tap网卡到qbr桥上，qbr桥是linux-bridge桥，曾经的ovs不支持安全组的实现所以openstack只能加一个qbr桥在上面通过iptables来实现安全组，(mitaka版本中已经没有了因为ovs已经可以通过openflow来实现了),通过veth口将br-int和qbr桥连接起来，流量到br-int上，br-int上有对应的ovs规则转发到br-eth0上，，r-eth0 中的 flow rules。从 patch port 进入的数据帧，将内部 ocal_id 修改为vlan_id，再从 eth0 端口发出。通过交换机到达另外一个计算机节点。</p>
+<h4 id="不同租户的不同子网的通信或虚机根外部通信"><a href="#不同租户的不同子网的通信或虚机根外部通信" class="headerlink" title="不同租户的不同子网的通信或虚机根外部通信"></a>不同租户的不同子网的通信或虚机根外部通信</h4><p>需要经过网络节点，由网络节点的qroute做三层转发，也可以直接使用物理交换机。不同子网的通信，虚机会将流量丢给默认网关然后到达网络节点的qrouter通过qrouter的三层转发通讯。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/vlan_3.png" alt=""></p>
+<p>使用内部vlan号是为了实现多租户网络隔离，也就是说计算节点上将数据包隔离通过br-int的loca_id，假设没有这个local_id的话，租户a的192.168.1.0/24和租户b的192.168.1.0/24在同一个计算节点的同一个br-int的网桥上，如果没有local_id隔离，网络就串了。这种是openvswitch的实现方式，</p>
+<h4 id="linuxbridge的实现方式"><a href="#linuxbridge的实现方式" class="headerlink" title="linuxbridge的实现方式"></a>linuxbridge的实现方式</h4><p>比如租户a的私有网络是vlan100，租户b的私户网络是vlan200，然后linuxbridge会将在这个计算节点上创建两个网桥。然后用vconfig将对应的网卡创建出子接口，挂到刚刚创的桥上，在将对应的虚机tap网卡挂载到对应的桥上。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/vlan_4.png" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/neutron/" rel="tag">#neutron</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/08/vmware&openstack/" rel="next" title="OpenStack对接vmware">
+                <i class="fa fa-chevron-left"></i> OpenStack对接vmware
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/21/kdump/" rel="prev" title="kdump">
+                kdump <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -336,6 +446,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/09/17/neutron_vlan/"
+           data-title="OpenStack vlan模式下网络流量走向" data-url="http://yoursite.com/2017/09/17/neutron_vlan/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -355,8 +473,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/image.png"
@@ -426,6 +553,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用openvswitch-vlan的组网"><span class="nav-number">1.</span> <span class="nav-text">使用openvswitch+vlan的组网</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#相同物理机上的虚拟机"><span class="nav-number">1.1.</span> <span class="nav-text">相同物理机上的虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不同物理机上的虚拟机"><span class="nav-number">1.2.</span> <span class="nav-text">不同物理机上的虚拟机</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不同租户的不同子网的通信或虚机根外部通信"><span class="nav-number">1.3.</span> <span class="nav-text">不同租户的不同子网的通信或虚机根外部通信</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linuxbridge的实现方式"><span class="nav-number">1.4.</span> <span class="nav-text">linuxbridge的实现方式</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -535,6 +673,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
