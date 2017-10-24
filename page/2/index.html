@@ -791,8 +791,8 @@ cow （copy on write)写时复制，也就是做快照时，先圈好个位置�
             
               
                 
-                <a class="post-title-link" href="/2017/05/08/ironic/" itemprop="url">
-                  ironic-简介
+                <a class="post-title-link" href="/2017/05/23/linux_vconfig/" itemprop="url">
+                  Linux下单网卡配置属于不同vlan的ip(vlan子接口)
                 </a>
               
             
@@ -805,8 +805,8 @@ cow （copy on write)写时复制，也就是做快照时，先圈好个位置�
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-05-08T15:19:59+08:00" content="2017-05-08">
-              2017-05-08
+            <time itemprop="dateCreated" datetime="2017-05-23T15:19:59+08:00" content="2017-05-23">
+              2017-05-23
             </time>
           </span>
 
@@ -819,8 +819,8 @@ cow （copy on write)写时复制，也就是做快照时，先圈好个位置�
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
                   </a>
                 </span>
 
@@ -835,8 +835,8 @@ cow （copy on write)写时复制，也就是做快照时，先圈好个位置�
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2017/05/08/ironic/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/08/ironic/" itemprop="commentsCount"></span>
+                <a href="/2017/05/23/linux_vconfig/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/23/linux_vconfig/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -861,11 +861,12 @@ cow （copy on write)写时复制，也就是做快照时，先圈好个位置�
       
         
           
-          ironic简介介绍openstack中对物理机管理的组件，通过ironic可以给物理机，上电、下电、重启，自动安装操作系统，根据设定的规则模板，进行自动化配置。ironic是I版开始进入孵化，j版与nova进行集成、K版正式release,ironic原本是mirantis开发的，后面贡献到社区。
+          一台服务器上一块网卡想同时划到两个不同vlan，并且让他们之间可以互相通信。
+1、首先确认Linux系统内核是否已经支持VLAN功能，加载了8021q模块，lsmod |grep 8021q。2、关于网卡的解释，好多人不知道网卡接口上的冒号和点号的区别，以下是一些解释（我也是从网上查的，仅供参考） 
           ...
 
           <div class="post-more-link text-center">
-            <a class="btn" href="/2017/05/08/ironic/#more" rel="contents">
+            <a class="btn" href="/2017/05/23/linux_vconfig/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -994,6 +995,131 @@ openstack对接商业存储一般直接用cinder直接对接商业存储，但�
 
           <div class="post-more-link text-center">
             <a class="btn" href="/2017/05/08/boot_from_volume/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/05/08/ironic/" itemprop="url">
+                  ironic-简介
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-05-08T15:19:59+08:00" content="2017-05-08">
+              2017-05-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/openstack/" itemprop="url" rel="index">
+                    <span itemprop="name">openstack</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/05/08/ironic/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/08/ironic/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          ironic简介介绍openstack中对物理机管理的组件，通过ironic可以给物理机，上电、下电、重启，自动安装操作系统，根据设定的规则模板，进行自动化配置。ironic是I版开始进入孵化，j版与nova进行集成、K版正式release,ironic原本是mirantis开发的，后面贡献到社区。
+          ...
+
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2017/05/08/ironic/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1401,153 +1527,6 @@ DBaaS是什么？字面上理解数据库即是服务，简单来说就是以服
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/02/06/openstac&ceph/" itemprop="url">
-                  openstack N版对接ceph jewel版
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2017-02-06T14:24:44+08:00" content="2017-02-06">
-              2017-02-06
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/openstack/" itemprop="url" rel="index">
-                    <span itemprop="name">openstack</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2017/02/06/openstac&ceph/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/06/openstac&ceph/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-          环境网络配置：
-
-
-
-
-public_network
-cluster_network             
-
-
-
-
-控制节点/ceph-mon
-192.168.4.6
-192.168.3.5
-
-
-ceph-osd1
-192.168.4.12
-192.168.3.9
-
-
-ceph-osd2
-192
-          ...
-
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2017/02/06/openstac&ceph/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1593,7 +1572,7 @@ ceph-osd2
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">28</span>
+              <span class="site-state-item-count">29</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1601,7 +1580,7 @@ ceph-osd2
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1610,7 +1589,7 @@ ceph-osd2
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

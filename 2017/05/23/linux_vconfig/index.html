@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="我爱西红柿, blade" />
+  <meta name="keywords" content="linux," />
 
 
 
@@ -84,15 +84,19 @@
 
 
 
-<meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2017/07/index.html">
+<meta name="description" content="一台服务器上一块网卡想同时划到两个不同vlan，并且让他们之间可以互相通信。
+1、首先确认Linux系统内核是否已经支持VLAN功能，加载了8021q模块，lsmod |grep 8021q。2、关于网卡的解释，好多人不知道网卡接口上的冒号和点号的区别，以下是一些解释（我也是从网上查的，仅供参考）    a、物理网卡：物理网卡指的是服务器上实际的网络接口设备，如在系统中看到的2个物理网卡分别对应是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下单网卡配置属于不同vlan的ip(vlan子接口)">
+<meta property="og:url" content="http://yoursite.com/2017/05/23/linux_vconfig/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="一台服务器上一块网卡想同时划到两个不同vlan，并且让他们之间可以互相通信。
+1、首先确认Linux系统内核是否已经支持VLAN功能，加载了8021q模块，lsmod |grep 8021q。2、关于网卡的解释，好多人不知道网卡接口上的冒号和点号的区别，以下是一些解释（我也是从网上查的，仅供参考）    a、物理网卡：物理网卡指的是服务器上实际的网络接口设备，如在系统中看到的2个物理网卡分别对应是">
+<meta property="og:updated_time" content="2017-05-23T07:19:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="Linux下单网卡配置属于不同vlan的ip(vlan子接口)">
+<meta name="twitter:description" content="一台服务器上一块网卡想同时划到两个不同vlan，并且让他们之间可以互相通信。
+1、首先确认Linux系统内核是否已经支持VLAN功能，加载了8021q模块，lsmod |grep 8021q。2、关于网卡的解释，好多人不知道网卡接口上的冒号和点号的区别，以下是一些解释（我也是从网上查的，仅供参考）    a、物理网卡：物理网卡指的是服务器上实际的网络接口设备，如在系统中看到的2个物理网卡分别对应是">
 
 
 
@@ -110,7 +114,7 @@
   };
 </script>
 
-  <title> 归档 | 我爱西红柿 </title>
+  <title> Linux下单网卡配置属于不同vlan的ip(vlan子接口) | 我爱西红柿 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -140,7 +144,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  page-archive  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -261,66 +265,185 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 29 篇日志。 继续努力。
-    </span>
-
+  <div id="posts" class="posts-expand">
     
 
-      
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux下单网卡配置属于不同vlan的ip(vlan子接口)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-05-23T15:19:59+08:00" content="2017-05-23">
+              2017-05-23
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index">
+                    <span itemprop="name">linux</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/05/23/linux_vconfig/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/05/23/linux_vconfig/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
       
       
 
       
+        <p>一台服务器上一块网卡想同时划到两个不同vlan，并且让他们之间可以互相通信。</p>
+<p>1、首先确认Linux系统内核是否已经支持VLAN功能，加载了8021q模块，lsmod |grep 8021q。<br>2、关于网卡的解释，好多人不知道网卡接口上的冒号和点号的区别，以下是一些解释（我也是从网上查的，仅供参考）<br>    a、物理网卡：物理网卡指的是服务器上实际的网络接口设备，如在系统中看到的2个物理网卡分别对应是eth0和eth1这两个网络接口。<br>    b、子网卡：子网卡并不是实际上的网络接口设备，但是可以作为网络接口在系统中出现，如eth0:1、eth1:2这种网络接口。它们必须要依赖 于物理网卡，虽然可以与物理网卡的网络接口同时在系统中存在并使用不同的IP地址，而且也拥有它们自己的网络接口配置文件。但是当所依赖的物理网卡不启用 时（Down状态）这些子网卡也将一同不能工作。<br>    c、虚拟VLAN网卡：这些虚拟VLAN网卡也不是实际上的网络接口设备，也可以作为网络接口在系统中出现，但是与子网卡不同的是，他们没有自己 的配置文件。他们只是通过将物理网加入不同的VLAN而生成的VLAN虚拟网卡。如果将一个物理网卡添加到多个VLAN当中去的话，就会有多个VLAN虚 拟网卡出现，他们的信息以及相关的VLAN信息都是保存在/proc/net /vlan/config这个临时文件中的，而没有独自的配置文件。它们的网络接口名是eth0.1、eth1.2这种名字。</p>
+<p>下面为实际操作，我的环境是一台H3C S5120三层交换机，服务器有4个网卡。</p>
+<h3 id="交换机配置"><a href="#交换机配置" class="headerlink" title="交换机配置"></a>交换机配置</h3><p>配置trunk，并且配置允许vlan id，我这里端口是g1/0/11 到g1/0/15</p>
+<p>设置该端口为trunk模式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[H3C-Git1/0/11]port link-type trunk //vlan端口默认为access模式</div><div class="line">```    </div><div class="line">设置允许vlan 10和20的tag通过该端口</div></pre></td></tr></table></figure></p>
+<p>[H3c-Git1/0/11]port trunk permit vlan 40 50 //替换后面的数字为all则是允许所有vlan tag通过该端口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">其他12，13，14，15口一样配置</div><div class="line"></div><div class="line"></div><div class="line">接下来给vlan配置ip(配置网关)</div></pre></td></tr></table></figure></p>
+<p>[H3C]interface Vlan-interface 40<br>[H3C-Vlan-interface1]ip address 192.168.4.254 255.255.255.0</p>
+<p>[H3C]interface Vlan-interface 50<br>[H3C-Vlan-interface1]ip address 192.168.5.254 255.255.255.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">交换机配置到此结束，接下来是Linux网卡配置</div><div class="line"></div><div class="line">Linux要配置多vlan口。注：当需要启用VLAN虚拟网卡工作的时候，关联的物理网卡网络接口上必须没有IP地址的配置信息。</div><div class="line"></div><div class="line"></div><div class="line">首先确认是否安装vconfig</div><div class="line"></div><div class="line">然后查看核心是否提供VLAN 功能，执行</div></pre></td></tr></table></figure></p>
+<p>dmesg | grep -i 802</p>
+<p>[root@test]# dmesg | grep -i 802</p>
+<p>802.1Q VLAN Support v1.8 Ben Greear<a href="&#109;&#97;&#105;&#x6c;&#x74;&#x6f;&#58;&#x67;&#x72;&#101;&#x65;&#97;&#114;&#98;&#64;&#x63;&#x61;&#x6e;&#100;&#x65;&#108;&#x61;&#x74;&#101;&#99;&#x68;&#x2e;&#x63;&#x6f;&#109;">&#x67;&#x72;&#101;&#x65;&#97;&#114;&#98;&#64;&#x63;&#x61;&#x6e;&#100;&#x65;&#108;&#x61;&#x74;&#101;&#99;&#x68;&#x2e;&#x63;&#x6f;&#109;</a></p>
+<p>[root@test]# modprobe 8021q</p>
+<p>[root@test~]#lsmod |grep 8021q //查看系统内核是否支持802.1q协议</p>
+<p>8021q 18633 0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>vconfig add eno3 300 // eno3为物理网络接口名称，300为 802.1q tag id 也即 vlan ID<br>vconfig add eno3 500</p>
+<p>ifconfig eno3.300  192.168.4.5/24 up<br>ifconfig eno3.500  172.31.5.5/24  up </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">最终可以在可以创建成功的vlan接口  </div><div class="line">root@node-78:~# ls /proc/net/vlan/</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">然后把这些写进配置文件不然重启就没有了</div><div class="line"></div><div class="line"></div><div class="line">vim /etc/network/interfaces</div></pre></td></tr></table></figure>
+<p>auto lo eno3<br>iface lo inet loopback<br>iface eno3.300 inet static<br>    address 192.168.4.5<br>    netmask 255.255.255.0<br>iface eno3.500 inet static<br>    address 172.31.5.5<br>    netmask 255.255.255.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line">测试在服务器上分别ping 192.168.4.254和172.31.5.254可以ping通就行。</div><div class="line">不能通的话， router -n 查看路由，是不是还是以前的老路由，是的话要删除</div><div class="line"></div><div class="line"></div><div class="line">ip route del xxxx via xxx.xxx.xxx.xxx</div><div class="line">                            dev  接口</div><div class="line"></div><div class="line"></div><div class="line">5,删除VLAN命令</div></pre></td></tr></table></figure></p>
+<p>[root@test0001~]#vconfig rem eth0.100<br>Removed VLAN -:eth0.100:-<br>[root@test0001~]#vconfig rem eth0.200<br>Removed VLAN -:eth0.200:-<br>```<br>在openstack虚拟机里不能做操作，不过newton版开发了这个plugin叫VLAN-aware-VMs<br><a href="http://blog.csdn.net/bc_vnetwork/article/details/53927687" target="_blank" rel="external">http://blog.csdn.net/bc_vnetwork/article/details/53927687</a></p>
+
+      
+    </div>
+
+    <div>
+      
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2017">2017</h2>
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
         </div>
       
       
+    </div>
+  </div>
+
 
       
+    </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/linux/" rel="tag">#linux</a>
+          
+        </div>
+      
 
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2017/07/23/dvr/" itemprop="url">
-              
-                <span itemprop="name">neutron-高可用(1)--DVR</span>
-              
-            </a>
-        
-      </h1>
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/08/boot_from_volume/" rel="next" title="boot from volume的两种方式">
+                <i class="fa fa-chevron-left"></i> boot from volume的两种方式
+              </a>
+            
+          </div>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-07-23T15:19:59+08:00"
-              content="2017-07-23" >
-          07-23
-        </time>
-      </div>
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/23/dvr/" rel="prev" title="neutron-高可用(1)--DVR">
+                neutron-高可用(1)--DVR <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
-  </section>
-
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -328,6 +451,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/05/23/linux_vconfig/"
+           data-title="Linux下单网卡配置属于不同vlan的ip(vlan子接口)" data-url="http://yoursite.com/2017/05/23/linux_vconfig/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -347,8 +478,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/image.png"
@@ -418,6 +558,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#交换机配置"><span class="nav-number">1.</span> <span class="nav-text">交换机配置</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -527,11 +678,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
 
 
   
