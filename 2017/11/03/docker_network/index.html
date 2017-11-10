@@ -1,0 +1,911 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="docker," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。docker网络（单host上容器网络)显示docker网络docker network list
+docker run时通过–network指定网络  
+none网络1docker run -it --network=none busybox
+none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker单主机网络">
+<meta property="og:url" content="http://yoursite.com/2017/11/03/docker_network/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。docker网络（单host上容器网络)显示docker网络docker network list
+docker run时通过–network指定网络  
+none网络1docker run -it --network=none busybox
+none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_16.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_17.png">
+<meta property="og:updated_time" content="2017-11-03T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker单主机网络">
+<meta name="twitter:description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。docker网络（单host上容器网络)显示docker网络docker network list
+docker run时通过–network指定网络  
+none网络1docker run -it --network=none busybox
+none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_network_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6229174250624779000,
+      author: '我爱西红柿'
+    }
+  };
+</script>
+
+  <title> Docker单主机网络 | 我爱西红柿 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=59881503";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">我爱西红柿</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">已知的已知，已知的未知，未知的未知</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Docker单主机网络
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-11-03T21:45:59+08:00" content="2017-11-03">
+              2017-11-03
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/docker/" itemprop="url" rel="index">
+                    <span itemprop="name">docker</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/11/03/docker_network/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/11/03/docker_network/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><a href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。" class="headerlink" title="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"></a>此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</h2><p>docker网络（单host上容器网络)<br>显示docker网络<br>docker network list<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_1.png" alt=""></p>
+<p>docker run时通过–network指定网络  </p>
+<h3 id="none网络"><a href="#none网络" class="headerlink" title="none网络"></a>none网络</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -it --network=none busybox</div></pre></td></tr></table></figure>
+<p>none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他任何网卡。</p>
+<p>使用场景：对于一些安全性要求高且不需要联网的应用可以使用。</p>
+<h3 id="host网络"><a href="#host网络" class="headerlink" title="host网络"></a>host网络</h3><p>连接到host网络的容器，共享docker 宿主机的网络，并且连hostname也是宿主机的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd  --network=hhost busybox</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_2.png" alt=""></p>
+<p>使用场景：用host网络性能比较高，容器可以直接操作宿主机网络，缺点是牺牲了灵活性，需要考虑端口冲突问题。</p>
+<h3 id="bridge网络"><a href="#bridge网络" class="headerlink" title="bridge网络"></a>bridge网络</h3><p>docker使用最广泛的方式，docker安装时会创建一个docker0的linux bridge，如果不指定容器网络默认都会挂到docker0上</p>
+<p>启动个容器，查看docker0<br>docker run -itd   centos_10_23  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_3.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_4.png" alt=""></p>
+<p>docker 内的网卡eth0@if28和linux bridge上的vethfe788c9是一堆veth-pair</p>
+<p>默认bridge配置的subnet就是172.17.0.3/16网关为172.17.0.1配在docker0上，容器创建时会自动从172.17.0.3/16里面抽出一个地址。</p>
+<h3 id="user-define-用户自定义网络"><a href="#user-define-用户自定义网络" class="headerlink" title="user-define(用户自定义网络)"></a>user-define(用户自定义网络)</h3><p>user-define网络支持：bridge，overlay和macvlan网络驱动，macvlan和overlay属于跨宿主机的容器的通信，这里先不讨论，这里讨论使用bridge驱动创建user-define网络。</p>
+<p>创建一个bridge为driver的user-define网络</p>
+<p>docker network create –driver bridge my_net</p>
+<p>查看网络状态<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_5.png" alt=""></p>
+<p>inspect一下，发现新创建的网络默认subnet地址自动会从上一个开始，  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_6.png" alt=""></p>
+<p>创建好后，多了个网桥</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_7.png" alt=""></p>
+<p>指定网段,只需要加–subnet 和–gateway参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker network create --driver bridge --subnet 192.168.1.0/24 --gateway 192.168.1.1 my_net</div></pre></td></tr></table></figure></p>
+<p>容器指定ip，run时加上–ip，只能是使用的–subnet的网络的容器才能使用指定ip功能<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_8.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --network=my_net --ip 192.168.1.100 centos_10_23</div></pre></td></tr></table></figure>
+<p>定义另外一个network网络<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker network create --subnet 192.168.2.0/24 --gateway=192.168.2.1 my_net2</div></pre></td></tr></table></figure></p>
+<p>在mynet_2上创建容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --network=my_net2 centos_10_23</div></pre></td></tr></table></figure></p>
+<p>宿主机上查看路由<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_9.png" alt=""></p>
+<p>开启路由转发<br>sysctl net.ipv4.ip_forward</p>
+<p>在容器内测试192.168.2.2 ping 192.168.1.100，发现网关都能通就是ping不通192.168.1.100  </p>
+<p>默认宿主机上的iptables DROP掉了这两个网桥的连接  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_10.png" alt=""></p>
+<p>给my_net2的容器加入my_net网络  </p>
+<p>docker network connect my_net 60cae2aee142  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_11.png" alt=""></p>
+<p>在去ping 192.168.1.100 就ok了  </p>
+<h3 id="容器和容器间的通信"><a href="#容器和容器间的通信" class="headerlink" title="容器和容器间的通信"></a>容器和容器间的通信</h3><p>3种方式：IP、Docker DNS server 、joined  </p>
+<p>IP方式<br>使用docker network connect将现有容器加入到指定网络实现容器间的通信。  </p>
+<p>Docker DNS server<br>Docker daemon内嵌了一个DNS Server通过Docker run –name定义的容器名进行通信，只能是user-define网络可以使用，默认的bridge不行 。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker run -itd  --name=wan_1 --network=mynet centos_10_23 </div><div class="line">docker run -itd  --name=wan_2 --network=my_net centos_10_23</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker exec -it 8549430966f7 bash</div></pre></td></tr></table></figure>
+<p>ping wan_1<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_12.png" alt=""></p>
+<p>joined方式<br>两个容器共享一个网络栈他，共享网卡核配置信息。joined容器之间通过127.0.0.1直接通信  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name=wan1 centos_10_23</div><div class="line">docker run -itd --name=wan2 --network=container:wan1  centos_10_23</div></pre></td></tr></table></figure>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_13.png" alt=""></p>
+<p>joined合适以下场景<br>1，不同容器中的程序希望通过loopback高效快速通信，比如web-Server和app-serve。<br>2，独立的网络监控容器用来监控网络流量。</p>
+<h3 id="容器访问外网"><a href="#容器访问外网" class="headerlink" title="容器访问外网"></a>容器访问外网</h3><p>容器访问外网(SNAT)<br>通过宿主机的iptables的snat，在宿主机查看  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_14.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_15.png" alt=""></p>
+<p>外界访问容器<br>通过Docker-proxy<br>每一个映射端口，host都会启动一个Docker-proxy进程来处理访问容器的流量  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_16.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_network_17.png" alt=""></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/weixin.png" alt="我爱西红柿 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/docker/" rel="tag">#docker</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/30/docker_base/" rel="next" title="Docker基础">
+                <i class="fa fa-chevron-left"></i> Docker基础
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/11/03/docker_network/"
+           data-title="Docker单主机网络" data-url="http://yoursite.com/2017/11/03/docker_network/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/image.png"
+               alt="我爱西红柿" />
+          <p class="site-author-name" itemprop="name">我爱西红柿</p>
+          <p class="site-description motion-element" itemprop="description">好好学习、天天向上</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">32</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/wanshaoyuan" target="_blank" title="github">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  github
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/wanshaoyuan" target="_blank" title="zhihu">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  zhihu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><span class="nav-number">1.</span> <span class="nav-text">此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#none网络"><span class="nav-number">1.1.</span> <span class="nav-text">none网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#host网络"><span class="nav-number">1.2.</span> <span class="nav-text">host网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bridge网络"><span class="nav-number">1.3.</span> <span class="nav-text">bridge网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#user-define-用户自定义网络"><span class="nav-number">1.4.</span> <span class="nav-text">user-define(用户自定义网络)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容器和容器间的通信"><span class="nav-number">1.5.</span> <span class="nav-text">容器和容器间的通信</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容器访问外网"><span class="nav-number">1.6.</span> <span class="nav-text">容器访问外网</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">我爱西红柿</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+本站总访问量 <span id="busuanzi_value_site_pv"></span> &nbsp&nbsp&nbsp
+您是第<span id="busuanzi_value_site_uv"></span>个来到的小伙伴
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"bladen"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -362,7 +362,7 @@
 <p>[H3C]interface Vlan-interface 50<br>[H3C-Vlan-interface1]ip address 192.168.5.254 255.255.255.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">交换机配置到此结束，接下来是Linux网卡配置</div><div class="line"></div><div class="line">Linux要配置多vlan口。注：当需要启用VLAN虚拟网卡工作的时候，关联的物理网卡网络接口上必须没有IP地址的配置信息。</div><div class="line"></div><div class="line"></div><div class="line">首先确认是否安装vconfig</div><div class="line"></div><div class="line">然后查看核心是否提供VLAN 功能，执行</div></pre></td></tr></table></figure></p>
 <p>dmesg | grep -i 802</p>
 <p>[root@test]# dmesg | grep -i 802</p>
-<p>802.1Q VLAN Support v1.8 Ben Greear<a href="&#x6d;&#97;&#105;&#108;&#116;&#x6f;&#58;&#103;&#x72;&#x65;&#101;&#x61;&#x72;&#x62;&#x40;&#x63;&#x61;&#110;&#x64;&#101;&#108;&#97;&#116;&#101;&#x63;&#104;&#x2e;&#99;&#111;&#109;">&#103;&#x72;&#x65;&#101;&#x61;&#x72;&#x62;&#x40;&#x63;&#x61;&#110;&#x64;&#101;&#108;&#97;&#116;&#101;&#x63;&#104;&#x2e;&#99;&#111;&#109;</a></p>
+<p>802.1Q VLAN Support v1.8 Ben Greear<a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#103;&#114;&#x65;&#101;&#97;&#x72;&#98;&#x40;&#99;&#x61;&#110;&#100;&#101;&#x6c;&#x61;&#x74;&#101;&#x63;&#x68;&#x2e;&#99;&#x6f;&#x6d;">&#103;&#114;&#x65;&#101;&#97;&#x72;&#98;&#x40;&#99;&#x61;&#110;&#100;&#101;&#x6c;&#x61;&#x74;&#101;&#x63;&#x68;&#x2e;&#99;&#x6f;&#x6d;</a></p>
 <p>[root@test]# modprobe 8021q</p>
 <p>[root@test~]#lsmod |grep 8021q //查看系统内核是否支持802.1q协议</p>
 <p>8021q 18633 0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div></pre></td></tr></table></figure></p>
@@ -417,8 +417,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/05/08/boot_from_volume/" rel="next" title="boot from volume的两种方式">
-                <i class="fa fa-chevron-left"></i> boot from volume的两种方式
+              <a href="/2017/05/08/ironic/" rel="next" title="ironic-简介">
+                <i class="fa fa-chevron-left"></i> ironic-简介
               </a>
             
           </div>
@@ -499,7 +499,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">29</span>
+              <span class="site-state-item-count">32</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
