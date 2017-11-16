@@ -386,7 +386,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/04/monitor_1/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,459(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,458(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -437,7 +437,7 @@
 <p>配置启动脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@localhost php-7.1.7]# cp /lnmp/php-7.1.7/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm</div><div class="line">[root@localhost php-7.1.7]# chmod +x /etc/init.d/php-fpm</div></pre></td></tr></table></figure></p>
 <p>配置fast-cgi<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp /usr/local/php7.1.7/etc/php-fpm.d/www.conf.default  /usr/local/php7.1.7/etc/php-fpm.d/www.conf</div></pre></td></tr></table></figure></p>
 <p>修改fast-cgi<br>vim /usr/local/php7.1.7/etc/php-fpm.d/www.conf<br>修改已下参数<br>rlimit_files = 65535</p>
-<p>创建www用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">groupadd www  </div><div class="line">useradd -u www -s /sbin/nologin</div></pre></td></tr></table></figure></p>
+<p>创建www用户和组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">useradd www -s /sbin/nologin</div></pre></td></tr></table></figure></p>
 <p>启动php-fpm<br> /etc/init.d/php-fpm start<br>设置开机自启<br>/sbin/chkconfig –add php-fpm<br>修改php.ini以满足zabbix要求<br>vim /usr/local/php7.1.7/etc/php.ini<br>限制执行目录,nginx网页放在/var/www/html下<br>open_basedir = “/var/www/html/:/tmp”<br>max_execution_time = 300<br>max_input_time = 300<br>post_max_size = 24M<br>upload_max_filesize = 4M<br>修改php连接mysql<br>pdo_mysql.default_socket= /var/lib/mysql/mysql.sock<br>mysqli.default_socket = /var/lib/mysql/mysql.sock</p>
 <h3 id="安装nginx"><a href="#安装nginx" class="headerlink" title="安装nginx"></a>安装nginx</h3><p>wget <a href="http://nginx.org/download/nginx-1.12.1.tar.gz" target="_blank" rel="external">http://nginx.org/download/nginx-1.12.1.tar.gz</a><br>解压  </p>
 <p>[root@localhost lnmp]# tar -xvf nginx-1.12.1.tar.gz</p>
