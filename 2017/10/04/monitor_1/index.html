@@ -386,7 +386,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/04/monitor_1/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,453(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,459(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -409,8 +409,9 @@
 <p>安装依赖<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum -y install gcc gcc-devel gcc-c++ gcc-c++-devel libaio-devel boost boost-devel autoconf* automake* zlib* libxml* ncurses-devel ncurses libgcrypt* libtool* cmake openssl openssl-devel bison bison-devel unzip numactl-devel</div></pre></td></tr></table></figure></p>
 <p>创建mysql软件源<br>vim /etc/yum.repo.d/mysql.repo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[mysql]</div><div class="line">name = mysql</div><div class="line">baseurl = https://mirrors.ustc.edu.cn/mysql-repo/yum/mysql-5.7-community/el/7/x86_64/</div><div class="line">gpgcheck=0</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install mysql-community-libs mysql-community-common  mysql-community-client mysql-community-devel mysql-community-server</div></pre></td></tr></table></figure>
+<p>启动mysql<br>systemctl start mysqld  </p>
 <p>mysql初始化<br>mysqld –initialize –user=mysql  </p>
-<p>查找默认密码<br>grep ‘temporary password’ /var/log/mysqld.log  </p>
+<p>查找默认密码<br>grep “temporary password” /var/log/mysqld.log  </p>
 <p>默认密码策略设置密码需要大写、小写、特殊符号。关闭默认密码策略  </p>
 <p>编辑/etc/my.cnf<br>validate_password=off  </p>
 <p>重启mysql<br>systemctl restart mysqld  </p>
