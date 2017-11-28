@@ -16,29 +16,25 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>Docker安装 | 我爱西红柿</title>
-  <meta name="description" content="centos7安装docker官方推荐centos7.3系统安装依赖yum install -y yum-utils device-mapper-persistent-data  lvm2
-添加docker yum源1yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-版本区别">
+  <title>openstack使用ISO镜像 | 我爱西红柿</title>
+  <meta name="description" content="openstack默认使用ISO镜像创建虚机时，nova从glance那获取镜像，并将根磁盘设置的磁盘类型设置为cdrom类型，ide总线类型，导致到安装系统界面时，会发现找不到磁盘。
+这种情况是正常的，因为你的根分区mout了这个系统的cdrom。当我们在直接使用kvm或vmware时，使用cdrom做为安装介质时，我们也是在选完安装介质后，还需要在创建硬盘进行安装，总好像pc的cdrom是 c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Docker安装">
-<meta property="og:url" content="http://yoursite.com/2017/10/23/install_docker/index.html">
+<meta property="og:title" content="openstack使用ISO镜像">
+<meta property="og:url" content="http://yoursite.com/2017/11/28/openstack_iso/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="centos7安装docker官方推荐centos7.3系统安装依赖yum install -y yum-utils device-mapper-persistent-data  lvm2
-添加docker yum源1yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-版本区别">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_3.png">
-<meta property="og:updated_time" content="2017-10-23T13:45:59.000Z">
+<meta property="og:description" content="openstack默认使用ISO镜像创建虚机时，nova从glance那获取镜像，并将根磁盘设置的磁盘类型设置为cdrom类型，ide总线类型，导致到安装系统界面时，会发现找不到磁盘。
+这种情况是正常的，因为你的根分区mout了这个系统的cdrom。当我们在直接使用kvm或vmware时，使用cdrom做为安装介质时，我们也是在选完安装介质后，还需要在创建硬盘进行安装，总好像pc的cdrom是 c">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_iso_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_iso_2.png">
+<meta property="og:updated_time" content="2017-11-28T16:18:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Docker安装">
-<meta name="twitter:description" content="centos7安装docker官方推荐centos7.3系统安装依赖yum install -y yum-utils device-mapper-persistent-data  lvm2
-添加docker yum源1yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-版本区别">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_1.png">
+<meta name="twitter:title" content="openstack使用ISO镜像">
+<meta name="twitter:description" content="openstack默认使用ISO镜像创建虚机时，nova从glance那获取镜像，并将根磁盘设置的磁盘类型设置为cdrom类型，ide总线类型，导致到安装系统界面时，会发现找不到磁盘。
+这种情况是正常的，因为你的根分区mout了这个系统的cdrom。当我们在直接使用kvm或vmware时，使用cdrom做为安装介质时，我们也是在选完安装介质后，还需要在创建硬盘进行安装，总好像pc的cdrom是 c">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_iso_3.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2017/10/23/install_docker/index.html">
+  <link rel="canonical" href="http://yoursite.com/2017/11/28/openstack_iso/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -348,14 +344,14 @@
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-install_docker" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-openstack_iso" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      Docker安装
+      openstack使用ISO镜像
     </h1>
   
 
@@ -363,32 +359,32 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/10/23/install_docker/" class="article-date">
-	  <time datetime="2017-10-23T13:45:59.000Z" itemprop="datePublished">2017-10-23</time>
+	<a href="/2017/11/28/openstack_iso/" class="article-date">
+	  <time datetime="2017-11-28T16:15:26.000Z" itemprop="datePublished">2017-11-29</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
+    <a class="article-category-link" href="/categories/openstack/">openstack</a>
   </span>
 
         
   <span class="article-tag">
     <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
+	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/23/install_docker/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/11/28/openstack_iso/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 267(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 436(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
 	
 
       </div>
@@ -403,26 +399,19 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <p>centos7安装docker<br>官方推荐centos7.3系统<br>安装依赖<br>yum install -y yum-utils device-mapper-persistent-data  lvm2</p>
-<p>添加docker yum源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo</div></pre></td></tr></table></figure></p>
-<p>版本区别：<br>docker-ce-edge：类似开发测试版，功能比较新，但不一定稳定，edge是每月更新一次。</p>
-<p>docker-ce-stable：稳定版，每3个月更新一次。</p>
-<p>开启docker-ce-edge更新(默认是关闭的)<br>yum-config-manager –enable docker-ce-edge<br>yum-config-manager –disable docker-ce-edge</p>
-<p>安装docker  </p>
-<p>yum install docker-ce -y</p>
-<p>启动docker  </p>
-<p>systemctl start docker  </p>
-<p>测试docker是否安装成功,运行个httpd 镜像  </p>
-<p>docker run -d -p 80:80 httpd</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_install_1.png" alt=""></p>
-<p>-d:以后台方式运行<br>-p：端口映射，源端口:目标端口  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_install_2.png" alt=""></p>
-<p>docker hub在国外，速度太慢了，使用国内的镜像源daocloud<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://a58c8480.m.daocloud.io</div></pre></td></tr></table></figure></p>
-<p>重启docker 进程<br>systemctl restart docker  </p>
-<p>运行mysql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run --name first-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=4435448 -d mysql</div></pre></td></tr></table></figure></p>
-<p>-e设置环境变量<br>这里使用-e设置环境变量MYSQL_ROOT_PASSWORD</p>
-<p>连接方法<br>mysql -h 10.211.55.5 -P3306 -uroot -p4435448</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_install_3.png" alt=""></p>
+        <p>openstack默认使用ISO镜像创建虚机时，nova从glance那获取镜像，并将根磁盘设置的磁盘类型设置为cdrom类型，ide总线类型，导致到安装系统界面时，会发现找不到磁盘。</p>
+<p>这种情况是正常的，因为你的根分区mout了这个系统的cdrom。当我们在直接使用kvm或vmware时，使用cdrom做为安装介质时，我们也是在选完安装介质后，还需要在创建硬盘进行安装，总好像pc的cdrom是 cd或dvd设备，创建的磁盘是pc的硬盘一样。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack_iso_3.png" alt=""><br>解决方法<br>1、修改flavor，增加临时磁盘空间，这样安装时就可以看见硬盘了<br><img src="http://ohx02qrb8.bkt.clouddn.com/openstack_iso_2.png" alt=""></p>
+<p>弊端是<br>openstack的快照功能只能针对根磁盘，所以想通过此方法创建主机，在做快照，通过快照做成镜像是不行的。<br>可以通过修改libvirt代码将cdrom mount到临时磁盘，根分区用来安装系统就解决了这个问题。    </p>
+<p>2、给云主机挂载块云硬盘，将系统安装在云硬盘内  </p>
+<p>将此云硬盘做为镜像方法<br>通过glance create创建一个空镜像，记录uuid占个坑<br>glance image-create  </p>
+<p>在ceph底层将这个volume卷cp到glance读取image的pool  </p>
+<p>rbd cp volume/volume-xxxxx images/image_uuid  </p>
+<p>创建snap打上protect<br>rbd snap create images/image_uuid@snap<br>rbd snap protet image/image_uuid@snap  </p>
+<p>修改刚刚创建的空的glance镜像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ceph_id=`ceph -s | grep cluster | awk &apos;&#123;print $2&#125;&apos;`</div></pre></td></tr></table></figure></p>
+<p>设置后端存储URL<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glance location-add --url rbd://$&#123;ceph_id&#125;/images/$&#123;image_uuid&#125;/snap $image_uuid</div></pre></td></tr></table></figure></p>
+<p>images为ceph中存放镜像的pool名，根据实际环境修改。<br>更新镜像元数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">glance image-update --name=&quot;test_image&quot; --disk-format=raw --container-format=bare image_uuid</div></pre></td></tr></table></figure></p>
+<p>然后就可以基于新的镜像创建云主机了。  </p>
 
       
     </div>
@@ -445,13 +434,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2017/10/30/docker_machine/" title="Docker machine(docker 多主机部署)"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2017/10/16/monitor_5/" title="从零开始搭建云平台监控(五)监控自动化部署">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+      <a href="/2017/11/17/docker_network_overlay/" title="Docker多主机网络(overlay)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
     </li>
     
   </ul>
