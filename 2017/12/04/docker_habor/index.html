@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker镜像仓库管理软件(habor） | 我爱西红柿</title>
+  <meta name="description" content="项目首页http://vmware.github.io/harbor/#gettingHarbor软件版本操作系统：centos7.2harbor：1.2.2docker：17.09-ce环境信息container-0  192.168.2.110container-1   192.168.2.112container-2   192.168.2.113  
+habor是什么？habor并不是镜像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker镜像仓库管理软件(habor）">
+<meta property="og:url" content="http://yoursite.com/2017/12/04/docker_habor/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="项目首页http://vmware.github.io/harbor/#gettingHarbor软件版本操作系统：centos7.2harbor：1.2.2docker：17.09-ce环境信息container-0  192.168.2.110container-1   192.168.2.112container-2   192.168.2.113  
+habor是什么？habor并不是镜像">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_16.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_17.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_18.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_19.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_20.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_21.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_22.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_23.png">
+<meta property="og:updated_time" content="2017-12-04T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker镜像仓库管理软件(habor）">
+<meta name="twitter:description" content="项目首页http://vmware.github.io/harbor/#gettingHarbor软件版本操作系统：centos7.2harbor：1.2.2docker：17.09-ce环境信息container-0  192.168.2.110container-1   192.168.2.112container-2   192.168.2.113  
+habor是什么？habor并不是镜像">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_habor_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2017/12/04/docker_habor/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Linux/" style="font-size: 14px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.25px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.5px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.75px;">docker</a> <a href="/tags/neutron/" style="font-size: 13.5px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.75px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.25px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/04/docker_habor/" class="title">docker镜像仓库管理软件(habor）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-04T13:45:59.000Z" itemprop="datePublished">2017-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/openstack/">openstack</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/11/28/openstack_iso/" class="title">openstack使用ISO镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-11-28T16:15:26.000Z" itemprop="datePublished">2017-11-29</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/11/17/docker_network_overlay/" class="title">Docker多主机网络(overlay)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-11-17T13:45:59.000Z" itemprop="datePublished">2017-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/11/03/docker_network/" class="title">Docker单主机网络</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-11-03T13:45:59.000Z" itemprop="datePublished">2017-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/10/30/docker_machine/" class="title">Docker machine(docker 多主机部署)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-10-30T13:45:59.000Z" itemprop="datePublished">2017-10-30</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#habor是什么？"><span class="toc-number">1.</span> <span class="toc-text">habor是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#组件介绍"><span class="toc-number">1.1.</span> <span class="toc-text">组件介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#整体架构"><span class="toc-number">1.2.</span> <span class="toc-text">整体架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-login过程"><span class="toc-number">1.3.</span> <span class="toc-text">docker login过程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装habor"><span class="toc-number">2.</span> <span class="toc-text">安装habor</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#修改配置文件"><span class="toc-number">2.1.</span> <span class="toc-text">修改配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#执行安装"><span class="toc-number">2.2.</span> <span class="toc-text">执行安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#web访问和基本使用"><span class="toc-number">2.3.</span> <span class="toc-text">web访问和基本使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#用户管理"><span class="toc-number">2.4.</span> <span class="toc-text">用户管理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#验证"><span class="toc-number">3.</span> <span class="toc-text">验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-client配置"><span class="toc-number">3.1.</span> <span class="toc-text">docker-client配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多habor的同步"><span class="toc-number">4.</span> <span class="toc-text">多habor的同步</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker_habor" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker镜像仓库管理软件(habor）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/12/04/docker_habor/" class="article-date">
+	  <time datetime="2017-12-04T13:45:59.000Z" itemprop="datePublished">2017-12-04</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/04/docker_habor/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,863(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>项目首页<br><a href="http://vmware.github.io/harbor/#gettingHarbor" target="_blank" rel="external">http://vmware.github.io/harbor/#gettingHarbor</a><br>软件版本<br>操作系统：centos7.2<br>harbor：1.2.2<br>docker：17.09-ce<br>环境信息<br>container-0  192.168.2.110<br>container-1   192.168.2.112<br>container-2   192.168.2.113  </p>
+<h3 id="habor是什么？"><a href="#habor是什么？" class="headerlink" title="habor是什么？"></a>habor是什么？</h3><p>habor并不是镜像仓库，更确切的说是一个镜像仓库管理平台，原生的docker registry不支持用户权限管理，而habor镜像仓库也是用的原生的docker registry，只是又通过一些其他组件来进行用户和权限管理功能。<br>habor默认镜像是存储在本地文件系统，可以的支持的第三方对象存储，如Amazon s3、openstack swift、ceph radosgw。</p>
+<h4 id="组件介绍"><a href="#组件介绍" class="headerlink" title="组件介绍"></a>组件介绍</h4><p>habor安装默认会启动这些组件<br>habor-administrator<br>habor的系统管理容器，可以进行habor-Server的一些系统信息的获取，如存储用量<br>harbor-db<br>负责存储habor的用户信息和项目信息<br>harbor-jobservice<br>负责habor与habor的之间项目的同步<br>harbor-log<br>负责统一管理habor日志<br>habor-ui<br>负责web端展示，token的验证和生成。<br>nginx<br>前端反向代理，<br>registry<br>docker的镜像仓库  </p>
+<h4 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h4><p>来源(<a href="http://blog.csdn.net/u010278923/article/details/77941995" target="_blank" rel="external">http://blog.csdn.net/u010278923/article/details/77941995</a>)  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_1.png" alt=""></p>
+<p>主要组件包括proxy，他是一个nginx前端代理，主要是分发前端页面ui访问和镜像上传和下载流量，上图中通过深蓝色先标识；ui提供了一个web管理页面，当然还包括了一个前端页面和后端API，底层使用mysql数据库；registry是镜像仓库，负责存储镜像文件，当镜像上传完毕后通过hook通知ui创建repository，上图通过红色线标识，当然registry的token认证也是通过ui组件完成；adminserver是系统的配置管理中心附带检查存储用量，ui和jobserver启动时候回需要加载adminserver的配置，通过灰色线标识；jobsevice是负责镜像复制工作的，他和registry通信，从一个registry pull镜像然后push到另一个registry，并记录job_log，上图通过紫色线标识；log是日志汇总组件，通过docker的log-driver把日志汇总到一起，通过浅蓝色线条标识。</p>
+<h4 id="docker-login过程"><a href="#docker-login过程" class="headerlink" title="docker login过程"></a>docker login过程</h4><p>(<a href="http://www.sohu.com/a/67065472_115128" target="_blank" rel="external">http://www.sohu.com/a/67065472_115128</a>)<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_2.png" alt=""></p>
+<p>(a) 首先，这个请求会由监听80端口的proxy容器接收到。根据预先设置的匹配规则，容器中的Nginx会将请求转发给后端的registry 容器；<br>(b) 在registry容器一方，由于配置了基于token的认证，registry会返回错误代码401，提示Docker客户端访问token服务绑定的URL。在Harbor中，这个URL指向Core Services；<br>(c) Docker 客户端在接到这个错误代码后，会向token服务的URL发出请求，并根据HTTP协议的Basic Authentication规范，将用户名密码组合并编码，放在请求头部(header)；<br>(d) 类似地，这个请求通过80端口发到proxy容器后，Nginx会根据规则把请求转发给ui容器，ui容器监听token服务网址的处理程序接收到请求后，会将请求头解码，得到用户名、密码；<br>(e) 在得到用户名、密码后，ui容器中的代码会查询数据库，将用户名、密码与mysql容器中的数据进行比对（注：ui 容器还支持LDAP的认证方式，在那种情况下ui会试图和外部LDAP服务进行通信并校验用户名/密码)。比对成功，ui容器会返回表示成功的状态码，并用密钥生成token，放在响应体中返回给Docker 客户端。<br>至此，一次docker login 成功地完成了，Docker客户端会把步骤(c)中编码后的用户名密码保存在本地的隐藏文件中。  </p>
+<p>docker push的流程<br>(<a href="http://www.sohu.com/a/67065472_115128" target="_blank" rel="external">http://www.sohu.com/a/67065472_115128</a>)  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_3.png" alt=""><br>用户登录成功后用docker push命令向Harbor 推送一个Docker image：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># docker push 192.168.2.110/library/hello-world</div></pre></td></tr></table></figure></p>
+<p>(a) 首先，docker 客户端会重复login的过程，首先发送请求到registry,之后得到token 服务的地址；<br>(b) 之后，Docker 客户端在访问ui容器上的token服务时会提供额外信息，指明它要申请一个对imagelibrary/hello-world进行push操作的token；<br>(c) token 服务在经过Nginx转发得到这个请求后，会访问数据库核实当前用户是否有权限对该image进行push。如果有权限，它会把image的信息以及push动作进行编码，并用私钥签名，生成token返回给Docker客户端；<br>(d) 得到token之后Docker客户端会把token放在请求头部，向registry发出请求，试图开始推送image。Registry 收到请求后会用公钥解码token并进行核对，一切成功后，image的传输就开始了。  </p>
+<h3 id="安装habor"><a href="#安装habor" class="headerlink" title="安装habor"></a>安装habor</h3><p>container-0上安装<br>habor安装是写好的docker-compose.yml文件，所以需要先安装docker-compose<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">easy_install pip</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip install docker-compose</div></pre></td></tr></table></figure>
+<p>下载habor离线安装包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http://harbor.orientsoft.cn/harbor-1.2.2/harbor-offline-installer-v1.2.2.tgz</div></pre></td></tr></table></figure></p>
+<p>md5<br>d2af810be0554319181969835a462807<br>解压<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -xvf harbor-offline-installer-v1.2.2.tgz</div></pre></td></tr></table></figure></p>
+<h4 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd /root/habor</div></pre></td></tr></table></figure>
+<p>vim /root/habor/harbor.cfg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">hostname=192.168.2.110  //这里不能写localhost和127.0.0.1，</div><div class="line">ui_url_protocol = http //协议写http或https</div><div class="line">harbor_admin_password = 123456 //harbor admin的密码，默认为Harbor12345</div></pre></td></tr></table></figure></p>
+<h4 id="执行安装"><a href="#执行安装" class="headerlink" title="执行安装"></a>执行安装</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root@container-0 harbor]# ./install.sh</div></pre></td></tr></table></figure>
+<p>它会将刚刚下载的镜像import进行，然后调用docker-compose，初始化，并启动。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_4.png" alt="">  </p>
+<p>查看集群状态<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_5.png" alt="">  </p>
+<h4 id="web访问和基本使用"><a href="#web访问和基本使用" class="headerlink" title="web访问和基本使用"></a>web访问和基本使用</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_6.png" alt="">  </p>
+<p>我这里刚刚设置了用户名为admin密码为123456，如果默认密码为Harbor12345<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_7.png" alt="">  </p>
+<h4 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h4><p>创建用户<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_8.png" alt="">  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_9.png" alt="">  </p>
+<p>创建项目<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_10.png" alt="">  </p>
+<p>将刚刚创建的wanshaoyuan添加成项目内，角色为项目管理员<br>用户加入对应的项目分为三种角色<br>项目管理员、开发人员、访客<br>分别对应的权限为<br>项目管理员：M(管理)、D(删除)、R(读取)、W(写入)、S(查询)<br>开发人员：R(读取)、W(写入)、S(查询)<br>访客：R(读取)、S(查询)  </p>
+<p>项目管理<br>项目是一组镜像仓库的逻辑集合，habor对用户权限的控制，实上就是对这个用户在这个项目的权限控制，一个项目可以有多个项目管理员，下面的habor同步也是基于项目的。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_11.png" alt="">  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_12.png" alt="">  </p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="docker-client配置"><a href="#docker-client配置" class="headerlink" title="docker-client配置"></a>docker-client配置</h4><p>去上传镜像啦，因为habor使用的是http协议，而默认docker push镜像默认是https的所以我们需要修改下docker-client<br>container-1和container-2上操作<br>vim /usr/lib/systemd/system/docker.service<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ExecStart=/usr/bin/dockerd --insecure-registry=192.168.2.110</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl daemon-reload</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart docker</div></pre></td></tr></table></figure>
+<p>在container-1上，上传镜像导habor<br>给镜像打tag<br>habor格式为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[registry_host]:[port]/[project_name]/[封装的应用]:[版本]</div></pre></td></tr></table></figure></p>
+<p>原生的registry，是用户名，habor是写刚刚创建的项目名<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[registry_host]:[port]/[username]/[封装的应用]:[版本]</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_13.png" alt=""><br>push镜像  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_14.png" alt="">  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_15.png" alt="">  </p>
+<p>在habor web端查看<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_16.png" alt="">  </p>
+<p>日志可以看见刚刚的push操作<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_17.png" alt="">  </p>
+<p>pull镜像<br>在container-2上将刚刚push的镜像pull下来<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_18.png" alt="">  </p>
+<h3 id="多habor的同步"><a href="#多habor的同步" class="headerlink" title="多habor的同步"></a>多habor的同步</h3><p>有多个habor服务器时可以设置镜像的同步</p>
+<p>在container-1上在启动一个habor</p>
+<p>安装方法同上<br>访问<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_19.png" alt="">  </p>
+<p>配置项目复制<br>点击进项目<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_20.png" alt="">  </p>
+<p>添加复制规则<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_21.png" alt=""><br>container-0上查看日志，已经同步成功了<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_22.png" alt="">  </p>
+<p>container-1上查看，项目已经创建好了<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_habor_23.png" alt="">  </p>
+<p>后面只要container-0上的镜像有更新，container-1也会自动同步  </p>
+<p><a href="http://blog.csdn.net/u010278923/article/details/72468791" target="_blank" rel="external">http://blog.csdn.net/u010278923/article/details/72468791</a><br><a href="http://www.sohu.com/a/67065472_115128" target="_blank" rel="external">http://www.sohu.com/a/67065472_115128</a><br><a href="https://github.com/vmware/harbor/blob/master/docs/installation_guide.md" target="_blank" rel="external">https://github.com/vmware/harbor/blob/master/docs/installation_guide.md</a><br><a href="http://www.cnblogs.com/huangjc/p/6270405.html" target="_blank" rel="external">http://www.cnblogs.com/huangjc/p/6270405.html</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2017/11/28/openstack_iso/" title="openstack使用ISO镜像">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
