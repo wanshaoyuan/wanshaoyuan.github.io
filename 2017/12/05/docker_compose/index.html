@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker-compose | 我爱西红柿</title>
+  <meta name="description" content="概念用来定义和管理多个容器的容器编排工具，docker-compose是docker-fig的升级版。能做什么？能够快速管理和创建多个容器，比如我直想起一个WordPress，在容器中也不需要自己去搭建lamp和然后安装WordPress了，只需要在docker hub找mysql和WordPress的镜像就可以，然后自己docker run，传对应的参数进去，映射端口，映射目录，很麻烦，同时非常">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker-compose">
+<meta property="og:url" content="http://yoursite.com/2017/12/05/docker_compose/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概念用来定义和管理多个容器的容器编排工具，docker-compose是docker-fig的升级版。能做什么？能够快速管理和创建多个容器，比如我直想起一个WordPress，在容器中也不需要自己去搭建lamp和然后安装WordPress了，只需要在docker hub找mysql和WordPress的镜像就可以，然后自己docker run，传对应的参数进去，映射端口，映射目录，很麻烦，同时非常">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_16.png">
+<meta property="og:updated_time" content="2017-12-05T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker-compose">
+<meta name="twitter:description" content="概念用来定义和管理多个容器的容器编排工具，docker-compose是docker-fig的升级版。能做什么？能够快速管理和创建多个容器，比如我直想起一个WordPress，在容器中也不需要自己去搭建lamp和然后安装WordPress了，只需要在docker hub找mysql和WordPress的镜像就可以，然后自己docker run，传对应的参数进去，映射端口，映射目录，很麻烦，同时非常">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-compose_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2017/12/05/docker_compose/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">7</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Linux/" style="font-size: 14px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.25px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.5px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/neutron/" style="font-size: 13.5px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.75px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.25px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/05/docker_compose/" class="title">docker-compose</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-05T13:45:59.000Z" itemprop="datePublished">2017-12-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/04/docker_habor/" class="title">docker镜像仓库管理软件(habor）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-04T13:45:59.000Z" itemprop="datePublished">2017-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/openstack/">openstack</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/11/28/openstack_iso/" class="title">openstack使用ISO镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-11-28T16:15:26.000Z" itemprop="datePublished">2017-11-29</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/11/17/docker_network_overlay/" class="title">Docker多主机网络(overlay)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-11-17T13:45:59.000Z" itemprop="datePublished">2017-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/11/03/docker_network/" class="title">Docker单主机网络</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-11-03T13:45:59.000Z" itemprop="datePublished">2017-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#docker-compose-yml语法解析"><span class="toc-number">1.1.</span> <span class="toc-text">docker-compose.yml语法解析</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子"><span class="toc-number">2.</span> <span class="toc-text">例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#python-flask框架网站"><span class="toc-number">2.1.</span> <span class="toc-text">python flask框架网站</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#构建WordPress应用"><span class="toc-number">2.2.</span> <span class="toc-text">构建WordPress应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#构建zabbix监控"><span class="toc-number">2.3.</span> <span class="toc-text">构建zabbix监控</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker_compose" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker-compose
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/12/05/docker_compose/" class="article-date">
+	  <time datetime="2017-12-05T13:45:59.000Z" itemprop="datePublished">2017-12-05</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/05/docker_compose/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,138(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 9(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>用来定义和管理多个容器的容器编排工具，docker-compose是docker-fig的升级版。<br>能做什么？<br>能够快速管理和创建多个容器，比如我直想起一个WordPress，在容器中也不需要自己去搭建lamp和然后安装WordPress了，只需要在docker hub找mysql和WordPress的镜像就可以，然后自己docker run，传对应的参数进去，映射端口，映射目录，很麻烦，同时非常容易出错，有了docker-compose，你只需要通过yaml语言，编写docker-compose脚本，然后就可以通过docker-compose一键是启动，关闭，删除这些容器了。脚本更加好维护和方便迁移。</p>
+<p>安装docker-compose<br>可以直接通过pip 安装，因为docker-compose是基于python写的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pip install docker-compose</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_1.png" alt=""></p>
+<p>原理<br>dockerc-compose使用不同的请求将会调用不同的python方法去处理，比如使用docker-compose run -d将会调用run方法处理，最终调用docker-daemon去完成操作，docker-compose借助docker-py来完任务，docker-py是一个使用python开发并调用docker-daemon api的docker client包。  </p>
+<p>docker-compose命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">–-verbose：输出详细信息。</div><div class="line"></div><div class="line">-f：制定一个非docker-compose.yml命名的yaml文件。</div><div class="line"></div><div class="line">-p：设置一个项目名称，默认是当前目录的名称。</div><div class="line">-d：表示后台运行</div><div class="line">--project-directory ：设置一个项目路径默认</div><div class="line">build:构建镜像，docker-compose里面镜像来源有两种一种是通过Dockerfile构建，一种是通过镜像仓库pull下来，build在这里就是指调用Docker-compose的build参数，构建镜像</div><div class="line">config:用于检查docker-compose的yml文件语法是否有错误</div><div class="line">create:创建出来的容器状态为create状态。</div><div class="line">down：将创建出来的容器集群down掉。</div><div class="line">events:接收容器事件</div><div class="line">exec：对run的容器执行命令</div><div class="line">ps：输出正在运行容器</div><div class="line">pull:pull一个服务镜像下来 docker-compose pull server_name</div><div class="line">push:上传一个容器镜像 docker-compose push server_name</div><div class="line">stop：停止容器集群</div><div class="line">start：启动容器集群</div><div class="line">up：创建和启动一个容器</div><div class="line">scale:设置运行容器的数量，可以进行集群伸缩，如docker-compose scale resource_name=container_num</div></pre></td></tr></table></figure></p>
+<p>例<br>下面这个docker-compose.yml默认执行docker-compose up -d只会起一个web1一个db1，web1使用centos镜像，db1使用httpd镜像，并且db1依赖web1，必须等到web1安装完才能操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">version: &quot;3&quot;</div><div class="line">services:</div><div class="line"> web1:</div><div class="line">  image: centos</div><div class="line">  tty: true</div><div class="line"> db1:</div><div class="line">  image: httpd</div><div class="line">  depends_on:</div><div class="line">    - web1</div><div class="line">  tty: true</div></pre></td></tr></table></figure>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_2.png" alt=""></p>
+<p>假设web1资源不够了需要进行扩容到5个<br>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker-compose scale web1=5</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_3.png" alt=""></p>
+<p>迅速扩容到5个，此时高峰期以过，不需要这么多web1容器了需要缩减到正常<br>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker-compose scale web1=1</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_4.png" alt=""></p>
+<h4 id="docker-compose-yml语法解析"><a href="#docker-compose-yml语法解析" class="headerlink" title="docker-compose.yml语法解析"></a>docker-compose.yml语法解析</h4><p>详细参考<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">https://docs.docker.com/compose/compose-file/compose-versioning/</div><div class="line">https://www.cnblogs.com/freefei/p/5311294.html</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">以下面这个文件为例</div><div class="line">version: &quot;3&quot;</div><div class="line">services:</div><div class="line"> web1:</div><div class="line">  image: centos</div><div class="line">  tty: true</div><div class="line"> db1:</div><div class="line">  image: centos</div><div class="line">  depends_on:</div><div class="line">    - web1</div><div class="line">  tty: true</div></pre></td></tr></table></figure>
+<p>version ：版本，docker-compose的版本，不同的版本所支持的语法是不一样的，所对应的docker版本也是不一样的<br>如,但新版本都是向下兼容的 。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_5.png" alt=""></p>
+<p>services：表示定义服务，是以容器为颗粒度的。<br>web1：表示服务名。<br>image：才用哪个镜像，docker-compose支持两种镜像来源，一种是从docker-hub上，或本地镜像仓库，一种是通过dockerfile构建镜像那这里就应该是build了。<br>tty：根docker run的-t一样，为容器重新分配一个伪输入终端。<br>depends_on:依赖那个服务，这里表示等待哪个服务先完成，在进行本服务的操作。  </p>
+<p>其中参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">links:                       </div><div class="line">  - server_name</div><div class="line">  - server_name:alias_name</div></pre></td></tr></table></figure></p>
+<p>链接到其他服务中的容器，使用服务名称，或别名,这样在容器中就可以通过服务名的方式联通。但在新版本docker 17.09版本中发现就算不link，docker默认也将他们信息添加到docker dns中了可以直接ping通。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">external_links</div><div class="line"> - container_name</div></pre></td></tr></table></figure></p>
+<p>链接外部已经存在容器，非docker-compose管理的容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ports:</div><div class="line">  - &quot;xxx:xxx&quot;</div></pre></td></tr></table></figure></p>
+<p>端口映射<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">volumes：</div><div class="line">   -/dxx/xxx:/xxx</div><div class="line">   -/dxx/xxxx:xxx:ro</div></pre></td></tr></table></figure></p>
+<p>卷映射,加上ro表示只读模式。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">volume_from:</div><div class="line">     - container_name</div></pre></td></tr></table></figure></p>
+<p>从另外一个服务或容器挂载他的卷。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">environment：</div><div class="line">  - XXXX=XXX</div><div class="line">  - XXXX=XXX</div></pre></td></tr></table></figure>
+<p>设置环境变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">extra_hosts:</div><div class="line">   - &quot;www.test.com: xxx.xxx.xxx.xx&quot;</div></pre></td></tr></table></figure></p>
+<p>添加此项到hosts文件</p>
+<p>container_name: xxx 设置容器名  </p>
+<p>hostname： xxx 设置主机名  </p>
+<p>restart:always  根docker run参数一样，无论怎么样，自动拉起此容器  </p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><h4 id="python-flask框架网站"><a href="#python-flask框架网站" class="headerlink" title="python flask框架网站"></a>python flask框架网站</h4><p>以docker官网例子docker-compose构建一个简单的动态网站为例<br>创建compose文件夹，并cd到目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir /compose</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd /compose</div></pre></td></tr></table></figure>
+<p>编写一个python文件，内容如下<br>vim app.py<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">from flask import Flask</div><div class="line">from redis import Redis</div><div class="line"></div><div class="line">app = Flask(__name__)</div><div class="line">redis = Redis(host=&apos;redis&apos;, port=6379)</div><div class="line"></div><div class="line">@app.route(&apos;/&apos;)</div><div class="line">def hello():</div><div class="line">    count = redis.incr(&apos;hits&apos;)</div><div class="line">    return &apos;Hello World! I have been seen &#123;&#125; times.\n&apos;.format(count)</div><div class="line"></div><div class="line">if __name__ == &quot;__main__&quot;:</div><div class="line">    app.run(host=&quot;0.0.0.0&quot;, debug=True)</div></pre></td></tr></table></figure></p>
+<p>其中host的redis为docker-compose里面定义的redis的service-name，因为新版本docker默认会将service_name 添加到dns所以可以不用link直接就可以通过主机名进行通信。  </p>
+<p>创建requirements.txt文件用于pip程序安装  </p>
+<p>vim requirements.txt<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">flask</div><div class="line">redis</div></pre></td></tr></table></figure></p>
+<p>创建Dockerfile文件用于构建镜像<br>vim Dockerfile<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">FROM python:3.4-alpine</div><div class="line">ADD . /code</div><div class="line">WORKDIR /code</div><div class="line">RUN pip install -r requirements.txt</div><div class="line">CMD [&quot;python&quot;, &quot;app.py&quot;]</div></pre></td></tr></table></figure></p>
+<p>创建Docker-compose文件，用于构建应用集群<br>vim docker-compose.yml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">version: &apos;3&apos;</div><div class="line">services:</div><div class="line">   web:</div><div class="line">    build: .</div><div class="line">    volumes:</div><div class="line">      - .:/code</div><div class="line">    ports:</div><div class="line">      - &quot;5000:5000&quot;</div><div class="line">   redis:</div><div class="line">     image: &quot;redis:alpine&quot;</div></pre></td></tr></table></figure></p>
+<p>开始运行<br>docker-compose up<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_6.png" alt=""></p>
+<p>访问浏览器<a href="http://localhost:5000,刷新一下times根着变一次。" target="_blank" rel="external">http://localhost:5000,刷新一下times根着变一次。</a><br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_7.png" alt=""></p>
+<p>查看容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker ps -a</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_8.png" alt=""></p>
+<p>如果要后台运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker-compose up -d</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_9.png" alt=""></p>
+<p>查看服务的环境变量<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_10.png" alt=""></p>
+<p>通过service_name控制单个服务的开关。<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_11.png" alt=""></p>
+<p>需要注意的是，如果没指定网络的话，默认docker-compose会创建一个以docker-compose.yml所在文件夹名为名的bridge网络。比如我的docker-compose.yml文件是放在zabbix这个目录，那么通过docker-compose构建集群后，会自动创建一个zabbix_default网络，类型为bridge。</p>
+<p>如果需要使创建的应用集群同时创建网络，使用下面例子，创建docker集群时，同时构建指定网络名称和类型、网段的docker网络。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">version: &apos;3&apos;</div><div class="line">services:</div><div class="line">    web:</div><div class="line">      build: .</div><div class="line">      ports:</div><div class="line">       - &quot;5000:5000&quot;</div><div class="line">      networks:</div><div class="line">       - test</div><div class="line">    redis:</div><div class="line">      networks:</div><div class="line">       - test</div><div class="line">      image: &quot;redis:alpine&quot;</div><div class="line">networks:</div><div class="line">  test:</div><div class="line">    driver: bridge</div><div class="line">    ipam:</div><div class="line">      driver: default</div><div class="line">      config:</div><div class="line">        - subnet: 172.28.0.0/16</div></pre></td></tr></table></figure></p>
+<p>web和reids服务都通过network参数加入到test网络中，下面networks资源开始创建test网络，类型为bridge，ipadm驱动为默认，网段为172.28.0.0/16。  </p>
+<p>docker-compose默认没指定网络会创建一个自己的网络，然后将这些service加入进去。</p>
+<p>执行docker-compose up -d<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_12.png" alt=""></p>
+<p>查看这个网络<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_13.png" alt=""></p>
+<p>如果需要加入一个已经存在的网络<br>创建网络<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker network create --driver bridge --subnet 192.168.1.0/24 --gateway 192.168.1.1 my_net</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">version: &quot;3&quot;</div><div class="line">services:</div><div class="line"> web1:</div><div class="line">  image: centos</div><div class="line">  tty: true</div><div class="line">  networks:</div><div class="line">     - my_net</div><div class="line"> db1:</div><div class="line">  image: centos</div><div class="line">  depends_on:</div><div class="line">    - web1</div><div class="line">  tty: true</div><div class="line">  networks:</div><div class="line">      - my_net</div><div class="line"></div><div class="line">networks:</div><div class="line">  my_net:</div><div class="line">    external: true</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker-compose  up -d</div></pre></td></tr></table></figure>
+<p>在去镜像内查看就发现是192.168.1.0/24的网段了。</p>
+<h4 id="构建WordPress应用"><a href="#构建WordPress应用" class="headerlink" title="构建WordPress应用"></a>构建WordPress应用</h4><p>使用两个镜像，一个mysql，一个WordPress，WordPress已经部署好了apache和php和WordPress。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">version: &apos;3&apos;</div><div class="line">services:</div><div class="line">    db1:</div><div class="line">      image: mysql:5.7</div><div class="line">      volumes:</div><div class="line">       - /var/lib/mysql:/var/lib/mysql</div><div class="line">      environment:</div><div class="line">       - MYSQL_ROOT_PASSWORD=password</div><div class="line">       - MYSQL_DATABASE=wordpress</div><div class="line">       - MYSQL_USER=wordpress</div><div class="line">       - MYSQL_PASSWORD=wordpress</div><div class="line"></div><div class="line">    wordpress:</div><div class="line">       image: wordpress:latest</div><div class="line">       depends_on:</div><div class="line">         - db1</div><div class="line">       ports:</div><div class="line">         - 8000:80</div><div class="line">       environment:</div><div class="line">         - WORDPRESS_DB_HOST=db1</div><div class="line">         - WORDPRESS_DB_USER=wordpress</div><div class="line">         - WORDPRESS_DB_PASSWORD=wordpress</div><div class="line">         - WORDPRESS_DB_NAME=wordpress</div></pre></td></tr></table></figure>
+<p>默认docker-compose出来的容器已经自动添加service_name和ip的映射了，所以这里DB_HOST直接写db1，不用links也是可以的互通的。<br>这些镜像的环境变量可以在docker hub上找到  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_14.png" alt=""></p>
+<p>构建<br>使用下面的命令，所有的服务将使用后台模式被启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker-compose up -d</div></pre></td></tr></table></figure></p>
+<p>访问<br><a href="http://localhost:8000" target="_blank" rel="external">http://localhost:8000</a><br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_15.png" alt=""></p>
+<h4 id="构建zabbix监控"><a href="#构建zabbix监控" class="headerlink" title="构建zabbix监控"></a>构建zabbix监控</h4><p>zabbix-server分为两个部分，zabbix-server-mysql负责接收zabbix-agent的监控数据，然后将监控数据存储到mysql中，zabbix-web-nginx-mysql负责展示监控数据。</p>
+<p>因为默认mysql数据库不是utf-8的编码所以需要重新构建下镜像<br>vim Dockerfile<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">FROM mysql:5.7</div><div class="line">CMD [&quot;mysqld&quot;, &quot;--character-set-server=utf8&quot;, &quot;--collation-server=utf8_bin&quot;]，</div></pre></td></tr></table></figure></p>
+<p>所以在mysql镜像这里没有直接用仓库的镜像，而是采用dockerfile重新构建。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">version: &apos;3&apos;</div><div class="line">services:</div><div class="line">    db1:</div><div class="line">     build: .</div><div class="line">     volumes:</div><div class="line">       - /var/lib/mysql:/var/lib/mysql</div><div class="line">     environment:</div><div class="line">       - MYSQL_ROOT_PASSWORD=password</div><div class="line">       - MYSQL_USER=zabbix</div><div class="line">       - MYSQL_PASSWORD=zabbix</div><div class="line">       - MYSQL_DATABASE=zabbix</div><div class="line"></div><div class="line">    zabbix-server:</div><div class="line">     image: zabbix/zabbix-server-mysql:ubuntu-3.4.4</div><div class="line">     ports:</div><div class="line">      - 10051:10051</div><div class="line">     volumes:</div><div class="line">       - /var/lib/mysql:/var/lib/mysql</div><div class="line">     environment:</div><div class="line">       - DB_SERVER_HOST=db1</div><div class="line">       - MYSQL_USER=zabbix</div><div class="line">       - MYSQL_PASSWORD=zabbix</div><div class="line">       - MYSQL_DATABASE=zabbix</div><div class="line"></div><div class="line">    zabbix-nginx-mysql:</div><div class="line">     image: zabbix/zabbix-web-nginx-mysql:ubuntu-3.4.4</div><div class="line">     depends_on:</div><div class="line">      - db1</div><div class="line">     ports:</div><div class="line">      - 8000:80</div><div class="line">     environment:</div><div class="line">       - DB_SERVER_HOST=db1</div><div class="line">       - MYSQL_USER=zabbix</div><div class="line">       - MYSQL_PASSWORD=zabbix</div><div class="line">       - ZBX_SERVER_HOST=zabbix-server</div><div class="line">       - PHP_TZ:Asia/Shanghai</div></pre></td></tr></table></figure></p>
+<p>启动<br>docker-compose up -d<br>访问<br><a href="http://localhost:8000" target="_blank" rel="external">http://localhost:8000</a>  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-compose_16.png" alt="">  </p>
+<p>参考链接<br><a href="http://wiki.jikexueyuan.com/project/docker-technology-and-combat/yaml_file.html" target="_blank" rel="external">http://wiki.jikexueyuan.com/project/docker-technology-and-combat/yaml_file.html</a><br><a href="https://www.hi-linux.com/posts/12554.html" target="_blank" rel="external">https://www.hi-linux.com/posts/12554.html</a><br><a href="https://docs.docker.com/compose/install/#install-compose" target="_blank" rel="external">https://docs.docker.com/compose/install/#install-compose</a><br><a href="http://www.ywnds.com/?p=7592" target="_blank" rel="external">http://www.ywnds.com/?p=7592</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2017/12/04/docker_habor/" title="docker镜像仓库管理软件(habor）">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
