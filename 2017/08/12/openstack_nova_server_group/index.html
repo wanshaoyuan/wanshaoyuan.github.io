@@ -16,18 +16,28 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <title>openstack nova server_group | 我爱西红柿</title>
+  <meta name="description" content="前言：openstack在I版中增加了server group的概念，设置server group策略可以做为虚机调度的策略，目前支持的策略有”affinity”和”Anti-Affinity” 意思就是亲和性和非亲和性。
+使用场景：我们知道nova创建虚机调度是通过nova-schedule的算法去筛选出对应的计算节点，然后调度到上面。在openstack上创建个app高可用集群，需要虚机分布在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openstack nova server_group">
+<meta property="og:url" content="http://yoursite.com/2017/08/12/openstack_nova_server_group/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="前言：openstack在I版中增加了server group的概念，设置server group策略可以做为虚机调度的策略，目前支持的策略有”affinity”和”Anti-Affinity” 意思就是亲和性和非亲和性。
+使用场景：我们知道nova创建虚机调度是通过nova-schedule的算法去筛选出对应的计算节点，然后调度到上面。在openstack上创建个app高可用集群，需要虚机分布在">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_4.png">
+<meta property="og:updated_time" content="2017-12-06T14:13:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="openstack nova server_group">
+<meta name="twitter:description" content="前言：openstack在I版中增加了server group的概念，设置server group策略可以做为虚机调度的策略，目前支持的策略有”affinity”和”Anti-Affinity” 意思就是亲和性和非亲和性。
+使用场景：我们知道nova创建虚机调度是通过nova-schedule的算法去筛选出对应的计算节点，然后调度到上面。在openstack上创建个app高可用集群，需要虚机分布在">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/index.html">
+  <link rel="canonical" href="http://yoursite.com/2017/08/12/openstack_nova_server_group/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -325,479 +335,130 @@
 </aside>
 
   
-  <main class="main" role="main">
   
-  <div class="content article-list">
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言："><span class="toc-number">1.</span> <span class="toc-text">前言：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景："><span class="toc-number">2.</span> <span class="toc-text">使用场景：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现原理"><span class="toc-number">3.</span> <span class="toc-text">实现原理</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-openstack_nova_server_group" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
+    <div class="article-header">
+      
+        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/05/docker_compose/">docker-compose</a>
+    <h1 class="article-title" itemprop="name">
+      openstack nova server_group
     </h1>
   
 
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
+      
+      <div class="article-meta">
+        <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/12/05/docker_compose/" class="article-date">
-	  <time datetime="2017-12-05T13:45:59.000Z" itemprop="datePublished">12月 5</time>
+	<a href="/2017/08/12/openstack_nova_server_group/" class="article-date">
+	  <time datetime="2017-08-12T05:15:26.000Z" itemprop="datePublished">2017-08-12</time>
 	</a>
 </span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/05/docker_compose/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,138(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 9(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/04/docker_habor/">docker镜像仓库管理软件(habor）</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/12/04/docker_habor/" class="article-date">
-	  <time datetime="2017-12-04T13:45:59.000Z" itemprop="datePublished">12月 4</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/04/docker_habor/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,863(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/01/docker-rancher/">Docker 管理平台(Rancher)</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/12/01/docker-rancher/" class="article-date">
-	  <time datetime="2017-12-01T13:45:59.000Z" itemprop="datePublished">12月 1</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/01/docker-rancher/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3,558(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 15(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/28/openstack_iso/">openstack使用ISO镜像</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/11/28/openstack_iso/" class="article-date">
-	  <time datetime="2017-11-28T16:15:26.000Z" itemprop="datePublished">11月 29</time>
-	</a>
-</span>
-    
+        
   <span class="article-category">
     <i class="fa fa-folder"></i>
     <a class="article-category-link" href="/categories/openstack/">openstack</a>
   </span>
 
-    
+        
   <span class="article-tag">
     <i class="fa fa-tag"></i>
 	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
   </span>
 
 
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/11/28/openstack_iso/#comments" class="article-comment-link">评论</a></span>
-    
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/08/12/openstack_nova_server_group/#comments" class="article-comment-link">评论</a></span>
+        
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 436(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 477(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
 	
 
-  </p>
-</article>
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>openstack在I版中增加了server group的概念，设置server group策略可以做为虚机调度的策略，目前支持的策略有”affinity”和”Anti-Affinity” 意思就是亲和性和非亲和性。</p>
+<h3 id="使用场景："><a href="#使用场景：" class="headerlink" title="使用场景："></a>使用场景：</h3><p>我们知道nova创建虚机调度是通过nova-schedule的算法去筛选出对应的计算节点，然后调度到上面。<br>在openstack上创建个app高可用集群，需要虚机分布在不同的本nova availability zone的不同的计算节点内，那么我们只需要创建个server group然后配置策略为anti-affinity，创建虚机时选择这个策略，这样创建出来的虚机就会落到不同的计算节点上。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_1.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_2.png" alt=""></p>
+<p>虽然默认的nova-schedule也支持affinity和anti-affinity但nova-schedule并不能支持持久化，只在虚机创建时生效，如果后面执行migration、evacute、resize那高可用就被破坏了。  </p>
+<p>server group会将group的信息持久化，每次重新调度都能获得正确的虚机。  </p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>在nova库中增加了以下三张表instance_group_member、instance_group_policy             instance_groups。  </p>
+<p>1，在创建云主机时如果加入了server-group这将instances加入到server_group_member中；<br>2，conductor 从数据库中取得group信息，解析 group 的 policy 并设置调度参数，通过RPC让 scheduler 选择合适的宿主机；<br>3，nova-scheduler将创建请求通过rpc传递给对应的nova-compute；<br>4，nova-comput去访问nova-conductor去获取创建虚机的一些信息；  </p>
+<p>启用server_group<br>修改控制节点nova.conf<br>将scheduler_default_filters改成如下。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scheduler_default_filters=RetryFilter,AvailabilityZoneFilter,RamFilter,CoreFilter,DiskFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter</div></pre></td></tr></table></figure></p>
+<p>目前dashboard没有Server group接口，只能通过cli的方式。<br>CLI命令创建server_group<br><img src="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_5.png" alt=""></p>
+<p>创建server-group 其中test-2为group的名字 affinity为policy<br><img src="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_3.png" alt=""></p>
+<p>查看哪些云主机使用了此server_group<br><img src="http://ohx02qrb8.bkt.clouddn.com/nova_server_group_4.png" alt=""></p>
+<p>创建云主机时要指定server-group的方法<br>nova boot时加上–hint group=server_group_id<br>如<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nova boot --image IMAGE_ID --flavor flavor_id --hint group=group-1  test3</div></pre></td></tr></table></figure></p>
 
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/17/docker_network_overlay/">Docker多主机网络(overlay)</a>
-    </h1>
-  
+    
+  <section id="comments">
+  	
+  </section>
 
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/09/08/vmware&openstack/" title="OpenStack对接vmware"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2017/08/05/crush/" title="ceph crushmap">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
   </div>
   
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/11/17/docker_network_overlay/" class="article-date">
-	  <time datetime="2017-11-17T13:45:59.000Z" itemprop="datePublished">11月 17</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/11/17/docker_network_overlay/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,522(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/03/docker_network/">Docker单主机网络</a>
-    </h1>
-  
-
   </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/11/03/docker_network/" class="article-date">
-	  <time datetime="2017-11-03T13:45:59.000Z" itemprop="datePublished">11月 3</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/11/03/docker_network/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 910(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/30/docker_machine/">Docker machine(docker 多主机部署)</a>
-    </h1>
+</nav>
   
 
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/10/30/docker_machine/" class="article-date">
-	  <time datetime="2017-10-30T13:45:59.000Z" itemprop="datePublished">10月 30</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
 
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/30/docker_machine/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,028(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/30/docker_base/">Docker基础</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/10/30/docker_base/" class="article-date">
-	  <time datetime="2017-10-30T13:45:59.000Z" itemprop="datePublished">10月 30</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/30/docker_base/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,101(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 16(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/23/install_docker/">Docker安装</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/10/23/install_docker/" class="article-date">
-	  <time datetime="2017-10-23T13:45:59.000Z" itemprop="datePublished">10月 23</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/23/install_docker/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 267(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/16/monitor_5/">从零开始搭建云平台监控(五)监控自动化部署</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/10/16/monitor_5/" class="article-date">
-	  <time datetime="2017-10-16T08:27:44.000Z" itemprop="datePublished">10月 16</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/Linux/">Linux</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/Linux/">Linux</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/16/monitor_5/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 882(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
-	
-
-  </p>
-</article>
-
-    
-  </div>
-
-  
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev disabled">
-                <a href="javascript:;">
-                    <i class="fa fa-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/page/2/">
-                    下一页
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-        <div class="total-article bar-right">Page 1 of 4</div>
-        </div>
-    </nav>
-    
- 
 </main>
 
   
@@ -835,6 +496,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
