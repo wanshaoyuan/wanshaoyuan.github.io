@@ -16,18 +16,27 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>分类: docker | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/categories/docker/index.html">
+  <title>openstack添加多个不同物理出口的private网络 | 我爱西红柿</title>
+  <meta name="description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  
+
+以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
+<meta property="og:type" content="article">
+<meta property="og:title" content="openstack添加多个不同物理出口的private网络">
+<meta property="og:url" content="http://yoursite.com/2017/09/13/openstack_multi_private/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  
+
+以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_multi_private_1.png">
+<meta property="og:updated_time" content="2017-09-13T03:50:43.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="openstack添加多个不同物理出口的private网络">
+<meta name="twitter:description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  
+
+以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_multi_private_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/categories/docker/index.html">
+  <link rel="canonical" href="http://yoursite.com/2017/09/13/openstack_multi_private/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,139 +335,135 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置方法（组件为openvswitch"><span class="toc-number">1.</span> <span class="toc-text">配置方法（组件为openvswitch)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#控制节点配置"><span class="toc-number">2.</span> <span class="toc-text">控制节点配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算节点配置"><span class="toc-number">3.</span> <span class="toc-text">计算节点配置</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title"></h1>
-	      <p class="text-muted">共 10 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-openstack_multi_private" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      openstack添加多个不同物理出口的private网络
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2017" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2017
-            </a>
-            <!-- <a href="/archives/2017" class="archive-year">2017</a> -->
-          </h3>
-        </div>
-        <div id="collapse2017" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2017">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/09/13/openstack_multi_private/" class="article-date">
+	  <time datetime="2017-09-13T03:50:44.000Z" itemprop="datePublished">2017-09-13</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/neutron/">neutron</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/neutron/">neutron</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/09/13/openstack_multi_private/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 613(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack_multi_private_1.png" alt=""></p>
+<p>以上图的环境为例<br>compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口连接起来，同时生成对应的流表控制，修改openvswitch配置文件使得physnetX根br-dmz mapping。<br>需要注意的是<br>这里control-1接dmz的网络主要是为了dhcp 地址、metadata注入、和根三层网络的NAT。你可以通过neutron availability zone的方式把把dhcp和metadata和l3部署在网络能通的计算节点，这样就不需要控制节点接线了。  </p>
+<h3 id="配置方法（组件为openvswitch"><a href="#配置方法（组件为openvswitch" class="headerlink" title="配置方法（组件为openvswitch)"></a>配置方法（组件为openvswitch)</h3><p>这里假设compute-2的br-dmz物理出口为br-ovs-bond2<br>控制节点和计算节点都执行<br>创建ovs桥<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-br br-dmz</div></pre></td></tr></table></figure></p>
+<p>添加端口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-ovsctl add-port br-dmz br-dmz--br-ovs-bond2</div></pre></td></tr></table></figure></p>
+<p>设置端口类型为patch<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-dmz--br-ovs-bond2 type=patch</div></pre></td></tr></table></figure></p>
+<p>设置patch口的peer端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-dmz--br-ovs-bond2 options:peer=br-ovs-bond2--br-dmz</div></pre></td></tr></table></figure></p>
+<p>在br-ovs-bond2上配置另外一个path口<br>添加端口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port br-ovs-bond2 br-ovs-bond2--br-dmz</div></pre></td></tr></table></figure></p>
+<p>设置端口类型为patch<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-ovs-bond2--br-dmz type=patch</div></pre></td></tr></table></figure></p>
+<p>设置patch口的peer端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-ovs-bond2--br-dmz options:peer=br-dmz--br-ovs-bond2</div></pre></td></tr></table></figure></p>
+<h3 id="控制节点配置"><a href="#控制节点配置" class="headerlink" title="控制节点配置"></a>控制节点配置</h3><p>vim /etc/neutron/plugins/ml2/ml2_conf.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">network_vlan_ranges =physnet2:1000:2000,physnet3   #在原来基础上新增个physnet3为我新增的，没有明确vlan-id范围可以不写</div></pre></td></tr></table></figure></p>
+<p>vim /etc/neutron/plugins/ml2/openvswitch_agent.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bridge_mappings=physnet2:br-prv,physnet3:br-dmz  #在原来基础上新增个physnet3:br-dmz</div></pre></td></tr></table></figure></p>
+<p>重启neutron-server和neutron-openvswitch-agent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart neutron-server</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart neutron-openvswitch-agent</div></pre></td></tr></table></figure>
+<h3 id="计算节点配置"><a href="#计算节点配置" class="headerlink" title="计算节点配置"></a>计算节点配置</h3><p>vim /etc/neutron/plugins/ml2/openvswitch_agent.ini</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bridge_mappings=physnet2:br-prv,physnet3:br-dmz  #在原来基础上新增个physnet3:br-dmz</div></pre></td></tr></table></figure>
+<p>重启neutron-openvswitch-agent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart neutron-openvswitch-agent</div></pre></td></tr></table></figure></p>
+<p>创建网络，输入对应的physnet<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">neutron net-create dmz_net --router:external=true --provider:network_type=vlan --provider:physical_network=physnet3 --provider:segmentation_id=108</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">neutron subnet-create --gateway 20.52.15.254 --allocation-pool start=20.52.15.30,end=20.52.15.40 --disable-dhcp dmz_net 20.52.15.0/24</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
     
-    
-<a href="/2017/12/07/docker_macvlan/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-12-07T13:45:59.000Z" itemprop="datePublished">2017-12-07</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker多主机网络(macvlan)
-</a>
+  <section id="comments">
+  	
+  </section>
 
 
   
-    
-    
-    
-<a href="/2017/12/05/docker_compose/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-12-05T13:45:59.000Z" itemprop="datePublished">2017-12-05</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> docker-compose
-</a>
+</div>
 
-
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
   
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/09/17/neutron_vlan/" title="OpenStack vlan模式下网络流量走向"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
     
     
+    <li class="next">
+      <a href="/2017/09/08/vmware&openstack/" title="OpenStack对接vmware">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
     
-<a href="/2017/12/04/docker_habor/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-12-04T13:45:59.000Z" itemprop="datePublished">2017-12-04</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> docker镜像仓库管理软件(habor）
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/12/01/docker-rancher/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-12-01T13:45:59.000Z" itemprop="datePublished">2017-12-01</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker 管理平台(Rancher)
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/11/17/docker_network_overlay/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-11-17T13:45:59.000Z" itemprop="datePublished">2017-11-17</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker多主机网络(overlay)
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/11/03/docker_network/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-11-03T13:45:59.000Z" itemprop="datePublished">2017-11-03</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker单主机网络
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/30/docker_machine/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-30T13:45:59.000Z" itemprop="datePublished">2017-10-30</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker machine(docker 多主机部署)
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/30/docker_base/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-30T13:45:59.000Z" itemprop="datePublished">2017-10-30</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker基础
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/23/install_docker/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-23T13:45:59.000Z" itemprop="datePublished">2017-10-23</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker安装
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/02/09/killo_newton/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-02-09T13:45:59.000Z" itemprop="datePublished">2017-02-09</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kolla 3.0.3部署openstack newton
-</a>
-
-
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   
@@ -496,6 +501,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
