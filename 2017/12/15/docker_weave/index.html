@@ -396,7 +396,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/15/docker_weave/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,192(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,196(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -473,6 +473,7 @@
 <p>此时就可以ping通了<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_20.png" alt=""></p>
 <p>如果其他主机想访问这台host上的容器，只需要添加一条默认路由将下一跳指向host的地址。<br>container-2访问container-1上的bbox1<br>只需要在container-2上添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip route add 10.32.0.0/12 via 192.168.111.161</div></pre></td></tr></table></figure></p>
 <p>IPAM<br>默认weave使用一个大的subnet(10.32.0.0/12)所有主机容器都从这个地址空间分配ip一个大二层。  </p>
+<p>参考链接  </p>
 <p><a href="http://ibash.cc/frontend/article/59/" target="_blank" rel="external">http://ibash.cc/frontend/article/59/</a></p>
 
       
