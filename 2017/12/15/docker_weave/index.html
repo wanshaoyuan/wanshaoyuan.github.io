@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Docker多主机网络(weave) | 我爱西红柿</title>
+  <meta name="description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。weave软件版本docker：17.09weave：2.1.3项目文 档：https://www.weave.works/docs/net/latest/overview/项目地址：https://github.com/weaveworks/weave环境信息container-1  192.168.111.161conta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker多主机网络(weave)">
+<meta property="og:url" content="http://yoursite.com/2017/12/15/docker_weave/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。weave软件版本docker：17.09weave：2.1.3项目文 档：https://www.weave.works/docs/net/latest/overview/项目地址：https://github.com/weaveworks/weave环境信息container-1  192.168.111.161conta">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_17.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_16.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_18.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_19.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_20.png">
+<meta property="og:updated_time" content="2017-12-15T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker多主机网络(weave)">
+<meta name="twitter:description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。weave软件版本docker：17.09weave：2.1.3项目文 档：https://www.weave.works/docs/net/latest/overview/项目地址：https://github.com/weaveworks/weave环境信息container-1  192.168.111.161conta">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/weave_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2017/12/15/docker_weave/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.2px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.4px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/neutron/" style="font-size: 13.6px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.8px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.2px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/15/docker_weave/" class="title">Docker多主机网络(weave)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-15T13:45:59.000Z" itemprop="datePublished">2017-12-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/14/docker_flannel/" class="title">Docker多主机网络(flannel)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-14T13:45:59.000Z" itemprop="datePublished">2017-12-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/07/docker_macvlan/" class="title">Docker多主机网络(macvlan)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-07T13:45:59.000Z" itemprop="datePublished">2017-12-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/05/docker_compose/" class="title">docker-compose</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-05T13:45:59.000Z" itemprop="datePublished">2017-12-05</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/04/docker_habor/" class="title">docker镜像仓库管理软件(habor）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-04T13:45:59.000Z" itemprop="datePublished">2017-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><span class="toc-number">1.</span> <span class="toc-text">此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#weave安装"><span class="toc-number">1.2.</span> <span class="toc-text">weave安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原理"><span class="toc-number">1.3.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#单台host架构图"><span class="toc-number">1.3.1.</span> <span class="toc-text">单台host架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#多host时网络架构图"><span class="toc-number">1.3.2.</span> <span class="toc-text">多host时网络架构图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#weave网络隔离"><span class="toc-number">1.3.3.</span> <span class="toc-text">weave网络隔离</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker_weave" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker多主机网络(weave)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/12/15/docker_weave/" class="article-date">
+	  <time datetime="2017-12-15T13:45:59.000Z" itemprop="datePublished">2017-12-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/15/docker_weave/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,192(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><a href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。" class="headerlink" title="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"></a>此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</h2><p>weave<br>软件版本<br>docker：17.09<br>weave：2.1.3<br>项目文 档：<a href="https://www.weave.works/docs/net/latest/overview/" target="_blank" rel="external">https://www.weave.works/docs/net/latest/overview/</a><br>项目地址：<a href="https://github.com/weaveworks/weave" target="_blank" rel="external">https://github.com/weaveworks/weave</a><br>环境信息<br>container-1  192.168.111.161<br>container-2  192.168.111.162  </p>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>weave是weaveworks开发的容器网络解决方案，weave会创建一个大的二层网络，来将各个host上的容器连接起来，容器与容器之间可以直接通信，无须nat和端口映射,weave还提供dns服务，使容器可以直接通过hostname访问。weave不需要依赖k\v服务，而是在每个主机上运行一个weave容器路由器。来根据不同的主机交换路由信息。  </p>
+<p>注意点：<br>1、一个Weave网络是由一定数量的Weave节点构成的。每个Weave路由器运行在不同的宿主机上。  </p>
+<p>2、Weave网络中的每个节点都有一个名字，默认是Weave网卡的地址。还有一个人类便于识别的名称，默认是主机名，也可以在Weave启动的时候指定一个名称。  </p>
+<p>3、Weave路由器节点之间会建立TCP连接，通过TCP连接，进行心跳检测和交换路由信息。通过配置可以让这条链接进行加密处理。  </p>
+<p>4、Weave路由器节点之间也会建立UDP连接，通过UDP连接，进行网络数据包的封装。同样也可以将UDP链接进行加密处理。</p>
+<p>Weave路由器节点之间的连接(TCP连接或者UDP连接)可以穿透防火墙，意味着，Weave网络可用于跨数据中心的Docker通信。</p>
+<p>5、Weave网络会在每个宿主机上创建一个网桥，每个容器通过veth pair连接到这个Weave 网桥。容器里面的veth网卡会获取到Weave网络分配给的IP地址和子网掩码。</p>
+<p>6、Weave网络在不同宿主机之间路由数据的方法有两种：fast data path模式(完全工作在内核态)，sleeve模式，在这种模式中，发往非本地容器的数据会被内核捕获，然后交给用户态的Weave网络路由器处理，通过UDP发送到其他的Weave节点路由器，然后注入到内核空间，最后再转发到本地的容器中。</p>
+<p>7、Weave网络路由器会学习其他节点特定的MAC地址，然后将已知的信息和拓扑结合起来。</p>
+<p>8、Weave网络可以在partially connected路由数据，通过拓扑交换。比如下图中：节点1 直接连接着 节点2和节点3，如果节点1 先要发送数据到 节点4或者节点5 ，那么先必须发送到节点3。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_1.png" alt=""></p>
+<p>Weave 网络如何了解网络拓扑？<br>官网地址：<a href="https://www.weave.works/docs/net/latest/concepts/network-topology/" target="_blank" rel="external">https://www.weave.works/docs/net/latest/concepts/network-topology/</a>  </p>
+<p>Peers之间的拓扑交流  </p>
+<p>连接到Weave网络的节点会捕获其他Peers节点的拓扑信息。Weave节点会将自己已知的拓扑，和改变的内容传递给其他节点，以便于所有的Weave Peers了解整过网络拓扑。</p>
+<p>Weave节点之间的通信建立在TCP上的，有两种方法：</p>
+<p>基于STP(生成树)的广播方法<br>基于邻居Gossip方法(八卦算法)<br>以下情况，拓扑信息会发送：</p>
+<p>当一个连接新加入进来的时候，如果远程节点似乎是新加入到Weave网络中的，那么会发送整个网络拓扑，并且增量更新，广播节点两端的连接。<br>当一个连接被标记为已经建立，则意味着远端可以从本端接受UDP报文，然后广播一个包含本端信息的数据包。<br>当一个连接断开，一个包含本端信息的报文被广播。<br>周期性的定时器，整个拓扑信息被gossip给邻居，这是为了拓扑敏感的随机分布系统。这是为了防止由于频繁的拓扑变化，造成广播路由表过时，而使前面提到的广播没有到达所有的peers。<br>如果Peers更新拓扑信息之后，发现有一个Peer已经离线，那么就会清除掉这个Peer相关的所有的信息。</p>
+<p>拓扑过期怎么办？</p>
+<p>将拓扑变化信息广播给所有peers不是立即发生的。这就意味着，很有可能一个节点有过期的网络拓扑视图。</p>
+<p>如果目的peer的数据包仍然可达，那么过期的拓扑可能会导致一次低效的路由选择。</p>
+<p>如果过期的拓扑中目的peer不可达，那么数据包会被丢弃，对于很多协议（如TCP)，数据发送会在稍后重新尝试，在这期间拓扑信息应当被正确更新。</p>
+<h3 id="weave安装"><a href="#weave安装" class="headerlink" title="weave安装"></a>weave安装</h3><p>container-1和container-2上<br>安装weave<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">curl -L git.io/weave -o /usr/local/bin/weave</div><div class="line">chmod a+x /usr/local/bin/weave</div></pre></td></tr></table></figure></p>
+<p>在container-1上启动weave<br>在 host1 中执行 weave launch 命令，weave的组件都是以容器启动的，weave 会从 docker hub 下载最新的 image 并启动容器。<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_2.png" alt=""></p>
+<p>10.32.0.0/12是weave网络使用的默认subnet，如果需要改变(所有host都要改)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">weave launch --ipalloc-range 10.2.0.0/16</div></pre></td></tr></table></figure></p>
+<p>weave 运行了三个容器：<br>weave 是主程序，负责建立 weave 网络，收发数据 ，提供 DNS 服务等。<br>weavevolumes容器提供卷存储<br>weavedb容器提供数据存储  </p>
+<p>创建了一个linux bridge桥<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_3.png" alt=""></p>
+<p>和weave网络<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_4.png" alt=""></p>
+<p>container-2<br>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">weave launch 192.168.111.161</div></pre></td></tr></table></figure></p>
+<p>这里指定的container-1的地址，这样container-2和container-1才会加入到同一个网络，也可以写多个地址，格式为 ip_addr ip_addr.</p>
+<p>两个host要互通，首先要确认建立了集群<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_5.png" alt=""></p>
+<p>测试<br>在container-1上执行<br>特别说明：声明环境变量的作用是告诉后续的docker命令都发给weave proxy进行处理。<br>声明环境变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">eval $(weave env)</div><div class="line">docker run -itd --name bbox1 busybox</div></pre></td></tr></table></figure></p>
+<p>如果要恢复之前的环境，可执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eval $(weave env --restore)</div></pre></td></tr></table></figure></p>
+<p>在container-2上执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">eval $(weave env)</div><div class="line">docker run -itd --name bbox2 busybox</div></pre></td></tr></table></figure></p>
+<p>bbox1 ping bbox2<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_6.png" alt=""></p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><h4 id="单台host架构图"><a href="#单台host架构图" class="headerlink" title="单台host架构图"></a>单台host架构图</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_14.png" alt=""></p>
+<p>bbox1和bbox2的地址为10.32.0.1/12、10.44.0.0/12, 子网掩码都是12位的，实际上这3个ip都位于 weave网络的10.32.0.0/12，通过container-1和container-2上的vxlan的遂道连接在一起。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_7.png" alt=""></p>
+<p>查看bbox1的网络接口  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_8.png" alt=""></p>
+<p>bbox1有两个网络接口eth0和ethwe，eth0桥接的是默认docker0网络。ethwe和宿主机weave网卡有关ethwe@if39表示ethwe对应编号39的interface。</p>
+<p>在宿主机ip a看见了39的interface，vethwepl19152和ethwe是一对veth-pair，同时vethwep19152还挂载在weave 桥上。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_9.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_10.png" alt=""></p>
+<p>同时挂载的还有vethwe-bridge，ip -d link查看<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_11.png" alt=""></p>
+<p>vethwe-bridge和vethwe-datapath是一对veth-pair，但vethwe-datapath的父设备是datapath，其中datapath是个openvswitch网桥，vxlan-6784是一个vxlan-interface，其父设备也是datapath，weave主机间是通过vxlan建立的遂道通信，等于说，veth-pair vethwe-bridge和vethwe-datapath将linux-bridge的weave桥和datapath连接在一起，其中，weave桥负责容器接入weave网络，datapath负责主机间建立vxlan隧道并收发数据。<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_12.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_13.png" alt=""></p>
+<h4 id="多host时网络架构图"><a href="#多host时网络架构图" class="headerlink" title="多host时网络架构图"></a>多host时网络架构图</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_17.png" alt=""></p>
+<p>1、当在container-1上的bbox1 ping container-2上bbox2时<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_15.png" alt=""></p>
+<p>2、将数据包给ethwe<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_16.png" alt=""></p>
+<p>2、ethwe和vethwep是veth-pair，所以数据包到了宿主机的weave桥上，然后给vethwe-bridge，然后通过veph-pair的另外一端vethwe-datapath到datapath，通过vxlan发送给container-2。<br>3、container-2的vxlan接口收到报文后会给datapath然后通过vethwe-datapath到weave桥收到报文后，根据目的IP地址将数据包转发给bbox2。  </p>
+<h4 id="weave网络隔离"><a href="#weave网络隔离" class="headerlink" title="weave网络隔离"></a>weave网络隔离</h4><p>默认weave使用一个大的subnet(10.32.0.0/12)所有主机容器都从这个地址空间分配ip，因为是同一个subnet，容器可以直接通信，如果要隔离，可以通过环境变量WEAVE_CIDR=net:xxx.xxx.xxx/24指定网段,但需要注意的是这个网段也不是随便写的，要在10.32.0.0/12这个大子网范围内。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd -e WEAVE_CIDR=net:xxx.xxx.xxx.xxx/24 image_name</div></pre></td></tr></table></figure></p>
+<p>weave与外网连接<br>宿主机访问weave网络的容器<br>因为weave默认是一个私有的vxlan网络，默认与外部网络隔离，要想host访问，需要将host加入weave。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_18.png" alt=""></p>
+<p>10.32.0.2会被分配到weave网桥上  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/weave_19.png" alt=""></p>
+<p>此时就可以ping通了<br><img src="http://ohx02qrb8.bkt.clouddn.com/weave_20.png" alt=""></p>
+<p>如果其他主机想访问这台host上的容器，只需要添加一条默认路由将下一跳指向host的地址。<br>container-2访问container-1上的bbox1<br>只需要在container-2上添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip route add 10.32.0.0/12 via 192.168.111.161</div></pre></td></tr></table></figure></p>
+<p>IPAM<br>默认weave使用一个大的subnet(10.32.0.0/12)所有主机容器都从这个地址空间分配ip一个大二层。  </p>
+<p><a href="http://ibash.cc/frontend/article/59/" target="_blank" rel="external">http://ibash.cc/frontend/article/59/</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2017/12/14/docker_flannel/" title="Docker多主机网络(flannel)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
