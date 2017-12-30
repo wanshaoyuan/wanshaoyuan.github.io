@@ -404,10 +404,10 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/14/docker_flannel/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,307(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,256(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
 	
 
       </div>
@@ -443,8 +443,7 @@
 <h3 id="在container-1和container-2上执行"><a href="#在container-1和container-2上执行" class="headerlink" title="在container-1和container-2上执行"></a>在container-1和container-2上执行</h3><p>安装flannel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install flannel -y</div></pre></td></tr></table></figure></p>
 <p>配置flannel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp  /etc/sysconfig/flanneld /etc/sysconfig/flanneld.bak</div></pre></td></tr></table></figure></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_5.png" alt=""></p>
-<p>ip写etcd的ip<br>注意路径写刚刚etcd导入的key。<br>flannel不会创建新的网络，会使用默认的bridge网络<br>启动容器<br>container-1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name bbox1 busybox</div></pre></td></tr></table></figure></p>
-<p>container-2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name bbox2 busybox</div></pre></td></tr></table></figure></p>
+<p>ip写etcd的ip  </p>
 <p>启动flannel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">systemctl enable flannel</div><div class="line">systemctl start flannel</div></pre></td></tr></table></figure></p>
 <p>验证可以看见flannel网卡已经出来了<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_6.png" alt=""></p>
 <p>配置docker使用flannel<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /run/flannel/subnet.env</div></pre></td></tr></table></figure></p>
