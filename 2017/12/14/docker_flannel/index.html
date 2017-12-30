@@ -360,7 +360,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><span class="toc-number">1.</span> <span class="toc-text">此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">1.1.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装etcd"><span class="toc-number">1.1.1.</span> <span class="toc-text">安装etcd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#导入网络配置key"><span class="toc-number">1.1.2.</span> <span class="toc-text">导入网络配置key</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试get-value"><span class="toc-number">1.1.3.</span> <span class="toc-text">测试get value</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在container-1和container-2上执行"><span class="toc-number">1.2.</span> <span class="toc-text">在container-1和container-2上执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原理"><span class="toc-number">1.3.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#vxlan"><span class="toc-number">1.3.1.</span> <span class="toc-text">vxlan</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#host-gw"><span class="toc-number">1.3.2.</span> <span class="toc-text">host-gw</span></a></li></ol></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><span class="toc-number">1.</span> <span class="toc-text">此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-number">1.1.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装etcd"><span class="toc-number">1.1.1.</span> <span class="toc-text">安装etcd</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#导入网络配置key"><span class="toc-number">1.1.2.</span> <span class="toc-text">导入网络配置key</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试get-value"><span class="toc-number">1.1.3.</span> <span class="toc-text">测试get value</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在container-1和container-2上执行"><span class="toc-number">1.2.</span> <span class="toc-text">在container-1和container-2上执行</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#测试连通性"><span class="toc-number">1.2.1.</span> <span class="toc-text">测试连通性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#原理"><span class="toc-number">1.3.</span> <span class="toc-text">原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#vxlan"><span class="toc-number">1.3.1.</span> <span class="toc-text">vxlan</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#host-gw"><span class="toc-number">1.3.2.</span> <span class="toc-text">host-gw</span></a></li></ol></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -404,10 +404,10 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/14/docker_flannel/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,236(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,307(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
 	
 
       </div>
@@ -455,10 +455,12 @@
 <p>docker会10.2.71.1配置到docker0上，同时生成一条路由<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_9.png" alt=""></p>
 <p>同主机的docker使用docker0进行通信，跨主机的使用flannel1.1转发<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_10.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps -ef|grep docker</div></pre></td></tr></table></figure>
-<p>测试连通性<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_11.png" alt=""></p>
+<h4 id="测试连通性"><a href="#测试连通性" class="headerlink" title="测试连通性"></a>测试连通性</h4><p>flannel不会创建新的网络，会使用默认的bridge网络<br>启动容器<br>container-1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name bbox1 busybox  </div><div class="line">`</div></pre></td></tr></table></figure></p>
+<p>container-2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name bbox2 busybox</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_11.png" alt=""></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_12.png" alt=""></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_13.png" alt=""></p>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><h4 id="vxlan"><a href="#vxlan" class="headerlink" title="vxlan"></a>vxlan</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_14.png" alt=""></p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><h4 id="vxlan"><a href="#vxlan" class="headerlink" title="vxlan"></a>vxlan</h4><p>容器内网卡和物理机上一veth-xxx是一对veth-pair，同时物理机的veth-xxx挂载在docker0这个bridge上。<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_14.png" alt=""></p>
 <p>容器内默认路由是给10.2.71.1<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_15.png" alt=""></p>
 <p>10.2.71.1是docker0<br><img src="http://ohx02qrb8.bkt.clouddn.com/flnnel_16.png" alt=""></p>
 <p> 查看host路由，是10.2.0.0/16这个subnet的包会交给flannel1.1,,flannel1.1封装成udp包通过ens3，发送出去。container-2 收到包解封装，发现数据包目的地址为 10.2.36.2，根据路由表将数据包发送给 flannel1..1，并通过 docker0 到达 bbox2。  </p>
