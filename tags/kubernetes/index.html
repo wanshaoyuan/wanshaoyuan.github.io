@@ -16,32 +16,18 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>从零开始构建云平台监控(写在前面) | 我爱西红柿</title>
-  <meta name="description" content="监控的重要性在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。
-监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、no">
-<meta property="og:type" content="article">
-<meta property="og:title" content="从零开始构建云平台监控(写在前面)">
-<meta property="og:url" content="http://yoursite.com/2017/10/03/monitor/index.html">
+  <title>标签: kubernetes | 我爱西红柿</title>
+  <meta name="description" content="好好学习、天天向上">
+<meta property="og:type" content="website">
+<meta property="og:title" content="我爱西红柿">
+<meta property="og:url" content="http://yoursite.com/tags/kubernetes/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="监控的重要性在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。
-监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、no">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_9.png">
-<meta property="og:updated_time" content="2017-10-03T15:27:43.000Z">
+<meta property="og:description" content="好好学习、天天向上">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="从零开始构建云平台监控(写在前面)">
-<meta name="twitter:description" content="监控的重要性在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。
-监控的范围在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、no">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg">
+<meta name="twitter:title" content="我爱西红柿">
+<meta name="twitter:description" content="好好学习、天天向上">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2017/10/03/monitor/index.html">
+  <link rel="canonical" href="http://yoursite.com/tags/kubernetes/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -340,136 +326,49 @@
 
   
   
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    <nav id="toc" class="article-toc">
-      <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#监控的重要性"><span class="toc-number">1.</span> <span class="toc-text">监控的重要性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监控的范围"><span class="toc-number">2.</span> <span class="toc-text">监控的范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件构成"><span class="toc-number">3.</span> <span class="toc-text">组件构成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件作用"><span class="toc-number">4.</span> <span class="toc-text">组件作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果展示"><span class="toc-number">5.</span> <span class="toc-text">效果展示</span></a></li></ol>
-    </nav>
-  </div>
-</aside>
-
 <main class="main" role="main">
-  <div class="content">
-  <article id="post-monitor" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-    
-    <div class="article-header">
-      
-        
+  	<article class="content article article-archives article-type-list" itemscope="">
+	    <header class="article-header">
+	      <h1 itemprop="title"></h1>
+	      <p class="text-muted">共 1 篇文章</p>
+	    </header>
+	    <div class="article-body">
+	      
   
-    <h1 class="article-title" itemprop="name">
-      从零开始构建云平台监控(写在前面)
-    </h1>
-  
-
-      
-      <div class="article-meta">
-        <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/10/03/monitor/" class="article-date">
-	  <time datetime="2017-10-03T15:27:44.000Z" itemprop="datePublished">2017-10-03</time>
-	</a>
-</span>
-        
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/Linux/">Linux</a>
-  </span>
-
-        
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/Linux/">Linux</a>
-  </span>
-
-
-        
-
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/03/monitor/#comments" class="article-comment-link">评论</a></span>
-        
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 639(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
-	
-
-      </div>
-      
-      <div class="toggle-toc hidden-xs" data-stick-top>
-        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
-          <i class="text-collapsed fa fa-anchor"></i>
-          <i class="text-in fa fa-close"></i>
-        </a>
-      </div>
-      
-    </div>
-    <div class="article-entry markdown-body" itemprop="articleBody">
-      
-        <h3 id="监控的重要性"><a href="#监控的重要性" class="headerlink" title="监控的重要性"></a>监控的重要性</h3><p>在整个it系统中，监控是最为重要的一个环节，监控是发现集群问题的关键，没有监控的话，只能等到出了问题才能发现集群的问题，那时为时以晚。</p>
-<h3 id="监控的范围"><a href="#监控的范围" class="headerlink" title="监控的范围"></a>监控的范围</h3><p>在一套完整的openstack私有云中，组件非常复杂因为它不仅仅有openstack的东西还有分布式存储ceph的东西。<br>计算组件：nova-api、nova-scheduler、nova-condutor、nova-novncproxy、nova-compute……<br>网络组件：neutron-server、neutron-dhcp-agent、neutron-metadata-agent、neutron-openvswitch-agent、openvswitch……<br>存储组件：cinder-api、cinder-scheduler 、cinder-volume<br> 其他：等还有认证组件keystone、消息队列、镜像组件、还有底层分布式存储ceph、一个这么庞大的系统可想而知如果没有一个比较完善的监控很多并且在不同的角色上所监控的组件也是不一样的，比如控制节点没有nova-compute服务，计算节点没有控制节点服务，所以监控项还得针对不同的角色做区分。</p>
-<p>除了组件上的监控外，其实少不了还有硬件上的监控，比如说，在私有云生产环境中，网卡都是会做bond的，做了bond的好处是当其中一个网卡出现故障时并并不是影响到整个集群，但你也得通过监控发现这个挂了的网卡，然后准备更换，ceph的osd down了，有可能是osd进程被kill掉了，也有可能是硬盘坏了导致osd进程挂了，这也都通过监控去发现。</p>
-<h3 id="组件构成"><a href="#组件构成" class="headerlink" title="组件构成"></a>组件构成</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_1.jpg" alt=""></p>
-<p>监控节点：nginx、php、mysql、influxdb、grafana、zabbix-server、zabbix-agent<br>控制节点：telegraf、zabbix-agent<br>融合节点：zabbix-agent  </p>
-<h3 id="组件作用"><a href="#组件作用" class="headerlink" title="组件作用"></a>组件作用</h3><p>nginx+php+mysql提供基础的lnmp平台让zabbix可以运行，mysql存储zabbix监控数据<br>zabbix-server：用于接收各个机器agent端发过来的数据<br>zabbix-agent：采集数据发给zabbix-server<br>telegraf：用于采集ceph的监控数据<br>influxdb：存储telegraf的数据<br>grafana：用于对采集数据图形化展示  </p>
-<p>其中需要注意的是因为教程所以监控节点组件都放一起了，并且还是单节点，在生产环境中监控节点要做高可用，根据监控的机器数决定是否将数据库能独立出来。</p>
-<p>以下为最终效果。</p>
-<h3 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h3><p>ceph监控界面<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_2.png" alt=""></p>
-<p>openstack节点性能状态  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_3.png" alt=""></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_4.png" alt=""></p>
-<p>控制节点服务状态展示<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_5.png" alt=""></p>
-<p>计算节点服务状态展示</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_6.png" alt=""></p>
-<p>存储节点osd监控</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_7.png" alt=""></p>
-<p>zabbix-server监控</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_8.png" alt=""></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_0_9.png" alt=""></p>
-
-      
-    </div>
-    <div class="article-footer">
-      
-    </div>
-  </article>
   
     
-  <section id="comments">
-  	
-  </section>
-
-
-  
-</div>
-
-  <nav class="bar bar-footer clearfix" data-stick-bottom>
-  <div class="bar-inner">
-  
-  <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2017/10/04/monitor_1/" title="从零开始构建云平台监控(一)搭建LNMP"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
-    </li>
+      
+      
+      <section class="panel panel-default b-no">
+        <div class="panel-heading" role="tab">
+          <h3 class="panel-title">
+            <a data-toggle="collapse" href="#collapse2018" aria-expanded="true">
+              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
+              2018
+            </a>
+            <!-- <a href="/archives/2018" class="archive-year">2018</a> -->
+          </h3>
+        </div>
+        <div id="collapse2018" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2018">
+        <div class="panel-body">
+          <div class="collection">
     
     
-    <li class="next">
-      <a href="/2017/10/01/python_socket/" title="Python socket模块">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
-    </li>
-    
-  </ul>
-  
-  
-  
-  <div class="bar-right">
-    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
-  </div>
-  
-  </div>
-</nav>
-  
+<a href="/2018/01/02/kubernetes_install/" class="collection-item" target="_blank" itemprop="url">
+  <time datetime="2018-01-02T13:45:59.000Z" itemprop="datePublished">2018-01-02</time>
+  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes V1.9安装(附离线安装包和离线镜像）
+</a>
 
 
+  
+  
+    </div></div></div></section>
+  
+
+	    </div>
+  	</article>
+  	 	
 </main>
 
   
@@ -507,8 +406,6 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
-    
-        
     
     
 

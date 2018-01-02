@@ -16,11 +16,11 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>我爱西红柿</title>
+  <title>kubernetes V1.9安装(附离线安装包和离线镜像） | 我爱西红柿</title>
   <meta name="description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.113node-2 192.168.2.
 软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler:v1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我爱西红柿">
+<meta property="og:title" content="kubernetes V1.9安装(附离线安装包和离线镜像）">
 <meta property="og:url" content="http://yoursite.com/2018/01/02/kubernetes_install/index.html">
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.113node-2 192.168.2.
@@ -50,9 +50,9 @@
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_23.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_24.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_25.png">
-<meta property="og:updated_time" content="2018-01-02T05:31:12.000Z">
+<meta property="og:updated_time" content="2018-01-02T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
+<meta name="twitter:title" content="kubernetes V1.9安装(附离线安装包和离线镜像）">
 <meta name="twitter:description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.113node-2 192.168.2.
 软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler:v1">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_1.png">
@@ -229,7 +229,7 @@
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -239,7 +239,7 @@
   <div class="widget">
     <h3 class="widget-title">标签</h3>
     <div class="widget-body">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
     </div>
   </div>
 
@@ -249,7 +249,7 @@
   <div class="widget">
     <h3 class="widget-title">标签云</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.2px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.4px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/neutron/" style="font-size: 13.6px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.8px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.2px;">数据库</a>
+      <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.2px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.4px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 13px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.6px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.8px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.2px;">数据库</a>
     </div>
   </div>
 
@@ -274,13 +274,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
               </p>
               <p class="item-title">
-                <a href="/2018/01/02/kubernetes_install/" class="title">(no title)</a>
+                <a href="/2018/01/02/kubernetes_install/" class="title">kubernetes V1.9安装(附离线安装包和离线镜像）</a>
               </p>
               <p class="item-date">
-                <time datetime="2018-01-02T05:31:13.000Z" itemprop="datePublished">2018-01-02</time>
+                <time datetime="2018-01-02T13:45:59.000Z" itemprop="datePublished">2018-01-02</time>
               </p>
             </div>
           </li>
@@ -356,21 +356,48 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开始安装"><span class="toc-number">2.</span> <span class="toc-text">开始安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#所有节点操作"><span class="toc-number">2.1.</span> <span class="toc-text">所有节点操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#master节点操作"><span class="toc-number">3.</span> <span class="toc-text">master节点操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#node节点操作"><span class="toc-number">4.</span> <span class="toc-text">node节点操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试集群"><span class="toc-number">5.</span> <span class="toc-text">测试集群</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署kubernetes-dashboard"><span class="toc-number">6.</span> <span class="toc-text">部署kubernetes-dashboard</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
   <div class="content">
   <article id="post-kubernetes_install" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes V1.9安装(附离线安装包和离线镜像）
+    </h1>
+  
+
+      
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
 	<a href="/2018/01/02/kubernetes_install/" class="article-date">
-	  <time datetime="2018-01-02T05:31:13.000Z" itemprop="datePublished">2018-01-02</time>
+	  <time datetime="2018-01-02T13:45:59.000Z" itemprop="datePublished">2018-01-02</time>
 	</a>
 </span>
         
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
         
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
 
         
 
@@ -383,6 +410,13 @@
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
 	
 
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
       </div>
       
     </div>
