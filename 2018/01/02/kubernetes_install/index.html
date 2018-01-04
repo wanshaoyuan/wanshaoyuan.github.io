@@ -17,14 +17,14 @@
   
   
   <title>kubernetes V1.9安装(附离线安装包和离线镜像） | 我爱西红柿</title>
-  <meta name="description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.113node-2 192.168.2.
-软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler:v1">
+  <meta name="description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.112node-2 192.168.2.113
+软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kubernetes V1.9安装(附离线安装包和离线镜像）">
 <meta property="og:url" content="http://yoursite.com/2018/01/02/kubernetes_install/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.113node-2 192.168.2.
-软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler:v1">
+<meta property="og:description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.112node-2 192.168.2.113
+软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_1.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_2.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_4.png">
@@ -53,8 +53,8 @@
 <meta property="og:updated_time" content="2018-01-02T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kubernetes V1.9安装(附离线安装包和离线镜像）">
-<meta name="twitter:description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.113node-2 192.168.2.
-软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler:v1">
+<meta name="twitter:description" content="简介环境信息（采用一个master节点+两个node节点)master 192.168.2.110node-1 192.168.2.112node-2 192.168.2.113
+软件版本kubernetes v1.9docker：17.03kubeadm:v1.9.0kube-apiserver:v1.9.0kube-controller-manager:v1.9.0kube-scheduler">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/01/02/kubernetes_install/index.html">
@@ -404,7 +404,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/02/kubernetes_install/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,722(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,724(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -422,12 +422,12 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>环境信息（采用一个master节点+两个node节点)<br>master 192.168.2.110<br>node-1 192.168.2.113<br>node-2 192.168.2.</p>
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>环境信息（采用一个master节点+两个node节点)<br>master 192.168.2.110<br>node-1 192.168.2.112<br>node-2 192.168.2.113</p>
 <p>软件版本<br>kubernetes v1.9<br>docker：17.03<br>kubeadm:v1.9.0<br>kube-apiserver:v1.9.0<br>kube-controller-manager:v1.9.0<br>kube-scheduler:v1.9.0<br>k8s-dns-sidecar:1.14.7<br>k8s-dns-kube-dns:1.14.7<br>k8s-dns-dnsmasq-nanny:1.14.7<br>kube-proxy:v1.9.0<br>etcd:3.1.10<br>pause :3.0<br>flannel:v0.9.1<br>kubernetes-dashboard:v1.8.1</p>
 <p>采用kubeadm安装</p>
 <p>kubeadm为kubernetes官方推荐的自动化部署工具，他将kubernetes的组件以pod的形式部署在master和node节点上，并自动完成证书认证等操作。<br>因为kubeadm默认要从google的镜像仓库下载镜像，但目前国内无法访问google镜像仓库，所以这里我提交将镜像下好了，只需要将离线包的镜像导入到节点中就可以了。</p>
-<h3 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h3><h4 id="所有节点操作"><a href="#所有节点操作" class="headerlink" title="所有节点操作"></a>所有节点操作</h4><p>下载<br>链接:<a href="https://pan.baidu.com/s/1kUE3gCB" target="_blank" rel="external">https://pan.baidu.com/s/1kUE3gCB</a>  密码:vk6u<br>比对md5解压离线包</p>
-<p>5f885b27010936fffed0bce105ea60e5  k8s_images.tar.bz2</p>
+<h3 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h3><h4 id="所有节点操作"><a href="#所有节点操作" class="headerlink" title="所有节点操作"></a>所有节点操作</h4><p>下载<br>链接: <a href="https://pan.baidu.com/s/1c2O1gIW" target="_blank" rel="external">https://pan.baidu.com/s/1c2O1gIW</a> 密码: 9s92<br>比对md5解压离线包</p>
+<p>MD5 (k8s_images.tar.bz2) = b60ad6a638eda472b8ddcfa9006315ee</p>
 <p>解压下载下来的离线包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -xjvf k8s_images.tar.bz2</div></pre></td></tr></table></figure></p>
 <p>安装docker-ce17.03(kubeadmv1.9最大支持docker-ce17.03)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rpm -ihv docker-ce-selinux-17.03.2.ce-1.el7.centos.noarch.rpm</div><div class="line">rpm -ivh docker-ce-17.03.2.ce-1.el7.centos.x86_64.rpm</div></pre></td></tr></table></figure></p>
 <p>修改docker的镜像源为国内的daocloud的。</p>
