@@ -417,10 +417,10 @@ rkt是coreos开">
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/30/docker_base/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,101(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,174(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 16(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 17(分)</span>
 	
 
       </div>
@@ -556,8 +556,8 @@ rkt是coreos开">
 <p>设置只读权限，这样就不能在container内对该目录进行修改了。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d -p 80:80 -v /root/http/:/usr/local/apache2/htdocs:ro httpd</div></pre></td></tr></table></figure>
 <p> <img src="http://ohx02qrb8.bkt.clouddn.com/docker_base_21.png" alt=""></p>
-<h4 id="docker-manged-volume"><a href="#docker-manged-volume" class="headerlink" title="docker manged volume"></a>docker manged volume</h4><p>manged volume最大特点是不需要指定源，只需要指定mount point就可以了<br>查看挂载的源</p>
-<p> docker inspect 79af2997ca68</p>
+<h4 id="docker-manged-volume"><a href="#docker-manged-volume" class="headerlink" title="docker manged volume"></a>docker manged volume</h4><p>manged volume最大特点是不需要指定源，只需要指定mount point就可以了<br>查看挂载的源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d -p 80:80 -v /usr/local/apache2/htdocs httpd</div></pre></td></tr></table></figure></p>
+<p>告诉docker需要一个volume并将其挂载到/usr/local/apache2/htdocs，这个但这个volume会从哪里来，inspect一下就知道了<br>manged volume最大特点是不需要指定源，只需要指定mount point就可以了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker inspect 79af2997ca68</div></pre></td></tr></table></figure></p>
 <p> 关注mounts信息<br> <img src="http://ohx02qrb8.bkt.clouddn.com/docker_base_22.png" alt=""></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">当容器申请 manged volume时docker会在/var/lib/docker/volumes/下生成一个目录xxx/_data这个就是mount源。mount point指向以有的目录，容器内原有的数据会被复制到这个目录中</div></pre></td></tr></table></figure>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_base_23.png" alt=""></p>
