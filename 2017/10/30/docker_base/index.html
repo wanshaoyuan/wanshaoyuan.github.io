@@ -417,10 +417,10 @@ rkt是coreos开">
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/30/docker_base/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,174(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,522(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 17(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 18(分)</span>
 	
 
       </div>
@@ -592,10 +592,15 @@ rkt是coreos开">
 <p>docker run -d -p 80:80 –volumes-from vc_data httpd<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_base_31.png" alt="">  </p>
 <p>容器能正确读取volume中的数据，data-packed volume container是自包含的不依赖host提供数据，具有很强移值性，非常合适静态数据的场景，比如应用的配置信息，web Server的静态文件等.</p>
 <p>data volume 生命周期  </p>
-<p>备份  </p>
-<p>备份host上对应的目录  </p>
-<p>恢复<br>使用host上的备份恢复  </p>
-<p>迁移<br>1、stop原用容器<br>2、将原目录mount到新容器  </p>
+<p>备份<br>1、备份host上对应的目录。<br>2、使用一个临时容器挂载目标容器备份。<br>如创建一个managerd-volume容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name App-container1 -v /var/volume1 -v /var/volume2  ubuntu</div></pre></td></tr></table></figure></p>
+<p>编辑些数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker exec -it data_volume bash</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /var/volume1/ &amp;&amp; touch &#123;1..100&#125;</div><div class="line">cd /var/volume2/ &amp;&amp; touch &#123;200..300&#125;</div></pre></td></tr></table></figure>
+<p>在宿主机上创建个目录用于存储备份的数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mkdir /backup</div><div class="line"></div><div class="line">docker run -it  --rm  --volumes-from App-container1 -v /backup:/backup ubuntu tar -cvf /backup/data_volume_2017_10_01.tar /var/volume1 /var/volume2</div></pre></td></tr></table></figure></p>
+<p>这条命令启动一个临时容器，这个容器有挂载两个volume一个的宿主机的/backup一个是映射App-container1的目录，这样这个临时容器就有了App-container1和宿主机backup目录，然后将App-container1目录的/var/volume1和/var/volume2目录备份到backup目录。因为backup目录和宿主机是映射的，这样宿主机就有了备份文件。  </p>
+<p>将本地backup目录和容器内backup目录进行映射然后将/var/volume1和/var/volume2打包备份到backup目录。<br>可以查看宿主机上目录<br>[root@wan_test /]# ll /backup/<br>总用量 112<br>-rw-r–r– 1 root root 112640 10月   6 19:34 data_volume_2017_10_01.tar</p>
+<p>恢复<br>启动个App-container2将App-container-1的数据恢复   到App-container2中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name App-container2 -v /var/volume1 -v /var/volume2  ubuntu</div></pre></td></tr></table></figure></p>
+<p>此时App-container2中的/var/volume1和/var/volume2目录是空的<br>开始恢复<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -it  --rm  --volumes-from App-container2 -v /backup:/backup ubuntu tar -xvf /backup/data_volume_2017_10_01.tar -C /</div></pre></td></tr></table></figure></p>
+<p>查看App-container2的/var/volume1和/var/volume2，数据恢复。<br>迁移<br>1、stop原用容器<br>2、将原目录mount到新容器  </p>
 <p>销毁<br>销毁容器不会销毁bind mount   </p>
 <p>data managed volume销毁需要docker rm -v 或docker volume rm xxx  </p>
 <p>批量删除<br>docker volume rm $(docker volume ls -q)</p>
