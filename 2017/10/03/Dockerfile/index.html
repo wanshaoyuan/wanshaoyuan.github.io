@@ -16,18 +16,19 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2017/9 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2017/09/index.html">
+  <title>Dockerfile | 我爱西红柿</title>
+  <meta name="description" content="本文为Dockerfile的语法简单介绍使用Dockerfile构建镜像比docker commit的优势 ：1、首先dockerfile是一个文本文件，可控性好，后面要进行翻看或check时更加简单。2、在使用CI/CD等devops工具时，我们一般都是将写好的Dockerfile push到gitlab中去，然后Jenkins监测到对应的project有变动，然后执行自动构建，基于Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dockerfile">
+<meta property="og:url" content="http://yoursite.com/2017/10/03/Dockerfile/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="本文为Dockerfile的语法简单介绍使用Dockerfile构建镜像比docker commit的优势 ：1、首先dockerfile是一个文本文件，可控性好，后面要进行翻看或check时更加简单。2、在使用CI/CD等devops工具时，我们一般都是将写好的Dockerfile push到gitlab中去，然后Jenkins监测到对应的project有变动，然后执行自动构建，基于Docker">
+<meta property="og:updated_time" content="2017-10-03T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="Dockerfile">
+<meta name="twitter:description" content="本文为Dockerfile的语法简单介绍使用Dockerfile构建镜像比docker commit的优势 ：1、首先dockerfile是一个文本文件，可控性好，后面要进行翻看或check时更加简单。2、在使用CI/CD等devops工具时，我们一般都是将写好的Dockerfile push到gitlab中去，然后Jenkins监测到对应的project有变动，然后执行自动构建，基于Docker">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2017/09/index.html">
+  <link rel="canonical" href="http://yoursite.com/2017/10/03/Dockerfile/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,89 +327,138 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#本文为Dockerfile的语法简单介绍"><span class="toc-number">1.</span> <span class="toc-text">本文为Dockerfile的语法简单介绍</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2017/9</h1>
-	      <p class="text-muted">共 5 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-Dockerfile" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Dockerfile
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2017" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2017
-            </a>
-            <!-- <a href="/archives/2017" class="archive-year">2017</a> -->
-          </h3>
-        </div>
-        <div id="collapse2017" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2017">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/10/03/Dockerfile/" class="article-date">
+	  <time datetime="2017-10-03T13:45:59.000Z" itemprop="datePublished">2017-10-03</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/10/03/Dockerfile/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 622(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="本文为Dockerfile的语法简单介绍"><a href="#本文为Dockerfile的语法简单介绍" class="headerlink" title="本文为Dockerfile的语法简单介绍"></a>本文为Dockerfile的语法简单介绍</h3><p>使用Dockerfile构建镜像比docker commit的优势 ：<br>1、首先dockerfile是一个文本文件，可控性好，后面要进行翻看或check时更加简单。<br>2、在使用CI/CD等devops工具时，我们一般都是将写好的Dockerfile push到gitlab中去，然后Jenkins监测到对应的project有变动，然后执行自动构建，基于Dockerfile去构建<br>docker image，然后去部署到kubernetes集群中。</p>
+<p>Dockerfile常用指令<br>FROM #指定base镜像<br>MAINTAINER #设置镜像作者<br>COPY #将文件从host上的build context拷贝到镜像目录，注意src文件必须是build context内的  支持的格式COPY src dest 和COPY [“src”,”dest”]</p>
+<p>ADD #与copy类似，从build context复制文件到镜像，不同的是如果src是归档类文件（tar,zip,tgz,xz等),文件会自动解压到dest</p>
+<p>ENV #设置环境变量，环境变量可被后面的指令使用。</p>
+<p>EXPOSE#指定容器中进程会监听的端口，Docker可以将端口暴露出来。</p>
+<p>VOLUME #将文件或目录声明为volume</p>
+<p>WORKDIR #build时会直接切换到此目录，为后面的RUN、CMD、ENTRYPOINT、ADD、COPY等指令设置镜像当前工作目录</p>
+<p>RUN #容器中运行指定的命令</p>
+<p>CMD #容器启动是运行指定的命令，可以由多个CMD命令，但只有最后一个会生效，CMD命令会被docker run之后根的参数替换掉。</p>
+<p>ENTRYPOINT #设置容器启动时命令，Dockerfile中有多个ENTRYPOINT命令但只有最后一个生效，cmd或docker run之后的参数会被当做参数传递给ENTRYPOINT。</p>
+<p>指令有两中格式shell和exec格式</p>
+<p>shell格式<instruction> <command><br>如<br>RUN apt get install python3<br>CMD echo “Hello world”</instruction></p>
+<p>exec格式<instruction> [“executable”,”param1”,”param2”,…]<br>如<br>RUN [“apt-get”,  “install”,”python3”]<br>CMD[“/bin/echo”, “hello world”]</instruction></p>
+<p>exec执行指令时，会直接调用[command]命令，不会被shell解析，</p>
+<p>当有环境变量时使用exec格式不会被解析。<br>如<br>ENV name wan ENTRYPOINT [“/bin/echo”,”hello”,$name”]<br>运行容器将输出<br>hello $name</p>
+<p>如果要输出变量<br>ENV name wan ENTRYPOINT [“/bin/sh”,”-c”,”echo hello,$name”]</p>
+<p>运行容器将输出<br>hello ，wan</p>
+<p>cmd和entrypoint的区别<br>如果docker run指定了其他命令，cmd指定的默认命令将被忽略，当entrypoint一定会执行。并将docker run后面的参数做为entrypoint后面的参数。</p>
+<p>cmd可以做entrypoint的参数</p>
+<p>ENTRYPOINT [“/bin/echo”,”hello”]<br>CMD [“world”]</p>
+<p>当容器通过docker run -it [image]启动时输出<br>hello world</p>
+<p>entrypoint使用shell格式是，会忽略cmd或docker run提供的参数。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
     
-    
-<a href="/2017/09/27/python_logging/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-27T15:27:44.000Z" itemprop="datePublished">2017-09-27</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Python logging模块
-</a>
+  <section id="comments">
+  	
+  </section>
 
 
   
-    
-    
-    
-<a href="/2017/09/21/kdump/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-21T03:50:44.000Z" itemprop="datePublished">2017-09-21</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kdump
-</a>
+</div>
 
-
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
   
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/10/03/monitor/" title="从零开始构建云平台监控(写在前面)"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
     
     
+    <li class="next">
+      <a href="/2017/10/01/python_socket/" title="Python socket模块">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
     
-<a href="/2017/09/17/neutron_vlan/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-17T03:50:44.000Z" itemprop="datePublished">2017-09-17</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> OpenStack vlan模式下网络流量走向
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/13/openstack_multi_private/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-13T03:50:44.000Z" itemprop="datePublished">2017-09-13</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> openstack添加多个不同物理出口的private网络
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/08/vmware&openstack/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-08T14:55:00.000Z" itemprop="datePublished">2017-09-08</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> OpenStack对接vmware
-</a>
-
-
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   
@@ -446,6 +496,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
