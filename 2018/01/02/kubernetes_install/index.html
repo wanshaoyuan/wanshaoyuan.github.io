@@ -404,7 +404,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/02/kubernetes_install/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,724(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,725(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -490,7 +490,7 @@
 <p>给kube-apiserver添加basic_auth验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/kubernetes/manifests/kube-apiserver.yaml</div></pre></td></tr></table></figure></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_20.png" alt=""></p>
 <p>加上这行</p>
-<p>更新kube-apiserver容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl  apply kube-apiserver.yaml</div></pre></td></tr></table></figure></p>
+<p>更新kube-apiserver容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl  apply -f kube-apiserver.yaml</div></pre></td></tr></table></figure></p>
 <p>授权<br>k8s1.6后版本都采用RBAC授权模型<br>给admin授权<br>默认cluster-admin是拥有全部权限的，将admin和cluster-admin bind这样admin就有cluster-admin的权限。</p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_21.png" alt=""></p>
 <p>那我们将admin和cluster-admin bind在一起这样admin也拥用cluster-admin的权限了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create clusterrolebinding login-on-dashboard-with-cluster-admin --clusterrole=cluster-admin --user=admin</div></pre></td></tr></table></figure></p>
