@@ -404,7 +404,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/02/kubernetes_install/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,725(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,770(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -468,7 +468,9 @@
 <p>或直接使用离线包里面的<br>若要修改网段，需要kubeadm –pod-network-cidr=和这里同步<br>vim kube-flannel.yml<br>修改network项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;Network&quot;: &quot;10.244.0.0/16&quot;,</div></pre></td></tr></table></figure></p>
 <p>执行</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create  -f kube-flannel.yml</div></pre></td></tr></table></figure>
-<h3 id="node节点操作"><a href="#node节点操作" class="headerlink" title="node节点操作"></a>node节点操作</h3><p>使用刚刚kubeadm后的kubeadm join –xxx<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm join --token 361c68.fbafaa96a5381651 192.168.2.110:6443 --discovery-token-ca-cert-hash sha256:e5e392f4ce66117635431f76512d96824b88816dfdf0178dc497972cf8631a98</div></pre></td></tr></table></figure></p>
+<h3 id="node节点操作"><a href="#node节点操作" class="headerlink" title="node节点操作"></a>node节点操作</h3><p>修改kubelet配置文件根上面有一将cgroup的driver由systemd改为cgroupfs<br>vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf<br>Environment=”KUBELET_CGROUP_ARGS=–cgroup-driver=cgroupfs”<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl daemon-reload</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable kubelet&amp;&amp;systemctl restart kubelet</div></pre></td></tr></table></figure>
+<p>使用刚刚执行kubeadm后的kubeadm join –xxx<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubeadm join --token 361c68.fbafaa96a5381651 192.168.2.110:6443 --discovery-token-ca-cert-hash sha256:e5e392f4ce66117635431f76512d96824b88816dfdf0178dc497972cf8631a98</div></pre></td></tr></table></figure></p>
 <p>多次加入报错查看/var/log/message日志.<br>这个错是因为没有配置前面sysctl的router的环境变量<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_26.png" alt=""></p>
 <p>发现node节点启动不了flannel容器，查看容器log发现是host上没有默认路由，在网卡配置文件里面设置好默认路由。</p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_11.png" alt=""></p>
