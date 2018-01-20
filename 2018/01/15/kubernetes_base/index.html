@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes基础理解 | 我爱西红柿</title>
+  <meta name="description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。
+master节点master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。
+node节点运行容器应用，由mater管理，接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes基础理解">
+<meta property="og:url" content="http://yoursite.com/2018/01/15/kubernetes_base/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。
+master节点master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。
+node节点运行容器应用，由mater管理，接">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_12.png">
+<meta property="og:updated_time" content="2018-01-15T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kubernetes基础理解">
+<meta name="twitter:description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。
+master节点master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。
+node节点运行容器应用，由mater管理，接">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/01/15/kubernetes_base/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">13</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.2px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.4px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 13.2px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.6px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.8px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.2px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/15/kubernetes_base/" class="title">kubernetes基础理解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-15T13:45:59.000Z" itemprop="datePublished">2018-01-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/02/kubernetes_install/" class="title">kubernetes V1.9安装(附离线安装包和离线镜像）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-02T13:45:59.000Z" itemprop="datePublished">2018-01-02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/15/docker_weave/" class="title">Docker多主机网络(weave)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-15T13:45:59.000Z" itemprop="datePublished">2017-12-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/14/docker_flannel/" class="title">Docker多主机网络(flannel)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-14T13:45:59.000Z" itemprop="datePublished">2017-12-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/07/docker_macvlan/" class="title">Docker多主机网络(macvlan)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-07T13:45:59.000Z" itemprop="datePublished">2017-12-07</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件构成"><span class="toc-number">2.</span> <span class="toc-text">组件构成</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#master节点"><span class="toc-number">2.1.</span> <span class="toc-text">master节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#node节点"><span class="toc-number">2.2.</span> <span class="toc-text">node节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#根openstack类比"><span class="toc-number">3.</span> <span class="toc-text">根openstack类比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子-参考cloudmanhttps-steemit-com-kubernetes-cloudman6-k8s-kubernetes-3-部署应用"><span class="toc-number">4.</span> <span class="toc-text">例子(参考cloudmanhttps://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3)部署应用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#部署应用（kubernetes-bootcamp"><span class="toc-number">4.1.</span> <span class="toc-text">部署应用（kubernetes-bootcamp)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#scale应用（弹性伸缩"><span class="toc-number">4.2.</span> <span class="toc-text">scale应用（弹性伸缩)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#滚动更新"><span class="toc-number">4.3.</span> <span class="toc-text">滚动更新</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_base" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes基础理解
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/01/15/kubernetes_base/" class="article-date">
+	  <time datetime="2018-01-15T13:45:59.000Z" itemprop="datePublished">2018-01-15</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/15/kubernetes_base/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,943(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>cluster<br>cluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。</p>
+<p>master节点<br>master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。</p>
+<p>node节点<br>运行容器应用，由mater管理，接收master节点的各类请求，进行容器的创建和管理，并将运行在上面的容器应用上报到master节点，类似openstack的计算节点。</p>
+<p>POD<br>pod是kubernetes最小的调度单元，一个pod对应一个或多个container，通常会将紧密相连的一组应用放到一个pod中，同一个pod的container共享ip和namespace。</p>
+<p>为什么使用pod?<br>方便管理<br>在kubernetes中pod是container的载体，一个pod里面拥有一个或多个container，做为一个逻辑单元，方便管理。</p>
+<p>资源共享和通信<br>同一个pod中的container共享一个网络栈和存储，相互之间可以直接通过localhost进行通信，同时也共享同一块存储卷</p>
+<p>灵活<br>kubernetes直接管理对象是pod，而不是底层的docker，对于docker的操作，被封装在pod中，不会直接操作，这也意味着，pod包含也可以是其他公司的容器产品，比如coreos的rtk或阿里巴巴的pouch。</p>
+<p>controller<br>kubernetes使用controller来创建和管理pod，controller中定义了pod的部署特性，比如部署几个副本，在什么样的node上运行。<br>为满足不同的业务需求，kubernetes提供了如下controller。</p>
+<p>Deployment<br>是最常用的 Controller，比如前面就是通过创建 Deployment 来部署应用的。Deployment 可以管理 Pod 的多个副本，并确保 Pod 按照期望的状态运行。  </p>
+<p>Replicaset<br>实现了 Pod 的多副本管理。使用 Deployment 时会自动创建 ReplicaSet，也就是说 Deployment 是通过 ReplicaSet 来管理 Pod 的多个副本，我们通常不需要直接使用 ReplicaSet。  </p>
+<p>Daemonset<br> 用于每个 Node 最多只运行一个 Pod 副本的场景。正如其名称所揭示的，DaemonSet 通常用于运行 daemon。</p>
+<p>StatefuleSet<br>能够保证 Pod 的每个副本在整个生命周期中名称是不变的。而其他 Controller 不提供这个功能，当某个 Pod 发生故障需要删除并重新启动时，Pod 的名称会发生变化。同时 StatefuleSet 会保证副本按照固定的顺序启动、更新或者删除。  </p>
+<p>Job<br>用于运行结束就删除的应用。而其他 Controller 中的 Pod 通常是长期持续运行。  </p>
+<p>service<br>deployment有多个副本pod，每个pod有自己的ip，外界通过service来访问pod，service有自己的ip和端口，service为pod提供负载均衡，简单说，service是为一组功能相同的pod提供统一入口。  </p>
+<p>namespace<br>这里根linux的namespace不一样<br>通过namespace将用户创建的controller和pod等资源分开。namespace可以将一个物理的cluster划成多个虚拟的cluster，每个cluster就是一个namespace，不同的namespace里面资源是完全隔离的。<br>kubernetes默认创建了三个namespace，default、kube-public、kube-system<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_1.png" alt=""><br>default：默认创建的资源将放到这个namespace里面。<br>kube-system：kubernetes自己创建的系统资源将放这里。<br>kube-public：kubernetes自己创建的命名空间，用于确保整个集群中公开的看到某些资源。<br>创建pod时指定namespace<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl --namespace=&lt;insert-namespace-name-here&gt; run nginx --image=nginx</div></pre></td></tr></table></figure></p>
+<h3 id="组件构成"><a href="#组件构成" class="headerlink" title="组件构成"></a>组件构成</h3><h4 id="master节点"><a href="#master节点" class="headerlink" title="master节点"></a>master节点</h4><p>etcd<br>kubernetes的后端数据存储系统，cluster中的所有资源对象数据都存储在这，用于配置共享和服务发现。  </p>
+<p>kube-apiserver<br>1、整个集群管理的api接口，所有对集群的操作和查询都需要经过api-server。<br>2、集群内各个模块通信的枢钮，集群内其他模块，互相之间并不能直接通信，都是通过api-server打交道，来完成自己那部分工作。<br>3、集群安全控制，apiserver提供了集群的安全验证，和角色权限分配。<br>4、连接etcd，集群内所有组件都不能直接连接etcd只能通过api-server去连接etcd。  </p>
+<p>kube-controller-manager<br>1、负责集群的故障检测和修复。<br>2、根据deployment的定义，维持正确的pod副本数。<br>3、根据Service与Pod的管理关系，完成服务的Endpoints对象的创建和更新；<br>4、为新的namespace创建帐户和api访问token。  </p>
+<p>kube-scheduler<br>创建pod时，选择合适的node进行调度。  </p>
+<p>kube-dns<br>kubernetes中的域名解析服务器。  </p>
+<p>flannel<br>flannel的网络组件。  </p>
+<p>kube-dashboard<br>kubernetes的web控制端。</p>
+<h4 id="node节点"><a href="#node节点" class="headerlink" title="node节点"></a>node节点</h4><p>kubelet<br>负责node节点容器的创建、删除监控等生命周期管理，上报node信息如cpu、内存、pod的ip等信息导master节点的api-server<br>kube-proxy<br>用于实现端口映射和负载均衡。<br>kube-dns<br>kubernetes的域名解析服务器<br>flannel<br>网络flannel的组件  </p>
+<h3 id="根openstack类比"><a href="#根openstack类比" class="headerlink" title="根openstack类比"></a>根openstack类比</h3><p>角色上<br>kubernetes分为master节点和node节点，其中master节点是大脑，node节点上承载master调度过来的资源，接收master节点的各类请求。这点根openstack的control节点和compute节点基本一样。<br>组件上<br>master节点<br>先从etcd说起，etcd做为kubernetes的后端数据存储系统用于配置共享和服务发现，和openstack中的控制节点的数据库和消息队列服务提供的服务相似。<br>kube-api-server在kubernetes提供集群管理的api接口，角色的权限分配和安全验证，和openstack中的keystone和各类组件的api-server相似。<br>kube-scheduler在kubernetes中为pod选择最合适的node节点。与openstack的nova-scheduler提供功能相似。<br>node节点<br>kubelet在node节点上负责pod的创建和生命周期的管理，同时对宿主机资源使用情况进行上报到master，与openstack的nova-compute所提供的功能非常一致。<br>docker是运行容器的引擎根openstack的hypervisor提供的功能一致。kubelet调用docker创建容器，nova-compute调用kvm去创建虚拟机。</p>
+<h3 id="例子-参考cloudmanhttps-steemit-com-kubernetes-cloudman6-k8s-kubernetes-3-部署应用"><a href="#例子-参考cloudmanhttps-steemit-com-kubernetes-cloudman6-k8s-kubernetes-3-部署应用" class="headerlink" title="例子(参考cloudmanhttps://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3)部署应用"></a>例子(参考cloudman<a href="https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3)部署应用" target="_blank" rel="external">https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3)部署应用</a></h3><hr>
+<h4 id="部署应用（kubernetes-bootcamp"><a href="#部署应用（kubernetes-bootcamp" class="headerlink" title="部署应用（kubernetes-bootcamp)"></a>部署应用（kubernetes-bootcamp)</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl run kubernetes-bootcamp --image=docker.io/jocatalin/kubernetes-bootcamp:v1 --port=8080</div></pre></td></tr></table></figure>
+<p>查看部署的应用，这里deployment为kubernetes术语，理解为应用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get deployment</div></pre></td></tr></table></figure></p>
+<p>docker镜像通过–image指定<br>–port设置应用对外服务的端口。  </p>
+<p>流程:<br>1、kubectl发送应用部署请求到kube-apiserver，kube-apiserver将请求写入etcd中。<br>2、api-server通知kube-controller-manger，创建一个deployment对象。将结果通过api-server写入etcd。<br>3、Scheduler发现后，执行调度流程，为这个新Pod选定一个落户的Node，然后通过API Server将结果写入到etcd中。<br>4、目标节点kubelet进程通过api-server检测这个新生的pod，并按照定义创建pod。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_13.png" alt=""></p>
+<p>查看当前pod<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get pods</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_2.png" alt=""></p>
+<p>默认情况下使用pod只能在集群内部进行访问，为了能在外部访问容器，需要将容器应用的端口映射到node节点端口。<br>修改kubernetes-bootcamp的端口类型为NodePort，容器内端口为8080，映射的端口会自动从30000~32767中挑选一个。<br>services可以认为是端口映射。<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_2.png" alt=""></p>
+<p>kubernetes-bootcamp分配到了node-2上，可以直接访问node-2的:31079<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_3.png" alt="">  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_4.png" alt=""></p>
+<h4 id="scale应用（弹性伸缩"><a href="#scale应用（弹性伸缩" class="headerlink" title="scale应用（弹性伸缩)"></a>scale应用（弹性伸缩)</h4><p>当前kubernetes-bootcamp副本数还是为1<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_5.png" alt=""><br>扩展应用为3<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl scale deployment/kubernetes-bootcamp --replicas=3</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_6.png" alt=""></p>
+<p>pod数也增长为3了。<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_7.png" alt=""></p>
+<p>每次访问node-1:31079，都是不同的pod给回的返回结果。可以发现每次请求发到了不同的pod上从而实现了负载均衡。<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_8.png" alt=""></p>
+<p>缩减pod数为2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl scale deployment/kubernetes-bootcamp --replicas=2</div></pre></td></tr></table></figure></p>
+<h4 id="滚动更新"><a href="#滚动更新" class="headerlink" title="滚动更新"></a>滚动更新</h4><p>当前应用image版本为v1，升级为v2<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_9.png" alt=""><br>在次访问，版本是v2了<br>回退版本<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_10.png" alt=""><br>验证结果<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_12.png" alt=""></p>
+<p>参考链接:<br><a href="http://blog.csdn.net/liukuan73/article/details/54971854" target="_blank" rel="external">http://blog.csdn.net/liukuan73/article/details/54971854</a><br><a href="https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3" target="_blank" rel="external">https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2018/01/02/kubernetes_install/" title="kubernetes V1.9安装(附离线安装包和离线镜像）">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
