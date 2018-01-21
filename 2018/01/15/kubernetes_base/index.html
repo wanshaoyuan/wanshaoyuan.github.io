@@ -17,16 +17,16 @@
   
   
   <title>kubernetes基础理解 | 我爱西红柿</title>
-  <meta name="description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。
+  <meta name="description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用;  
 master节点master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。
-node节点运行容器应用，由mater管理，接">
+node节点运行容器应用，由mater管理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kubernetes基础理解">
 <meta property="og:url" content="http://yoursite.com/2018/01/15/kubernetes_base/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。
+<meta property="og:description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用;  
 master节点master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。
-node节点运行容器应用，由mater管理，接">
+node节点运行容器应用，由mater管理">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_1.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_13.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_2.png">
@@ -43,9 +43,9 @@ node节点运行容器应用，由mater管理，接">
 <meta property="og:updated_time" content="2018-01-15T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kubernetes基础理解">
-<meta name="twitter:description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。
+<meta name="twitter:description" content="概念clustercluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用;  
 master节点master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。
-node节点运行容器应用，由mater管理，接">
+node节点运行容器应用，由mater管理">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/01/15/kubernetes_base/index.html">
@@ -413,7 +413,7 @@ node节点运行容器应用，由mater管理，接">
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>cluster<br>cluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用。</p>
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>cluster<br>cluster是计算、存储、网络的资源的集合，kubernetes利用这些资源运行各种基于容器的应用;  </p>
 <p>master节点<br>master是cluster的大脑，类似openstack的控制节点，运行着apiserver、controller-manager、scheduler它的主要职责是对资源管理、调度，还有认证、弹性伸缩、安全认证。</p>
 <p>node节点<br>运行容器应用，由mater管理，接收master节点的各类请求，进行容器的创建和管理，并将运行在上面的容器应用上报到master节点，类似openstack的计算节点。</p>
 <p>POD<br>pod是kubernetes最小的调度单元，一个pod对应一个或多个container，通常会将紧密相连的一组应用放到一个pod中，同一个pod的container共享ip和namespace。</p>
