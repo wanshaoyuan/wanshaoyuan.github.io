@@ -38,7 +38,7 @@ node节点运行容器应用，由mater管理">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_7.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_8.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_11.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_12.png">
 <meta property="og:updated_time" content="2018-01-15T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
@@ -453,7 +453,7 @@ node节点运行容器应用，由mater管理">
 <p>pod数也增长为3了。<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_7.png" alt=""></p>
 <p>每次访问node-1:31079，都是不同的pod给回的返回结果。可以发现每次请求发到了不同的pod上从而实现了负载均衡。<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_8.png" alt=""></p>
 <p>缩减pod数为2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl scale deployment/kubernetes-bootcamp --replicas=2</div></pre></td></tr></table></figure></p>
-<h4 id="滚动更新"><a href="#滚动更新" class="headerlink" title="滚动更新"></a>滚动更新</h4><p>当前应用image版本为v1，升级为v2<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_9.png" alt=""><br>在次访问，版本是v2了<br>回退版本<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_10.png" alt=""><br>验证结果<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_12.png" alt=""></p>
+<h4 id="滚动更新"><a href="#滚动更新" class="headerlink" title="滚动更新"></a>滚动更新</h4><p>当前应用image版本为v1，升级为v2<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_9.png" alt=""><br>在次访问，版本是v2了<br>回退版本<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_11.png" alt=""><br>验证结果<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubenetes_base_12.png" alt=""></p>
 <p>参考链接:<br><a href="http://blog.csdn.net/liukuan73/article/details/54971854" target="_blank" rel="external">http://blog.csdn.net/liukuan73/article/details/54971854</a><br><a href="https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3" target="_blank" rel="external">https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3</a>  </p>
 
       
