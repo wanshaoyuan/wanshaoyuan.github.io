@@ -16,18 +16,36 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2017/11 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2017/11/index.html">
+  <title>修改docker容器默认空间大小 | 我爱西红柿</title>
+  <meta name="description" content="软件版本docker-ce 17.03storagedriver：device-mapper：direct-lvm    
+docker 启动一个容器后默认根分区大小为10GB，通过docker info可以看见默认大小为10G,有时会不够用需要扩展。
+两种修改方式静态扩展启动容器查看容器分区大小指定容器默认空间大小为20G修改/etc/docker/daemon.json，添加dm.basesi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="修改docker容器默认空间大小">
+<meta property="og:url" content="http://yoursite.com/2018/01/23/docker_default_storage/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="软件版本docker-ce 17.03storagedriver：device-mapper：direct-lvm    
+docker 启动一个容器后默认根分区大小为10GB，通过docker info可以看见默认大小为10G,有时会不够用需要扩展。
+两种修改方式静态扩展启动容器查看容器分区大小指定容器默认空间大小为20G修改/etc/docker/daemon.json，添加dm.basesi">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_10.png">
+<meta property="og:updated_time" content="2017-01-23T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="修改docker容器默认空间大小">
+<meta name="twitter:description" content="软件版本docker-ce 17.03storagedriver：device-mapper：direct-lvm    
+docker 启动一个容器后默认根分区大小为10GB，通过docker info可以看见默认大小为10G,有时会不够用需要扩展。
+两种修改方式静态扩展启动容器查看容器分区大小指定容器默认空间大小为20G修改/etc/docker/daemon.json，添加dm.basesi">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2017/11/index.html">
+  <link rel="canonical" href="http://yoursite.com/2018/01/23/docker_default_storage/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,69 +344,146 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#两种修改方式"><span class="toc-number">1.</span> <span class="toc-text">两种修改方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#静态扩展"><span class="toc-number">1.1.</span> <span class="toc-text">静态扩展</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#动态修改"><span class="toc-number">1.2.</span> <span class="toc-text">动态修改</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2017/11</h1>
-	      <p class="text-muted">共 3 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-docker_default_storage" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      修改docker容器默认空间大小
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2017" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2017
-            </a>
-            <!-- <a href="/archives/2017" class="archive-year">2017</a> -->
-          </h3>
-        </div>
-        <div id="collapse2017" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2017">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/01/23/docker_default_storage/" class="article-date">
+	  <time datetime="2018-01-23T13:45:59.000Z" itemprop="datePublished">2018-01-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/23/docker_default_storage/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 519(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 2(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>软件版本<br>docker-ce 17.03<br>storagedriver：device-mapper：direct-lvm    </p>
+<p>docker 启动一个容器后默认根分区大小为10GB，通过docker info可以看见默认大小为10G,有时会不够用需要扩展。<br><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_1.png" alt=""></p>
+<h3 id="两种修改方式"><a href="#两种修改方式" class="headerlink" title="两种修改方式"></a>两种修改方式</h3><h4 id="静态扩展"><a href="#静态扩展" class="headerlink" title="静态扩展"></a>静态扩展</h4><p>启动容器查看容器分区大小<br><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_2.png" alt=""><br>指定容器默认空间大小为20G<br>修改/etc/docker/daemon.json，添加dm.basesize=xxx<br><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_3.png" alt=""></p>
+<p>需要注意的是只能扩容不能缩减。<br>重启docker<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart docker</div></pre></td></tr></table></figure></p>
+<p>此时还是不生效的，需要把镜像重新pull一遍<br><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_4.png" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker rmi centos</div><div class="line">docker pull centos</div></pre></td></tr></table></figure></p>
+<p>重新run一个<br><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_5.png" alt=""><br>缺点：  </p>
+<ul>
+<li>非动态更改，改完后还需要重新启动docker  </li>
+<li>更改后镜像需要重新pull下来。  </li>
+<li>只能扩容不能缩减。    </li>
+</ul>
+<h4 id="动态修改"><a href="#动态修改" class="headerlink" title="动态修改"></a>动态修改</h4><p>以centos这个容器为例，动态修改这个容器默认空间为30G<br>创建个centos容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name centos centos</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_13.png" alt=""></p>
+<p>找到对应的块设备<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker inspect centos|grep DeviceName</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_7.png" alt=""><br>使用dmsetup table查看文件扇区信息<br>结果的第二个数字(41943040)是设备的大小，表示有多少个512字节的扇区，计算方法是(20<em>1024</em>1024*1024/512)我们修改大小也只需要修改这个值。<br><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_8.png" alt=""><br>将新的扇区大小写入，只需要修改第二个值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo 0 62914560 thin 253:3 15|dmsetup load /dev/mapper/docker-253\:0-1940029-7ad938b4cb54e70bed0028bb5705c3f7ecd832591d56b076c7c59e51f8cb1276</div></pre></td></tr></table></figure></p>
+<p> <img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_9.png" alt=""><br> 将修改后的容器存储文件激活<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">dmsetup resume /dev/mapper/docker-253\:0-1940029-7ad938b4cb54e70bed0028bb5705c3f7ecd832591d56b076c7c59e51f8cb1276</div></pre></td></tr></table></figure></p>
+<p>再次查看  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docer_storage_size_10.png" alt=""><br>发现扇区大小改好了<br>文件系统更新<br>ext4、ext3、ext3文件系统使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">resize2fs /dev/mapper/docker-253\:0-1940029-7ad938b4cb54e70bed0028bb5705c3f7ecd832591d56b076c7c59e51f8cb1276</div></pre></td></tr></table></figure></p>
+<p>xfs文件系统使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">xfs_growfs -d /dev/mapper/docker-253\:0-1940029-7ad938b4cb54e70bed0028bb5705c3f7ecd832591d56b076c7c59e51f8cb1276</div></pre></td></tr></table></figure></p>
+<p>优点：   </p>
+<ul>
+<li>动态修改，不需要修改docker启动参数，重启docker。</li>
+<li>不用重新pull镜像，针对单个容器，控制灵活。</li>
+</ul>
+<p>缺点：  </p>
+<ul>
+<li>上面用的方法只能是devicemapper的storage-driver。</li>
+<li>只能扩容不能缩减。</li>
+</ul>
+<p>建议：<br>实际使用中，数据还是尽量放数据卷中，放镜像中的话，会造成镜像太过于雍肿，就违背了容器本身设计的初仲了。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
     
-    
-<a href="/2017/11/28/openstack_iso/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-11-28T16:15:26.000Z" itemprop="datePublished">2017-11-29</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> openstack使用ISO镜像
-</a>
+  <section id="comments">
+  	
+  </section>
 
 
   
-    
-    
-    
-<a href="/2017/11/17/docker_network_overlay/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-11-17T13:45:59.000Z" itemprop="datePublished">2017-11-17</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker多主机网络(overlay)
-</a>
+</div>
 
-
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
   
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/01/25/docker_storage_driver/" title="docker storage-driver"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
     
     
+    <li class="next">
+      <a href="/2018/01/15/kubernetes_base/" title="kubernetes基础理解">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
     
-<a href="/2017/11/03/docker_network/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-11-03T13:45:59.000Z" itemprop="datePublished">2017-11-03</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker单主机网络
-</a>
-
-
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   
@@ -426,6 +521,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 

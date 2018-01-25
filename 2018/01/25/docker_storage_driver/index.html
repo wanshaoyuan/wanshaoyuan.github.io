@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker storage-driver | 我爱西红柿</title>
+  <meta name="description" content="作用：
+容器镜像的存储和管理。  
+容器启动时的文件系统的准备。  
+
+概念：写时复制（copy-on-write)只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。用时分配（allocate-on-daemand)thin-pool用的就是此技术当分配一个100G的空">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker storage-driver">
+<meta property="og:url" content="http://yoursite.com/2018/01/25/docker_storage_driver/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="作用：
+容器镜像的存储和管理。  
+容器启动时的文件系统的准备。  
+
+概念：写时复制（copy-on-write)只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。用时分配（allocate-on-daemand)thin-pool用的就是此技术当分配一个100G的空">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_15.png">
+<meta property="og:updated_time" content="2018-01-25T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker storage-driver">
+<meta name="twitter:description" content="作用：
+容器镜像的存储和管理。  
+容器启动时的文件系统的准备。  
+
+概念：写时复制（copy-on-write)只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。用时分配（allocate-on-daemand)thin-pool用的就是此技术当分配一个100G的空">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/01/25/docker_storage_driver/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.2px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.4px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 13.2px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.6px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.8px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.2px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/25/docker_storage_driver/" class="title">docker storage-driver</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-25T13:45:59.000Z" itemprop="datePublished">2018-01-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/23/docker_default_storage/" class="title">修改docker容器默认空间大小</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-23T13:45:59.000Z" itemprop="datePublished">2018-01-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/15/kubernetes_base/" class="title">kubernetes基础理解</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-15T13:45:59.000Z" itemprop="datePublished">2018-01-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/02/kubernetes_install/" class="title">kubernetes V1.9安装(附离线安装包和离线镜像）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-02T13:45:59.000Z" itemprop="datePublished">2018-01-02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/15/docker_weave/" class="title">Docker多主机网络(weave)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-15T13:45:59.000Z" itemprop="datePublished">2017-12-15</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#作用："><span class="toc-number">1.</span> <span class="toc-text">作用：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念："><span class="toc-number">2.</span> <span class="toc-text">概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见的storage-driver"><span class="toc-number">3.</span> <span class="toc-text">常见的storage-driver</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#aufs："><span class="toc-number">3.1.</span> <span class="toc-text">aufs：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#overlay"><span class="toc-number">3.2.</span> <span class="toc-text">overlay:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#overlay2："><span class="toc-number">3.3.</span> <span class="toc-text">overlay2：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#devicemapper："><span class="toc-number">3.4.</span> <span class="toc-text">devicemapper：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#适用场景："><span class="toc-number">4.</span> <span class="toc-text">适用场景：</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker_storage_driver" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker storage-driver
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/01/25/docker_storage_driver/" class="article-date">
+	  <time datetime="2018-01-25T13:45:59.000Z" itemprop="datePublished">2018-01-25</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/25/docker_storage_driver/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,756(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="作用："><a href="#作用：" class="headerlink" title="作用："></a>作用：</h3><ul>
+<li>容器镜像的存储和管理。  </li>
+<li>容器启动时的文件系统的准备。  </li>
+</ul>
+<h3 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h3><p>写时复制（copy-on-write)<br>只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。<br>所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。<br>用时分配（allocate-on-daemand)<br>thin-pool用的就是此技术<br>当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。  </p>
+<h3 id="常见的storage-driver"><a href="#常见的storage-driver" class="headerlink" title="常见的storage-driver"></a>常见的storage-driver</h3><h4 id="aufs："><a href="#aufs：" class="headerlink" title="aufs："></a>aufs：</h4><p>linux上较老牌的storage_driver,基于文件级的存储driver，将多层合并成文件系统的单层表示。底层都是只读层，只有最上层文件系统可写,当写和修改文件时也是使用cow技术。<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_1.png" alt=""></p>
+<p>优点：拥有较长的历史，在大量生产环境中验证过，稳定性、可靠性较高<br>缺点：aufs对文件第一次进行修改操作时需要将整个文件复制到读写层，哪怕你只是修改文件的一小部分，这样会造成很大的性能开销。  </p>
+<h4 id="overlay"><a href="#overlay" class="headerlink" title="overlay:"></a>overlay:</h4><p>与aufs设计非常类似，也是基于文件级的存储driver同时 也是 一个union filesystem，overlay主要分两层upperdir和lowerdir,其中lowerdir对应的docker中的镜像层，upperdir对应的 是容器层，merged对应的是有效的容器挂载点。  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_2.png" alt=""><br>优点：overlay的速度比aufsh和devicemapper快，因为aufs有很多层，而overlay只有两层。<br>overlay支持页缓存共享，多个容器访问同一个文件，可以共享一个或多个页缓存选项。  </p>
+<p>缺点：1、overlay是个新生儿，还不具备在生产中使用的条件。<br>2、因为overlay也是基于文件级的存储，所以根aufs 一样对文件进行第一次修改操作时需要将整个文件拷贝到读写层但比aufs好，因为overlay只有两层，而aufs有多层。<br>3、overlay只有两层，镜像中的每一层并不对应overlay中的层，对应的是/var/lib/docker/overlay/中一个文件夹，然后用硬连接的方式将下面层文件引用到上层。所以overlay需要消耗更多的inode。  </p>
+<h4 id="overlay2："><a href="#overlay2：" class="headerlink" title="overlay2："></a>overlay2：</h4><p>overlay的更进版，只支持4.0以上内核，overlay原生支持多lower overlayfs镜像（最大128层），所以消耗更少的inode。  </p>
+<h4 id="devicemapper："><a href="#devicemapper：" class="headerlink" title="devicemapper："></a>devicemapper：</h4><p>在linux2.6内核版本中并入内核，devicemapper将所有的镜像和容器存储在自己的虚拟块设备上，devicemapper根上面aufs和overlay不一样的是devicemapper工作在块层次上而不是文件层次上。devicemapper驱动会从配置好的thin-pool中创建一个带一个带有文件系统的块设备，所有镜像都是创建的块设备的快照，容器层是镜像层的快照，都是采用copy-on-write策略。<br>优点：<br>1、devicemapper的copy-on-write策略以64KB为最小单元，相比aufs和overlay整个文件的复制，这个效率很高了。<br>缺点：<br>2、启动n个容器就复制n分文件在内存中，对内存影响大，不合适单台host容器密度高的业务场景。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_3.png" alt=""></p>
+<p>从上图可以看出，镜像的每一层都是它下面一层的快照，镜像是thin-pool里面创建的块设备的快照。<br>devicemapper分两种模式loop-lvm，direct-lvm，这两种模式的主要区别就是创建thin-pool的方式不一样。<br>loop-lvm是在/var/lib/docker/devicemapper/创建data和metada两个稀疏文件通过losetup将这两个文件映射成块设备，然后通过devicemapper映射成thin-pool。  </p>
+<p>direct-lvm是直接通过lvm的方式将设备创建成pv，组成两个vg分别为data和metadata，将这两个vg组成lvm的thin-pool。<br>需要注意的docker官方推荐centos和rhel生产中使用devicmapper的direct-lvm模式，不推荐loop-lvm因为loop-lvm在挂载多个容器后性能会急剧下降。</p>
+<h3 id="适用场景："><a href="#适用场景：" class="headerlink" title="适用场景："></a>适用场景：</h3><p>没有好坏分只有合适分，在不同业务场景下使用不同的storage-driver。<br>这是docker官方给出的一个不同linux发行版的推荐表<br><a href="https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#docker-ce" target="_blank" rel="external">https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#docker-ce</a><br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_4.png" alt=""></p>
+<p>不同storage-driver所支持的文件系统<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_5.png" alt="">  </p>
+<p>不同的存储驱动在不同的应用场景下性能不同。例如，AUFS、Overlay、Overlay2 操作在文件级别，内存使用相对更高效，但大文件读写时，容器层会变得很大；DeviceMapper、Btrfs、ZFS 操作在块级别，适合工作在io负载高的场景；容器层数多，且写小文件频繁时，Overlay 效率比 Overlay2 更高；Btrfs、ZFS 更耗内存。<br>此图片来源七牛布道师 陈爱珍在docker.io的分享<a href="http://dockone.io/article/1513" target="_blank" rel="external">http://dockone.io/article/1513</a>  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_6.png" alt=""></p>
+<p>性能对比<br><a href="http://dockone.io/article/1513" target="_blank" rel="external">http://dockone.io/article/1513</a>  </p>
+<p>docker默认是使用操作系统本身默认的storage-driver，比如说你在ubuntu上安装docker那么默认就是aufs，在centos7或rhel7上部署docker默认就是overlay。<br>将centos7默认的overlay改成生产可用的devicemapper的direct-lvm模式。<br>安装device-mapper-persistent-data, lvm2包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install device-mapper-persistent-data, lvm2 -y</div></pre></td></tr></table></figure></p>
+<p>创建pv<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pvcreate /dev/sdb</div></pre></td></tr></table></figure></p>
+<p>创建vg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vgcreate  docker /dev/sdb</div></pre></td></tr></table></figure></p>
+<p>创建lv，这里需要注意，我们分两个lv，一个是data，一个是metadata，最后要将这个两个lv组成一个thin-pool<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">lvcreate --wipesignatures y -n thinpool docker -l 95%VG #使用95% VG剩余空间</div><div class="line">lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG</div></pre></td></tr></table></figure></p>
+<p>将lv docker/thinpool做为thinpool ，docker/thinpoolmeta做为pool的metadata<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lvconvert -y --zero n -c 512K --thinpool docker/thinpool  --poolmetadata docker/thinpoolmeta</div></pre></td></tr></table></figure></p>
+<p>配置lvm thinpool的自动扩容  </p>
+<p>vi /etc/lvm/profile/docker-thinpool.profile<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">activation &#123;</div><div class="line">  thin_pool_autoextend_threshold=80</div><div class="line">  thin_pool_autoextend_percent=20</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>thin_pool_autoextend_threshold:已用空间百分比 ，100为关闭<br>thin_pool_autoextend_percent=20：每次扩容thinpool的容量比例，0为关闭    </p>
+<p>当磁盘使用达到80%时，再扩展当前容量的20%。更新/etc/lvm/profile/docker-thinpool.profile  </p>
+<p>激活此规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lvchange --metadataprofile docker-thinpool docker/thinpool</div></pre></td></tr></table></figure></p>
+<p>对逻辑卷启用监视<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lvs -o+seg_monitor</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_7.png" alt=""></p>
+<p>如果之前/var/lib/docker有数据，建议进行备份，没有的可以直接运行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">编辑daemon.json文件</div><div class="line">/etc/docker/daemon.json</div><div class="line">&#123;</div><div class="line">    &quot;storage-driver&quot;: &quot;devicemapper&quot;,</div><div class="line">    &quot;storage-opts&quot;: [</div><div class="line">    &quot;dm.thinpooldev=/dev/mapper/docker-thinpool&quot;,</div><div class="line">    &quot;dm.use_deferred_removal=true&quot;,</div><div class="line">    &quot;dm.use_deferred_deletion=true&quot;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>重启docker<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart docker</div></pre></td></tr></table></figure></p>
+<p>验证<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_8.png" alt=""></p>
+<p>我们可以直接pull一个镜像看看逻辑卷使用会不会改变。<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_9.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker pull centos</div></pre></td></tr></table></figure>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_10.png" alt=""><br>在次查看发现使用率提高了<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_11.png" alt=""></p>
+<p>扩容<br>按照传统的lvm扩容的方式扩容就可以了，假设我添加一个100G的sdc设备<br>先创建pv<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pvcreate /dev/sdc</div></pre></td></tr></table></figure></p>
+<p>扩容vg<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vgextend docker /dev/sdc</div></pre></td></tr></table></figure></p>
+<p>扩容thin-pool<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">lvextend -l+100%FREE -n docker/thinpool</div></pre></td></tr></table></figure></p>
+<p>检查<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_12.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_13.png" alt=""></p>
+<p>当启动一个容器时<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd centos</div></pre></td></tr></table></figure></p>
+<p>就生成了对应的块设备<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_14.png" alt=""></p>
+<p>进入对应目录可以看见运行的容器对应的rootfs<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker_storagedriver_15.png" alt=""></p>
+<p>参考链接：<br><a href="http://blog.csdn.net/M2l0ZgSsVc7r69eFdTj/article/details/78153724" target="_blank" rel="external">http://blog.csdn.net/M2l0ZgSsVc7r69eFdTj/article/details/78153724</a><br><a href="http://blog.csdn.net/vchy_zhao/article/details/70238690" target="_blank" rel="external">http://blog.csdn.net/vchy_zhao/article/details/70238690</a><br><a href="http://blog.csdn.net/a85880819/article/details/52448654" target="_blank" rel="external">http://blog.csdn.net/a85880819/article/details/52448654</a><br><a href="https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#related-information" target="_blank" rel="external">https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#related-information</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2018/01/23/docker_default_storage/" title="修改docker容器默认空间大小">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
