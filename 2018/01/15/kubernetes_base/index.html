@@ -419,7 +419,7 @@ node节点运行容器应用，由mater管理">
 <p>POD<br>pod是kubernetes最小的调度单元，一个pod对应一个或多个container，通常会将紧密相连的一组应用放到一个pod中，同一个pod的container共享ip和namespace。</p>
 <p>为什么使用pod?<br>方便管理<br>在kubernetes中pod是container的载体，一个pod里面拥有一个或多个container，做为一个逻辑单元，方便管理。</p>
 <p>资源共享和通信<br>同一个pod中的container共享一个网络栈和存储，相互之间可以直接通过localhost进行通信，同时也共享同一块存储卷</p>
-<p>灵活<br>kubernetes直接管理对象是pod，而不是底层的docker，对于docker的操作，被封装在pod中，不会直接操作，这也意味着，pod包含也可以是其他公司的容器产品，比如coreos的rtk或阿里巴巴的pouch。</p>
+<p>灵活<br>kubernetes直接管理对象是pod，而不是底层的docker，对于docker的操作，被封装在pod中，不会直接操作，这也意味着，pod包含也可以是其他公司的容器产品，比如coreos的rkt或阿里巴巴的pouch。</p>
 <p>controller<br>kubernetes使用controller来创建和管理pod，controller中定义了pod的部署特性，比如部署几个副本，在什么样的node上运行。<br>为满足不同的业务需求，kubernetes提供了如下controller。</p>
 <p>Deployment<br>是最常用的 Controller，比如前面就是通过创建 Deployment 来部署应用的。Deployment 可以管理 Pod 的多个副本，并确保 Pod 按照期望的状态运行。  </p>
 <p>Replicaset<br>实现了 Pod 的多副本管理。使用 Deployment 时会自动创建 ReplicaSet，也就是说 Deployment 是通过 ReplicaSet 来管理 Pod 的多个副本，我们通常不需要直接使用 ReplicaSet。  </p>
