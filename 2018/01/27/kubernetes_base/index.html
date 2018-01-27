@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes���� | 我爱西红柿</title>
+  <meta name="description" content="����ϵͳ��centos7.3kubernetes:v1.9  
+  
+������ʶkubernetesWhat is kubernetes?Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.�ص㣺Automa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes����">
+<meta property="og:url" content="http://yoursite.com/2018/01/27/kubernetes_base/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="����ϵͳ��centos7.3kubernetes:v1.9  
+  
+������ʶkubernetesWhat is kubernetes?Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.�ص㣺Automa">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_14.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_15.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_16.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_17.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_18.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_19.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_20.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_21.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_22.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_23.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_24.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_25.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_26.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_27.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_28.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_29.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_30.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_31.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_32.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_33.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_34.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_35.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_36.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_37.png">
+<meta property="og:updated_time" content="2018-01-27T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kubernetes����">
+<meta name="twitter:description" content="����ϵͳ��centos7.3kubernetes:v1.9  
+  
+������ʶkubernetesWhat is kubernetes?Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.�ص㣺Automa">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/01/27/kubernetes_base/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Linux/" style="font-size: 13.8px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.2px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.4px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 13.2px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.6px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.8px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.2px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/27/kubernetes_base/" class="title">kubernetes����</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-27T13:45:59.000Z" itemprop="datePublished">2018-01-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/25/docker_storage_driver/" class="title">docker storage-driver</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-25T13:45:59.000Z" itemprop="datePublished">2018-01-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/23/docker_default_storage/" class="title">修改docker容器默认空间大小</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-23T13:45:59.000Z" itemprop="datePublished">2018-01-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/01/02/kubernetes_install/" class="title">kubernetes V1.9安装(附离线安装包和离线镜像）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-01-02T13:45:59.000Z" itemprop="datePublished">2018-01-02</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2017/12/15/docker_weave/" class="title">Docker多主机网络(weave)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2017-12-15T13:45:59.000Z" itemprop="datePublished">2017-12-15</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#������ʶkubernetes"><span class="toc-number">1.</span> <span class="toc-text">������ʶkubernetes</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kubernetes����ʲo��"><span class="toc-number">1.1.</span> <span class="toc-text">kubernetes����ʲô��</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes�L�������"><span class="toc-number">2.</span> <span class="toc-text">kubernetes�Ļ�������</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#�ܽ᣺"><span class="toc-number">2.1.</span> <span class="toc-text">�ܽ᣺</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes�lܹ�"><span class="toc-number">3.</span> <span class="toc-text">kubernetes�ļܹ�</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#master�ڵ�"><span class="toc-number">3.1.</span> <span class="toc-text">master�ڵ�</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#node�ڵ�"><span class="toc-number">3.2.</span> <span class="toc-text">node�ڵ�</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#�ܽ᣺-1"><span class="toc-number">3.3.</span> <span class="toc-text">�ܽ᣺</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes�Ĳ���"><span class="toc-number">4.</span> <span class="toc-text">kubernetes�Ĳ���</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#�ܽ᣺-2"><span class="toc-number">4.1.</span> <span class="toc-text">�ܽ᣺</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubernetes�L�������-1"><span class="toc-number">5.</span> <span class="toc-text">kubernetes�Ļ�������</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#��A����"><span class="toc-number">5.1.</span> <span class="toc-text">��Ⱥ����</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Ӧ�o���"><span class="toc-number">5.2.</span> <span class="toc-text">Ӧ�ò���</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#�ܽ�"><span class="toc-number">5.3.</span> <span class="toc-text">�ܽ�</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_base" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes����
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/01/27/kubernetes_base/" class="article-date">
+	  <time datetime="2018-01-27T13:45:59.000Z" itemprop="datePublished">2018-01-27</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/27/kubernetes_base/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 859(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>����ϵͳ��centos7.3<br>kubernetes:v1.9  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_1.png" alt="">  </p>
+<h3 id="������ʶkubernetes"><a href="#������ʶkubernetes" class="headerlink" title="������ʶkubernetes"></a>������ʶkubernetes</h3><p>What is kubernetes?<br>Kubernetes is an open-source system for automating deployment, scaling, and management of containerized applications.<br>�ص㣺<br>Automating deployment:�Զ�����<br>Scaling������<br>Management of containerized applications����������Ӧ��  </p>
+<p>1��google�����ڲ���������ϵͳborgĿǰ����??mega�Ŀ�Դ�棬����Ŀ��google 2014�꿪ʼ������kubernetes 1.0��????��2015��7��21����ʽ������<br>2��2017��7��google���� linux���??��(Linux Foundation)������CNCF������(Cloud Native Computing Foundation)����kubernetes������Ŀ���׸���CNCF�����ᡣ<br>3��2017�??kubernetes�ܹ��������ĸ��汾����Ҫ���ڶ��û����ฺ�ء���ȫ���??�����Է������˸Ľ����ֱ��ǣ�<br>��ȫ�Ժ������Է������˸Ľ����ֱ��ǣ�<br>Kubernetes 1.6��������SLO֧�ְ���5000���ڵ㣨15��pod)�ļ�Ⱥ�Ͷ�̬�洢��<br>Kubernetes 1.7��network policy API��ǿ���簲ȫ��<br>Kubernetes 1.8����ɫ���ʿ��ƹ��ܱ�Ϊ�ȶ���<br>Kubernetes 1.9��֧��windowϵͳ  </p>
+<h4 id="kubernetes����ʲo��"><a href="#kubernetes����ʲo��" class="headerlink" title="kubernetes����ʲô��"></a>kubernetes����ʲô��</h4><p>1����????���Զ�������������<br>2���������Զ�����<br>3���Լ�Ⱥ�ķ�ʽ�������??�����ṩ�������ĸ��ؾ���<br>4���������Զ��޸��ͽ�������  </p>
+<p>Ϊʲ��????��kubernetes?<br>����ά��<br>����ά��<br>1��������ͷ����CNCF����????���˶������󣬳�������Ҳ���¡�<br>2��2017���°���kubernetes��????��ȫӮ����������ս��<br>����ά��<br>3��Kubernetes�߱���ǿ�ĺ��??��չ������ֻҪ�ܹ����Ƶĺã������������ߵ�������չ��<br>4��kubernetes���ô�ͳ��master-slave�ܹ���container�ϲ��ַ�װ�˲�pod��????�����Ʒǳ���������ܸ��õ���Ӧ�͹���΢������  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_2.png" alt="">  </p>
+<h3 id="kubernetes�L�������"><a href="#kubernetes�L�������" class="headerlink" title="kubernetes�Ļ�������"></a>kubernetes�Ļ�������</h3><p>cluster<br>cluster�Ǽ��㡢�洢����������Դ�ļ��ϣ�kubernetes������Щ��Դ���и��ֻ���������Ӧ�á�  </p>
+<p>POD<br>pod��kubernetes��С�ĵ��ȵ�Ԫ��һ��pod��Ӧһ��������container��ͨ���Ὣ����������һ��Ӧ�??�ŵ�һ��pod�У�ͬһ��pod��container����ip��namespace��  </p>
+<p>Ϊʲôʹ��pod?<br>��������<br>��kubernetes��pod��container�����壬һ��pod����ӵ��һ��������container����Ϊһ���߼�����????����������  </p>
+<p>��Դ������ͨ��<br>ͬһ��pod�е�container����????������ջ�ʹ洢���໥֮������ֱ��ͨ��localhost����ͨ�ţ�ͬ�??Ҳ����ͬһ���洢����  </p>
+<p>����<br>kubernetesֱ�ӹ���������pod��????���ǵײ���docker������docker�Ĳ���������װ��pod�У�����ֱ�??��������Ҳ��ζ�ţ�pod����Ҳ������������˾��������Ʒ������coreos��rkt�������Ͱ͵�pouch��  </p>
+<p>controller<br>kubernetesʹ��controller�������͹���pod��controller�ж�����pod�Ĳ������ԣ����粿�𼸸���������ʲô����node�����С�<br>Ϊ���㲻ͬ��ҵ��������kubernetes�ṩ������controller��<br>Deployment<br>����õ� Controller������ǰ������ͨ������ Deployment ������Ӧ�õġ�Deployment ���Թ��� Pod �Ķ�����������ȷ�� Pod ����������״̬���С�<br>Replicaset<br>ʵ���� Pod �Ķั��������ʹ�� Deployment ʱ���Զ����?? ReplicaSet��Ҳ����˵ Deployment ��ͨ�� ReplicaSet ������ Pod �??��������������ͨ������Ҫֱ��ʹ�� ReplicaSet��<br>Daemonset<br>��????ÿ�� Node ����ֻ����һ�� Pod �����ĳ�������������������ʾ���??DaemonSet ͨ���������� daemon��<br>StatefuleSet<br>�ܹ���֤ Pod ��ÿ���������������������������ǲ����ġ������� Controller �����??�������ܣ���ĳ�� Pod ����������Ҫɾ������������ʱ��Pod �����ƻᷢ���仯��ͬʱ StatefuleSet �ᱣ֤�������չ̶���˳�����������»���ɾ����<br>Job<br>�������н�����ɾ����Ӧ�á������� Controller �е� Pod ͨ���ǳ��ڳ������С�  </p>
+<p>service<br>ֱ�ӽ�ͨ��pod��ip�Ӷ˿�ȥ����Ӧ���ǲ����׵ģ���Ϊpod�����������ǲ��ϱ仯�ģ�ÿ���������ɵ�pod ip��ַ���Ƕ��ǲ�һ���ģ����ҵ�pod�ж�������ʱ�������ķ��ʾ���????���ˣ�����kubernetesͨ��service��������Щ���⣬������˵�??�����԰�service����Ϊһ�����ؾ�������Ҳ����˵��service��Ϊ�??�鹦����ͬ��pod�ṩͳһ���ڡ�<br>ServiceĬ�����Լ���ip�Ͷ˿ڵ��??cluster-ip��port���ڲ�����ֱ��ͨ������endpoint(clusterip+port)ȥ����Ӧ�á�<br>������һ����Ҫע�⣬����cluster-ip�Ǹ�Virtual IP������ping��ͨ�ģ��ײ�ת��??????ͨ��node�ڵ��ϵ�kube-proxy��????iptables���ɶ�Ӧ��ת��������??????????����kubernetes��kube-proxy����ֱ��ʹ��ipvs������Ŀǰ���ǲ��Խ׶Ρ�???? </p>
+<p>namespace<br>������linux��namespace��һ��������������һ�����顣<br>ͨ��namespace���û�������controller��pod����Դ�ֿ���namespace���Խ�һ��������cluster���ɶ���������cluster��ÿ��cluster����һ��namespace����ͬ��namespace������????����ȫ�����ġ����ڲ�ͬ���鹲��ʹ�ü�Ⱥ������Դ��ͬ�??�����ܱ�������ʹ��Namespace����֯Kubernetes�ĸ��ֶ�����????��ʵ�ֶ��û��ķ��飬�������⻧���Ĺ������Բ�ͬ���⻧���??�Խ��е�������Դ�������ú͹�����ʹ��������Ⱥ����Դ���÷ǳ��??����㡣һ����Ⱥ�е���Դ�������޵ģ���������Ⱥ�������⻧�??Ӧ��ͬʱʹ��ʱ��Ϊ�˸��õ�ʹ���������޵Ĺ�����Դ����Ҫ������????���Ĺ�����Ԫ�������⻧������ͨ���ڲ�ͬ�⻧��Ӧ��Namespace�??���ö�Ӧ��ResourceQuota���ɴﵽĿ�ġ�<br>kubernetesĬ�ϴ���������namespace��default��kube-public��kube-system��<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_3.png" alt=""><br>default��Ĭ�ϴ�������Դ���ŵ�����namespace���档<br>kube-system��kubernetes�Լ�������ϵͳ��Դ�������<br>kube-public��kubernetes�Լ������������ռ䣬����ȷ�������??Ⱥ�й����Ŀ���ĳЩ��Դ��<br>����podʱָ��namespace<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl --namespace=&lt;insert-namespace-name-here&gt; run nginx --image=nginx</div></pre></td></tr></table></figure></p>
+<p>label<br>Label��key/value��ֵ�Ե���ʽ��????�����ֶ����ϣ���Pod��Node�ȡ�Serviceͨ��selector label���??service��pod�Ĺ�����������˵����Դ����Դ֮���Ĺ�������ͨ��label��ͨ����һ����Դ����һ����������ͬ��label��ʵ�ֶ�ά�ȵ����??������selector label������sql������where��  </p>
+<h4 id="�ܽ᣺"><a href="#�ܽ᣺" class="headerlink" title="�ܽ᣺"></a>�ܽ᣺</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_4.png" alt="">  </p>
+<h3 id="kubernetes�lܹ�"><a href="#kubernetes�lܹ�" class="headerlink" title="kubernetes�ļܹ�"></a>kubernetes�ļܹ�</h3><p>��ɫ�ϣ�<br>���͵�master-slave�ܹ�<br>master�ڵ�<br>node�ڵ�����Minion�ڵ�<br>�����ϣ�<br>master�ڵ���Ϊ��Ⱥ����<br>node�ڵ����ڳ��ز���������Ӧ��<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_5.png" alt="">  </p>
+<h4 id="master�ڵ�"><a href="#master�ڵ�" class="headerlink" title="master�ڵ�"></a>master�ڵ�</h4><p>master��cluster�Ĵ��ԣ�����openstack�Ŀ��ƽڵ㣬������apiserver��controller-manager��scheduler������Ҫְ���Ƕ���Դ��????�����ȣ�������֤��������������ȫ��֤��<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_6.png" alt="">  </p>
+<p>master�ڵ���������<br>etcd<br>kubernetes�ĺ������ݴ洢ϵͳ��cluster�е�������Դ�������ݶ���????���⣬�������ù����ͷ������֡�    </p>
+<p>kube-apiserver<br>1�������??Ⱥ������api�ӿڣ����жԼ�Ⱥ�Ĳ����Ͳ�ѯ����Ҫ����api-server��<br>2����Ⱥ�ڸ���ģ��ͨ�ŵ���ť����Ⱥ������ģ�飬����֮�䲢����ֱ�??ͨ�ţ�����ͨ��api-server�򽻵����������Լ��ǲ��ֹ�����<br>3���??Ⱥ��ȫ���ƣ�apiserver�ṩ�˼�Ⱥ�İ�ȫ��֤���ͽ�ɫȨ�޷��䡣<br>4������etcd����Ⱥ����������������ֱ������etcdֻ��ͨ��api-serverȥ����etcd��  </p>
+<p>kube-controller-manager<br>1��������Ⱥ�Ĺ��ϼ������޸���<br>2������deployment�Ķ��壬ά����ȷ��pod��������<br>3������Service��Pod�Ĺ�����ϵ�����ɷ�����Endpoints�����Ĵ����͸��£�<br>4��Ϊ�µ�namespace�����ʻ���api����token��  </p>
+<p>kube-scheduler<br>����podʱ�??ѡ�����ʵ�node���е��ȡ�<br>kube-dns<br>kubernetes�е�����????����������<br>flannel<br>flannel������������<br>kube-dashboard<br>kubernetes��web���ƶ�  </p>
+<h4 id="node�ڵ�"><a href="#node�ڵ�" class="headerlink" title="node�ڵ�"></a>node�ڵ�</h4><p>��������Ӧ�ã��??mater����������master�ڵ��ĸ������󣬽��������Ĵ����͹�����????������������������Ӧ���ϱ���master�ڵ㣬����openstack�ļ��??�ڵ㡣<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_7.png" alt="">  </p>
+<p>node�ڵ���������<br>kubelet<br>����node�ڵ������Ĵ����??ɾ�����ص��������ڹ������ϱ�node��Ϣ��cpu���ڴ桢pod��ip����Ϣ��master�ڵ���api-server<br>kube-proxy<br>����ʵ�ֶ˿�ӳ���͸��ؾ��⡣<br>kube-dns<br>kubernetes����������������<br>flannel<br>����flannel������  </p>
+<p>��openstack����<br>��ɫ������<br>kubernetes��Ϊmaster�ڵ���node�ڵ㣬����master�ڵ��Ǵ��ԣ�node�ڵ��ϳ���master���ȹ�������Դ�??����master�ڵ��ĸ���������������openstack��control�ڵ���??ompute�ڵ�����һ����<br>����������<br>master�ڵ�<br>�ȴ�etcd˵����etcd��Ϊkubernetes�ĺ������ݴ洢ϵͳ�������ù����ͷ����??�֣���openstack�еĿ��ƽڵ������ݿ�����Ϣ���з����ṩ�ķ���????�ơ�<br>kube-api-server��kubernetes�ṩ��Ⱥ������api�ӿڣ��??ɫ��Ȩ�޷����Ͱ�ȫ��֤����openstack�е�keystone�͸���������api-server���ơ�<br>kube-scheduler��kubernetes��Ϊpodѡ����������??ode�ڵ㡣��openstack��nova-scheduler�ṩ�������ơ�<br>node����??<br>kubelet��node�ڵ��ϸ���pod�Ĵ������������ڵĹ�����ͬʱ����������Դʹ�����������ϱ���master����openstack��nova-compute���ṩ�Ĺ��ܷǳ�һ�¡�<br>docker����������������openstack��hypervisor�ṩ�Ĺ���һ�¡�kubelet����docker����������nova-compute����kvmȥ������������  </p>
+<h4 id="�ܽ᣺-1"><a href="#�ܽ᣺-1" class="headerlink" title="�ܽ᣺"></a>�ܽ᣺</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_8.png" alt="">  </p>
+<h3 id="kubernetes�Ĳ���"><a href="#kubernetes�Ĳ���" class="headerlink" title="kubernetes�Ĳ���"></a>kubernetes�Ĳ���</h3><p>1��kubeadm<br>kubeadmΪkubernetes�ٷ��Ƽ����Զ������𹤾ߣ�����kubernetes��??????����pod����ʽ������master��node�ڵ��ϣ����Զ�������????��֤�Ȳ�����??????ΪkubeadmĬ��Ҫ��google�ľ����ֿ����ؾ���????��Ŀǰ�����޷�����google�����ֿ⣬??????��������Ҫ��ǰ�����??�º��ˣ�ֻ��Ҫ�����߰��ľ������뵽�ڵ��оͿ����ˡ�<br>�ο�: <a href="http://www.bladewan.com/2018/01/02/kubernetes_install/" target="_blank" rel="external">http://www.bladewan.com/2018/01/02/kubernetes_install/</a><br>2��Դ���??װ<br><a href="https://github.com/kubernetes/kubernetes/tree/release-1.9" target="_blank" rel="external">https://github.com/kubernetes/kubernetes/tree/release-1.9</a><br>1��github�����ض�Ӧ�汾��Դ���������룬�Լ�����֤�飬��д���������ļ�<br>�Ƽ�����kubeadmװһ�飬��Ϥһ�¸�������������Դ��װ����������֮    �����ù�ϵ��  </p>
+<h4 id="�ܽ᣺-2"><a href="#�ܽ᣺-2" class="headerlink" title="�ܽ᣺"></a>�ܽ᣺</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_9.png" alt="">  </p>
+<h3 id="kubernetes�L�������-1"><a href="#kubernetes�L�������-1" class="headerlink" title="kubernetes�Ļ�������"></a>kubernetes�Ļ�������</h3><p>��Ⱥ����<br>�鿴��Ⱥ��Ϣ<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl cluster-info</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_10.png" alt="">  </p>
+<p>�鿴��������״̬<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get cs</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_11.png" alt="">  </p>
+<h4 id="��A����"><a href="#��A����" class="headerlink" title="��Ⱥ����"></a>��Ⱥ����</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get pod --all-namespaces</div></pre></td></tr></table></figure>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_12.png" alt="">  </p>
+<p>2���鿴ָ��namespace��pod��״̬��kube-systemΪ��<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get pod --namespace=kube-system</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_13.png" alt=""><br>�鿴pod��ϸ��Ϣ<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl describe pod kube-apiserver-master --namespace=kube-system</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_14.png" alt="">    </p>
+<p>�鿴pod��ϸrun��Ϣ<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get pods -o wide</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_15.png" alt="">    </p>
+<p>ɾ��service<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl delete service service_name</div></pre></td></tr></table></figure></p>
+<p>����label<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl label node node-1 disktype=ssd</div></pre></td></tr></table></figure></p>
+<p>�鿴���õ�label<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get node --show-labels</div></pre></td></tr></table></figure></p>
+<h4 id="Ӧ�o���"><a href="#Ӧ�o���" class="headerlink" title="Ӧ�ò���"></a>Ӧ�ò���</h4><p>����(��????cloudman<a href="https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3" target="_blank" rel="external">https://steemit.com/kubernetes/@cloudman6/k8s-kubernetes-3</a>)<br>����Ӧ�ã�kubernetes-bootcamp)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl run kubernetes-bootcamp --image=docker.io/jocatalin/kubernetes-bootcamp:v1 --port=8080</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_16.png" alt="">    </p>
+<p>�鿴������Ӧ�ã�����deploymentΪkubernetes���������????�á�<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get deployment</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_17.png" alt=""><br>docker����ͨ��–image�??��<br>–port����Ӧ�ö��������Ķ˿ڡ�<br>����:<br>1��kubectl��????Ӧ�ò���������kube-apiserver��kube-apiserver������д��etcd�??.<br>2��api-server֪ͨkube-controller-manger������һ��deployment���󡣽�����ͨ��api-serverд��etcd .<br>3��Scheduler���ֺ���ִ�е������̣�Ϊ������Podѡ��һ���仧��Node��Ȼ��ͨ��API Server������д�뵽etcd�С�<br>4��Ŀ���ڵ�kubelet����ͨ��api-server��������������pod�������ն��崴��pod��   </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_18.png" alt="">  </p>
+<p>�鿴��ǰpod<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get pods</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_19.png" alt=""><br>�??�� podʵ���������ĸ��ڵ���<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get pod  -o wide</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_20.png" alt="">   </p>
+<p>����<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_21.png" alt="">   </p>
+<p>Ĭ��������ʹ��podֻ���ڼ�Ⱥ�ڲ����з��??��Ϊ�������ⲿ������������Ҫ������Ӧ�õĶ˿�ӳ�䵽node�ڵ���????��<br>�޸�kubernetes-bootcamp�Ķ˿�����ΪNodePort�������ڶ���????8080��ӳ���Ķ˿ڻ��Զ���30000~32767����ѡһ����<br>services���??��Ϊ�Ƕ˿�ӳ�䡣<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl expose deployment/kubernetes-bootcamp --type=&quot;NodePort&quot; --port=8080</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_22.png" alt="">   </p>
+<p>kubernetes-bootcamp���䵽��node-2�ϣ�����ֱ�ӷ���node-2��:31079<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_23.png" alt="">   </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_24.png" alt="">   </p>
+<p>scaleӦ�ã������??��)<br>��ǰkubernetes-bootcamp����������Ϊ1<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_25.png" alt=""><br>��չӦ��Ϊ3<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl scale deployment/kubernetes-bootcamp --replicas=3</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_26.png" alt="">  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_27.png" alt="">  </p>
+<p>pod��Ҳ����Ϊ3�ˡ�<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_28.png" alt="">  </p>
+<p>ÿ�η���nodeip:31079�����ǲ�ͬ��pod���صķ��ؽ��������Է���ÿ�����󷢵��˲�ͬ��pod�ϴӶ�ʵ������????���⡣  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_29.png" alt="">  </p>
+<p>����pod��Ϊ2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl scale deployment/kubernetes-bootcamp --replicas=2</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_30.png" alt="">  </p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_31.png" alt="">  </p>
+<p>��������<br>��ǰӦ��image�汾Ϊv1������Ϊv2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl set image deployment/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_32.png" alt=""><br>���Կ���kubernetes�Ǵ���������v2�汾�ľ�����Ȼ���ڻ�����v2��v1�滻��<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_33.png" alt="">  </p>
+<p>�ڴη��ʣ��汾��v2��<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_34.png" alt="">  </p>
+<p>���˰汾<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl rollout undo  deployment/kubernetes-bootcamp</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_35.png" alt="">  </p>
+<p>��֤����<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_36.png" alt="">  </p>
+<h4 id="�ܽ�"><a href="#�ܽ�" class="headerlink" title="�ܽ�"></a>�ܽ�</h4><p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_base_37.png" alt="">  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2018/01/25/docker_storage_driver/" title="docker storage-driver">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
