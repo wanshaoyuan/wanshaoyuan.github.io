@@ -404,7 +404,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/02/kubernetes_install/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,813(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,790(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
@@ -483,13 +483,13 @@
 <p>检查pod<br>可以看见pod分布在node-1和node-2上<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_16.png" alt=""></p>
 <p>因为创建的资源不是service所以不会调用kube-proxy<br>直接访问测试<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_17.png" alt=""></p>
 <p>至此kubernetes基本集群安装完成。</p>
-<h3 id="部署kubernetes-dashboard"><a href="#部署kubernetes-dashboard" class="headerlink" title="部署kubernetes-dashboard"></a>部署kubernetes-dashboard</h3><p>kubernetes-dashboard是可选组件，因为，实在不好用，功能太弱了。<br>建议在部署master时一起把kubernetes-dashboard一起部署了,不然在node节点加入集群后，kubernetes-dashboard会被kube-scheduler调度node节点上，这样根kube-apiserver通信需要额外配置。<br>下载kubernetes-dashboard的配置文件或直接使用离线包里面的kubernetes-dashboard.yaml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</div></pre></td></tr></table></figure></p>
+<h3 id="部署kubernetes-dashboard"><a href="#部署kubernetes-dashboard" class="headerlink" title="部署kubernetes-dashboard"></a>部署kubernetes-dashboard</h3><p>kubernetes-dashboard是可选组件，因为，实在不好用，功能太弱了。<br>建议在部署master时一起把kubernetes-dashboard一起部署了,不然在node节点加入集群后，kubernetes-dashboard会被kube-scheduler调度node节点上，这样根kube-apiserver通信需要额外配置。<br>直接使用离线包里面的kubernetes-dashboard.yaml</p>
 <p>修改kubernetes-dashboard.yaml</p>
 <p>如果需要让外面访问需要修改这个yaml文件端口类型为NodePort默认为clusterport外部访问不了，<br><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_18.png" alt=""></p>
-<p>nodeport端口范围30000-32767<br>32666就是我的映射端口，根docker run -d xxx:xxx差不多<br>创建kubernetes-dashboard<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f kubernetes-dashboard.yaml</div></pre></td></tr></table></figure></p>
-<p>访问<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://master_ip:32666</div></pre></td></tr></table></figure></p>
+<p>nodeport默认端口范围30000-32767<br>32666就是我的映射端口，根docker run -d xxx:xxx差不多<br>创建kubernetes-dashboard<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f kubernetes-dashboard.yaml</div></pre></td></tr></table></figure></p>
+<p>访问<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://master_ip:NodePort</div></pre></td></tr></table></figure></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_19.png" alt=""></p>
-<p>默认验证方式有kubeconfig和token，这里我们都不用。<br>这里我们使用basicauth的方式进行apiserver的验证<br>创建/etc/kubernetes/manifests/pki/basic_auth_file 用于存放用户名和密码</p>
+<p>默认验证方式有kubeconfig和token，这里我们都不用。<br>这里我们使用basicauth的方式进行apiserver的验证<br>创建/etc/kubernetes/pki/basic_auth_file 用于存放用户名和密码</p>
 <p>#user,password,userid<br>admin,admin,2</p>
 <p>给kube-apiserver添加basic_auth验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/kubernetes/manifests/kube-apiserver.yaml</div></pre></td></tr></table></figure></p>
 <p><img src="http://ohx02qrb8.bkt.clouddn.com/kubernetes_install_20.png" alt=""></p>
