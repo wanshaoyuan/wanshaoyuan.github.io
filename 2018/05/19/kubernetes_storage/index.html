@@ -401,7 +401,7 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/05/19/kubernetes_storage/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,634(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,626(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 11(分)</span>
@@ -434,7 +434,8 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
 <p>将pod内的/var/lib/mysql与宿主机的/tmp/mysql映射。</p>
 <h3 id="storage-private"><a href="#storage-private" class="headerlink" title="storage-private"></a>storage-private</h3><p>不使用host存储空间，使用公有云厂商对象存储或分布式</p>
 <h3 id="persisten-volume"><a href="#persisten-volume" class="headerlink" title="persisten volume"></a>persisten volume</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-3.png" alt=""></p>
-<p>volume虽然能提供很好的数据持久化，但在可管理性上，还是不足的，要使用volume，用户必须，知道当前的volume信息和提前创建好对应的volume，kubernetes推荐使用pv、pvc来解决存储持久化的问题。因此kubernetes给出的解决方案是pv(persistent volume)、pvc(persistent volume Claim)<br>pv是k8s里面的一个资源对象，它是直接和底层存储关联的，pv具有持久性，生命周期独立于pod，pod直接使用的是pvc，然后pvc会根据pod的存储空间大小和访问模式去寻找合适的pv进行绑定。<br>有了pvc用户使用存储只需要关心自己用多少，不需要关心存储从哪来。<br>kubernetes支持的pv类型<br><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" target="_blank" rel="external">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a><br>例子<br>这里以nfs做为pv后端存储为例讲解pv和pvc的使用<br>搭建nfs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt install nfs-kernel-server nfs-common rpcbind</div></pre></td></tr></table></figure></p>
+<p>volume虽然能提供很好的数据持久化，但在可管理性上，还是不足的，要使用volume，用户必须，知道当前的volume信息和提前创建好对应的volume，kubernetes推荐使用pv、pvc来解决存储持久化的问题。因此kubernetes给出的解决方案是pv(persistent volume)、pvc(persistent volume Claim)<br>persisten volume(pv)是k8s里面的一个资源对象，它是直接和底层存储关联的，pv具有持久性，生命周期独立于pod。<br>persisten volume claim(pvc)是对pv的具体实现，pod使用存储是直接使用pvc，然后pvc会根据pod需要的存储空间大小和访问模式在去寻找合适的pv然后绑定。  </p>
+<p>kubernetes支持的pv类型<br><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" target="_blank" rel="external">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a><br>例子<br>这里以nfs做为pv后端存储为例讲解pv和pvc的使用<br>搭建nfs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt install nfs-kernel-server nfs-common rpcbind</div></pre></td></tr></table></figure></p>
 <p>配置共享目录<br>修改/etc/exports文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/nfsdata *(rw,sync,no_root_squash)</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">*：表示所有用户都可以访问</div><div class="line">rw：挂接此目录的客户端对该共享目录具有读写权限</div><div class="line">sync：资料同步写入内存和硬盘</div><div class="line">no_root_squash：root用户具有对根目录的完全管理访问权限</div></pre></td></tr></table></figure>
 <p>启动rpcbind<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl status rpcbind</div></pre></td></tr></table></figure></p>
