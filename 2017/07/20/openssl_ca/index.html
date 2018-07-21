@@ -16,27 +16,26 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>openstack添加多个不同物理出口的private网络 | 我爱西红柿</title>
-  <meta name="description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  
-
-以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
+  <title>openssl证书生成 | 我爱西红柿</title>
+  <meta name="description" content="X.509是一种非常通用的证书格式。所有的证书都符合ITU-T X.509国际标准，因此(理论上)为一种应用创建的证书可以用于任何其他符合X.509标准的应用。x.5.09证书通常包含三类文件key文件，密钥文件用于对发送和接收到的数据进行加密和解密csr是签名请求文件，用于提交给CA进行签名crt是ca签名后颁发的证书pem是 用于导出和导入证书时的证书格式，通常是crt+key的结合
+在内部使">
 <meta property="og:type" content="article">
-<meta property="og:title" content="openstack添加多个不同物理出口的private网络">
-<meta property="og:url" content="http://yoursite.com/2017/09/13/openstack_multi_private/index.html">
+<meta property="og:title" content="openssl证书生成">
+<meta property="og:url" content="http://yoursite.com/2017/07/20/openssl_ca/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  
-
-以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_multi_private_1.png">
-<meta property="og:updated_time" content="2017-09-13T03:50:43.000Z">
+<meta property="og:description" content="X.509是一种非常通用的证书格式。所有的证书都符合ITU-T X.509国际标准，因此(理论上)为一种应用创建的证书可以用于任何其他符合X.509标准的应用。x.5.09证书通常包含三类文件key文件，密钥文件用于对发送和接收到的数据进行加密和解密csr是签名请求文件，用于提交给CA进行签名crt是ca签名后颁发的证书pem是 用于导出和导入证书时的证书格式，通常是crt+key的结合
+在内部使">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/ca_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/ca_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/ca_3.png">
+<meta property="og:updated_time" content="2017-07-20T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="openstack添加多个不同物理出口的private网络">
-<meta name="twitter:description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  
-
-以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/openstack_multi_private_1.png">
+<meta name="twitter:title" content="openssl证书生成">
+<meta name="twitter:description" content="X.509是一种非常通用的证书格式。所有的证书都符合ITU-T X.509国际标准，因此(理论上)为一种应用创建的证书可以用于任何其他符合X.509标准的应用。x.5.09证书通常包含三类文件key文件，密钥文件用于对发送和接收到的数据进行加密和解密csr是签名请求文件，用于提交给CA进行签名crt是ca签名后颁发的证书pem是 用于导出和导入证书时的证书格式，通常是crt+key的结合
+在内部使">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/ca_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2017/09/13/openstack_multi_private/index.html">
+  <link rel="canonical" href="http://yoursite.com/2017/07/20/openssl_ca/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -339,21 +338,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置方法（组件为openvswitch"><span class="toc-number">1.</span> <span class="toc-text">配置方法（组件为openvswitch)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#控制节点配置"><span class="toc-number">2.</span> <span class="toc-text">控制节点配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#计算节点配置"><span class="toc-number">3.</span> <span class="toc-text">计算节点配置</span></a></li></ol>
+      
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-openstack_multi_private" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-openssl_ca" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      openstack添加多个不同物理出口的private网络
+      openssl证书生成
     </h1>
   
 
@@ -361,29 +360,29 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/09/13/openstack_multi_private/" class="article-date">
-	  <time datetime="2017-09-13T03:50:44.000Z" itemprop="datePublished">2017-09-13</time>
+	<a href="/2017/07/20/openssl_ca/" class="article-date">
+	  <time datetime="2017-07-20T13:45:59.000Z" itemprop="datePublished">2017-07-20</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/neutron/">neutron</a>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
   </span>
 
         
   <span class="article-tag">
     <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/neutron/">neutron</a>
+	<a class="article-tag-link" href="/tags/Linux/">Linux</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/09/13/openstack_multi_private/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/07/20/openssl_ca/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 613(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 704(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
@@ -401,25 +400,25 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <p>在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/openstack_multi_private_1.png" alt=""></p>
-<p>以上图的环境为例<br>compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口连接起来，同时生成对应的流表控制，修改openvswitch配置文件使得physnetX根br-dmz mapping。<br>需要注意的是<br>这里control-1接dmz的网络主要是为了dhcp 地址、metadata注入、和根三层网络的NAT。你可以通过neutron availability zone的方式把把dhcp和metadata和l3部署在网络能通的计算节点，这样就不需要控制节点接线了。  </p>
-<h3 id="配置方法（组件为openvswitch"><a href="#配置方法（组件为openvswitch" class="headerlink" title="配置方法（组件为openvswitch)"></a>配置方法（组件为openvswitch)</h3><p>这里假设compute-2的br-dmz物理出口为br-ovs-bond2<br>控制节点和计算节点都执行<br>创建ovs桥<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-br br-dmz</div></pre></td></tr></table></figure></p>
-<p>添加端口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-ovsctl add-port br-dmz br-dmz--br-ovs-bond2</div></pre></td></tr></table></figure></p>
-<p>设置端口类型为patch<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-dmz--br-ovs-bond2 type=patch</div></pre></td></tr></table></figure></p>
-<p>设置patch口的peer端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-dmz--br-ovs-bond2 options:peer=br-ovs-bond2--br-dmz</div></pre></td></tr></table></figure></p>
-<p>在br-ovs-bond2上配置另外一个path口<br>添加端口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl add-port br-ovs-bond2 br-ovs-bond2--br-dmz</div></pre></td></tr></table></figure></p>
-<p>设置端口类型为patch<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-ovs-bond2--br-dmz type=patch</div></pre></td></tr></table></figure></p>
-<p>设置patch口的peer端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ovs-vsctl set interface br-ovs-bond2--br-dmz options:peer=br-dmz--br-ovs-bond2</div></pre></td></tr></table></figure></p>
-<h3 id="控制节点配置"><a href="#控制节点配置" class="headerlink" title="控制节点配置"></a>控制节点配置</h3><p>vim /etc/neutron/plugins/ml2/ml2_conf.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">network_vlan_ranges =physnet2:1000:2000,physnet3   #在原来基础上新增个physnet3为我新增的，没有明确vlan-id范围可以不写</div></pre></td></tr></table></figure></p>
-<p>vim /etc/neutron/plugins/ml2/openvswitch_agent.ini<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bridge_mappings=physnet2:br-prv,physnet3:br-dmz  #在原来基础上新增个physnet3:br-dmz</div></pre></td></tr></table></figure></p>
-<p>重启neutron-server和neutron-openvswitch-agent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart neutron-server</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart neutron-openvswitch-agent</div></pre></td></tr></table></figure>
-<h3 id="计算节点配置"><a href="#计算节点配置" class="headerlink" title="计算节点配置"></a>计算节点配置</h3><p>vim /etc/neutron/plugins/ml2/openvswitch_agent.ini</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bridge_mappings=physnet2:br-prv,physnet3:br-dmz  #在原来基础上新增个physnet3:br-dmz</div></pre></td></tr></table></figure>
-<p>重启neutron-openvswitch-agent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart neutron-openvswitch-agent</div></pre></td></tr></table></figure></p>
-<p>创建网络，输入对应的physnet<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">neutron net-create dmz_net --router:external=true --provider:network_type=vlan --provider:physical_network=physnet3 --provider:segmentation_id=108</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">neutron subnet-create --gateway 20.52.15.254 --allocation-pool start=20.52.15.30,end=20.52.15.40 --disable-dhcp dmz_net 20.52.15.0/24</div></pre></td></tr></table></figure>
+        <p>X.509是一种非常通用的证书格式。所有的证书都符合ITU-T X.509国际标准，因此(理论上)为一种应用创建的证书可以用于任何其他符合X.509标准的应用。<br>x.5.09证书通常包含三类文件<br>key文件，密钥文件用于对发送和接收到的数据进行加密和解密<br>csr是签名请求文件，用于提交给CA进行签名<br>crt是ca签名后颁发的证书<br>pem是 用于导出和导入证书时的证书格式，通常是crt+key的结合</p>
+<p>在内部使用时通常使用自签名的证书，简单来说是，就是自己通过一些工具如openssl或cfssl生成CA然后去进行签名证书，如果要对外提供公共服务，就需要去购买正规的证书颁发机构的CA进行签名。这里我们讨论的是自签名证书</p>
+<p>首先我们需要生成CA根证书<br>1、生成CA 私钥，这里使用的是RSA算法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl genrsa -out ca.key 2048</div></pre></td></tr></table></figure></p>
+<p>2、生成根证书请求文件csr<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl req -new -key ca.key -out ca.csr</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/ca_1.png" alt=""></p>
+<p>需要依次输入国家，地区，城市，组织，组织单位，Common Name和Email。其中Common Name，可以写自己的名字或者域名，如果要支持https，Common Name应该与域名保持一致，否则会引起浏览器警告。</p>
+<p>3、自签名得到ca证书</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl x509 -req -days 36500  -in ca.csr -signkey ca.key -out ca.crt</div></pre></td></tr></table></figure>
+<p>得到自签名的CA证书以后我们要用CA证书对用户的证书进行签名，这样才能正常使用<br>生成私钥 key文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl genrsa -out domain.rancher.com.key 1024</div></pre></td></tr></table></figure></p>
+<p>生成证书请求csr文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl req -new -key domain.rancher.com.key -out domain.rancher.com.csr</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/ca_2.png" alt=""></p>
+<p>需要依次输入国家，地区，城市，组织，组织单位，Common Name和Email。其中Common Name，可以写自己的名字或者域名，如果要支持https，Common Name应该与域名保持一致，否则会引起浏览器警告。</p>
+<p>用CA证书签名用户证书<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">openssl ca -in domain.rancher.com.csr -out domain.rancher.com.crt -cert ca.crt -keyfile ca.key</div></pre></td></tr></table></figure></p>
+<p>注意: 此时会出错：Using configuration from /usr/share/ssl/openssl.cfg I am unable to access the ./demoCA/newcerts directory ./demoCA/newcerts: No such file or directory</p>
+<p>解决方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mkdir -p ./demoCA/newcerts</div><div class="line">touch demoCA/index.txt  #空文件，生成证书时会将数据记录写入</div><div class="line">touch demoCA/serial</div><div class="line">echo 01 &gt; demoCA/serial #写入01，然后生成证书会以此递增</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/ca_3.png" alt=""></p>
+<p>然后会对应的ca证书和用户证书放到对应的web服务器的目录就可以了。</p>
+<p>如果需要pem证书文件 ，就把证书文件(crt)和私钥文件(key)文件合并即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat domain.rancher.com.crt domain.rancher.com.key &gt; domain.rancher.com.pem</div></pre></td></tr></table></figure>
 
       
     </div>
@@ -443,12 +442,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2017/09/17/neutron_vlan/" title="OpenStack vlan模式下网络流量走向"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+      <a href="/2017/07/23/dvr/" title="neutron-高可用(1)--DVR"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
     </li>
     
     
     <li class="next">
-      <a href="/2017/09/08/vmware&openstack/" title="OpenStack对接vmware">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+      <a href="/2017/05/23/linux_vconfig/" title="Linux下单网卡配置属于不同vlan的ip(vlan子接口)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
     </li>
     
   </ul>
