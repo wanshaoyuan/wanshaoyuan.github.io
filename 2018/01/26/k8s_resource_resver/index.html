@@ -16,18 +16,23 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2018 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2018/index.html">
+  <title>kubernetes集群节点资源预留 | 我爱西红柿</title>
+  <meta name="description" content="概述默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes集群节点资源预留">
+<meta property="og:url" content="http://yoursite.com/2018/01/26/k8s_resource_resver/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="概述默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_3.png">
+<meta property="og:updated_time" content="2018-01-26T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="kubernetes集群节点资源预留">
+<meta name="twitter:description" content="概述默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2018/index.html">
+  <link rel="canonical" href="http://yoursite.com/2018/01/26/k8s_resource_resver/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,165 +331,146 @@
 
   
   
-<main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2018</h1>
-	      <p class="text-muted">共 10 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
-    
-    
-      
-      
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2018" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2018
-            </a>
-            <!-- <a href="/archives/2018" class="archive-year">2018</a> -->
-          </h3>
-        </div>
-        <div id="collapse2018" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2018">
-        <div class="panel-body">
-          <div class="collection">
-    
-    
-<a href="/2018/07/20/kubernetes_hpa/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-07-20T13:45:59.000Z" itemprop="datePublished">2018-07-20</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes pod的弹性伸缩
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/06/11/jenkins&sonar/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-06-11T13:45:59.000Z" itemprop="datePublished">2018-06-11</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Jenkins对接sonarqube
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/05/19/kubernetes_storage/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-05-19T13:45:59.000Z" itemprop="datePublished">2018-05-19</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes 持久化存储
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/05/05/kubernetes_service/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-05-05T13:45:59.000Z" itemprop="datePublished">2018-05-05</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes services
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/05/01/CI/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-05-01T13:45:59.000Z" itemprop="datePublished">2018-05-01</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> CI(jenkins+gitlab)
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/03/26/rke部署kubernetes/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-03-26T13:45:59.000Z" itemprop="datePublished">2018-03-26</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> rke部署kubernetes
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/03/11/kubernetes_ingress/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-03-11T13:45:59.000Z" itemprop="datePublished">2018-03-11</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes ingress
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/02/26/kubernetes_rbac/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-02-26T13:45:59.000Z" itemprop="datePublished">2018-02-26</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes RBAC
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/01/26/kubernetes_base/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-01-26T13:45:59.000Z" itemprop="datePublished">2018-01-26</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes入门
-</a>
-
-
-  
-    
-    
-    
-<a href="/2018/01/26/k8s_resource_resver/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2018-01-26T13:45:59.000Z" itemprop="datePublished">2018-01-26</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kubernetes集群节点资源预留
-</a>
-
-
-  
-  
-    </div></div></div></section>
-  
-
-	    </div>
-  	</article>
-  	
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev disabled">
-                <a href="javascript:;">
-                    <i class="fa fa-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/archives/2018/page/2/">
-                    下一页
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-        <div class="total-article bar-right">Page 1 of 2</div>
-        </div>
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置kubelet资源预留"><span class="toc-number">2.</span> <span class="toc-text">配置kubelet资源预留</span></a></li></ol>
     </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-k8s_resource_resver" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
- 	
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes集群节点资源预留
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/01/26/k8s_resource_resver/" class="article-date">
+	  <time datetime="2018-01-26T13:45:59.000Z" itemprop="datePublished">2018-01-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/26/k8s_resource_resver/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,583(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod重新跑在其他正常的节点上，将另外正常的节点压跨。循怀下去直到集群内所有主机都挂了，这就是集群雪崩效应。</p>
+<p>如何避免？<br>在kubernetes中可以通过给kubelet配置参数预留资源给系统进程和kubernetes进程保证它们稳定运行。目前能实现到cpu、memory、ephemeral-storage层面的资源预留。<br>重点提两点<br>cpu：cpu是配置cpu shares实际上对应的是cpu的优先级，简单来说，这个在cpu繁忙时，它能有更高优先级获取更多cpu资源。</p>
+<p>ephemeral-storage是kubernetes1.8开始引入的一个资源限制的对象，kubernetes 1.10版本中kubelet默认已经打开的了,到目前1.11还是beta阶段，主要是用于对本地临时存储使用空间大小的限制，如对pod的empty dir、/var/lib/kubelet、日志、容器可读写层的使用大小的限制。</p>
+<p>配置<br>在讲配置之前我们先了解几个概念</p>
+<p>Node capacity：节点总共的资源<br>kube-reserved：给kubernetes进程预留的资源<br>system-reserved：给操作系统预留的资源<br>eviction-threshold：kubelet eviction的阀值<br>allocatable：留给pod使用的资源</p>
+<p>node_allocatable=Node_capacity-(kube-reserved+system-reserved+hard-eviction)<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_1.png" alt=""></p>
+<p>eviction-threshold<br>分两类：<br>1、kube-control-manager周期性的接收kubelet发送过来的心跳，检查所有节点的状态，当节点属于no ready时，驱逐重建上面的pod(默认超时5分钟)。<br>2、kubelet周期性的检查host上的资源，与配置项里面的配置进行比对，达到阀值后，按照优先级驱逐pod。</p>
+<p>eviction-threshold实际上是对pod limit_resource的补充，因为limit_resource只能针对单个pod做资源限制，当这个pod达到限制的阀值后，kubelet便会oom_killer掉这个container，而eviction-threshold根据事先设定的Eviction Thresholds来触发Eviction，调用算法筛选出合适的几个pod，kill掉一个或多个pod回收资源，被eviction掉的pod会被kube-scheduler在其他节点重新调度起来。<br>eviction-threshold分两种类型<br>Soft Eviction Thresholds：达到触发值后，并不是马上去驱逐pod，而是等待一个缓冲时间，这个配置参考<br><a href="https://kubernetes.io/docs/tasks/administer-cluster/out-of-resource/" target="_blank" rel="external">https://kubernetes.io/docs/tasks/administer-cluster/out-of-resource/</a></p>
+<p>Hard Eviction Thresholds：达到触发值后，直接筛选出对应的pod kill掉</p>
+<p>两种配置方式<br>绝对值：memory.available&lt;5Gi<br>百分比：memory.available&lt;5%</p>
+<h3 id="配置kubelet资源预留"><a href="#配置kubelet资源预留" class="headerlink" title="配置kubelet资源预留"></a>配置kubelet资源预留</h3><p>环境<br>kubernetes：v1.11<br>kubeadm：v1.11<br>os：ubuntu16.04</p>
+<p>一台master+2台worker节点</p>
+<p>机器配置<br>内存：8175176KB<br>CPU：2vcpu<br>磁盘：40G</p>
+<p>resource-reserved依赖cgroup，所以需要提前将kubelet和docker的cgroup-driver对应好<br>在修改配置前，先查看node节点目前可用资源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl describe node rke-node3</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_2.png" alt=""></p>
+<p>这里以cpu、ephemeral-storage、memory为参考，capacity为host本身资源，Allocatable为host实际可分配资源，这里可以看见在没配置资源预留的情况下，Allocatable基本上等于capacity，然后我们配置rke-node3的kubelet<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /var/lib/kubelet/kubeadm-flags.env</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">--enforce-node-allocatable=pods,kube-reserved,system-reserved --kube-reserved-cgroup=/system.slice/kubelet.service --system-reserved-cgroup=/system.slice --kube-reserved=cpu=1,memory=2Gi, --system-reserved=cpu=500m,memory=1Gi</div><div class="line"></div><div class="line">enforce-node-allocatable=pods,kube-reserved,system-reserved  #默认为pod设置，但我们这里要给kube进程和system预留所以要加上。</div><div class="line">kube-reserved-cgroup=/system.slice/kubelet.service  #kube组件对应cgroup目录</div><div class="line">system-reserved-cgroup=/system.slice #系统组件对应cgroup目录</div><div class="line">kube-reserved=cpu=1,memory=2Gi #kube组件资源预留大小</div><div class="line">system-reserved=cpu=500m,memory=1Gi #系统组件资源预留大小</div></pre></td></tr></table></figure>
+<p>cpuset和hugetlb subsystem是默认没有初始化system.slice手动创建<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir -p /sys/fs/cgroup/cpuset/system.slice/kubelet.service/</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir -p /sys/fs/cgroup/hugetlb/system.slice/kubelet.service/</div></pre></td></tr></table></figure>
+<p>配好后重启kubelet<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl restart kubelet</div></pre></td></tr></table></figure></p>
+<p>然后我们在通过kubectl describe node rke-node3查看信息。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_3.png" alt=""></p>
+<p>kube-reserved=cpu=1，system-reserved=cpu=500m 所以cpu就1.5个了，总共就2个，那么Allocatable就为2000-1500=500m了<br>kube-reserved=memory=2Gi，system-reserved=memory=1Gi 所以你才为3Gi，8Gi-3GI=5Gi=5242990Ki</p>
+<p>上面也论证了kubelet配置资源预留，实际上是kubelet上报资源时，把预留的值减去了，所以scheduler调度时得到的值就是减后的值。</p>
+<p>配置eviction<br>生产环境尽量配置eviction-soft，少用eviction-hard，因为eviction-hard没有缓冲时间，马上去驱逐pod，而eviction-soft可以通过配置eviction-soft-grace-period(达到阀值后等待多久在进行eviction，默认是90s)<br>eviction-hard（默认就配置了eviction-hard=memory.available=100Mi，所以我们前面没做任何配置Allocatable看见的memory会少100M内存)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">--enforce-node-allocatable=pods,kube-reserved,system-reserved --kube-reserved-cgroup=/system.slice/kubelet.service --system-reserved-cgroup=/system.slice --kube-reserved=cpu=1,memory=2Gi, --system-reserved=cpu=500m,memory=1Gi, --eviction-hard=memory.available&lt;10%,nodefs.available&lt;10%,imagefs.available&lt;10%</div></pre></td></tr></table></figure></p>
+<p> 配置了eviction-hard的话，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Allocatable=Node_capacity-(kube-reserved+system-reserved+eviction-threshold)</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">--enforce-node-allocatable=pods,kube-reserved,system-reserved --kube-reserved-cgroup=/system.slice/kubelet.service --system-reserved-cgroup=/system.slice --kube-reserved=cpu=1,memory=2Gi, --system-reserved=cpu=500m,memory=1Gi, --eviction-soft=memory.available&lt;10%,nodefs.available&lt;10%,imagefs.available&lt;10% --eviction-soft-grace-period=memory.available=2m,nodefs.available=2m,imagefs.available=2m</div></pre></td></tr></table></figure>
+<p>配置了eviction-soft的话，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Allocatable=Node_capacity-(kube-reserved+system-reserved)</div></pre></td></tr></table></figure></p>
+<p>最佳实践<br>1、生产环境中，建议资源预留+应用资源限制结合使用，因为如果单纯只做资源预留的，没做应用资源限制或配置eviction，如果应用运行了一段时间的pod突然资源使用暴涨，就会触发host oomkill。<br>2、在kubernetes中资源分为可压缩资源和不可压缩资源 ，如我们常见的cpu是可压缩资源、内存、磁盘资源是不可压缩资源。建议只针对不可压缩资源进行资源预留。<br>3、建议给系统预留10%的内存，kubernetes组件预留3%~5%的内存，磁盘预留10%。     </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">https://www.kubernetes.org.cn/1150.html</div><div class="line">http://wsfdl.com/kubernetes/2017/12/18/k8s资源预留.html</div><div class="line">https://my.oschina.net/jxcdwangtao/blog/1629059</div><div class="line">http://www.sohu.com/a/231155920_268033</div><div class="line">https://www.kubernetes.org.cn/4022.html</div><div class="line">http://licyhust.com/容器技术/2017/10/24/eviction/</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/01/26/kubernetes_base/" title="kubernetes入门"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/01/25/docker_storage_driver/" title="docker storage-driver">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
 </main>
 
   
@@ -522,6 +508,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
