@@ -20,19 +20,19 @@
   <meta name="description" content="概述默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod">
 <meta property="og:type" content="article">
 <meta property="og:title" content="kubernetes集群节点资源预留">
-<meta property="og:url" content="http://yoursite.com/2018/01/26/k8s_resource_resver/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/07/27/k8s_resource_resver/index.html">
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_1.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_2.png">
 <meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_3.png">
-<meta property="og:updated_time" content="2018-01-26T13:45:59.000Z">
+<meta property="og:updated_time" content="2018-07-27T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kubernetes集群节点资源预留">
 <meta name="twitter:description" content="概述默认kubelet没配置资源预留应用没做应用资源限制情况下，那host上所有资源都是可以给pod调配使用的，这样很容易引起集群雪崩效应，比如集群内有一台上跑的pod没做resource limt导致占用资源过大导致将宿主机压死了，此时这个节点在kubernetes内就是一个no ready的状态了，kubernetes会将这台host上所有的pod在其他节点上重建，也就意味着那个有问题的pod">
 <meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s_resource_reserved_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2018/01/26/k8s_resource_resver/index.html">
+  <link rel="canonical" href="http://yoursite.com/2018/07/27/k8s_resource_resver/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -233,7 +233,7 @@
   <div class="widget">
     <h3 class="widget-title">归档</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
     </div>
   </div>
 
@@ -245,6 +245,21 @@
     <div class="widget-body">
       <ul class="recent-post-list list-unstyled no-thumbnail">
         
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/07/27/k8s_resource_resver/" class="title">kubernetes集群节点资源预留</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-07-27T13:45:59.000Z" itemprop="datePublished">2018-07-27</time>
+              </p>
+            </div>
+          </li>
+          
           <li>
             
             <div class="item-inner">
@@ -305,21 +320,6 @@
             </div>
           </li>
           
-          <li>
-            
-            <div class="item-inner">
-              <p class="item-category">
-                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
-              </p>
-              <p class="item-title">
-                <a href="/2018/05/01/CI/" class="title">CI(jenkins+gitlab)</a>
-              </p>
-              <p class="item-date">
-                <time datetime="2018-05-01T13:45:59.000Z" itemprop="datePublished">2018-05-01</time>
-              </p>
-            </div>
-          </li>
-          
       </ul>
     </div>
   </div>
@@ -357,8 +357,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2018/01/26/k8s_resource_resver/" class="article-date">
-	  <time datetime="2018-01-26T13:45:59.000Z" itemprop="datePublished">2018-01-26</time>
+	<a href="/2018/07/27/k8s_resource_resver/" class="article-date">
+	  <time datetime="2018-07-27T13:45:59.000Z" itemprop="datePublished">2018-07-27</time>
 	</a>
 </span>
         
@@ -376,7 +376,7 @@
 
         
 
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/26/k8s_resource_resver/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/07/27/k8s_resource_resver/#comments" class="article-comment-link">评论</a></span>
         
 	
 		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,583(字)</span>
@@ -449,13 +449,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2018/01/26/kubernetes_base/" title="kubernetes入门"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2018/01/25/docker_storage_driver/" title="docker storage-driver">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+      <a href="/2018/07/20/kubernetes_hpa/" title="kubernetes pod的弹性伸缩">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
     </li>
     
   </ul>
