@@ -16,18 +16,34 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2017 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2017/page/2/index.html">
+  <title>Jenkins对接kubernetes实现slave动态创建 | 我爱西红柿</title>
+  <meta name="description" content="概述：单个Jenkins很难满足生产环境中多个项目同时编译的需求，容易造成队列阻塞，所以这个时候需要通过Jenkins-slave的方式将编译分担到slave上，但传统的直接通过几台服务器专门做slave，浪费资源，还容易造成编译环境的不一致导致编译失败。后面有Jenkins有推出过基于docker的Jenkins-slave，虽然可以解决上述问题，但所以在这里我们可以充分利用kubernetes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins对接kubernetes实现slave动态创建">
+<meta property="og:url" content="http://yoursite.com/2018/08/25/jenkins_dymaic_pod/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="概述：单个Jenkins很难满足生产环境中多个项目同时编译的需求，容易造成队列阻塞，所以这个时候需要通过Jenkins-slave的方式将编译分担到slave上，但传统的直接通过几台服务器专门做slave，浪费资源，还容易造成编译环境的不一致导致编译失败。后面有Jenkins有推出过基于docker的Jenkins-slave，虽然可以解决上述问题，但所以在这里我们可以充分利用kubernetes">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_10.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_11.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_12.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_13.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_14.png">
+<meta property="og:updated_time" content="2018-08-25T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="Jenkins对接kubernetes实现slave动态创建">
+<meta name="twitter:description" content="概述：单个Jenkins很难满足生产环境中多个项目同时编译的需求，容易造成队列阻塞，所以这个时候需要通过Jenkins-slave的方式将编译分担到slave上，但传统的直接通过几台服务器专门做slave，浪费资源，还容易造成编译环境的不一致导致编译失败。后面有Jenkins有推出过基于docker的Jenkins-slave，虽然可以解决上述问题，但所以在这里我们可以充分利用kubernetes">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2017/page/2/index.html">
+  <link rel="canonical" href="http://yoursite.com/2018/08/25/jenkins_dymaic_pod/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,165 +342,136 @@
 
   
   
-<main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2017</h1>
-	      <p class="text-muted">共 10 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
-    
-    
-      
-      
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2017" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2017
-            </a>
-            <!-- <a href="/archives/2017" class="archive-year">2017</a> -->
-          </h3>
-        </div>
-        <div id="collapse2017" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2017">
-        <div class="panel-body">
-          <div class="collection">
-    
-    
-<a href="/2017/10/30/docker_base/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-30T13:45:59.000Z" itemprop="datePublished">2017-10-30</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker基础
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/23/install_docker/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-23T13:45:59.000Z" itemprop="datePublished">2017-10-23</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Docker安装
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/16/monitor_5/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-16T08:27:44.000Z" itemprop="datePublished">2017-10-16</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始搭建云平台监控(五)监控自动化部署
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/13/monitor_4/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-13T15:27:44.000Z" itemprop="datePublished">2017-10-13</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始构建云平台监控(四)图形化展示监控效果
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/11/monitor_3/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-11T15:27:44.000Z" itemprop="datePublished">2017-10-11</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始构建云平台监控(三)配置基础监控平台
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/10/monitor_2/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-10T15:27:44.000Z" itemprop="datePublished">2017-10-10</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始构建云平台监控(二)安装zabbix
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/04/monitor_1/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-04T15:27:44.000Z" itemprop="datePublished">2017-10-04</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始构建云平台监控(一)搭建LNMP
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/03/monitor/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-03T15:27:44.000Z" itemprop="datePublished">2017-10-03</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始构建云平台监控(写在前面)
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/03/Dockerfile/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-03T13:45:59.000Z" itemprop="datePublished">2017-10-03</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Dockerfile
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/01/python_socket/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-01T03:27:44.000Z" itemprop="datePublished">2017-10-01</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Python socket模块
-</a>
-
-
-  
-  
-    </div></div></div></section>
-  
-
-	    </div>
-  	</article>
-  	
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev">
-                <a href="/archives/2017/">
-                    <i class="fa fa-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/archives/2017/page/3/">
-                    下一页
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-        <div class="total-article bar-right">Page 2 of 4</div>
-        </div>
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述："><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置方法"><span class="toc-number">2.</span> <span class="toc-text">配置方法</span></a></li></ol>
     </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-jenkins_dymaic_pod" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
- 	
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Jenkins对接kubernetes实现slave动态创建
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/08/25/jenkins_dymaic_pod/" class="article-date">
+	  <time datetime="2018-08-25T13:45:59.000Z" itemprop="datePublished">2018-08-25</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/CI-CD/">CI/CD</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/CI-CD/">CI/CD</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/08/25/jenkins_dymaic_pod/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 802(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>单个Jenkins很难满足生产环境中多个项目同时编译的需求，容易造成队列阻塞，所以这个时候需要通过Jenkins-slave的方式将编译分担到slave上，但传统的直接通过几台服务器专门做slave，浪费资源，还容易造成编译环境的不一致导致编译失败。后面有Jenkins有推出过基于docker的Jenkins-slave，虽然可以解决上述问题，但所以在这里我们可以充分利用kubernetes的功能，将Jenkins-slave以pod的方式运行在kubernetes集群内，将任务分发给这些Jenkins-slave pod，然后执行任务，任务执行完以后，在自动释放掉这些pod，能够很好的利用资源。</p>
+<p>版本：<br>os：ubuntu16.04<br>kubernetes：1.10.5<br>Jenkins：2.89.4  （通过deb包方式安装)</p>
+<h3 id="配置方法"><a href="#配置方法" class="headerlink" title="配置方法"></a>配置方法</h3><p>Jenkins安装kubernetes插件<br>系统管理—&gt;管理插件—&gt;搜索Kubernetes plugin安装</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_1.png" alt=""><br>配置<br>系统管理—&gt;系统设置—&gt;新增一个云</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_2.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_3.png" alt=""></p>
+<p>配置Jenkins URL，这里我们没有配置api-server地址和证书key，连接kubernetes，所以默认会去读取放在JENKINS_HOME的.kube/目录的kubeconfig文件，用于连接集群。我这里是通过安装包的方式安装的Jenkins HOME在/var/lib/jenkins/目录，如果是通过容器方式启动，将kubeconfig文件直接放~/.kube/目录。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_4.png" alt=""><br>配置pod template<br><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_5.png" alt=""></p>
+<p>名字可以随便写，注意这个namespace和labels，需要规划好namespace默认不写就是default labels是用于后面编译的项目调用这个kubernetes pod template时用的。</p>
+<p>配置container template<br><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_6.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_7.png" alt=""></p>
+<p>注意这个pod的名字叫jnlp，用来覆盖默认容器，如果改成其他名字的话，那这个pod会启动两个container，都去连接master<br>配置Arguments to pass to the command的用处是定义多个Jenkins-agent container时通过${computer.jnlpmac} ${computer.name}，做为jnlp的启动参数，用来区分不同container。<br>配置cpu、memory资源request，因为可使用资源太低的节点上运行jnlp容易出错。</p>
+<p>保存配置<br>打开Jenkins-slave连接master的端口，这里定义为50000<br>系统管理—&gt;全局安全配置—&gt;agents<br><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_8.png" alt=""></p>
+<p>验证<br>创建个freestyle<br><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_9.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_10.png" alt=""></p>
+<p>特别需要注意这个label Expression，要根我们刚刚定义的kubernetes-template配置的一样，这样做的意义是什么，因为在实际使用环境中，不同的项目由不同的开发语言构成，也需要不同的编译环境，所以会配置多种语言环境的jnlp镜像，通过label去调用合适的kubernetes-template</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_11.png" alt=""></p>
+<p>这里我们配置一个最简单的shell，输出一串字符。<br>点击立刻构建<br>在kubernetes集群内就看见这个jnlp-slave已经被创建出来了。</p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_12.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_13.png" alt=""></p>
+<p>查看本次编译结果，编译成功<br><img src="http://ohx02qrb8.bkt.clouddn.com/jenkins_dymaic_slave_14.png" alt=""></p>
+<p>pipline用法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">podTemplate(label: &apos;jnlp-slave&apos;, cloud: &apos;kubernetes&apos;) &#123;</div><div class="line">    node(&apos;jnlp-slave&apos;) &#123;</div><div class="line">        stage(&apos;Run shell&apos;) &#123;</div><div class="line">            sh &apos;echo hello world&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>总结：<br>通过jenkins-kubernetes-plugin能实现对Jenkins slave的弹性部署和回收，能非常有效的利用资源，在实际使用的过程中，我们会根据不同的编程去构建一个对应的jnlp，或在一个jnlp镜像内包含全部编程语言。</p>
+<p>参考链接<br><a href="https://github.com/jenkinsci/docker-jnlp-slave" target="_blank" rel="external">https://github.com/jenkinsci/docker-jnlp-slave</a><br><a href="https://github.com/jenkinsci/kubernetes-plugin/blob/master/README.md" target="_blank" rel="external">https://github.com/jenkinsci/kubernetes-plugin/blob/master/README.md</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2018/08/18/docker_image_p2p/" title="使用p2p技术加速容器镜像分发">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
 </main>
 
   
@@ -522,6 +509,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
