@@ -16,27 +16,33 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>openstack 本地yum源搭建 | 我爱西红柿</title>
-  <meta name="description" content="我们在部署openstack时用国外yum源的快，经常会很慢导致等待时间太久，所以建议使用本地yum源安装  
-这里以newton版centos7平台为例  
-首先下载官方repoyum install https://rdoproject.org/repos/rdo-release.rpm这时侯/etc/yum.repos.d里面会产生3个文件12[root@test yum.repos.d]#">
+  <title>Helm(一)(介绍+安装+简单使用) | 我爱西红柿</title>
+  <meta name="description" content="概述什么是helm？helm是kubernetes里面的包管理工具，那什么包管理工具呢？其实就类似于我们用的centos的yum，ubuntu的apt一样能够快速安装、卸载、更新软件，最重要的一点是能够解决软件安装的依赖问题。
+helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件非常麻烦的事情，首先你得学会kubernetes中的各种概念，deployment，service，">
 <meta property="og:type" content="article">
-<meta property="og:title" content="openstack 本地yum源搭建">
-<meta property="og:url" content="http://yoursite.com/2016/12/12/openstack-localyumbuild/index.html">
+<meta property="og:title" content="Helm(一)(介绍+安装+简单使用)">
+<meta property="og:url" content="http://yoursite.com/2018/09/09/kubernete_helm_1/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="我们在部署openstack时用国外yum源的快，经常会很慢导致等待时间太久，所以建议使用本地yum源安装  
-这里以newton版centos7平台为例  
-首先下载官方repoyum install https://rdoproject.org/repos/rdo-release.rpm这时侯/etc/yum.repos.d里面会产生3个文件12[root@test yum.repos.d]#">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/yumrepo.png">
-<meta property="og:updated_time" content="2018-05-06T10:43:32.379Z">
+<meta property="og:description" content="概述什么是helm？helm是kubernetes里面的包管理工具，那什么包管理工具呢？其实就类似于我们用的centos的yum，ubuntu的apt一样能够快速安装、卸载、更新软件，最重要的一点是能够解决软件安装的依赖问题。
+helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件非常麻烦的事情，首先你得学会kubernetes中的各种概念，deployment，service，">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_5.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_6.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_7.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_8.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_9.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_10.png">
+<meta property="og:updated_time" content="2018-09-09T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="openstack 本地yum源搭建">
-<meta name="twitter:description" content="我们在部署openstack时用国外yum源的快，经常会很慢导致等待时间太久，所以建议使用本地yum源安装  
-这里以newton版centos7平台为例  
-首先下载官方repoyum install https://rdoproject.org/repos/rdo-release.rpm这时侯/etc/yum.repos.d里面会产生3个文件12[root@test yum.repos.d]#">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/yumrepo.png">
+<meta name="twitter:title" content="Helm(一)(介绍+安装+简单使用)">
+<meta name="twitter:description" content="概述什么是helm？helm是kubernetes里面的包管理工具，那什么包管理工具呢？其实就类似于我们用的centos的yum，ubuntu的apt一样能够快速安装、卸载、更新软件，最重要的一点是能够解决软件安装的依赖问题。
+helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件非常麻烦的事情，首先你得学会kubernetes中的各种概念，deployment，service，">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2016/12/12/openstack-localyumbuild/index.html">
+  <link rel="canonical" href="http://yoursite.com/2018/09/09/kubernete_helm_1/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -339,21 +345,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#首先下载官方repo"><span class="toc-number">1.</span> <span class="toc-text">首先下载官方repo</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#先安装httpd"><span class="toc-number">2.</span> <span class="toc-text">先安装httpd</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是helm？"><span class="toc-number">1.1.</span> <span class="toc-text">什么是helm？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#helm能帮助我们解决什么问题？"><span class="toc-number">1.2.</span> <span class="toc-text">helm能帮助我们解决什么问题？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#helm的概念"><span class="toc-number">1.3.</span> <span class="toc-text">helm的概念</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#helm安装"><span class="toc-number">2.</span> <span class="toc-text">helm安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#下载helm"><span class="toc-number">2.1.</span> <span class="toc-text">下载helm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装Tiller"><span class="toc-number">2.2.</span> <span class="toc-text">安装Tiller</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#授权"><span class="toc-number">2.3.</span> <span class="toc-text">授权</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署应用测试"><span class="toc-number">2.4.</span> <span class="toc-text">部署应用测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#helm原理"><span class="toc-number">3.</span> <span class="toc-text">helm原理</span></a></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-openstack-localyumbuild" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-kubernete_helm_1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      openstack 本地yum源搭建
+      Helm(一)(介绍+安装+简单使用)
     </h1>
   
 
@@ -361,32 +367,32 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2016/12/12/openstack-localyumbuild/" class="article-date">
-	  <time datetime="2016-12-12T05:15:26.000Z" itemprop="datePublished">2016-12-12</time>
+	<a href="/2018/09/09/kubernete_helm_1/" class="article-date">
+	  <time datetime="2018-09-09T13:45:59.000Z" itemprop="datePublished">2018-09-09</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/openstack/">openstack</a>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
   </span>
 
         
   <span class="article-tag">
     <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
   </span>
 
 
         
 
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2016/12/12/openstack-localyumbuild/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/09/09/kubernete_helm_1/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 351(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,581(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
 	
 
       </div>
@@ -401,23 +407,39 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <p>我们在部署openstack时用国外yum源的快，经常会很慢导致等待时间太久，所以建议使用本地yum源安装  </p>
-<p>这里以newton版centos7平台为例  </p>
-<h1 id="首先下载官方repo"><a href="#首先下载官方repo" class="headerlink" title="首先下载官方repo"></a>首先下载官方repo</h1><p>yum install <a href="https://rdoproject.org/repos/rdo-release.rpm" target="_blank" rel="external">https://rdoproject.org/repos/rdo-release.rpm</a><br>这时侯/etc/yum.repos.d里面会产生3个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root@test yum.repos.d]# ls  </div><div class="line">rdo-qemu-ev.repo  rdo-release.repo  rdo-testing.repo</div></pre></td></tr></table></figure></p>
-<p>我这里打算用http搭建我的本地yum服务器 </p>
-<h1 id="先安装httpd"><a href="#先安装httpd" class="headerlink" title="先安装httpd"></a>先安装httpd</h1><p>yum install httpd</p>
-<p>mkdir /var/www/html/newton  </p>
-<p>待会将同步下来的包放这个目录<br>cd /vaw/www/html/newton<br> yum repolist    –列出你所有的仓库<br><img src="http://ohx02qrb8.bkt.clouddn.com/yumrepo.png" alt=""></p>
-<p>前面是repo id不包含x86_64  </p>
-<p>这里我只需要openstack-newton、和rdo-qemu-ev这两个软件库  </p>
-<p>先同步openstack-newton<br><code>reposync --repoid=openstack-newton</code></p>
-<p>指定要下载的仓库id，会通过网络全部下载到当前目录下载下来。  </p>
-<p>同步完第一个继续同步第二个<br><code>reposync --repoid=rdo-qemu-ev</code></p>
-<p>同步完后<br>这时查看 /vaw/www/html/newton里面已经有很多包了，只有软件包，没有repodate清单，所以需要自己重新createrepo来创建清单没有createrepo自己安装，创建软件清单<br><code>createrepo /var/www/html/newton/</code></p>
-<p>然后启动httpd服务，其他机器通过httpd服务来访问yum源  </p>
-<p>例如控制节点yum源配置<br>vim /etc/yum.repos.d/openstack.repo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[openstack]</div><div class="line">name=openstack</div><div class="line">baseurl=http://192.168.4.3/newton</div><div class="line">enabled=1</div><div class="line">gpgcheck=0</div><div class="line">~</div></pre></td></tr></table></figure></p>
-<p>yum makecache  </p>
-<p>其他节点一样。  </p>
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><h4 id="什么是helm？"><a href="#什么是helm？" class="headerlink" title="什么是helm？"></a>什么是helm？</h4><p>helm是kubernetes里面的包管理工具，那什么包管理工具呢？其实就类似于我们用的centos的yum，ubuntu的apt一样能够快速安装、卸载、更新软件，最重要的一点是能够解决软件安装的依赖问题。</p>
+<h4 id="helm能帮助我们解决什么问题？"><a href="#helm能帮助我们解决什么问题？" class="headerlink" title="helm能帮助我们解决什么问题？"></a>helm能帮助我们解决什么问题？</h4><p>在kubernetes中，部署应用是一件非常麻烦的事情，首先你得学会kubernetes中的各种概念，deployment，service，pv，pvc……，其次你还得会写yaml文件，通过yaml文件把这些资源对象整合起来，所以这就产生了一个很大问题了，这些yaml文件的管理和执行的先后顺序怎么解决。举个简单例子，WordPress这个博客应用，主要用到k8s哪些资源对象，首先通过deployment部署应用，通过service提供统一入口，如果需要数据持久化的话还需要创建pv和pvc，还需要secret配置WordPress的帐号密码，mariadb的帐号密码，而且部署时还有依赖关系，WordPress数据是存储在mariadb里面的，所以需要mariadb先启动就绪后在启动WordPress，那helm能如何解决这些问题？首先helm可以把这些资源对象封装在一起做成一个软件包统一发包，这个软件包里面就可以解决掉服务与访问之间的依赖问题，其次helm能更加高效的共享和重用访问，比如这个mariadb，如果就通过yaml文件访问部署，那这里里面很多配置参数都写死了，如果另外一个应用通过这个yaml部署mariadb，就需要改里面的配置参数，通过helm能把这些参数做成变量的形式，通过传递变量的方式来达到复用的效果。总结如下 1、helm能通过软件包的方式将这些资源对象统一管理起来。2、helm降低了应用配置和部署的复杂性。3、helm时应用程序可以多次复用。</p>
+<h4 id="helm的概念"><a href="#helm的概念" class="headerlink" title="helm的概念"></a>helm的概念</h4><p>helm：命令行工具也是helm的客户端，主要用本地chart开发，chart仓库管理，与Tiller连接，release信息仓库。<br>chart：helm的软件包，类似于yum和apt里面的软件安装包，chart里面内含了kubernetes对象的配置模块，参数，依赖关系和说明文档。<br>release：是chart运行的实例，比如你通过helm将memcache这个chart部署到了这个kubernetes集群，那这个部署好的memcache就是一个release。<br>tiller：helm是一个c/s架构程序，tiller是helm的服务端，用于接收helm客户端的请求它与kube-apiserver交互，负责基于chart创建release和删除和release状态追踪。<br>Repoistory：软件仓库，就类似于yum源和apt源一样。chart就是存在这里面。</p>
+<h3 id="helm安装"><a href="#helm安装" class="headerlink" title="helm安装"></a>helm安装</h3><p>环境信息：<br>os：ubuntu16.04<br>docker：17.03<br>kubernetes：1.11.2<br>helm：2.9.1</p>
+<p>不同操作系统有不同安装方法<a href="https://github.com/helm/helm/releases，我这里使用ubuntu操作系统，直接下载对应的包就好了" target="_blank" rel="external">https://github.com/helm/helm/releases，我这里使用ubuntu操作系统，直接下载对应的包就好了</a></p>
+<h4 id="下载helm"><a href="#下载helm" class="headerlink" title="下载helm"></a>下载helm</h4><p>会发现下载不下来，因为在google那边<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget  https://kubernetes-helm.storage.googleapis.com/helm-v2.9.1-linux-amd64.tar.gz</div></pre></td></tr></table></figure></p>
+<p>翻墙下载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://kubernetes-helm.storage.googleapis.com/helm-v2.9.1-linux-amd64.tar.gz</div></pre></td></tr></table></figure></p>
+<p>解压<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -xvf helm-v2.9.1-linux-amd64.tar.gz</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cd linux-amd64/</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mv helm  /usr/bin/</div></pre></td></tr></table></figure>
+<h4 id="安装Tiller"><a href="#安装Tiller" class="headerlink" title="安装Tiller"></a>安装Tiller</h4><p>执行helm init<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">helm init</div><div class="line">Creating /root/.helm</div><div class="line">Creating /root/.helm/repository</div><div class="line">Creating /root/.helm/repository/cache</div><div class="line">Creating /root/.helm/repository/local</div><div class="line">Creating /root/.helm/plugins</div><div class="line">Creating /root/.helm/starters</div><div class="line">Creating /root/.helm/cache/archive</div><div class="line">Creating /root/.helm/repository/repositories.yaml</div><div class="line">Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com</div><div class="line">Error: Looks like &quot;https://kubernetes-charts.storage.googleapis.com&quot; is not a valid chart repository or cannot be reached: Get https://kubernetes-charts.storage.googleapis.com/index.yaml: net/http: TLS handshake timeout</div></pre></td></tr></table></figure></p>
+<p>helm init  在缺省配置下， Helm 会利用 “gcr.io/kubernetes-helm/tiller” 镜像在Kubernetes集群上安装配置 Tiller；并且利用 “<a href="https://kubernetes-charts.storage.googleapis.com" target="_blank" rel="external">https://kubernetes-charts.storage.googleapis.com</a>“ 作为缺省的 stable repository 的地址。由于在国内可能无法访问 “gcr.io”, “storage.googleapis.com”<br>所以这里我们换成国内阿里的repo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm init --upgrade -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.9.1 --stable-repo-url https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</div></pre></td></tr></table></figure></p>
+<p>该命令会在当前目录下创建helm文件夹即~/.helm，并且通过Kubernetes Deployment 部署tiller. 检查Tiller是否成功安装：<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_1.png" alt=""></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_2.png" alt=""></p>
+<h4 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h4><p>如果k8s集群打开的RBAC的话需要给tiller用ServiceAccount运行并且给这个ServiceAccount配置clusterrolebinding，因为tiller需要直接根kube-apiserver交互需要权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create serviceaccount --namespace kube-system tiller</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl patch deploy --namespace kube-system tiller-deploy -p &apos;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;serviceAccount&quot;:&quot;tiller&quot;&#125;&#125;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<p>验证<br>执行helm version<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_3.png" alt=""></p>
+<p>查看当前仓库可用的chart<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm search</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_4.png" alt=""></p>
+<h4 id="部署应用测试"><a href="#部署应用测试" class="headerlink" title="部署应用测试"></a>部署应用测试</h4><p>部署mariadb<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_5.png" alt=""></p>
+<p>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm install  --name mariadb --set &quot;persistence.enabled=false&quot; stable/mariadb</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_6.png" alt=""></p>
+<p>这里配置persistence.enabled=false是因为我环境里面没有pvc所以把持久化存储关了，将chart内的这个变量设置为false<br>部署完成<br>查看是否部署成功<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_7.png" alt=""></p>
+<p>删除release<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm del release_name</div></pre></td></tr></table></figure></p>
+<p>直接通过helm del删除release，会把对应的kubernetes资源对象删除，但release记录还是会保留下来，这时如果要还原可以直接执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm rollback release_name revision</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_8.png" alt=""></p>
+<p>虽然rollback能执行成功并且，资源也重启创建回来了，但是状态会变成PENDING_ROLLBACK,看github的issue是说rollback只能用于现有的部署，已经删除了release回滚状态会报错<br><a href="https://github.com/helm/helm/issues/3722" target="_blank" rel="external">https://github.com/helm/helm/issues/3722</a><br>如果需要删除时，彻底删干净，连同release记录也删除，需要添加额外参数–purge<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm del --purge release_name</div></pre></td></tr></table></figure></p>
+<h3 id="helm原理"><a href="#helm原理" class="headerlink" title="helm原理"></a>helm原理</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_9.png" alt=""><br>图片来源cloudman《每天5分钟玩转kubernetes》<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_10.png" alt=""></p>
+<p>创建release<br>1、helm客户端从本地tar文件或repo里面解析出chart信息。<br>2、helm客户端将解析出来的信息通过grpc传给tiller。<br>3、tiller根据传来的信息生成release，然后将install release请求直接传递给kube-apiserver。</p>
+<p>删除release<br>1、helm客户端从本地tar文件或repo里面解析出chart信息。<br>2、helm客户端将解析出来的信息通过grpc传给tiller。<br>3、tiller将delete release请求直接传递给kube-apiserver。</p>
+<p>更新release<br>1、helm客户端将需要更新的chart的release名称chart结构和value信息传给tiller。<br>2、tiller将收到的信息生成新的release，并同时更新这个release的history。<br>3、tiller将新的release传递给kubernetes-apiserver进行更新。</p>
+<p><a href="https://www.cnblogs.com/CloudMan6/p/8970314.html" target="_blank" rel="external">https://www.cnblogs.com/CloudMan6/p/8970314.html</a><br><a href="https://docs.helm.sh" target="_blank" rel="external">https://docs.helm.sh</a></p>
 
       
     </div>
@@ -440,13 +462,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2016/12/22/win10_shell/" title="win10启用ubuntu子shell"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2016/12/12/openstack-newton-install/" title="openstack newton 安装">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+      <a href="/2018/09/06/kuberneter_namespace_quota/" title="kubernetes namespace quota">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
     </li>
     
   </ul>
