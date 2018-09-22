@@ -16,18 +16,25 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/page/6/index.html">
+  <title>docker in docker | 我爱西红柿</title>
+  <meta name="description" content="概述：docker-in-docker简单来说，就是在docker里面运行docker,大部分应用场景在在CI系统容器化后，如何在CI系统内构建容器镜像，比如我们前面例子，将Jenkins对接kubernetes然后Jenkins-slave以kubernetes内的pod方式运行实现动态创建和删除，这时如果需要构建容器镜像的话，就需要Jenkins-slave能支持docker-in-docke">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker in docker">
+<meta property="og:url" content="http://yoursite.com/2018/09/22/docker-in-docker/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="概述：docker-in-docker简单来说，就是在docker里面运行docker,大部分应用场景在在CI系统容器化后，如何在CI系统内构建容器镜像，比如我们前面例子，将Jenkins对接kubernetes然后Jenkins-slave以kubernetes内的pod方式运行实现动态创建和删除，这时如果需要构建容器镜像的话，就需要Jenkins-slave能支持docker-in-docke">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-in-dokcer_1.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_2.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_3.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_4.png">
+<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_5.png">
+<meta property="og:updated_time" content="2018-09-22T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="docker in docker">
+<meta name="twitter:description" content="概述：docker-in-docker简单来说，就是在docker里面运行docker,大部分应用场景在在CI系统容器化后，如何在CI系统内构建容器镜像，比如我们前面例子，将Jenkins对接kubernetes然后Jenkins-slave以kubernetes内的pod方式运行实现动态创建和删除，这时如果需要构建容器镜像的话，就需要Jenkins-slave能支持docker-in-docke">
+<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker-in-dokcer_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/page/6/index.html">
+  <link rel="canonical" href="http://yoursite.com/2018/09/22/docker-in-docker/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -325,479 +332,130 @@
 </aside>
 
   
-  <main class="main" role="main">
   
-  <div class="content article-list">
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述："><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境信息："><span class="toc-number">2.</span> <span class="toc-text">环境信息：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现方式："><span class="toc-number">3.</span> <span class="toc-text">实现方式：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两种方式的区别："><span class="toc-number">4.</span> <span class="toc-text">两种方式的区别：</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker-in-docker" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
+    <div class="article-header">
+      
+        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/05/08/boot_from_volume/">boot from volume的两种方式</a>
+    <h1 class="article-title" itemprop="name">
+      docker in docker
     </h1>
   
 
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
+      
+      <div class="article-meta">
+        <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/05/08/boot_from_volume/" class="article-date">
-	  <time datetime="2017-05-08T07:19:59.000Z" itemprop="datePublished">5月 8</time>
+	<a href="/2018/09/22/docker-in-docker/" class="article-date">
+	  <time datetime="2018-09-22T13:45:59.000Z" itemprop="datePublished">2018-09-22</time>
 	</a>
 </span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/openstack/">openstack</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/05/08/boot_from_volume/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 316(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/05/08/ironic/">ironic-简介</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/05/08/ironic/" class="article-date">
-	  <time datetime="2017-05-08T07:19:59.000Z" itemprop="datePublished">5月 8</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/openstack/">openstack</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/05/08/ironic/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,059(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/04/17/trove/">trove原理</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/04/17/trove/" class="article-date">
-	  <time datetime="2017-04-17T15:27:44.000Z" itemprop="datePublished">4月 17</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/openstack/">openstack</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/04/17/trove/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,715(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 10(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/24/vxlan/">vxlan</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/02/24/vxlan/" class="article-date">
-	  <time datetime="2017-02-24T06:24:44.000Z" itemprop="datePublished">2月 24</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/neutron/">neutron</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/neutron/">neutron</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/02/24/vxlan/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3,066(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 12(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/09/killo_newton/">kolla 3.0.3部署openstack newton</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/02/09/killo_newton/" class="article-date">
-	  <time datetime="2017-02-09T13:45:59.000Z" itemprop="datePublished">2月 9</time>
-	</a>
-</span>
-    
+        
   <span class="article-category">
     <i class="fa fa-folder"></i>
     <a class="article-category-link" href="/categories/docker/">docker</a>
   </span>
 
-    
+        
   <span class="article-tag">
     <i class="fa fa-tag"></i>
 	<a class="article-tag-link" href="/tags/docker/">docker</a>
   </span>
 
 
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/02/09/killo_newton/#comments" class="article-comment-link">评论</a></span>
-    
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/09/22/docker-in-docker/#comments" class="article-comment-link">评论</a></span>
+        
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,105(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,038(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
 	
 
-  </p>
-</article>
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>docker-in-docker简单来说，就是在docker里面运行docker,大部分应用场景在在CI系统容器化后，如何在CI系统内构建容器镜像，比如我们前面例子，将Jenkins对接kubernetes然后Jenkins-slave以kubernetes内的pod方式运行实现动态创建和删除，这时如果需要构建容器镜像的话，就需要Jenkins-slave能支持docker-in-docker的方式了。</p>
+<h3 id="环境信息："><a href="#环境信息：" class="headerlink" title="环境信息："></a>环境信息：</h3><p>os：ubuntu16.04<br>docker：17.03-2</p>
+<h3 id="实现方式："><a href="#实现方式：" class="headerlink" title="实现方式："></a>实现方式：</h3><p>docker-in-docker的实现方式有两种<br>方式一：通过docker官方镜像docker:dind，或自己以特权模式启动一个基础镜像（然后安装docker)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name test-docker --privileged docker:dind（docker:dind镜像默认是最新版docker版本的dind,如果需要指定docker版本可以docker:17.03-dind)</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-in-dokcer_1.png" alt=""><br>配置镜像加速器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">tee  /etc/docker/daemon.json &lt;&lt; EOF</div><div class="line">&#123;</div><div class="line">  &quot;registry-mirrors&quot;: [&quot;https://vqgjby9l.mirror.aliyuncs.com&quot;]</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>启动应用功能测试<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd -p 80:80 nginx</div></pre></td></tr></table></figure></p>
+<p>测试应用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">curl 127.0.0.1</div><div class="line">wget 127.0.0.1 &amp;&amp; cat index.html</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_2.png" alt=""><br>构建镜像功能测试<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vi ~/Dockerfile</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">FROM nginx</div><div class="line">MAINTAINER Alex wan &quot;wanshaoyuan@gmail.com&quot;</div><div class="line">RUN  echo test &gt; /usr/share/nginx/html/index.html</div></pre></td></tr></table></figure>
+<p>构建镜像<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_3.png" alt=""></p>
+<p>基于新镜像启动容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd -p 80:80 test-nginx:v1.0</div></pre></td></tr></table></figure></p>
+<p>验证<br><img src="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_4.png" alt=""></p>
+<p>可以看见这根我们平常用的docker一模一样了，能够运行容器，管理容器，构建容器镜像。<br>方式二：将宿主机的docker.sock文件映射到容器内,然后在应用镜像内安装一个docker client端就可以了，docker官方也有内部就封装了docker命令的镜像，镜像名就叫docker<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd -v /var/run/docker.sock:/var/run/docker.sock docker</div></pre></td></tr></table></figure></p>
+<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker-in-docker_5.png" alt=""></p>
+<p>这种方式很简单了就是直接用的宿主机的docker，只不过用的另外的客户端去连接而已，所以你在容器里面的所有操作比如创建、删除、构建这些操作都是直接反映到宿主机的docker上的。</p>
+<h3 id="两种方式的区别："><a href="#两种方式的区别：" class="headerlink" title="两种方式的区别："></a>两种方式的区别：</h3><p>第一种方式使用docker inserd docker，是直接在子容器容器里面启动一个单独的容器，这种方案优点在于1、它是完全独立的一个docker，根宿主机是完全隔离的，在上面做任何操作都不会影响宿主机上的docker，对应的子容器销毁，里面容器和镜像就没有了，不会残留在父容器上，同时缺点也很明显1、因为需要操作iptables和cgroup所以需要特权模式启动，带来一定的安全隐患。2、StoragDriver问题，因为外部docker运行在操作系统的文件系统之上如ext4，xfs等，子容器运行在StoragDriver之上，然后子容器中的容器又运行在子容器的StoragDriver之上，所以这就成了一个多级嵌套的一个关系了，对于一些StoragDriver是不允许的，比如你不能在aufs之上在运行aufs，但目前overlay2是可以运行在aufs之上的，但会有较强的性能损耗。</p>
+<p>第二种方式使用docker outside of docker，这种方式子容器内封装一个docker命令然后将宿主机的docker.sock文件映射进去，这种方案优点在于：1、因为子容器只是运行一个docker客户端，所以不需要特端模式，可以保证一定的安全性。2、没有多层StorageDriver嵌套问题因为它是直接运行在宿主机上的。缺点：1、因为是直接控制宿主机容器，所以所有操作都会反应在宿主机上，隔离性没那么好。2、端口要保证唯一性。3、容器层面安全性问题，因为可以直接操作宿主机docker，所以可以任意修改和删除上面的容器。</p>
+<p>推荐做法：<br>如果是使用ci工具在容器中构建容器的话，建议直接使用第二种方式docker outside of docker，因为这种方式不需要那么完全隔离，只要编译镜像就可以，另外就是编译出来的镜像直接在宿主机上，测试时还可以直接run起来。</p>
 
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/06/openstac&ceph/">openstack N版对接ceph jewel版</a>
-    </h1>
-  
+    
+  <section id="comments">
+  	
+  </section>
 
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2018/09/09/kubernete_helm_1/" title="Helm(一)(介绍+安装+简单使用)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
   </div>
   
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/02/06/openstac&ceph/" class="article-date">
-	  <time datetime="2017-02-06T06:24:44.000Z" itemprop="datePublished">2月 6</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/openstack/">openstack</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/openstack/">openstack</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/02/06/openstac&ceph/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,230(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/01/manual_ceph/">手动安装ceph</a>
-    </h1>
-  
-
   </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/01/01/manual_ceph/" class="article-date">
-	  <time datetime="2017-01-01T01:50:44.000Z" itemprop="datePublished">1月 1</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/ceph/">ceph</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/ceph/">ceph</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/01/01/manual_ceph/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,548(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/25/mariadb-base/">Mariadb galera</a>
-    </h1>
+</nav>
   
 
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2016/12/25/mariadb-base/" class="article-date">
-	  <time datetime="2016-12-25T11:50:44.000Z" itemprop="datePublished">12月 25</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/数据库/">数据库</a>
-  </span>
 
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/数据库/">数据库</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2016/12/25/mariadb-base/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 801(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/22/mariadb-galera-2/">Mariadb galera集群搭建</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2016/12/22/mariadb-galera-2/" class="article-date">
-	  <time datetime="2016-12-22T15:35:44.000Z" itemprop="datePublished">12月 22</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/数据库/">数据库</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/数据库/">数据库</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2016/12/22/mariadb-galera-2/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 576(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
-	
-
-  </p>
-</article>
-
-    
-      <article class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="article-header">
-    
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/12/22/win10_shell/">win10启用ubuntu子shell</a>
-    </h1>
-  
-
-  </div>
-  
-  <p class="article-meta">
-    <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2016/12/22/win10_shell/" class="article-date">
-	  <time datetime="2016-12-22T15:35:44.000Z" itemprop="datePublished">12月 22</time>
-	</a>
-</span>
-    
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/操作系统/">操作系统</a>
-  </span>
-
-    
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/操作系统/">操作系统</a>
-  </span>
-
-
-    <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2016/12/22/win10_shell/#comments" class="article-comment-link">评论</a></span>
-    
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 249(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
-	
-
-  </p>
-</article>
-
-    
-  </div>
-
-  
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev">
-                <a href="/page/5/">
-                    <i class="fa fa-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/page/7/">
-                    下一页
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-        <div class="total-article bar-right">Page 6 of 7</div>
-        </div>
-    </nav>
-    
- 
 </main>
 
   
@@ -835,6 +493,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
