@@ -27,14 +27,14 @@
 <meta property="og:description" content="我们在部署openstack时用国外yum源的快，经常会很慢导致等待时间太久，所以建议使用本地yum源安装  
 这里以newton版centos7平台为例  
 首先下载官方repoyum install https://rdoproject.org/repos/rdo-release.rpm这时侯/etc/yum.repos.d里面会产生3个文件12[root@test yum.repos.d]#">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/yumrepo.png">
-<meta property="og:updated_time" content="2018-11-06T15:50:12.499Z">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/yumrepo.png">
+<meta property="og:updated_time" content="2018-11-07T04:15:40.103Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="openstack 本地yum源搭建">
 <meta name="twitter:description" content="我们在部署openstack时用国外yum源的快，经常会很慢导致等待时间太久，所以建议使用本地yum源安装  
 这里以newton版centos7平台为例  
 首先下载官方repoyum install https://rdoproject.org/repos/rdo-release.rpm这时侯/etc/yum.repos.d里面会产生3个文件12[root@test yum.repos.d]#">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/yumrepo.png">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/yumrepo.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2016/12/12/openstack-localyumbuild/index.html">
   
@@ -407,7 +407,7 @@
 <p>我这里打算用http搭建我的本地yum服务器 </p>
 <h1 id="先安装httpd"><a href="#先安装httpd" class="headerlink" title="先安装httpd"></a>先安装httpd</h1><p>yum install httpd</p>
 <p>mkdir /var/www/html/newton  </p>
-<p>待会将同步下来的包放这个目录<br>cd /vaw/www/html/newton<br> yum repolist    –列出你所有的仓库<br><img src="http://ohx02qrb8.bkt.clouddn.com/yumrepo.png" alt=""></p>
+<p>待会将同步下来的包放这个目录<br>cd /vaw/www/html/newton<br> yum repolist    –列出你所有的仓库<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/yumrepo.png" alt=""></p>
 <p>前面是repo id不包含x86_64  </p>
 <p>这里我只需要openstack-newton、和rdo-qemu-ev这两个软件库  </p>
 <p>先同步openstack-newton<br><code>reposync --repoid=openstack-newton</code></p>

@@ -25,22 +25,22 @@ helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述什么是helm？helm是kubernetes里面的包管理工具，那什么包管理工具呢？其实就类似于我们用的centos的yum，ubuntu的apt一样能够快速安装、卸载、更新软件，最重要的一点是能够解决软件安装的依赖问题。
 helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件非常麻烦的事情，首先你得学会kubernetes中的各种概念，deployment，service，">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_10.png">
 <meta property="og:updated_time" content="2018-09-09T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Helm(一)(介绍+安装+简单使用)">
 <meta name="twitter:description" content="概述什么是helm？helm是kubernetes里面的包管理工具，那什么包管理工具呢？其实就类似于我们用的centos的yum，ubuntu的apt一样能够快速安装、卸载、更新软件，最重要的一点是能够解决软件安装的依赖问题。
 helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件非常麻烦的事情，首先你得学会kubernetes中的各种概念，deployment，service，">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/helm_base_1.png">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/09/09/helm_1/index.html">
   
@@ -419,23 +419,23 @@ helm能帮助我们解决什么问题？在kubernetes中，部署应用是一件
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mv helm  /usr/bin/</div></pre></td></tr></table></figure>
 <h4 id="安装Tiller"><a href="#安装Tiller" class="headerlink" title="安装Tiller"></a>安装Tiller</h4><p>执行helm init<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">helm init</div><div class="line">Creating /root/.helm</div><div class="line">Creating /root/.helm/repository</div><div class="line">Creating /root/.helm/repository/cache</div><div class="line">Creating /root/.helm/repository/local</div><div class="line">Creating /root/.helm/plugins</div><div class="line">Creating /root/.helm/starters</div><div class="line">Creating /root/.helm/cache/archive</div><div class="line">Creating /root/.helm/repository/repositories.yaml</div><div class="line">Adding stable repo with URL: https://kubernetes-charts.storage.googleapis.com</div><div class="line">Error: Looks like &quot;https://kubernetes-charts.storage.googleapis.com&quot; is not a valid chart repository or cannot be reached: Get https://kubernetes-charts.storage.googleapis.com/index.yaml: net/http: TLS handshake timeout</div></pre></td></tr></table></figure></p>
 <p>helm init  在缺省配置下， Helm 会利用 “gcr.io/kubernetes-helm/tiller” 镜像在Kubernetes集群上安装配置 Tiller；并且利用 “<a href="https://kubernetes-charts.storage.googleapis.com" target="_blank" rel="external">https://kubernetes-charts.storage.googleapis.com</a>“ 作为缺省的 stable repository 的地址。由于在国内可能无法访问 “gcr.io”, “storage.googleapis.com”<br>所以这里我们换成国内阿里的repo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm init --upgrade -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.9.1 --stable-repo-url https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</div></pre></td></tr></table></figure></p>
-<p>该命令会在当前目录下创建helm文件夹即~/.helm，并且通过Kubernetes Deployment 部署tiller. 检查Tiller是否成功安装：<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_1.png" alt=""></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_2.png" alt=""></p>
+<p>该命令会在当前目录下创建helm文件夹即~/.helm，并且通过Kubernetes Deployment 部署tiller. 检查Tiller是否成功安装：<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_1.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_2.png" alt=""></p>
 <h4 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h4><p>如果k8s集群打开的RBAC的话需要给tiller用ServiceAccount运行并且给这个ServiceAccount配置clusterrolebinding，因为tiller需要直接根kube-apiserver交互需要权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create serviceaccount --namespace kube-system tiller</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller</div></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl patch deploy --namespace kube-system tiller-deploy -p &apos;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;serviceAccount&quot;:&quot;tiller&quot;&#125;&#125;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
-<p>验证<br>执行helm version<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_3.png" alt=""></p>
+<p>验证<br>执行helm version<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_3.png" alt=""></p>
 <p>查看当前仓库可用的chart<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm search</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_4.png" alt=""></p>
-<h4 id="部署应用测试"><a href="#部署应用测试" class="headerlink" title="部署应用测试"></a>部署应用测试</h4><p>部署mariadb<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_5.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_4.png" alt=""></p>
+<h4 id="部署应用测试"><a href="#部署应用测试" class="headerlink" title="部署应用测试"></a>部署应用测试</h4><p>部署mariadb<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_5.png" alt=""></p>
 <p>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm install  --name mariadb --set &quot;persistence.enabled=false&quot; stable/mariadb</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_6.png" alt=""></p>
-<p>这里配置persistence.enabled=false是因为我环境里面没有pvc所以把持久化存储关了，将chart内的这个变量设置为false<br>部署完成<br>查看是否部署成功<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_7.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_6.png" alt=""></p>
+<p>这里配置persistence.enabled=false是因为我环境里面没有pvc所以把持久化存储关了，将chart内的这个变量设置为false<br>部署完成<br>查看是否部署成功<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_7.png" alt=""></p>
 <p>删除release<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm del release_name</div></pre></td></tr></table></figure></p>
 <p>直接通过helm del删除release，会把对应的kubernetes资源对象删除，但release记录还是会保留下来，这时如果要还原可以直接执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm rollback release_name revision</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_8.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_8.png" alt=""></p>
 <p>虽然rollback能执行成功并且，资源也重启创建回来了，但是状态会变成PENDING_ROLLBACK,看github的issue是说rollback只能用于现有的部署，已经删除了release回滚状态会报错<br><a href="https://github.com/helm/helm/issues/3722" target="_blank" rel="external">https://github.com/helm/helm/issues/3722</a><br>如果需要删除时，彻底删干净，连同release记录也删除，需要添加额外参数–purge<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">helm del --purge release_name</div></pre></td></tr></table></figure></p>
-<h3 id="helm原理"><a href="#helm原理" class="headerlink" title="helm原理"></a>helm原理</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_9.png" alt=""><br>图片来源cloudman《每天5分钟玩转kubernetes》<br><img src="http://ohx02qrb8.bkt.clouddn.com/helm_base_10.png" alt=""></p>
+<h3 id="helm原理"><a href="#helm原理" class="headerlink" title="helm原理"></a>helm原理</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_9.png" alt=""><br>图片来源cloudman《每天5分钟玩转kubernetes》<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/helm_base_10.png" alt=""></p>
 <p>创建release<br>1、helm客户端从本地tar文件或repo里面解析出chart信息。<br>2、helm客户端将解析出来的信息通过grpc传给tiller。<br>3、tiller根据传来的信息生成release，然后将install release请求直接传递给kube-apiserver。</p>
 <p>删除release<br>1、helm客户端从本地tar文件或repo里面解析出chart信息。<br>2、helm客户端将解析出来的信息通过grpc传给tiller。<br>3、tiller将delete release请求直接传递给kube-apiserver。</p>
 <p>更新release<br>1、helm客户端将需要更新的chart的release名称chart结构和value信息传给tiller。<br>2、tiller将收到的信息生成新的release，并同时更新这个release的history。<br>3、tiller将新的release传递给kubernetes-apiserver进行更新。</p>

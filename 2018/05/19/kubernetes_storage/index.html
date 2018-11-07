@@ -25,34 +25,34 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="操作系统：ubuntu 16.04kubernetes版本：1.10.0ceph：10.2.10
 kubernetes常见的三种应用1、无状态应用容器内的应用状态无需保持，kubernetes通过replicaset保证pod的数量，一旦pod挂掉或崩溃，会基于image重建pod，此时pod内数据丢失。2、有状态应用和无状态应用相比，有状态应用多了一个应用状态保存的需求.3、有状态集群应用和有状">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-7.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-8.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-9.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-10.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-11.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-12.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-13.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-14.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-15.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-16.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-22.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-17.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-18.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-19.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-20.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-21.png">
 <meta property="og:updated_time" content="2018-05-26T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="kubernetes 持久化存储">
 <meta name="twitter:description" content="操作系统：ubuntu 16.04kubernetes版本：1.10.0ceph：10.2.10
 kubernetes常见的三种应用1、无状态应用容器内的应用状态无需保持，kubernetes通过replicaset保证pod的数量，一旦pod挂掉或崩溃，会基于image重建pod，此时pod内数据丢失。2、有状态应用和无状态应用相比，有状态应用多了一个应用状态保存的需求.3、有状态集群应用和有状">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-1.png">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/05/19/kubernetes_storage/index.html">
   
@@ -419,12 +419,12 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <p>操作系统：ubuntu 16.04<br>kubernetes版本：1.10.0<br>ceph：10.2.10<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-1.png" alt=""></p>
+        <p>操作系统：ubuntu 16.04<br>kubernetes版本：1.10.0<br>ceph：10.2.10<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-1.png" alt=""></p>
 <p>kubernetes常见的三种应用<br>1、无状态应用<br>容器内的应用状态无需保持，<br>kubernetes通过replicaset保证pod的数量，一旦pod挂掉或崩溃，会基于image重建pod，此时pod内数据丢失。<br>2、有状态应用<br>和无状态应用相比，有状态应用多了一个应用状态保存的需求.<br>3、有状态集群应用<br>和有状态应用相比，多了集群管理的需求，那么需要解决的问题有两个，一个是应用状态的保存，一个是集群的管理。</p>
 <p>有状态应用和有状态集群应用需要持久化存储里面的数据，比如数据库我们需要存储里面的数据库文件，直接用docker，我们可以使用docker的bind-mont、docker-managed-volume 、volume-container的方式，在kubernetes中解决方案是kubernetes volume和kubernetes persistent volume 。volume独立于pod，pod被销毁了数据没有了，但volume还是存在的，可以给其他pod使用。本质上，volume就是一个目录根目录的映射，它后端可以对应各种各样的存储，但pod在使用时，并不需要关心这些，对于pod来说，它看见的只是一个目录，这点根docker volume基本一样，当一个volume mount到pod中时，这个pod中所有容器都可以访问这个volume，kuberne volume支持多种类型的后端存如awsElasticBlockStore、azureDisk、ceph-rbd</p>
 <p>完整参考列表<br><a href="https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes" target="_blank" rel="external">https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes</a></p>
 <p>kubernetes中volume分为两种类型静态供给的和动态供给的<br>静态供给volume：emptyDir、hostpath，Persistent volume<br>动态供给volume：storage-class</p>
-<h3 id="静态供给volume"><a href="#静态供给volume" class="headerlink" title="静态供给volume"></a>静态供给volume</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-2.png" alt=""></p>
+<h3 id="静态供给volume"><a href="#静态供给volume" class="headerlink" title="静态供给volume"></a>静态供给volume</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-2.png" alt=""></p>
 <p>缺点：<br>pod直接访问volume可移值性和可扩展性、安全性较差</p>
 <p>emptyDir<br>emptydir：临时空目录，与pod紧密联接在创建pod是创建，在删除这个pod时，也会自动删除，pod迁移到其他节点数据会丢失。<br>用途：用于存储一些临时数据，如cookie等。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">例：</div><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">metadata:</div><div class="line"> name: producer-consumer</div><div class="line">spec:</div><div class="line"> containers:</div><div class="line"> - image: busybox</div><div class="line">   name: producer</div><div class="line">   volumeMounts:</div><div class="line">   - mountPath: /producer_dir</div><div class="line">     name: shared-volume</div><div class="line">   args:</div><div class="line">   - /bin/sh</div><div class="line">   - -c</div><div class="line">   - echo &quot;hello world&quot; &gt;/producer_dir/hello; sleep 30000</div><div class="line"> volumes:</div><div class="line"> - name: shared-volume</div><div class="line">   emptyDir: &#123;&#125;</div></pre></td></tr></table></figure></p>
 <p>创建一个pod里面有两个container，生产者、消费者共享一个emptyDir，生产者向/producer_dir/hello写入hello world</p>
@@ -433,7 +433,7 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
 <p>例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">apiVersion: apps/v1beta1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line"> name: mysql</div><div class="line">spec:</div><div class="line"> selector:</div><div class="line">   matchLabels:</div><div class="line">     app: mysql</div><div class="line"> template:</div><div class="line">   metadata:</div><div class="line">     labels:</div><div class="line">       app: mysql</div><div class="line">   spec:</div><div class="line">     containers:</div><div class="line">     - image: mysql:5.6</div><div class="line">       name: mysql</div><div class="line">       env:</div><div class="line">       - name: MYSQL_ROOT_PASSWORD</div><div class="line">         value: password</div><div class="line">       ports:</div><div class="line">       - containerPort: 3306</div><div class="line">         name: mysql</div><div class="line">       volumeMounts:</div><div class="line">       - name: vol1</div><div class="line">         mountPath: /var/lib/mysql</div><div class="line">     volumes:</div><div class="line">     - hostPath:</div><div class="line">            path: /tmp/mysql</div><div class="line">       name: vol1</div></pre></td></tr></table></figure></p>
 <p>将pod内的/var/lib/mysql与宿主机的/tmp/mysql映射。</p>
 <h3 id="storage-private"><a href="#storage-private" class="headerlink" title="storage-private"></a>storage-private</h3><p>不使用host存储空间，使用公有云厂商对象存储或分布式</p>
-<h3 id="persisten-volume"><a href="#persisten-volume" class="headerlink" title="persisten volume"></a>persisten volume</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-3.png" alt=""></p>
+<h3 id="persisten-volume"><a href="#persisten-volume" class="headerlink" title="persisten volume"></a>persisten volume</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-3.png" alt=""></p>
 <p>volume虽然能提供很好的数据持久化，但在可管理性上，还是不足的，要使用volume，用户必须，知道当前的volume信息和提前创建好对应的volume，kubernetes推荐使用pv、pvc来解决存储持久化的问题。因此kubernetes给出的解决方案是pv(persistent volume)、pvc(persistent volume Claim)<br>persisten volume(pv)是k8s里面的一个资源对象，它是直接和底层存储关联的，pv具有持久性，生命周期独立于pod。<br>persisten volume claim(pvc)是对pv的具体实现，pod使用存储是直接使用pvc，然后pvc会根据pod需要的存储空间大小和访问模式在去寻找合适的pv然后绑定。  </p>
 <p>kubernetes支持的pv类型<br><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" target="_blank" rel="external">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a><br>例子<br>这里以nfs做为pv后端存储为例讲解pv和pvc的使用<br>搭建nfs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apt install nfs-kernel-server nfs-common rpcbind</div></pre></td></tr></table></figure></p>
 <p>配置共享目录<br>修改/etc/exports文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/nfsdata *(rw,sync,no_root_squash)</div></pre></td></tr></table></figure></p>
@@ -441,11 +441,11 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
 <p>启动rpcbind<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl status rpcbind</div></pre></td></tr></table></figure></p>
 <p>启动nfs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start nfs-kernel-server</div></pre></td></tr></table></figure></p>
 <p>验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">showmount -e  nfs_server_ip</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-4.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-4.png" alt=""></p>
 <p>挂载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount -t nfs 172.31.164.57:/nfsdata /mnt/</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-5.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-5.png" alt=""></p>
 <p>配置pv<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolume</div><div class="line">metadata:</div><div class="line"> name: mysql-pv</div><div class="line">spec:</div><div class="line"> accessModes:</div><div class="line">     - ReadWriteOnce  #可读写模式支持单节点挂载</div><div class="line"> capacity:</div><div class="line">   storage: 1Gi</div><div class="line"> persistentVolumeReclaimPolicy: Retain</div><div class="line"> storageClassName: nfs</div><div class="line"> nfs:</div><div class="line">   path: /nfsdata/mysql-pv</div><div class="line">   server: 172.31.164.57</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-6.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-6.png" alt=""></p>
 <p>pv的回收模式</p>
 <ul>
 <li>persistentVolumeReclaimPolicy 为当pvc删除后pv的回收策略。</li>
@@ -460,31 +460,31 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
 <li>ReadWriteMany(RWX)：可读写模式支持多节点挂载，目前只有少数存储支持这种方式，像ceph-rbd目前只能当个节点挂载。</li>
 </ul>
 <p>创建pvc<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">kind: PersistentVolumeClaim</div><div class="line">apiVersion: v1</div><div class="line">metadata:</div><div class="line">  name: mysql-pvc</div><div class="line">spec:</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteOnce</div><div class="line">  resources:</div><div class="line">    requests:</div><div class="line">      storage: 1Gi</div><div class="line">  storageClassName: nfs</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-7.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-7.png" alt=""></p>
 <p>pvc只需要指定大小，访问模式和className就会根pv关联。</p>
 <p>创建mysql使用pvc<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">apiVersion: apps/v1beta1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line"> name: mysql</div><div class="line">spec:</div><div class="line"> selector:</div><div class="line">   matchLabels:</div><div class="line">     app: mysql</div><div class="line"> template:</div><div class="line">   metadata:</div><div class="line">     labels:</div><div class="line">       app: mysql</div><div class="line">   spec:</div><div class="line">     containers:</div><div class="line">     - image: mysql:5.6</div><div class="line">       name: mysql</div><div class="line">       env:</div><div class="line">       - name: MYSQL_ROOT_PASSWORD</div><div class="line">         value: password</div><div class="line">       ports:</div><div class="line">       - containerPort: 3306</div><div class="line">         name: mysql</div><div class="line">       volumeMounts:</div><div class="line">       - name: mysql-persistent-storage</div><div class="line">         mountPath: /var/lib/mysql</div><div class="line">     volumes:</div><div class="line">     - name: mysql-persistent-storage</div><div class="line">       persistentVolumeClaim:</div><div class="line">        claimName: mysql-pvc</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-8.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-9.png" alt=""></p>
-<p>进入container创建些数据<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-10.png" alt=""><br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-11.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-8.png" alt=""><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-9.png" alt=""></p>
+<p>进入container创建些数据<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-10.png" alt=""><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-11.png" alt=""></p>
 <p>将pod所在宿主机关闭了，过几分钟kubernetes会在另外宿主机上启动,并且还是使用这个pvc，因为nfs支持多个host同时挂载.</p>
-<h3 id="动态供给volume-storage-class"><a href="#动态供给volume-storage-class" class="headerlink" title="动态供给volume(storage_class)"></a>动态供给volume(storage_class)</h3><p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-12.png" alt=""></p>
+<h3 id="动态供给volume-storage-class"><a href="#动态供给volume-storage-class" class="headerlink" title="动态供给volume(storage_class)"></a>动态供给volume(storage_class)</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-12.png" alt=""></p>
 <p>storage-class：<br>直接使用pv方式都是静态供给，需要管理员提前将pv创建好，然后再与pvc绑定，在kubernetes中动态卷是通过storage-class去实现的。配好storage-class与backend对接，当没有满足pvc条件的pv时，storage-class会动态的去创建一个pv<br>动态卷的优势</p>
 <p>1、不需要提前创建好pv，提高效率和资源利用率</p>
 <p>2、封装不同的存储类型给pvc使用，在StorageClass出现以前，PVC绑定一个PV只能根据两个条件，一个是存储的大小，另一个是访问模式。在StorageClass出现后，等于增加了一个绑定维度。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-13.png" alt=""><br>在PVC里除了常规的大小、访问模式的要求外，还通过annotation指定了Storage Class的名字为fast，这样这个PVC就会绑定一个SSD，而不会绑定一个普通的磁盘。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-14.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-13.png" alt=""><br>在PVC里除了常规的大小、访问模式的要求外，还通过annotation指定了Storage Class的名字为fast，这样这个PVC就会绑定一个SSD，而不会绑定一个普通的磁盘。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-14.png" alt=""></p>
 <p>例这里我们以ceph-rbd为例配置一个storage-class<br>因为<br>操作系统加载rbd module<br>modprobe rbd<br>记得加入开机启动脚本，不然重启module又没加载<br>创建一个ceph-rbd的storage-class<br>获取admin的secret并用base64加密<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ceph auth get-key client.admin |base64</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-15.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-15.png" alt=""></p>
 <p>创建个secret对象<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Secret</div><div class="line">metadata:</div><div class="line">  name: ceph-secret-admin</div><div class="line">type: &quot;kubernetes.io/rbd&quot;</div><div class="line">data:</div><div class="line">  key: QVFEMDJ1VmE0L1pxSEJBQUtTUnFwS3JFVjErRjFNM1kwQ2lyWmc9PQ==</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-16.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-16.png" alt=""></p>
 <p>创建storage-class<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">kind: StorageClass</div><div class="line">apiVersion: storage.k8s.io/v1</div><div class="line">metadata:</div><div class="line">  name: rbd</div><div class="line">provisioner: kubernetes.io/rbd</div><div class="line">parameters:</div><div class="line">  monitors: 172.31.164.57:6789</div><div class="line">  adminId: admin</div><div class="line">  adminSecretName: ceph-secret-admin</div><div class="line">  adminSecretNamespace: default</div><div class="line">  pool: rbd</div><div class="line">  userId: admin</div><div class="line">  userSecretName: ceph-secret-admin</div></pre></td></tr></table></figure></p>
 <p>monitors:  ceph-monitor地址+端口<br>adminId:  secret的用户名<br>adminSecretName: 上面创建secret的名字<br>pool：rbd 在ceph哪个pool<br>userSecretName：上面创建secret的名字</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">kind: PersistentVolumeClaim</div><div class="line">apiVersion: v1</div><div class="line">metadata:</div><div class="line">  name: mysql-pvc</div><div class="line">spec:</div><div class="line">  accessModes:</div><div class="line">    - ReadWriteOnce</div><div class="line">  resources:</div><div class="line">    requests:</div><div class="line">      storage: 1Gi</div><div class="line">  storageClassName: rbd</div></pre></td></tr></table></figure>
-<p>storageClassName指向我们刚刚创建storage-class<br>可以看见已经Bound了<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-22.png" alt=""></p>
-<p>查看ceph的pool，发现块设备已经创建好了<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-17.png" alt=""><br>继续使用上面的yml创建mysql，会直接用这个pvc<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-18.png" alt=""></p>
-<p>到rke-node3上去<br>可以看见kernel rbd module将pool里面的块映射出来了，挂载到pod里面了<br><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-19.png" alt=""></p>
+<p>storageClassName指向我们刚刚创建storage-class<br>可以看见已经Bound了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-22.png" alt=""></p>
+<p>查看ceph的pool，发现块设备已经创建好了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-17.png" alt=""><br>继续使用上面的yml创建mysql，会直接用这个pvc<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-18.png" alt=""></p>
+<p>到rke-node3上去<br>可以看见kernel rbd module将pool里面的块映射出来了，挂载到pod里面了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-19.png" alt=""></p>
 <p>如果非hyperkube部署的kubernetes集群，如kubeadm部署的，在创建pvc时会报错如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">persistentvolume-controller     Warning   ProvisioningFailed  Failed to provision volume with StorageClass &quot;rbd&quot;: failed to create rbd image: executable file not found in $PATH, command output:</div></pre></td></tr></table></figure></p>
 <p>因为我们的k8s集群是使用kubeadm创建的，k8s的几个服务也是跑在集群静态pod中，而kube-controller-manager组件会调用rbd的api，但是因为它的pod中没有安装rbd，所以会报错。解决办法如下<br>使用kubernetes上的存储扩展卷来解决<br><a href="https://github.com/kubernetes-incubator/external-storage" target="_blank" rel="external">https://github.com/kubernetes-incubator/external-storage</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone  https://github.com/kubernetes-incubator/external-storage</div></pre></td></tr></table></figure></p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-20.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-20.png" alt=""></p>
 <p>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kubectl apply -f ./</div><div class="line">kubectl get pods</div><div class="line">NAME                              READY     STATUS    RESTARTS   AGE</div><div class="line">rbd-provisioner-23232323-i6223   1/1       Running   0          13s</div></pre></td></tr></table></figure></p>
 <p>然后在重新创建storage-class<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat ceph-storageclass.yaml</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">kind: StorageClass</div><div class="line">apiVersion: storage.k8s.io/v1</div><div class="line">metadata:</div><div class="line">  name: rbd</div><div class="line">#provisionen: kubernetes.io/rbd</div><div class="line">provisioner: ceph.com/rbd</div><div class="line">parameters:</div><div class="line">  monitors: 172.31.164.57:6789</div><div class="line">  adminId: admin</div><div class="line">  adminSecretName: ceph-secret-admin</div><div class="line">  adminSecretNamespace: default</div><div class="line">  pool: rbd</div><div class="line">  userId: admin</div><div class="line">  userSecretName: ceph-secret-admin</div></pre></td></tr></table></figure>
@@ -495,7 +495,7 @@ kubernetes常见的三种应用1、无状态应用容器内的应用状态无需
 <li>因为在k8s里面是直接用的是内核的rbd块，openstack用的是librbd接口，所以这里需要在每个host上内核要加载rbd模块，不然挂载不上去的，modprobe rbd。  </li>
 <li>ceph-rbd 在AccessMode为ReadWriteOnce情况下只支持单节点挂载，不能被多个pod同时使用这个pvc。也就是说一个host挂了，如果上面pod使用了ceph-rbd，哪里在另外一个host上重建这个pod时会报这个pvc已经被使用了，但在AccessMode为ReadWriteOnce+ReadOnlyMany的情况下支持一个pvc被多个pod挂载。</li>
 </ul>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/k8s-storage-21.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-21.png" alt=""></p>
 <p>参考链接<br><a href="https://www.kubernetes.org.cn/3462.html" target="_blank" rel="external">https://www.kubernetes.org.cn/3462.html</a><br><a href="https://blog.csdn.net/liukuan73/article/details/60089305" target="_blank" rel="external">https://blog.csdn.net/liukuan73/article/details/60089305</a></p>
 
       

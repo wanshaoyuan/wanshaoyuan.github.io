@@ -29,13 +29,13 @@ vim /etc/yum.repos.d/MariaDB.repo12345[mariadb]n">
 192.168.1.16 mariadb-1.novalocal mariadb-1192.168.1.19 mariadb-2.novalocal mariadb-2192.168.1.18 mariadb-3.novalocal mariadb-3  
 配置repo文件
 vim /etc/yum.repos.d/MariaDB.repo12345[mariadb]n">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-5.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-6.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-7.png">
 <meta property="og:updated_time" content="2016-12-22T15:50:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Mariadb galera集群搭建">
@@ -43,7 +43,7 @@ vim /etc/yum.repos.d/MariaDB.repo12345[mariadb]n">
 192.168.1.16 mariadb-1.novalocal mariadb-1192.168.1.19 mariadb-2.novalocal mariadb-2192.168.1.18 mariadb-3.novalocal mariadb-3  
 配置repo文件
 vim /etc/yum.repos.d/MariaDB.repo12345[mariadb]n">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/mariadb-1.png">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2016/12/22/mariadb-galera-2/index.html">
   
@@ -432,16 +432,16 @@ vim /etc/yum.repos.d/MariaDB.repo12345[mariadb]n">
 <p>[root@node4 ~]# tail -f /var/log/message<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">150701 19:54:17 [Note] WSREP: wsrep_load(): loading provider library &apos;none&apos;</div><div class="line">150701 19:54:17 [Note] /usr/libexec/mysqld: ready for connections.</div><div class="line">Version: &apos;5.5.40-MariaDB-wsrep&apos;  socket: &apos;/var/lib/mysql/mysql.sock&apos;  port: 3306  MariaDB Server, wsrep_25.11.r4026</div></pre></td></tr></table></figure></p>
 <p>出现 ready for connections ,证明我们启动成功  </p>
 <p>查看是否启用galera插件<br>连接mariadb,查看是否启用galera插件</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-1.png" alt=""></p>
-<p>目前集群机器数<br><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-2.png" alt=""></p>
-<p>查看集群状态<br>show status like ‘wsrep%’;<br><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-3.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-1.png" alt=""></p>
+<p>目前集群机器数<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-2.png" alt=""></p>
+<p>查看集群状态<br>show status like ‘wsrep%’;<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-3.png" alt=""></p>
 <p>查看连接的主机  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-4.png" alt=""></p>
-<p>另外两个节点mariadb会自动加入集群<br>systemctl start mariadb<br>这时查看galera集群机器数量<br><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-5.png" alt=""></p>
-<p>已经连接机器的ip<br><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-6.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-4.png" alt=""></p>
+<p>另外两个节点mariadb会自动加入集群<br>systemctl start mariadb<br>这时查看galera集群机器数量<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-5.png" alt=""></p>
+<p>已经连接机器的ip<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-6.png" alt=""></p>
 <p>测试<br>在mariadb-1上创建数据库，创建表，插入数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; create database test1；</div><div class="line">MariaDB [test1]&gt; insert into test values(1);</div><div class="line">Query OK, 1 row affected (0.01 sec)</div><div class="line"></div><div class="line">MariaDB [test1]&gt; insert into test values(2);</div><div class="line">Query OK, 1 row affected (0.01 sec)</div><div class="line"></div><div class="line">MariaDB [test1]&gt; insert into test values(3);</div><div class="line">Query OK, 1 row affected (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [test1]&gt; insert into test values(4);</div><div class="line">Query OK, 1 row affected (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [test1]&gt; insert into test values(5);</div><div class="line">Query OK, 1 row affected (0.03 sec)</div><div class="line"></div><div class="line">MariaDB [test1]&gt; insert into test values(6);</div><div class="line">Query OK, 1 row affected (0.01 sec)</div><div class="line"></div><div class="line">MariaDB [test1]&gt; insert into test values(7);</div><div class="line">Query OK, 1 row affected (0.01 sec)</div></pre></td></tr></table></figure></p>
 <p>在另外两台mariadb-2、mariadb-3上可以看见刚刚插入的数据，说明数据同步了。</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/mariadb-7.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-7.png" alt=""></p>
 
       
     </div>

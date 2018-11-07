@@ -27,16 +27,16 @@
 <meta property="og:description" content="centos7安装docker官方推荐centos7.3系统安装依赖yum install -y yum-utils device-mapper-persistent-data  lvm2
 添加docker yum源1yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 版本区别">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_2.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_3.png">
 <meta property="og:updated_time" content="2017-10-23T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Docker安装">
 <meta name="twitter:description" content="centos7安装docker官方推荐centos7.3系统安装依赖yum install -y yum-utils device-mapper-persistent-data  lvm2
 添加docker yum源1yum-config-manager  --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 版本区别">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/docker_install_1.png">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/10/23/install_docker/index.html">
   
@@ -414,15 +414,15 @@
 <p>systemctl start docker  </p>
 <p>测试docker是否安装成功,运行个httpd 镜像  </p>
 <p>docker run -d -p 80:80 httpd</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_install_1.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_1.png" alt=""></p>
 <p>-d:以后台方式运行<br>-p：端口映射，源端口:目标端口  </p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_install_2.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_2.png" alt=""></p>
 <p>docker hub在国外，速度太慢了，使用国内的镜像源daocloud<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://a58c8480.m.daocloud.io</div></pre></td></tr></table></figure></p>
 <p>重启docker 进程<br>systemctl restart docker  </p>
 <p>运行mysql<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run --name first-mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=4435448 -d mysql</div></pre></td></tr></table></figure></p>
 <p>-e设置环境变量<br>这里使用-e设置环境变量MYSQL_ROOT_PASSWORD</p>
 <p>连接方法<br>mysql -h 10.211.55.5 -P3306 -uroot -p4435448</p>
-<p><img src="http://ohx02qrb8.bkt.clouddn.com/docker_install_3.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_install_3.png" alt=""></p>
 
       
     </div>
@@ -446,7 +446,7 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2017/10/30/docker_machine/" title="Docker machine(docker 多主机部署)"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+      <a href="/2017/10/30/docker_base/" title="Docker基础"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
     </li>
     
     

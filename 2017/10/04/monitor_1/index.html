@@ -27,17 +27,17 @@
 <meta property="og:description" content="搭建LNMP先安装mysql—-&amp;gt;安装php—–&amp;gt;安装nginx版本:mysql 5.7.19php 7.1.7nginx 1.12.1  
 本次搭建除mysql外全部采用源码方式安装，因为采用源码的方式安装可以更好的对功能模块是否需要做定制。
 安装依赖1yum -y install gcc gcc-devel gcc-c++ gcc-c++-devel libaio-devel bo">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_1_1.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_1_3.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_1_4.png">
-<meta property="og:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_1_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_5.png">
 <meta property="og:updated_time" content="2017-10-04T15:27:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="从零开始构建云平台监控(一)搭建LNMP">
 <meta name="twitter:description" content="搭建LNMP先安装mysql—-&amp;gt;安装php—–&amp;gt;安装nginx版本:mysql 5.7.19php 7.1.7nginx 1.12.1  
 本次搭建除mysql外全部采用源码方式安装，因为采用源码的方式安装可以更好的对功能模块是否需要做定制。
 安装依赖1yum -y install gcc gcc-devel gcc-c++ gcc-c++-devel libaio-devel bo">
-<meta name="twitter:image" content="http://ohx02qrb8.bkt.clouddn.com/monitor_1_1.png">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/10/04/monitor_1/index.html">
   
@@ -419,11 +419,11 @@
 <p>修改默认编码<br>由下图可见database和server的字符集使用了latin1编码方式，不支持中文，即存储中文时会出现乱码。以下是命令行修改为utf-8编码的过程，以支持中文  </p>
 <p>修改为utf-8打开，编辑/etc/my.cnf.d/server.cnf<br>在mysqld里面添加<br>character_set_server = utf8</p>
 <p>重启mysql<br>systemctl restart mysqld</p>
-<p>再次查看<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_1_1.png" alt=""></p>
+<p>再次查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_1.png" alt=""></p>
 <h3 id="安装php7"><a href="#安装php7" class="headerlink" title="安装php7"></a>安装php7</h3><p>php7在性能上比php5.x有2倍多的提升，同时兼容性也特别好。同时php5.x很多openssl和openssh的漏洞  </p>
 <p>安装依赖包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum -y install libmcrypt-devel mcrypt mhash gd-devel ncurses-devel libxml2-devel bzip2-devel libcurl-devel curl-devel libjpeg-devel libpng-devel freetype-devel net-snmp-devel openssl-devel</div></pre></td></tr></table></figure></p>
 <p>安装libconv<br>创建目录<br>mkdir /lnmp<br>进入目录<br>cd /lnmp<br>wget <a href="http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz" target="_blank" rel="external">http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz</a><br>解压包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">tar xvf libiconv-1.14.tar.gz</div><div class="line"></div><div class="line">cd libiconv-1.14</div><div class="line"></div><div class="line">./configure --prefix=/usr/local/libiconv1.14</div></pre></td></tr></table></figure></p>
-<p>make时包此错<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_1_3.png" alt=""></p>
+<p>make时包此错<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_3.png" alt=""></p>
 <p>解决方法</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">vi libiconv-1.14/srclib/stdio.in.h</div><div class="line">将698行的代码：_GL_WARN_ON_USE (gets, &quot;gets is a security hole - use fgets instead&quot;);替换为：</div><div class="line"></div><div class="line">#if defined(__GLIBC__) &amp;&amp; !defined(__UCLIBC__) &amp;&amp; !__GLIBC_PREREQ(2, 16)</div><div class="line"> _GL_WARN_ON_USE (gets, &quot;gets is a security hole - use fgets instead&quot;);</div><div class="line">#endif</div></pre></td></tr></table></figure>
 <p>重新make &amp;&amp; make install<br>保存动态链接库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">echo &quot;/usr/local/lib64/&quot; &gt; /etc/ld.so.conf.d/lnmp.conf</div><div class="line">echo &quot;/usr/local/lib/&quot; &gt;&gt; /etc/ld.so.conf.d/lnmp.conf</div></pre></td></tr></table></figure></p>
@@ -452,11 +452,11 @@
 <p>设置nginx启动脚本<br>编辑/etc/init.d/nginx<br>注意PATH和NAME变量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line"># chkconfig: - 85 15</div><div class="line">PATH=/usr/local/nginx1.12.1</div><div class="line">DESC=&quot;nginx daemon&quot;</div><div class="line">NAME=nginx</div><div class="line">DAEMON=$PATH/sbin/$NAME</div><div class="line">CONFIGFILE=$PATH/conf/$NAME.conf</div><div class="line">PIDFILE=$PATH/logs/$NAME.pid</div><div class="line">SCRIPTNAME=/etc/init.d/$NAME</div><div class="line">set -e</div><div class="line">[ -x &quot;$DAEMON&quot; ] || exit 0</div><div class="line">do_start() &#123;</div><div class="line">$DAEMON -c $CONFIGFILE || echo -n &quot;nginx already running&quot;</div><div class="line">&#125;</div><div class="line">do_stop() &#123;</div><div class="line">$DAEMON -s stop || echo -n &quot;nginx not running&quot;</div><div class="line">&#125;</div><div class="line">do_reload() &#123;</div><div class="line">$DAEMON -s reload || echo -n &quot;nginx can&apos;t reload&quot;</div><div class="line">&#125;</div><div class="line">case &quot;$1&quot; in</div><div class="line">start)</div><div class="line">echo -n &quot;Starting $DESC: $NAME&quot;</div><div class="line">do_start</div><div class="line">echo &quot;.&quot;</div><div class="line">;;</div><div class="line">stop)</div><div class="line">echo -n &quot;Stopping $DESC: $NAME&quot;</div><div class="line">do_stop</div><div class="line">echo &quot;.&quot;</div><div class="line">;;</div><div class="line">reload|graceful)</div><div class="line">echo -n &quot;Reloading $DESC configuration...&quot;</div><div class="line">do_reload</div><div class="line">echo &quot;.&quot;</div><div class="line">;;</div><div class="line">restart)</div><div class="line">echo -n &quot;Restarting $DESC: $NAME&quot;</div><div class="line">do_stop</div><div class="line">do_start</div><div class="line">echo &quot;.&quot;</div><div class="line">;;</div><div class="line">*)</div><div class="line">echo &quot;Usage: $SCRIPTNAME &#123;start|stop|reload|restart&#125;&quot; &gt;&amp;2</div><div class="line">exit 3</div><div class="line">;;</div><div class="line">esac</div><div class="line">exit 0</div></pre></td></tr></table></figure></p>
 <p>添加执行权限<br>chmod a+x /etc/init.d/nginx<br>注册成服务<br>/sbin/chkconfig –add nginx  </p>
 <p>添加开机自启<br>/sbin/chkconfig nginx on  </p>
-<p>查看<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_1_4.png" alt=""><br>创建目录<br>mkdir -p /var/www/html<br>修改用户和属组<br>chown www:www /var/www/html<br>重启测试<br>启动nginx<br>systemctl start nginx<br>重启<br>systemctl restart nginx<br>关闭<br>systemctl stop nginx  </p>
+<p>查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_4.png" alt=""><br>创建目录<br>mkdir -p /var/www/html<br>修改用户和属组<br>chown www:www /var/www/html<br>重启测试<br>启动nginx<br>systemctl start nginx<br>重启<br>systemctl restart nginx<br>关闭<br>systemctl stop nginx  </p>
 <p>测试php<br>在/var/www/html下编写index.php文件  </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;?php  </div><div class="line">phpinfo();</div><div class="line">?&gt;</div></pre></td></tr></table></figure>
 <p>修改权限<br>chown www:www /var/www/html/index.php<br>重启nginx和php-fpm</p>
-<p>打开浏览器输入地址<br><img src="http://ohx02qrb8.bkt.clouddn.com/monitor_1_5.png" alt=""></p>
+<p>打开浏览器输入地址<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_5.png" alt=""></p>
 <p>至此LNMP搭建完毕。</p>
 
       
