@@ -411,7 +411,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/03/11/kubernetes_ingress/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,822(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,820(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 13(分)</span>
@@ -442,7 +442,7 @@
 <li>3、Traefik-ingress</li>
 </ul>
 <p>ingress包含两大组件<br>ingress-controller<br>default-backend  </p>
-<p>ingress-controller本身是一个是一个pod，这个pod里面的容器安装了反向代理软件，通过读取添加的ingress服务，动态生成负载均衡器的反向代理配置，你添加对应的ingress服务后,里面规则包含了对应的规则，里面有域名和对应的Service-backend</p>
+<p>ingress-controller本身是一个是一个pod，这个pod里面的容器安装了反向代理软件，通过读取添加的Service，动态生成负载均衡器的反向代理配置，你添加对应的ingress服务后,里面规则包含了对应的规则，里面有域名和对应的Service-backend</p>
 <p>ingress-controller怎么去读取我们添加的ingress服务的配置然后动态刷新呢？  </p>
 <p>ingress-controller通过与kube-apiserver交互，去读取ingress服务规则的变化，通过读取ingress服务的规则，生成一段新的负载均衡器的配置然后重新reload，生配置生效。</p>
 <p>default-backend<br>用来将未知请求全部负载到这个默认后端上，这个默认后端会返回 404 页面。</p>
