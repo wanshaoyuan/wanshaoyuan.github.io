@@ -385,7 +385,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/07/20/kubernetes_hpa/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,117(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,116(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
@@ -420,7 +420,7 @@
 <h4 id="kubeadm方式"><a href="#kubeadm方式" class="headerlink" title="kubeadm方式"></a>kubeadm方式</h4><p>将metric-server从github拉取下来<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/kubernetes-incubator/metrics-server.git -b v0.3.1</div></pre></td></tr></table></figure></p>
 <p>早期kubelet的10255端口是开放，但后面由于10255是一个非安全的端口容易被入侵，所以被关闭了。metric-server默认是从kubelet的10255端口去拉取监控信息的，所以这里需要修改从10250去拉取<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">edit  metrics-server/deploy/1.8+/metrics-server-deployment.yaml</div></pre></td></tr></table></figure></p>
 <p>添加command的一些配置参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">containers:</div><div class="line">     - name: metrics-server</div><div class="line">       image: k8s.gcr.io/metrics-server-amd64:v0.3.1</div><div class="line">       command:</div><div class="line">        - /metrics-server</div><div class="line">        - --kubelet-insecure-tls</div><div class="line">        - --kubelet-preferred-address-types=InternalIP</div></pre></td></tr></table></figure></p>
-<p>apply yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl apply -f metrics-server/deploy/1.8+/.1</div></pre></td></tr></table></figure></p>
+<p>apply yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl apply -f metrics-server/deploy/1.8+/</div></pre></td></tr></table></figure></p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_3.png" alt=""></p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_4.png" alt=""><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_5.png" alt=""></p>
 <p>等待一分钟<br>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubect top node</div></pre></td></tr></table></figure></p>
