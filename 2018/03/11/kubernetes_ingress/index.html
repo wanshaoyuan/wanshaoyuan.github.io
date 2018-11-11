@@ -433,7 +433,7 @@
 <p>软件版本:<br>kubernetes 1.9<br>nginx-ingress-controller:0.10.2<br>defaultbackend:1.4<br>haproxy-ingress:latest<br>defaultbackend:1.0<br>目前kubernetes内置暴露访问的方案  </p>
 <h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>目前kubernetes内置暴露访问的方案<br>1、nodeport<br>指定Service的端口类型为nodeport，它将在的host节点上面暴露出一个端口，kube-proxy同时也会监听这个端口，目前是通过kube-proxy调用iptables实现将流量负载均衡到不同的pod上去，外部访问pod是先到host-ip:port—-&gt;pod_ip:port.为了提高可用性，可以在集群前面在加个负载均衡器这样就变成      loadbalance_ip:port—-&gt;host_ip:port—-&gt;port_ip:port。  </p>
 <p>2、loadbalance<br>使用云平台本身提供的负载均衡器，分配访问pod的流量，这个目前只支持goole container engineand，目前也只支持tcp/udp负载均衡。</p>
-<p>3、ingress<br>ingress就是可以暴露内部访问工作在7层的负载均衡器，根据域名或服务名对后端Service进行端口转发，并且能根据后端Service的变化，动态刷新配置。  </p>
+<p>3、ingress<br>ingress就是可以暴露内部访问工作在7层的负载均衡器，根据域名或服务名对后端pod进行端口转发，并且能根据后端Service的变化，动态刷新配置。  </p>
 <h4 id="为什么需要ingress？"><a href="#为什么需要ingress？" class="headerlink" title="为什么需要ingress？"></a>为什么需要ingress？</h4><p>因为如果Service使用nodeport暴露host的端口方式去访问应用的话，当Service有多个时，会造成端口管理上的混乱，在企业内部中还涉及到开防火墙问题。  </p>
 <p>这里我们介绍3种ingress类型，用户可以自由选择使用哪种类型：  </p>
 <ul>
