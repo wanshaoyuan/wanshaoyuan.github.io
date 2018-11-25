@@ -403,7 +403,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/25/docker_storage_driver/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,756(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,787(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
@@ -430,15 +430,15 @@
 <p>优点：拥有较长的历史，在大量生产环境中验证过，稳定性、可靠性较高<br>缺点：aufs对文件第一次进行修改操作时需要将整个文件复制到读写层，哪怕你只是修改文件的一小部分，这样会造成很大的性能开销。  </p>
 <h4 id="overlay"><a href="#overlay" class="headerlink" title="overlay:"></a>overlay:</h4><p>与aufs设计非常类似，也是基于文件级的存储driver同时 也是 一个union filesystem，overlay主要分两层upperdir和lowerdir,其中lowerdir对应的docker中的镜像层，upperdir对应的 是容器层，merged对应的是有效的容器挂载点。  </p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_2.png" alt=""><br>优点：overlay的速度比aufsh和devicemapper快，因为aufs有很多层，而overlay只有两层。<br>overlay支持页缓存共享，多个容器访问同一个文件，可以共享一个或多个页缓存选项。  </p>
-<p>缺点：1、overlay是个新生儿，还不具备在生产中使用的条件。<br>2、因为overlay也是基于文件级的存储，所以根aufs 一样对文件进行第一次修改操作时需要将整个文件拷贝到读写层但比aufs好，因为overlay只有两层，而aufs有多层。<br>3、overlay只有两层，镜像中的每一层并不对应overlay中的层，对应的是/var/lib/docker/overlay/中一个文件夹，然后用硬连接的方式将下面层文件引用到上层。所以overlay需要消耗更多的inode。  </p>
-<h4 id="overlay2："><a href="#overlay2：" class="headerlink" title="overlay2："></a>overlay2：</h4><p>overlay的更进版，只支持4.0以上内核，overlay原生支持多lower overlayfs镜像（最大128层），所以消耗更少的inode。  </p>
+<p>缺点：1、overlay是个新生儿，还不具备在生产中使用的条件，但overlay2在centos的3.10.0-514及以上内核版本可以使用。<br>2、因为overlay也是基于文件级的存储，所以根aufs 一样对文件进行第一次修改操作时需要将整个文件拷贝到读写层但比aufs好，因为overlay只有两层，而aufs有多层。<br>3、overlay只有两层，镜像中的每一层并不对应overlay中的层，对应的是/var/lib/docker/overlay/中一个文件夹，然后用硬连接的方式将下面层文件引用到上层。所以overlay需要消耗更多的inode。  </p>
+<h4 id="overlay2："><a href="#overlay2：" class="headerlink" title="overlay2："></a>overlay2：</h4><p>overlay的更进版，只支持4.0以上内核，centos支持3.10.0-514及以上内核版本，overlay原生支持多lower overlayfs镜像（最大128层），所以消耗更少的inode。  </p>
 <h4 id="devicemapper："><a href="#devicemapper：" class="headerlink" title="devicemapper："></a>devicemapper：</h4><p>在linux2.6内核版本中并入内核，devicemapper将所有的镜像和容器存储在自己的虚拟块设备上，devicemapper根上面aufs和overlay不一样的是devicemapper工作在块层次上而不是文件层次上。devicemapper驱动会从配置好的thin-pool中创建一个带一个带有文件系统的块设备，所有镜像都是创建的块设备的快照，容器层是镜像层的快照，都是采用copy-on-write策略。<br>优点：<br>1、devicemapper的copy-on-write策略以64KB为最小单元，相比aufs和overlay整个文件的复制，这个效率很高了。<br>缺点：<br>2、启动n个容器就复制n分文件在内存中，对内存影响大，不合适单台host容器密度高的业务场景。</p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_3.png" alt=""></p>
 <p>从上图可以看出，镜像的每一层都是它下面一层的快照，镜像是thin-pool里面创建的块设备的快照。<br>devicemapper分两种模式loop-lvm，direct-lvm，这两种模式的主要区别就是创建thin-pool的方式不一样。<br>loop-lvm是在/var/lib/docker/devicemapper/创建data和metada两个稀疏文件通过losetup将这两个文件映射成块设备，然后通过devicemapper映射成thin-pool。  </p>
 <p>direct-lvm是直接通过lvm的方式将设备创建成pv，组成两个vg分别为data和metadata，将这两个vg组成lvm的thin-pool。<br>需要注意的docker官方推荐centos和rhel生产中使用devicmapper的direct-lvm模式，不推荐loop-lvm因为loop-lvm在挂载多个容器后性能会急剧下降。</p>
 <h3 id="适用场景："><a href="#适用场景：" class="headerlink" title="适用场景："></a>适用场景：</h3><p>没有好坏分只有合适分，在不同业务场景下使用不同的storage-driver。<br>这是docker官方给出的一个不同linux发行版的推荐表<br><a href="https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#docker-ce" target="_blank" rel="external">https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#docker-ce</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_4.png" alt=""></p>
 <p>不同storage-driver所支持的文件系统<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_5.png" alt="">  </p>
-<p>不同的存储驱动在不同的应用场景下性能不同。例如，AUFS、Overlay、Overlay2 操作在文件级别，内存使用相对更高效，但大文件读写时，容器层会变得很大；DeviceMapper、Btrfs、ZFS 操作在块级别，适合工作在io负载高的场景；容器层数多，且写小文件频繁时，Overlay 效率比 Overlay2 更高；Btrfs、ZFS 更耗内存。<br>此图片来源七牛布道师 陈爱珍在docker.io的分享<a href="http://dockone.io/article/1513" target="_blank" rel="external">http://dockone.io/article/1513</a>  </p>
+<p>不同的存储驱动在不同的应用场景下性能不同。例如，AUFS、Overlay、Overlay2 操作在文件级别，内存使用相对更高效，但大文件读写时，容器层会变得很大；DeviceMapper、Btrfs、ZFS 操作在块级别，适合工作在io负载高的场景；容器层数多，且写小文件频繁时，devicemapper 效率比 Overlay 更高；Btrfs、ZFS 更耗内存。<br>此图片来源七牛布道师 陈爱珍在docker.io的分享<a href="http://dockone.io/article/1513" target="_blank" rel="external">http://dockone.io/article/1513</a>  </p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_6.png" alt=""></p>
 <p>性能对比<br><a href="http://dockone.io/article/1513" target="_blank" rel="external">http://dockone.io/article/1513</a>  </p>
 <p>docker默认是使用操作系统本身默认的storage-driver，比如说你在ubuntu上安装docker那么默认就是aufs，在centos7或rhel7上部署docker默认就是overlay。<br>将centos7默认的overlay改成生产可用的devicemapper的direct-lvm模式。<br>安装device-mapper-persistent-data, lvm2包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install device-mapper-persistent-data, lvm2 -y</div></pre></td></tr></table></figure></p>
@@ -491,7 +491,7 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2018/01/26/kubernetes_base/" title="kubernetes入门"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+      <a href="/2018/01/26/k8s_resource_resver/" title="kubernetes集群节点资源预留"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
     </li>
     
     
