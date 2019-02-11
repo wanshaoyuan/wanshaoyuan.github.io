@@ -386,7 +386,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/12/10/kubernetes_service_mode/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3,946(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,141(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 18(分)</span>
@@ -476,6 +476,9 @@
 <p>kube-proxy使用的ipset集合</p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_7.png" alt=""></p>
 <p>Kubernetes哪些场景会用到ipset<br>kube-proxy配置–masquerade-all = true参数<br>在kube-proxy启动中指定集群CIDR<br>使用Loadbalancer类型的service<br>使用NodePort类型的service</p>
+<p>注意点：<br>在用户环境中使用发现一些需要长连接的应用使用ipvs模式经常出现”Connection reset by peer”的错误,后经过抓包分析发现链接是被IPVS清理掉了，随后通过以下命令发现IPVS默认tcp连接超时时间为900s(15分钟)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ipvsadm -l --timeout</div><div class="line">Timeout (tcp tcpfin udp): 900 120 300</div></pre></td></tr></table></figure></p>
+<p>而操作系统默认是7200s(2小时),这就产生了一个问题如果client的tcp链接空闲时间超过900s后会首先被IPVS强制断开，但操作系统认为该链接还没有超时会继续保活，所以就产生了上述问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sysctl -a|grep net.ipv4.tcp_keepalive_time</div><div class="line">net.ipv4.tcp_keepalive_time = 7200</div></pre></td></tr></table></figure></p>
+<p>解决办法<br>将net.ipv4.tcp_keepalive_time = 7200设置为小于ipvs的900s即可，比如设置为600s</p>
 <p><a href="https://berlinsaint.github.io/blog/2018/11/01/Mysql_On_Kubernetes%E5%BC%95%E5%8F%91%E7%9A%84TCP%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D/" target="_blank" rel="external">https://berlinsaint.github.io/blog/2018/11/01/Mysql_On_Kubernetes%E5%BC%95%E5%8F%91%E7%9A%84TCP%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D/</a><br><a href="https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/" target="_blank" rel="external">https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/</a><br><a href="https://github.com/projectcalico/calico/issues/2165" target="_blank" rel="external">https://github.com/projectcalico/calico/issues/2165</a><br><a href="https://fixatom.com/block-ip-with-ipset/" target="_blank" rel="external">https://fixatom.com/block-ip-with-ipset/</a><br><a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/ipvs/README.md" target="_blank" rel="external">https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/ipvs/README.md</a></p>
 
       
