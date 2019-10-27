@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>K3S安装 | 我爱西红柿</title>
+  <meta name="description" content="环境信息
+
+
+软件名称
+软件版本
+
+
+
+
+k3s
+v0.9.1
+
+
+
+安装k3s在线安装执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s安装server端：1curl -sfL https://get.k3s.io | sh -
+安装agent端：获取连接server端的token1/var/lib/rancher/k3s/server/node-token
+agent连接server端
+1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K3S安装">
+<meta property="og:url" content="http://yoursite.com/2019/10/28/k3s_install/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环境信息
+
+
+软件名称
+软件版本
+
+
+
+
+k3s
+v0.9.1
+
+
+
+安装k3s在线安装执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s安装server端：1curl -sfL https://get.k3s.io | sh -
+安装agent端：获取连接server端的token1/var/lib/rancher/k3s/server/node-token
+agent连接server端
+1">
+<meta property="og:updated_time" content="2019-10-28T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="K3S安装">
+<meta name="twitter:description" content="环境信息
+
+
+软件名称
+软件版本
+
+
+
+
+k3s
+v0.9.1
+
+
+
+安装k3s在线安装执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s安装server端：1curl -sfL https://get.k3s.io | sh -
+安装agent端：获取连接server端的token1/var/lib/rancher/k3s/server/node-token
+agent连接server端
+1">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2019/10/28/k3s_install/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">15</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">14</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.5px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.75px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.13px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.25px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 13.88px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.38px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.63px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.13px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/K3S/">K3S</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/10/28/k3s_install/" class="title">K3S安装</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-10-28T13:45:59.000Z" itemprop="datePublished">2019-10-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/02/07/flexvolume/" class="title">flexvolume简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-02-07T13:45:59.000Z" itemprop="datePublished">2019-02-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/01/31/etcd_backup/" class="title">ETCD集群的备份与还原</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-01-31T13:45:59.000Z" itemprop="datePublished">2019-01-31</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/12/29/k8sA_cicd/" class="title">Kubernetes下CICD工具的选型</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-12-29T13:45:59.000Z" itemprop="datePublished">2018-12-29</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2018/12/10/kubernetes_service_mode/" class="title">kubernetes service模式分析</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2018-12-10T13:45:59.000Z" itemprop="datePublished">2018-12-10</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#环境信息"><span class="toc-number">1.</span> <span class="toc-text">环境信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装k3s"><span class="toc-number">2.</span> <span class="toc-text">安装k3s</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#在线安装"><span class="toc-number">2.1.</span> <span class="toc-text">在线安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#离线安装"><span class="toc-number">2.2.</span> <span class="toc-text">离线安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常见命令"><span class="toc-number">2.3.</span> <span class="toc-text">常见命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FAQ"><span class="toc-number">2.4.</span> <span class="toc-text">FAQ</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#不使用containerd直接docker"><span class="toc-number">2.4.1.</span> <span class="toc-text">不使用containerd直接docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用systemd启动k3s-server"><span class="toc-number">2.4.2.</span> <span class="toc-text">使用systemd启动k3s server</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-k3s_install" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      K3S安装
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2019/10/28/k3s_install/" class="article-date">
+	  <time datetime="2019-10-28T13:45:59.000Z" itemprop="datePublished">2019-10-28</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/K3S/">K3S</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/K3S/">K3S</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/10/28/k3s_install/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 696(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h1 id="环境信息"><a href="#环境信息" class="headerlink" title="环境信息"></a>环境信息</h1><table>
+<thead>
+<tr>
+<th style="text-align:center">软件名称</th>
+<th style="text-align:center">软件版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">k3s</td>
+<td style="text-align:center">v0.9.1</td>
+</tr>
+</tbody>
+</table>
+<h1 id="安装k3s"><a href="#安装k3s" class="headerlink" title="安装k3s"></a>安装k3s</h1><h2 id="在线安装"><a href="#在线安装" class="headerlink" title="在线安装"></a>在线安装</h2><p>执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s<br>安装server端：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL https://get.k3s.io | sh -</div></pre></td></tr></table></figure></p>
+<p>安装agent端：<br>获取连接server端的token<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/var/lib/rancher/k3s/server/node-token</div></pre></td></tr></table></figure></p>
+<p>agent连接server端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=XXX sh -</div></pre></td></tr></table></figure>
+<p>验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">k3s kubectl get node</div><div class="line"></div><div class="line">NAME     STATUS   ROLES    AGE   VERSION</div><div class="line">ubuntu-server   Ready    master   86m   v1.15.4-k3s.1</div><div class="line">ubuntu-agent    Ready     worker   86m   v1.15.4-k3s.1</div></pre></td></tr></table></figure></p>
+<p>卸载<br>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/local/bin/k3s-uninstall.sh 或k3s-agent-uninstall.sh</div></pre></td></tr></table></figure></p>
+<p>注意：<br>在线安装有pause镜像会去k8s.gcr.io仓库拉取，在国内网络环境连接会受阻。  </p>
+<h2 id="离线安装"><a href="#离线安装" class="headerlink" title="离线安装"></a>离线安装</h2><p>准备下载离线包<br>在github，k3s release页下载对应的离线镜像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://github.com/rancher/k3s/releases/</div></pre></td></tr></table></figure></p>
+<p>根据机器类型，下载对应的文件  </p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>作用</th>
+<th>机器类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>k3s</td>
+<td>k3s 可执行文件</td>
+<td>x86 CPU架构64位系统</td>
+</tr>
+<tr>
+<td>k3s-arm64</td>
+<td>k3s可执行文件</td>
+<td>ARM CPU架构 64位系统</td>
+</tr>
+<tr>
+<td>k3s-armhf</td>
+<td>k3s可执行文件</td>
+<td>ARM CPU架构 32位系统</td>
+</tr>
+<tr>
+<td>k3s-airgap-images-amd64.tar</td>
+<td>离线镜像包</td>
+<td>x86 CPU架构64位系统</td>
+</tr>
+<tr>
+<td>k3s-airgap-images-arm64.tar</td>
+<td>离线镜像包</td>
+<td>ARM CPU架构 64位系统</td>
+</tr>
+<tr>
+<td>k3s-airgap-images-arm.tar</td>
+<td>离线镜像包</td>
+<td>ARM CPU架构 32位系统</td>
+</tr>
+</tbody>
+</table>
+<p>选择对应的操作系统版本，下载对应的k3s可执行文件和离线镜像包。  </p>
+<p>注：<br>官方的Raspbian Buster Lite系统仍然是32位。</p>
+<p>需要提前在打开操作系统cgroup</p>
+<p>ubuntu18.04方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo vi /boot/firmware/cmdline.txt</div><div class="line"></div><div class="line">cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory</div></pre></td></tr></table></figure>
+<p> Raspbian Buster Lite系统方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vi /boot/cmdline.txt</div><div class="line">cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory</div></pre></td></tr></table></figure></p>
+<p>重启生效。  </p>
+<p>创建镜像存储目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir -p /var/lib/rancher/k3s/agent/images/</div></pre></td></tr></table></figure></p>
+<p>拷贝离线镜像件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo cp ./k3s-airgap-images-$ARCH.tar /var/lib/rancher/k3s/agent/images/</div></pre></td></tr></table></figure></p>
+<p>拷贝可执行文到/usr/bin目录，并配置可执行权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cp k3sxxx /usr/bin/k3s</div><div class="line">chmoad a+x /usr/bin/k3s</div></pre></td></tr></table></figure></p>
+<p>启动 k3s会自动解压并导入镜像文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">k3s server</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rm /etc/rancher/k3s/k3s.yaml </div><div class="line">rm /var/lib/rancher/ -rf</div></pre></td></tr></table></figure>
+<p>查看集群<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">k3s  kubectl get node</div><div class="line">NAME     STATUS   ROLES    AGE   VERSION</div><div class="line">ubuntu   Ready    master   14s   v1.15.4-k3s.1</div></pre></td></tr></table></figure></p>
+<p>agent连接<br>在server端获取agent连接server的token<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat   /var/lib/rancher/k3s/server/node-token</div></pre></td></tr></table></figure></p>
+<h2 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h2><p>列出当前集群镜像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">k3s crictl images</div></pre></td></tr></table></figure></p>
+<p>列出当前集群容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">k3s crictl ps -a</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">k3s crictl ps</div></pre></td></tr></table></figure>
+<p>查看pod占用cpu 内存资源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">k3s crictl stats</div></pre></td></tr></table></figure></p>
+<h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h3 id="不使用containerd直接docker"><a href="#不使用containerd直接docker" class="headerlink" title="不使用containerd直接docker"></a>不使用containerd直接docker</h3><p>安装docker后</p>
+<p>将离线镜像导入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker load &lt; k3s-airgap-images-arm64.tar</div></pre></td></tr></table></figure></p>
+<p>执行k3s server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">k3s server --docker</div></pre></td></tr></table></figure></p>
+<h3 id="使用systemd启动k3s-server"><a href="#使用systemd启动k3s-server" class="headerlink" title="使用systemd启动k3s server"></a>使用systemd启动k3s server</h3><p>创建systemd文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/systemd/system/k3s.service</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">[Unit]</div><div class="line">Description=Lightweight Kubernetes</div><div class="line">Documentation=https://k3s.io</div><div class="line">After=network-online.target</div><div class="line">[Service]</div><div class="line">Type=$&#123;SYSTEMD_TYPE&#125;</div><div class="line">EnvironmentFile=$&#123;FILE_K3S_ENV&#125;</div><div class="line">ExecStartPre=-/sbin/modprobe br_netfilter</div><div class="line">ExecStartPre=-/sbin/modprobe overlay</div><div class="line">ExecStart=$&#123;BIN_DIR&#125;/k3s \\</div><div class="line">    $&#123;CMD_K3S_EXEC&#125;</div><div class="line">KillMode=process</div><div class="line">Delegate=yes</div><div class="line">LimitNOFILE=infinity</div><div class="line">LimitNPROC=infinity</div><div class="line">LimitCORE=infinity</div><div class="line">TasksMax=infinity</div><div class="line">TimeoutStartSec=0</div><div class="line">Restart=always</div><div class="line">RestartSec=5s</div><div class="line">[Install]</div><div class="line">WantedBy=multi-user.target</div></pre></td></tr></table></figure>
+<p>根据实际情况修改ExecStar,server用server对应的命令，agent用agent对应指令。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2019/02/07/flexvolume/" title="flexvolume简介">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
