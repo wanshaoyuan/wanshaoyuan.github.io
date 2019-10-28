@@ -32,9 +32,7 @@ v0.9.1
 
 
 安装k3s在线安装执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s安装server端：1curl -sfL https://get.k3s.io | sh -
-安装agent端：获取连接server端的token1/var/lib/rancher/k3s/server/node-token
-agent连接server端
-1">
+安装agent端：获取连接server端的token12/var/lib/rancher/k3s/server/node-token  k3s agent -s h">
 <meta property="og:type" content="article">
 <meta property="og:title" content="K3S安装">
 <meta property="og:url" content="http://yoursite.com/2019/10/28/k3s_install/index.html">
@@ -54,9 +52,7 @@ v0.9.1
 
 
 安装k3s在线安装执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s安装server端：1curl -sfL https://get.k3s.io | sh -
-安装agent端：获取连接server端的token1/var/lib/rancher/k3s/server/node-token
-agent连接server端
-1">
+安装agent端：获取连接server端的token12/var/lib/rancher/k3s/server/node-token  k3s agent -s h">
 <meta property="og:updated_time" content="2019-10-28T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="K3S安装">
@@ -75,9 +71,7 @@ v0.9.1
 
 
 安装k3s在线安装执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s安装server端：1curl -sfL https://get.k3s.io | sh -
-安装agent端：获取连接server端的token1/var/lib/rancher/k3s/server/node-token
-agent连接server端
-1">
+安装agent端：获取连接server端的token12/var/lib/rancher/k3s/server/node-token  k3s agent -s h">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2019/10/28/k3s_install/index.html">
   
@@ -426,7 +420,7 @@ agent连接server端
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/10/28/k3s_install/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 696(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 704(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
@@ -459,7 +453,7 @@ agent连接server端
 </tbody>
 </table>
 <h1 id="安装k3s"><a href="#安装k3s" class="headerlink" title="安装k3s"></a>安装k3s</h1><h2 id="在线安装"><a href="#在线安装" class="headerlink" title="在线安装"></a>在线安装</h2><p>执行在线安装脚本，会自动识别环境，拉取镜像，安装k3s<br>安装server端：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL https://get.k3s.io | sh -</div></pre></td></tr></table></figure></p>
-<p>安装agent端：<br>获取连接server端的token<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/var/lib/rancher/k3s/server/node-token</div></pre></td></tr></table></figure></p>
+<p>安装agent端：<br>获取连接server端的token<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">/var/lib/rancher/k3s/server/node-token  </div><div class="line">k3s agent -s https://master_ip:6443  -t  token</div></pre></td></tr></table></figure></p>
 <p>agent连接server端</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL https://get.k3s.io | K3S_URL=https://myserver:6443 K3S_TOKEN=XXX sh -</div></pre></td></tr></table></figure>
 <p>验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">k3s kubectl get node</div><div class="line"></div><div class="line">NAME     STATUS   ROLES    AGE   VERSION</div><div class="line">ubuntu-server   Ready    master   86m   v1.15.4-k3s.1</div><div class="line">ubuntu-agent    Ready     worker   86m   v1.15.4-k3s.1</div></pre></td></tr></table></figure></p>
