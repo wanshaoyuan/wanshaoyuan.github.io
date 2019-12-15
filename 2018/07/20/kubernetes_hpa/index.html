@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes pod的弹性伸缩(一)(基于CPU、memory的弹性伸缩) | 我爱西红柿</title>
+  <meta name="description" content="概念HPA是kubernetes里面pod弹性伸缩的实现,它能根据设置的监控阀值进行pod的弹性扩缩容，目前默认HPA只能支持cpu和内存的阀值检测扩缩容，但也可以通过custom metric api  调用prometheus实现自定义metric 来更加灵活的监控指标实现弹性伸缩。但hpa不能用于伸缩一些无法进行缩放的控制器如DaemonSet。这里我们用的是resource metric">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes pod的弹性伸缩(一)(基于CPU、memory的弹性伸缩)">
+<meta property="og:url" content="http://yoursite.com/2018/07/20/kubernetes_hpa/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概念HPA是kubernetes里面pod弹性伸缩的实现,它能根据设置的监控阀值进行pod的弹性扩缩容，目前默认HPA只能支持cpu和内存的阀值检测扩缩容，但也可以通过custom metric api  调用prometheus实现自定义metric 来更加灵活的监控指标实现弹性伸缩。但hpa不能用于伸缩一些无法进行缩放的控制器如DaemonSet。这里我们用的是resource metric">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_9.png">
+<meta property="og:updated_time" content="2018-07-20T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kubernetes pod的弹性伸缩(一)(基于CPU、memory的弹性伸缩)">
+<meta name="twitter:description" content="概念HPA是kubernetes里面pod弹性伸缩的实现,它能根据设置的监控阀值进行pod的弹性扩缩容，目前默认HPA只能支持cpu和内存的阀值检测扩缩容，但也可以通过custom metric api  调用prometheus实现自定义metric 来更加灵活的监控指标实现弹性伸缩。但hpa不能用于伸缩一些无法进行缩放的控制器如DaemonSet。这里我们用的是resource metric">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/07/20/kubernetes_hpa/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">17</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.43px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.71px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.14px;">Python</a> <a href="/tags/ceph/" style="font-size: 13.29px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 13.86px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.29px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.57px;">openstack</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.14px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/ceph/">ceph</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/12/01/ceph_deploy/" class="title">ceph部署</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-12-01T13:45:59.000Z" itemprop="datePublished">2019-12-01</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/25/kubernetes_custome_hpa/" class="title">kubernetes pod的弹性伸缩(二)(基于自定义监控指标的弹性伸缩)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-25T13:45:59.000Z" itemprop="datePublished">2019-11-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/K3S/">K3S</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/10/28/k3s_install/" class="title">K3S安装</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-10-28T13:45:59.000Z" itemprop="datePublished">2019-10-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/02/07/flexvolume/" class="title">flexvolume简介</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-02-07T13:45:59.000Z" itemprop="datePublished">2019-02-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/01/31/etcd_backup/" class="title">ETCD集群的备份与还原</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-01-31T13:45:59.000Z" itemprop="datePublished">2019-01-31</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现hpa的两大关键"><span class="toc-number">2.</span> <span class="toc-text">实现hpa的两大关键</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置HPA"><span class="toc-number">3.</span> <span class="toc-text">配置HPA</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#kubeadm方式"><span class="toc-number">3.1.</span> <span class="toc-text">kubeadm方式</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_hpa" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes pod的弹性伸缩(一)(基于CPU、memory的弹性伸缩)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/07/20/kubernetes_hpa/" class="article-date">
+	  <time datetime="2018-07-20T13:45:59.000Z" itemprop="datePublished">2018-07-20</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/07/20/kubernetes_hpa/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,116(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>HPA是kubernetes里面pod弹性伸缩的实现,它能根据设置的监控阀值进行pod的弹性扩缩容，目前默认HPA只能支持cpu和内存的阀值检测扩缩容，但也可以通过custom metric api  调用prometheus实现自定义metric 来更加灵活的监控指标实现弹性伸缩。但hpa不能用于伸缩一些无法进行缩放的控制器如DaemonSet。这里我们用的是resource metric api.</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_1.png" alt=""></p>
+<h3 id="实现hpa的两大关键"><a href="#实现hpa的两大关键" class="headerlink" title="实现hpa的两大关键"></a>实现hpa的两大关键</h3><p>1、监控指标的获取<br>早期kubernetes版本是使用hepster，在1.10后面版本更推荐使用metric-server</p>
+<p>hepster简单来说是api-server获取节点信息，然后通过kubelet获取监控信息，因为kubelet内置了cadvisor。</p>
+<p>metric-server，简单来说是通过metric-api来获取节点信息和监控信息。<a href="https://github.com/kubernetes-incubator/metrics-server" target="_blank" rel="external">https://github.com/kubernetes-incubator/metrics-server</a></p>
+<p>2、伸缩判定算法<br>HPA通过定期（定期轮询的时间通过–horizontal-pod-autoscaler-sync-period选项来设置，默认的时间为30秒）查询pod的状态，获得pod的监控数据。然后，通过现有pod的使用率的平均值跟目标使用率进行比较。<br>pod的使用率的平均值：<br>监控资源1分钟使用的平均值/设定的每个Pod的request资源值</p>
+<p>扩容的pod数计算公式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">TargetNumOfPods = ceil(sum(CurrentPodsCPUUtilization) / Target)</div></pre></td></tr></table></figure></p>
+<p>celi函数作用：<br>返回大于或者等于指定表达式的最小整数</p>
+<p>在每次扩容和缩容时都有一个窗口时间，在执行伸缩操作后，在这个窗口时间内，不会在进行伸缩操作，可以理解为类似等一下放技能的冷却时间。默认扩容为3分钟(–horizontal-pod-autoscaler-upscale-delay)，缩容为5分钟(–horizontal-pod-autoscaler-downscale-delay)。另外还需要以下情况下才会进行任何缩放avg（CurrentPodsConsumption）/ Target下降9%，进行缩容，增加至10%进行扩容。以上两条件需要都满足。</p>
+<p>这样做好处是：<br>1、判断的精度高，不会频繁的扩缩pod，造成集群压力大。<br>2、避免频繁的扩缩pod，防止应用访问不稳定。  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_2.png" alt=""></p>
+<p>实现hpa的条件：<br>1、hpa不能autoscale daemonset类型control<br>2、要实现autoscale，pod必须设置request  </p>
+<h3 id="配置HPA"><a href="#配置HPA" class="headerlink" title="配置HPA"></a>配置HPA</h3><p>这里以kubeadm 部署和的kubernetes 1.11和Rancher2.0部署的kubernetes 1.10为例<br>环境信息  </p>
+<p>操作系统：ubuntu16.04<br>kubernetes版本：1.11<br>rancher：2.0.6<br>metric-server：v0.3.1  </p>
+<h4 id="kubeadm方式"><a href="#kubeadm方式" class="headerlink" title="kubeadm方式"></a>kubeadm方式</h4><p>将metric-server从github拉取下来<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/kubernetes-incubator/metrics-server.git -b v0.3.1</div></pre></td></tr></table></figure></p>
+<p>早期kubelet的10255端口是开放，但后面由于10255是一个非安全的端口容易被入侵，所以被关闭了。metric-server默认是从kubelet的10255端口去拉取监控信息的，所以这里需要修改从10250去拉取<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">edit  metrics-server/deploy/1.8+/metrics-server-deployment.yaml</div></pre></td></tr></table></figure></p>
+<p>添加command的一些配置参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">containers:</div><div class="line">     - name: metrics-server</div><div class="line">       image: k8s.gcr.io/metrics-server-amd64:v0.3.1</div><div class="line">       command:</div><div class="line">        - /metrics-server</div><div class="line">        - --kubelet-insecure-tls</div><div class="line">        - --kubelet-preferred-address-types=InternalIP</div></pre></td></tr></table></figure></p>
+<p>apply yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl apply -f metrics-server/deploy/1.8+/</div></pre></td></tr></table></figure></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_3.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_4.png" alt=""><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_5.png" alt=""></p>
+<p>等待一分钟<br>执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubect top node</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl top pods</div></pre></td></tr></table></figure>
+<p>查看pod和node监控信息  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_6.png" alt=""></p>
+<p>创建个一个deployment，配置hpa测试<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: Service</div><div class="line">metadata:</div><div class="line">  name: podinfo</div><div class="line">  labels:</div><div class="line">    app: podinfo</div><div class="line">spec:</div><div class="line">  type: NodePort</div><div class="line">  ports:</div><div class="line">    - port: 9898</div><div class="line">      targetPort: 9898</div><div class="line">      nodePort: 31198</div><div class="line">      protocol: TCP</div><div class="line">  selector:</div><div class="line">    app: podinfo</div><div class="line">---</div><div class="line">apiVersion: extensions/v1beta1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: podinfo</div><div class="line">spec:</div><div class="line">  replicas: 2</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: podinfo</div><div class="line">      annotations:</div><div class="line">        prometheus.io/scrape: &apos;true&apos;</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: podinfod</div><div class="line">        image: stefanprodan/podinfo:0.0.1</div><div class="line">        imagePullPolicy: Always</div><div class="line">        command:</div><div class="line">          - ./podinfo</div><div class="line">          - -port=9898</div><div class="line">          - -logtostderr=true</div><div class="line">          - -v=2</div><div class="line">        volumeMounts:</div><div class="line">          - name: metadata</div><div class="line">            mountPath: /etc/podinfod/metadata</div><div class="line">            readOnly: true</div><div class="line">        ports:</div><div class="line">        - containerPort: 9898</div><div class="line">          protocol: TCP</div><div class="line">        resources:</div><div class="line">          requests:</div><div class="line">            memory: &quot;32Mi&quot;</div><div class="line">            cpu: &quot;1m&quot;</div><div class="line">          limits:</div><div class="line">            memory: &quot;256Mi&quot;</div><div class="line">            cpu: &quot;100m&quot;</div><div class="line">      volumes:</div><div class="line">        - name: metadata</div><div class="line">          downwardAPI:</div><div class="line">            items:</div><div class="line">              - path: &quot;labels&quot;</div><div class="line">                fieldRef:</div><div class="line">                  fieldPath: metadata.labels</div><div class="line">              - path: &quot;annotations&quot;</div><div class="line">                fieldRef:</div><div class="line">                  fieldPath: metadata.annotations</div></pre></td></tr></table></figure></p>
+<p>apply yaml文件<br>配置hpa<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">apiVersion: autoscaling/v2beta1</div><div class="line">kind: HorizontalPodAutoscaler</div><div class="line">metadata:</div><div class="line">  name: podinfo</div><div class="line">spec:</div><div class="line">  scaleTargetRef:</div><div class="line">    apiVersion: extensions/v1beta1</div><div class="line">    kind: Deployment</div><div class="line">    name: podinfo</div><div class="line">  minReplicas: 2</div><div class="line">  maxReplicas: 10</div><div class="line">  metrics:</div><div class="line">  - type: Resource</div><div class="line">    resource:</div><div class="line">      name: cpu</div><div class="line">      targetAverageUtilization: 80</div><div class="line">  - type: Resource</div><div class="line">    resource:</div><div class="line">      name: memory</div><div class="line">      targetAverageValue: 200Mi</div></pre></td></tr></table></figure></p>
+<p>apply yaml文件</p>
+<p>get hpa  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_7.png" alt=""></p>
+<p>测试<br>使用webbench进行压力测试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http://home.tiscali.cz/~cz210552/distfiles/webbench-1.5.tar.gz</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar -xvf webbench-1.5.tar.gz</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd webbench-1.5/</div><div class="line">make &amp;&amp; make install</div><div class="line"></div><div class="line">webbench -c 1000 -t 12360 http://172.31.164.104:31198/</div></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_8.png" alt=""></p>
+<p>可以看见随着cpu压力的增加，已经自动scale了，需要注意的是，scale up是一个阶段性的过程，并不是一次性就直接scale到max了，而是一个阶段性的过程，判定算法就是上文介绍的内容。<br>隔断时间没操作压力下来后，自动缩减pod<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_9.png" alt=""></p>
+<p><a href="https://zhuanlan.zhihu.com/p/34555654" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/34555654</a><br><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/autoscaling/horizontal-pod-autoscaler.md#autoscaling-algorithm" target="_blank" rel="external">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/autoscaling/horizontal-pod-autoscaler.md#autoscaling-algorithm</a><br><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-APIs" target="_blank" rel="external">https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-APIs</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/08/12/kubernetes_affinty/" title="kubernetes亲和性调度"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/06/11/jenkins&sonar/" title="Jenkins对接sonarqube">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
