@@ -16,18 +16,42 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>标签: 安全 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/tags/安全/index.html">
+  <title>Habor高可用的实现方式 | 我爱西红柿</title>
+  <meta name="description" content="Harbor架构图片来源harbor官网  
+组件介绍：proxy: 通过nginx服务器来做反向代理
+registry: docker官方的镜像存储服务。
+ui: 前端UI入口
+adminserver: 作为Harbor工程的配置数据管理器使用
+DB: 存放用户信息、项目信息、用户权限和安全漏洞库，早期使用Mysql，目前采用Postgres。   
+job services: 通过状态机的形式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Habor高可用的实现方式">
+<meta property="og:url" content="http://yoursite.com/2019/12/22/harbor_ha/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="Harbor架构图片来源harbor官网  
+组件介绍：proxy: 通过nginx服务器来做反向代理
+registry: docker官方的镜像存储服务。
+ui: 前端UI入口
+adminserver: 作为Harbor工程的配置数据管理器使用
+DB: 存放用户信息、项目信息、用户权限和安全漏洞库，早期使用Mysql，目前采用Postgres。   
+job services: 通过状态机的形式">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_4.png">
+<meta property="og:updated_time" content="2019-12-22T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="Habor高可用的实现方式">
+<meta name="twitter:description" content="Harbor架构图片来源harbor官网  
+组件介绍：proxy: 通过nginx服务器来做反向代理
+registry: docker官方的镜像存储服务。
+ui: 前端UI入口
+adminserver: 作为Harbor工程的配置数据管理器使用
+DB: 存放用户信息、项目信息、用户权限和安全漏洞库，早期使用Mysql，目前采用Postgres。   
+job services: 通过状态机的形式">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/tags/安全/index.html">
+  <link rel="canonical" href="http://yoursite.com/2019/12/22/harbor_ha/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,49 +350,213 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Harbor架构"><span class="toc-number">1.</span> <span class="toc-text">Harbor架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#组件介绍："><span class="toc-number">1.1.</span> <span class="toc-text">组件介绍：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#需要实现高可用的组件"><span class="toc-number">1.2.</span> <span class="toc-text">需要实现高可用的组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#双主HA模式"><span class="toc-number">1.3.</span> <span class="toc-text">双主HA模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#主备模式"><span class="toc-number">1.4.</span> <span class="toc-text">主备模式</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#基于镜像复制方式实现高可用"><span class="toc-number">2.</span> <span class="toc-text">基于镜像复制方式实现高可用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#导表方式如下："><span class="toc-number">2.1.</span> <span class="toc-text">导表方式如下：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#需要导出以下表："><span class="toc-number">2.1.1.</span> <span class="toc-text">需要导出以下表：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在主节点上操作："><span class="toc-number">2.2.</span> <span class="toc-text">在主节点上操作：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#备份registry数据库"><span class="toc-number">2.2.1.</span> <span class="toc-text">备份registry数据库</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#导出原表"><span class="toc-number">2.2.2.</span> <span class="toc-text">导出原表</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#将主节点导出的表文件发送到备节点上"><span class="toc-number">2.2.3.</span> <span class="toc-text">将主节点导出的表文件发送到备节点上</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在备节点操作"><span class="toc-number">2.3.</span> <span class="toc-text">在备节点操作</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#备份registry数据库-1"><span class="toc-number">2.3.1.</span> <span class="toc-text">备份registry数据库</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#删除原表（解决导入时外键依赖问题）"><span class="toc-number">2.3.2.</span> <span class="toc-text">删除原表（解决导入时外键依赖问题）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#导入"><span class="toc-number">2.3.3.</span> <span class="toc-text">导入</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意："><span class="toc-number">3.</span> <span class="toc-text">注意：</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title"></h1>
-	      <p class="text-muted">共 1 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-harbor_ha" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Habor高可用的实现方式
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2016" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2016
-            </a>
-            <!-- <a href="/archives/2016" class="archive-year">2016</a> -->
-          </h3>
-        </div>
-        <div id="collapse2016" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2016">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2019/12/22/harbor_ha/" class="article-date">
+	  <time datetime="2019-12-22T13:45:59.000Z" itemprop="datePublished">2019-12-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/docker/">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/12/22/harbor_ha/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,193(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="Harbor架构"><a href="#Harbor架构" class="headerlink" title="Harbor架构"></a>Harbor架构</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_1.png" alt="image"><br>图片来源harbor官网  </p>
+<h4 id="组件介绍："><a href="#组件介绍：" class="headerlink" title="组件介绍："></a>组件介绍：</h4><p>proxy: 通过nginx服务器来做反向代理</p>
+<p>registry: docker官方的镜像存储服务。</p>
+<p>ui: 前端UI入口</p>
+<p>adminserver: 作为Harbor工程的配置数据管理器使用</p>
+<p>DB: 存放用户信息、项目信息、用户权限和安全漏洞库，早期使用Mysql，目前采用Postgres。   </p>
+<p>job services: 通过状态机的形式将镜像复制到远程Harbor实例。镜像删除同样也可以被同步到远程Harbor实例中。</p>
+<p>log: 运行rsyslogd的容器，主要用于收集其他容器的日志</p>
+<p>Notary： 通过镜像签名方式方式，用于确保镜像来源真实性。</p>
+<h4 id="需要实现高可用的组件"><a href="#需要实现高可用的组件" class="headerlink" title="需要实现高可用的组件"></a>需要实现高可用的组件</h4><p>Redis：用于存储session会话信息。</p>
+<p>Postgres：用于存储用户信息，项目信息，用户权限信息和安全漏洞库。  </p>
+<p>Registry：实际镜像管理组件。  </p>
+<h4 id="双主HA模式"><a href="#双主HA模式" class="headerlink" title="双主HA模式"></a>双主HA模式</h4><p>通过共享存储实现高可用<br>Harbor默认全部数据存储在/data目录中，所以通过共享存储实际上就是将data目录挂载到共享存储中，目前常用方式是使用一些开源的分布式文件系统存储如cephfs，glusterfs或放置在对象存储S3中。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_2.png" alt="">  </p>
+<ul>
+<li>底层使用共享存储用于保证镜像数据可靠性。</li>
+<li>将postgres独立出来，通过pgpool-II实现高可用集群。 </li>
+<li>外部通过LB+keepalived方式转发到两个harbor中实现统一入口。  </li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>由于多Harbor实例共享存储，因此可以保持数据是实时一致的；</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>门槛高，需要具备共享存储；</li>
+<li>需要搭建和维护postgres集群，维护成本高；</li>
+</ul>
+<h4 id="主备模式"><a href="#主备模式" class="headerlink" title="主备模式"></a>主备模式</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_3.png" alt="">  </p>
+<ul>
+<li>底层使用共享存储用于保证镜像和postgres的数据可靠性。</li>
+<li>外部通过在两个Habor间通过Keepalived维持VIP，保证统一入口，但一个宕机后可以通过VIP漂移方式在将请求迅速转发到另外一个可用节点。  </li>
+</ul>
+<p>优点：</p>
+<ul>
+<li>架构简单，部署两个harbor，只需要通过共享存储和keepalived就可以实现HA；</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>只能实现主备，没有全主，每次只能有一个harbor可以对外提供服务； </li>
+<li></li>
+</ul>
+<h3 id="基于镜像复制方式实现高可用"><a href="#基于镜像复制方式实现高可用" class="headerlink" title="基于镜像复制方式实现高可用"></a>基于镜像复制方式实现高可用</h3><p>但没有共享存储时可以使用Harbor本身的镜像同步方式  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_4.png" alt="">  </p>
+<ul>
+<li>Harbor使用底层使用各自的本地存储；  </li>
+<li>两个Harbor之间配置双向同步镜像策略；  </li>
+</ul>
+<p>优点：  </p>
+<ul>
+<li>架构简单，只需要部署两个Harbor，不需要通过其他额外组件。</li>
+<li>配置文件，只需要配置两个Harbor间的镜像同步。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>只能实现主备，没有全主，每次只能有一个harbor可以对外提供服务； </li>
+<li>但其中一台宕机后，镜像push请求到另外一台harbor后，待另外一台harbor恢复后需要手工执行一下同步策略进行同步。  </li>
+<li>只能同步镜像，用户和用户权限信息无法进行同步，因为这些都保存到postgres数据库中，所以需要通过导表方式进行同步用户和权限。</li>
+<li>若VIP进行频繁飘移，容易造成两边postgres数据不一致。  </li>
+</ul>
+<h4 id="导表方式如下："><a href="#导表方式如下：" class="headerlink" title="导表方式如下："></a>导表方式如下：</h4><h5 id="需要导出以下表："><a href="#需要导出以下表：" class="headerlink" title="需要导出以下表："></a>需要导出以下表：</h5><table>
+<thead>
+<tr>
+<th>表名</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>harbor_user</td>
+<td>用户信息表 </td>
+</tr>
+<tr>
+<td>project</td>
+<td>项目信息表</td>
+</tr>
+<tr>
+<td>project_member</td>
+<td>项目成员表 </td>
+</tr>
+<tr>
+<td>project_metadata</td>
+<td>项目元数据表，数据主要为项目创建和更新时间</td>
+</tr>
+<tr>
+<td>repository</td>
+<td>项目镜像信息元数据  </td>
+</tr>
+</tbody>
+</table>
+<p>假设有A节点和B节点两个Harbor，目前vip在A节点上，需要将A节点以下表导出同步到B节点上，若后续VIP漂移到B节点上后也需要将B节点上数据重新同步到A节点。  </p>
+<h4 id="在主节点上操作："><a href="#在主节点上操作：" class="headerlink" title="在主节点上操作："></a>在主节点上操作：</h4><h5 id="备份registry数据库"><a href="#备份registry数据库" class="headerlink" title="备份registry数据库"></a>备份registry数据库</h5><p>进入 harbor-db容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pg_dump -d registry -f /var/lib/postgresql/registry.sql</div></pre></td></tr></table></figure></p>
+<h5 id="导出原表"><a href="#导出原表" class="headerlink" title="导出原表"></a>导出原表</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">pg_dump -t harbor_user registry &gt; /var/lib/postgresql/harbor_user.sql</div><div class="line">pg_dump -t project_member registry &gt; /var/lib/postgresql/project_member.sql</div><div class="line">pg_dump -t project registry &gt; /var/lib/postgresql/project.sql</div><div class="line">pg_dump -t project_metadata registry &gt; /var/lib/postgresql/project_metadata.sql</div><div class="line">pg_dump -t repository registry &gt;/var/lib/postgresql/repository.sql</div></pre></td></tr></table></figure>
+<h5 id="将主节点导出的表文件发送到备节点上"><a href="#将主节点导出的表文件发送到备节点上" class="headerlink" title="将主节点导出的表文件发送到备节点上"></a>将主节点导出的表文件发送到备节点上</h5><h4 id="在备节点操作"><a href="#在备节点操作" class="headerlink" title="在备节点操作"></a>在备节点操作</h4><p>进入 harbor-db容器执行  </p>
+<h5 id="备份registry数据库-1"><a href="#备份registry数据库-1" class="headerlink" title="备份registry数据库"></a>备份registry数据库</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">pg_dump -d registry -f /var/lib/postgresql/registry.sql</div></pre></td></tr></table></figure>
+<h5 id="删除原表（解决导入时外键依赖问题）"><a href="#删除原表（解决导入时外键依赖问题）" class="headerlink" title="删除原表（解决导入时外键依赖问题）"></a>删除原表（解决导入时外键依赖问题）</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">psql registry -c &quot;drop table project_metadata;&quot;</div><div class="line">psql registry -c &quot;drop table project;&quot;</div><div class="line">psql registry -c &quot;drop table oidc_user;&quot;</div><div class="line">psql registry -c &quot;drop table harbor_user;&quot;</div><div class="line">psql registry -c &quot;drop table project_member;&quot;</div><div class="line">psql registry -c &quot;drop table repository;&quot;</div></pre></td></tr></table></figure>
+<h5 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">psql registry -f /tmp/harbor/harbor_user.sql </div><div class="line">psql registry -f /tmp/harbor/project.sql</div><div class="line">psql registry -f /tmp/harbor/project_metadata.sql </div><div class="line">psql registry -f /tmp/harbor/oidc_user.sql</div><div class="line">psql registry -f /tmp/harbor/project_member.sql </div><div class="line">psql registry -f /tmp/harbor/repository.sql</div></pre></td></tr></table></figure>
+<p>查看harbor用户和项目成员信息，同步即可  </p>
+<h3 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h3><ul>
+<li>若VIP进行频繁飘移，容易造成两边postgres数据不一致。  </li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
     
     
-<a href="/2016/12/09/fastnetmon/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2016-12-09T11:50:27.000Z" itemprop="datePublished">2016-12-09</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Fastnetmon配置与使用
-</a>
-
-
+    <li class="next">
+      <a href="/2019/12/01/ceph_deploy/" title="ceph部署">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   
@@ -406,6 +594,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
