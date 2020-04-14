@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Thanos初体验 | 我爱西红柿</title>
+  <meta name="description" content="概述：Thanos主要用于解决大规模prometheus部署、增强prometheus高可用的工具，由Improbable团队开源，项目地址https://github.com/thanos-io/thanos
+架构：
+组件：thanos-sidecar：  通过Prometheus附加件与Prometheus进行连接，通过http方式在Prometheus的remote-read API基础之上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thanos初体验">
+<meta property="og:url" content="http://yoursite.com/2020/03/14/thanos/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述：Thanos主要用于解决大规模prometheus部署、增强prometheus高可用的工具，由Improbable团队开源，项目地址https://github.com/thanos-io/thanos
+架构：
+组件：thanos-sidecar：  通过Prometheus附加件与Prometheus进行连接，通过http方式在Prometheus的remote-read API基础之上">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_1.png">
+<meta property="og:image" content="https://gblobscdn.gitbook.com/assets%2F-LBdoxo9EmQ0bJP2BuUi%2F-LVSVjCoJ2ZKnv7dYe6V%2F-LPufOd4LgRt7mUDTV8C%2Fpromethues-ha-01.png?generation=1546683354194329&alt=media">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_12.png">
+<meta property="og:updated_time" content="2020-03-14T15:27:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Thanos初体验">
+<meta name="twitter:description" content="概述：Thanos主要用于解决大规模prometheus部署、增强prometheus高可用的工具，由Improbable团队开源，项目地址https://github.com/thanos-io/thanos
+架构：
+组件：thanos-sidecar：  通过Prometheus附加件与Prometheus进行连接，通过http方式在Prometheus的remote-read API基础之上">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/03/14/thanos/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">15</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.43px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.71px;">Linux</a> <a href="/tags/Python/" style="font-size: 13.14px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.29px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.29px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 13.86px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.29px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.57px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.14px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.14px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/prometheus/">prometheus</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/03/14/thanos/" class="title">Thanos初体验</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-03-14T15:27:44.000Z" itemprop="datePublished">2020-03-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/02/22/harbor_notary/" class="title">容器镜像签名</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-02-22T15:27:44.000Z" itemprop="datePublished">2020-02-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/prometheus/">prometheus</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/01/03/prometheus_1/" class="title">prometheus监控部署与使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-01-03T15:27:44.000Z" itemprop="datePublished">2020-01-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/ceph/">ceph</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/12/01/ceph_deploy/" class="title">ceph部署</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-12-01T13:45:59.000Z" itemprop="datePublished">2019-12-01</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2019/11/25/kubernetes_custome_hpa/" class="title">kubernetes pod的弹性伸缩(二)(基于自定义监控指标的弹性伸缩)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2019-11-25T13:45:59.000Z" itemprop="datePublished">2019-11-25</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述："><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#架构："><span class="toc-number">2.</span> <span class="toc-text">架构：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件："><span class="toc-number">3.</span> <span class="toc-text">组件：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Thanos能解决什么问题？"><span class="toc-number">4.</span> <span class="toc-text">Thanos能解决什么问题？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#大规模集群部署问题"><span class="toc-number">4.1.</span> <span class="toc-text">大规模集群部署问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#prometheus高可用问题和扩展问题"><span class="toc-number">4.2.</span> <span class="toc-text">prometheus高可用问题和扩展问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署架构"><span class="toc-number">5.</span> <span class="toc-text">部署架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署使用："><span class="toc-number">6.</span> <span class="toc-text">部署使用：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#部署prometheus"><span class="toc-number">6.1.</span> <span class="toc-text">部署prometheus</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署exporter"><span class="toc-number">6.2.</span> <span class="toc-text">部署exporter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署Query"><span class="toc-number">6.3.</span> <span class="toc-text">部署Query</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署对象存储"><span class="toc-number">6.4.</span> <span class="toc-text">部署对象存储</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#将落盘的监控数据存储到对象存储中"><span class="toc-number">6.5.</span> <span class="toc-text">将落盘的监控数据存储到对象存储中</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署Store-Gateway"><span class="toc-number">6.6.</span> <span class="toc-text">部署Store-Gateway</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署Compact"><span class="toc-number">6.7.</span> <span class="toc-text">部署Compact</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Receiver介绍"><span class="toc-number">6.8.</span> <span class="toc-text">Receiver介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Grafana对接"><span class="toc-number">6.9.</span> <span class="toc-text">Grafana对接</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-thanos" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Thanos初体验
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/03/14/thanos/" class="article-date">
+	  <time datetime="2020-03-14T15:27:44.000Z" itemprop="datePublished">2020-03-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/prometheus/">prometheus</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/prometheus/">prometheus</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/03/14/thanos/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,956(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 14(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>Thanos主要用于解决大规模prometheus部署、增强prometheus高可用的工具，由Improbable团队开源，项目地址<br><a href="https://github.com/thanos-io/thanos" target="_blank" rel="external">https://github.com/thanos-io/thanos</a></p>
+<h3 id="架构："><a href="#架构：" class="headerlink" title="架构："></a>架构：</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_1.png" alt=""></p>
+<h3 id="组件："><a href="#组件：" class="headerlink" title="组件："></a>组件：</h3><p>thanos-sidecar：  通过Prometheus附加件与Prometheus进行连接，通过http方式在Prometheus的remote-read API基础之上实现了storeAPI接口，query组件可以直接从此接口读取监控数据，并且还支持将数据上传到对应的对象存储。    </p>
+<p>thanos-query：  通过thanos-sidecar组件的store-api的grpc接口抓取监控数据，并对监控数据进行聚合去重处理。  </p>
+<p>thanos-storage-gateway：  对接后端对象存储，当需要查询对象存储中的历史监控数据时，query与其相连查看。    </p>
+<p>thanos-compact： 对存储在对象存储中的监控数据多个较小的块连续合并为较大的块。这显着减少了存储桶中的总存储大小。提高查询效率。      </p>
+<p>thanos-rules：  对监控数据进行告警，通知altermanager，并且可以预先计算经常需要或计算量大的表达式，并将其结果保存为一组新的时间序列据提供给query查询和对象存储进行存储。     </p>
+<h3 id="Thanos能解决什么问题？"><a href="#Thanos能解决什么问题？" class="headerlink" title="Thanos能解决什么问题？"></a>Thanos能解决什么问题？</h3><h4 id="大规模集群部署问题"><a href="#大规模集群部署问题" class="headerlink" title="大规模集群部署问题"></a>大规模集群部署问题</h4><p>prometheus本身只支持单机部署，没有自带集群模式，所以在目前大规模集群监控主要通过prometheus联邦机制或者做监控指标服务拆分方式去实现并且最难以接受的是prometheus对于监控历史数据的存储问题，在本地不能存储过久的监控数据，只能通过远端存储接口，存储到支持prometheus远端存储接口的数据库中，这带来的问题就是引入新的组件会增加对应的运维工作量。  </p>
+<h4 id="prometheus高可用问题和扩展问题"><a href="#prometheus高可用问题和扩展问题" class="headerlink" title="prometheus高可用问题和扩展问题"></a>prometheus高可用问题和扩展问题</h4><p>prometheus官方高可用的方式是通过部署多个prometheus实例采集同一个target，前端通过LB设备做为统一入口，这带来的问题就是，两个prometheus实例内存储的数据会存在差异，特别是当其中一个prometheus宕机后，另外一个prometheus接管服务，此时宕机的prometheus就会丢失宕机期间的监控数据，当LB的请求转发过来会出现数据不一致情况。</p>
+<p><img src="https://gblobscdn.gitbook.com/assets%2F-LBdoxo9EmQ0bJP2BuUi%2F-LVSVjCoJ2ZKnv7dYe6V%2F-LPufOd4LgRt7mUDTV8C%2Fpromethues-ha-01.png?generation=1546683354194329&amp;alt=media" alt=""></p>
+<p>Thanos能够解决上述问题，thanos能够将多个prometheus实例的数据进行聚合去重，来支持prometheus横向扩展和提高prometheus的高可用性，同时也支持将历史监控数据存储到对象存储中，提供监控数据的可靠性，降低运维难度。  </p>
+<h3 id="部署架构"><a href="#部署架构" class="headerlink" title="部署架构"></a>部署架构</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_5.png" alt=""></p>
+<ul>
+<li>部署多个prometheus实例，采集相同或不同的targets。</li>
+<li>thanos-sidecar通过sidecar方式与prometheus部署在一起，将数据提供给query查询和将本地落盘的数据上传到兼容S3协议的对象存储中。  </li>
+<li>Query进行数据汇总和去重做数据查询的统一入口，grafana通过query接口进行监控展示。  </li>
+<li>历史监控数据查询通过store-Gateway进行查询。</li>
+<li>compactor组件对存储在对象存储的数据进行压缩，降低采样率，后续查看长时间监控数据提高效率。  </li>
+</ul>
+<h3 id="部署使用："><a href="#部署使用：" class="headerlink" title="部署使用："></a>部署使用：</h3><p>这里以一个快速demo的方式进行thanos的功能展示和部署，实际生产可以结合prometheus-operator的方式去部署更佳。  </p>
+<p>提前准备：<br>创建一个storageclass，用于提供给prometheus实例使用</p>
+<h4 id="部署prometheus"><a href="#部署prometheus" class="headerlink" title="部署prometheus"></a>部署prometheus</h4><p>创建ServiceAccount并做权限绑定<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: v1</div><div class="line">kind: ServiceAccount</div><div class="line">metadata:</div><div class="line">  name: prometheus</div><div class="line">---</div><div class="line">apiVersion: rbac.authorization.k8s.io/v1</div><div class="line">kind: ClusterRole</div><div class="line">metadata:</div><div class="line">  name: prometheus</div><div class="line">rules:</div><div class="line">- apiGroups:</div><div class="line">  - &quot;&quot;</div><div class="line">  resources:</div><div class="line">  - nodes</div><div class="line">  - services</div><div class="line">  - endpoints</div><div class="line">  - pods</div><div class="line">  - nodes/proxy</div><div class="line">  verbs:</div><div class="line">  - get</div><div class="line">  - list</div><div class="line">  - watch</div><div class="line">- apiGroups:</div><div class="line">  - &quot;extensions&quot;</div><div class="line">  resources:</div><div class="line">    - ingresses</div><div class="line">  verbs:</div><div class="line">  - get</div><div class="line">  - list</div><div class="line">  - watch</div><div class="line">- apiGroups:</div><div class="line">  - &quot;&quot;</div><div class="line">  resources:</div><div class="line">  - configmaps</div><div class="line">  - nodes/metrics</div><div class="line">  verbs:</div><div class="line">  - get</div><div class="line">- nonResourceURLs:</div><div class="line">  - /metrics</div><div class="line">  verbs:</div><div class="line">  - get</div><div class="line">---</div><div class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</div><div class="line">kind: ClusterRoleBinding</div><div class="line">metadata:</div><div class="line">  name: prometheus</div><div class="line">roleRef:</div><div class="line">  apiGroup: rbac.authorization.k8s.io</div><div class="line">  kind: ClusterRole</div><div class="line">  name: prometheus</div><div class="line">subjects:</div><div class="line">- kind: ServiceAccount</div><div class="line">  name: prometheus</div><div class="line">  namespace: default</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>创建configmap<br>prometheus-configmap.yaml  </p>
+<p>将targets改为实际运行node-exporter节点地址  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">apiVersion: v1</div><div class="line">kind: ConfigMap</div><div class="line">metadata:</div><div class="line">  name: prometheus-config</div><div class="line">data:</div><div class="line">  prometheus.yaml.tmpl: |</div><div class="line">    global:</div><div class="line">      scrape_interval: 15s</div><div class="line">      scrape_timeout: 15s</div><div class="line">      external_labels:</div><div class="line">        cluster: test-thanos</div><div class="line">        replica: $(POD_NAME)</div><div class="line">    scrape_configs:</div><div class="line">     - job_name: &quot;node&quot;</div><div class="line">       static_configs:</div><div class="line">         - targets: [&quot;172.16.1.6:9100&quot;]</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line">apiVersion: apps/v1</div><div class="line">kind: StatefulSet</div><div class="line">metadata:</div><div class="line">  name: prometheus</div><div class="line">  labels:</div><div class="line">    app: prometheus</div><div class="line">spec:</div><div class="line">  serviceName: &quot;prometheus&quot;</div><div class="line">  replicas: 2</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: prometheus</div><div class="line">      thanos-store-api: &quot;true&quot;</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels: </div><div class="line">        app: prometheus</div><div class="line">        thanos-store-api: &quot;true&quot;</div><div class="line">    spec:</div><div class="line">      serviceAccountName: prometheus</div><div class="line">      volumes:</div><div class="line">      - name: prometheus-config</div><div class="line">        configMap:</div><div class="line">          name: prometheus-config</div><div class="line">      - name: prometheus-config-shared</div><div class="line">        emptyDir: &#123;&#125;</div><div class="line">      containers:</div><div class="line">      - name: prometheus</div><div class="line">        image: prom/prometheus:v2.14.0</div><div class="line">        args:</div><div class="line">        - &quot;--config.file=/etc/prometheus-shared/prometheus.yaml&quot;</div><div class="line">        - &quot;--storage.tsdb.path=/prometheus&quot;</div><div class="line">        - &quot;--storage.tsdb.retention.time=6h&quot;</div><div class="line">        - &quot;--storage.tsdb.no-lockfile&quot;</div><div class="line">        - &quot;--storage.tsdb.min-block-duration=2h&quot;  # 每隔2小时将数据压缩成一个block，持久化到硬盘中</div><div class="line">        - &quot;--storage.tsdb.max-block-duration=2h&quot; </div><div class="line">        - &quot;--web.enable-admin-api&quot;  # thanos可以通过prometheus admin api管理数据</div><div class="line">        - &quot;--web.enable-lifecycle&quot;  # 支持热更新  localhost:9090/-/reload 加载</div><div class="line">        ports:</div><div class="line">        - name: http</div><div class="line">          containerPort: 9090</div><div class="line">        volumeMounts:</div><div class="line">        - name: prometheus-config-shared</div><div class="line">          mountPath: /etc/prometheus-shared/</div><div class="line">        - name: data</div><div class="line">          mountPath: &quot;/prometheus&quot;</div><div class="line">      - name: thanos</div><div class="line">        image: thanosio/thanos:v0.11.0</div><div class="line">        args:</div><div class="line">        - sidecar</div><div class="line">        - --tsdb.path=/prometheus</div><div class="line">        - --prometheus.url=http://localhost:9090</div><div class="line">        - --reloader.config-file=/etc/prometheus/prometheus.yaml.tmpl #配置对应的prometheus.yaml.tmpl文件路径</div><div class="line">        - --reloader.config-envsubst-file=/etc/prometheus-shared/prometheus.yaml  # 基于配置文件模板生成配置文件</div><div class="line">        ports:</div><div class="line">        - name: http-sidecar</div><div class="line">          containerPort: 10902</div><div class="line">        - name: grpc</div><div class="line">          containerPort: 10901</div><div class="line">        env:</div><div class="line">        - name: POD_NAME</div><div class="line">          valueFrom:</div><div class="line">            fieldRef:</div><div class="line">              fieldPath: metadata.name</div><div class="line">        volumeMounts:</div><div class="line">        - name: prometheus-config</div><div class="line">          mountPath: /etc/prometheus</div><div class="line">        - name: prometheus-config-shared</div><div class="line">          mountPath: /etc/prometheus-shared/</div><div class="line">        - name: data</div><div class="line">          mountPath: &quot;/prometheus&quot;</div><div class="line">  volumeClaimTemplates:  #提供volumesclaimTemplate为每个prometheus实例分配一个PVC</div><div class="line">  - metadata:</div><div class="line">      name: data</div><div class="line">      labels:</div><div class="line">        app: prometheus</div><div class="line">    spec:</div><div class="line">      storageClassName: managed-nfs-storage</div><div class="line">      accessModes:</div><div class="line">      - ReadWriteOnce</div><div class="line">      resources:</div><div class="line">        requests:</div><div class="line">          storage: 2Gi</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>注意以下参数：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">--storage.tsdb.min-block-duration=2h </div><div class="line">--storage.tsdb.max-block-duration=2h    </div><div class="line">#这两个值使用thanos需要配置成一致，禁用prometheus对监控数据进行压缩，因为使用thanos，compactor组件会对监控数据进行压缩。 </div><div class="line">--web.enable-admin-api&quot;  # thanos可以通过prometheus admin api管理数据</div><div class="line">--web.enable-lifecycle&quot; #配置prometheus配置热加载</div></pre></td></tr></table></figure>
+<p>创建Service<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: v1</div><div class="line">kind: Service</div><div class="line">metadata:</div><div class="line">  name: thanos-store-gateway</div><div class="line">spec:</div><div class="line">  type: ClusterIP</div><div class="line">  clusterIP: None</div><div class="line">  ports:</div><div class="line">  - name: grpc</div><div class="line">    port: 10901</div><div class="line">    targetPort: grpc</div><div class="line">  selector:</div><div class="line">    thanos-store-api: &quot;true&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<h4 id="部署exporter"><a href="#部署exporter" class="headerlink" title="部署exporter"></a>部署exporter</h4><p>用于采集监控数据</p>
+<p>部署node-exporter</p>
+<p>在节点上部署node-exporter用于收集主机资源信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d   --net=&quot;host&quot;   --pid=&quot;host&quot;   -v &quot;/:/host:ro,rslave&quot;   bitnami/node-exporter   --path.rootfs=/host</div></pre></td></tr></table></figure></p>
+<h4 id="部署Query"><a href="#部署Query" class="headerlink" title="部署Query"></a>部署Query</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: apps/v1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: thanos-querier</div><div class="line">  namespace: kube-mon</div><div class="line">  labels:</div><div class="line">    app: thanos-querier</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: thanos-querier</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: thanos-querier</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: thanos</div><div class="line">        image: thanosio/thanos:v0.11.0</div><div class="line">        args:</div><div class="line">        - query</div><div class="line">        - --log.level=debug</div><div class="line">        - --query.replica-label=replica</div><div class="line">        # Discover local store APIs using DNS SRV.</div><div class="line">        - --store=dnssrv+thanos-store-gateway:10901</div><div class="line">        ports:</div><div class="line">        - name: http</div><div class="line">          containerPort: 10902</div><div class="line">        - name: grpc</div><div class="line">          containerPort: 10901</div><div class="line">        resources:</div><div class="line">          requests:</div><div class="line">            memory: &quot;2Gi&quot;</div><div class="line">            cpu: &quot;1&quot;</div><div class="line">          limits:</div><div class="line">            memory: &quot;2Gi&quot;</div><div class="line">            cpu: &quot;1&quot;</div><div class="line">        livenessProbe:</div><div class="line">          httpGet:</div><div class="line">            path: /-/healthy</div><div class="line">            port: http</div><div class="line">          initialDelaySeconds: 10</div><div class="line">        readinessProbe:</div><div class="line">          httpGet:</div><div class="line">            path: /-/healthy</div><div class="line">            port: http</div><div class="line">          initialDelaySeconds: 15</div><div class="line">---</div><div class="line">apiVersion: v1</div><div class="line">kind: Service</div><div class="line">metadata:</div><div class="line">  name: thanos-querier</div><div class="line">  labels:</div><div class="line">    app: thanos-querier</div><div class="line">spec:</div><div class="line">  ports:</div><div class="line">  - port: 9090</div><div class="line">    protocol: TCP</div><div class="line">    targetPort: http</div><div class="line">    nodePort: 30001</div><div class="line">    name: http</div><div class="line">  selector:</div><div class="line">    app: thanos-querier</div><div class="line">  type: NodePort</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>访问节点<a href="http://ip:30001端口即可打开Query界面" target="_blank" rel="external">http://ip:30001端口即可打开Query界面</a></p>
+<p>可以看见通过prometheus接口抓取过来的数据</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_4.png" alt=""></p>
+<p>可以看见对应的监控指标和对应的thanos-sidecar节点  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_2.png" alt=""></p>
+<p>通过Stores页面可以看见对应的组件的状态信息<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_3.png" alt=""></p>
+<p>以查看节点负载为例</p>
+<p>默认情况下会出现两个值，因为有两个prometheus实例对数据进行收集<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_6.png" alt="">  </p>
+<p>勾选deduplication选项将对监控数据进行去重处理，query是根据 prometheus.yaml.tmpl内的external_labels标签进行去重处理。Querier 会取时间戳新的数据进行展示。</p>
+<h4 id="部署对象存储"><a href="#部署对象存储" class="headerlink" title="部署对象存储"></a>部署对象存储</h4><p>Thanos目前支持多种对象存储接口，包括像国内的阿里OSS、腾讯COS、openstack-swift和兼容S3接口的对象存储如minio等，下图为官方支持的对象存储列表</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_7.png" alt="">  </p>
+<p>这里我们主要以Minio为例演示对接</p>
+<p>创建pvc<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line">apiVersion: v1</div><div class="line">kind: PersistentVolumeClaim</div><div class="line">metadata:</div><div class="line">  # This name uniquely identifies the PVC. This is used in deployment.</div><div class="line">  name: minio-pv-claim</div><div class="line">spec:</div><div class="line">  # Read more about access modes here: http://kubernetes.io/docs/user-guide/persistent-volumes/#access-modes</div><div class="line">  storageClassName: managed-nfs-storage</div><div class="line">  accessModes:</div><div class="line">    # The volume is mounted as read-write by a single node</div><div class="line">    - ReadWriteOnce</div><div class="line">  resources:</div><div class="line">    # This is the request for storage. Should be available in the cluster.</div><div class="line">    requests:</div><div class="line">      storage: 10Gi</div><div class="line">      </div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>创建Minio</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/kubernetes/minio-standalone-deployment.yaml</div></pre></td></tr></table></figure>
+<p>创建对外暴露Service</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: v1</div><div class="line">kind: Service</div><div class="line">metadata:</div><div class="line">  name: minio-service</div><div class="line">spec:</div><div class="line">  type: NodePort</div><div class="line">  ports:</div><div class="line">    - port: 9000</div><div class="line">      targetPort: 9000</div><div class="line">      protocol: TCP</div><div class="line">      nodePort: 30002</div><div class="line">  selector:</div><div class="line">    app: minio</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>访问Minio  </p>
+<p><a href="http://ip:30002" target="_blank" rel="external">http://ip:30002</a></p>
+<p>使用minio/minio123访问Minio</p>
+<p>创建名为prometheus的bucket<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_8.png" alt=""></p>
+<h4 id="将落盘的监控数据存储到对象存储中"><a href="#将落盘的监控数据存储到对象存储中" class="headerlink" title="将落盘的监控数据存储到对象存储中"></a>将落盘的监控数据存储到对象存储中</h4><p>创建secret<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: v1</div><div class="line">kind: Secret</div><div class="line">metadata:</div><div class="line">  name: minio-secret</div><div class="line">type: Opaque</div><div class="line">stringData:</div><div class="line">  thanos-secret.yaml: |-</div><div class="line">    type: S3</div><div class="line">    config:</div><div class="line">     bucket: &quot;prometheus&quot;</div><div class="line">     endpoint: &quot;172.16.1.6:30002&quot;</div><div class="line">     access_key: &quot;minio&quot;</div><div class="line">     insecure: true</div><div class="line">     secret_key: &quot;minio123&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>在prometheus启动的yaml文件中引用此secret<br>添加以下部分</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">spec:</div><div class="line">      serviceAccountName: prometheus</div><div class="line">      volumes:</div><div class="line">      - name: minio-secret</div><div class="line">        secret:</div><div class="line">          secretName: minio-secret</div><div class="line">      containers:</div><div class="line">      - name: thanos</div><div class="line">        image: thanosio/thanos:v0.11.0</div><div class="line">        args:</div><div class="line">        - sidecar</div><div class="line">        - --tsdb.path=/prometheus</div><div class="line">        - --prometheus.url=http://localhost:9090</div><div class="line">        - --reloader.config-file=/etc/prometheus/prometheus.yaml.tmpl #配置对应的prometheus.yaml.tmpl文件路径</div><div class="line">        - --reloader.config-envsubst-file=/etc/prometheus-shared/prometheus.yaml  # 基于配置文件模板生成配置文件</div><div class="line">        - --objstore.config-file=/etc/secret/thanos-secret.yaml</div><div class="line">    </div><div class="line">        volumeMounts:</div><div class="line">        - name: minio-secret</div><div class="line">          mountPath: &quot;/etc/secret/&quot;</div></pre></td></tr></table></figure>
+<p>等待片刻后可以在Minio上看见thanos-sidecar上传过来的prometheus监控数据</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_9.png" alt="">  </p>
+<p>thanos-secret.yaml</p>
+<h4 id="部署Store-Gateway"><a href="#部署Store-Gateway" class="headerlink" title="部署Store-Gateway"></a>部署Store-Gateway</h4><p>部署Store-Gateway方便查看历史存储数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: apps/v1</div><div class="line">kind: StatefulSet</div><div class="line">metadata:</div><div class="line">  labels:</div><div class="line">    app.kubernetes.io/name: thanos-store</div><div class="line">  name: thanos-store</div><div class="line">spec:</div><div class="line">  replicas: 1</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app.kubernetes.io/name: thanos-store</div><div class="line">  serviceName: thanos-store-gateway</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        thanos-store-api: &quot;true&quot;</div><div class="line">        app.kubernetes.io/name: thanos-store</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - args:</div><div class="line">        - store</div><div class="line">        - --data-dir=/var/thanos/store</div><div class="line">        - --grpc-address=0.0.0.0:10901</div><div class="line">        - --http-address=0.0.0.0:10902</div><div class="line">        - --objstore.config-file=/etc/secret/thanos-secret.yaml</div><div class="line">        - --experimental.enable-index-header</div><div class="line">        image: quay.io/thanos/thanos:v0.11.0</div><div class="line">        livenessProbe:</div><div class="line">          failureThreshold: 8</div><div class="line">          httpGet:</div><div class="line">            path: /-/healthy</div><div class="line">            port: 10902</div><div class="line">            scheme: HTTP</div><div class="line">          periodSeconds: 30</div><div class="line">        name: thanos-store</div><div class="line">        ports:</div><div class="line">        - containerPort: 10901</div><div class="line">          name: grpc</div><div class="line">        - containerPort: 10902</div><div class="line">          name: http</div><div class="line">        readinessProbe:</div><div class="line">          failureThreshold: 20</div><div class="line">          httpGet:</div><div class="line">            path: /-/ready</div><div class="line">            port: 10902</div><div class="line">            scheme: HTTP</div><div class="line">          periodSeconds: 5</div><div class="line">        volumeMounts:</div><div class="line">        - mountPath: /var/thanos/store</div><div class="line">          name: data</div><div class="line">          readOnly: false</div><div class="line">        - mountPath: /etc/secret/</div><div class="line">          name: minio-secret</div><div class="line">      volumes: </div><div class="line">      - name: minio-secret</div><div class="line">        secret:</div><div class="line">          secretName: minio-secret</div><div class="line">  volumeClaimTemplates:</div><div class="line">  - metadata:</div><div class="line">      labels:</div><div class="line">        app.kubernetes.io/name: thanos-store</div><div class="line">      name: data</div><div class="line">    spec:</div><div class="line">      storageClassName: managed-nfs-storage</div><div class="line">      accessModes:</div><div class="line">      - ReadWriteOnce</div><div class="line">      resources:</div><div class="line">        requests:</div><div class="line">          storage: 10Gi</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_10.png" alt="">  </p>
+<p>注意label thanos-store-api: “true”这样才能与thanos-store-gateway这个headless service关联，另外与它关联的Querier才能发现它。</p>
+<h4 id="部署Compact"><a href="#部署Compact" class="headerlink" title="部署Compact"></a>部署Compact</h4><p>compact需要本地磁盘空间来存储中间数据以进行处理，建议使用大约100GB的空间以保持正常工作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: apps/v1</div><div class="line">kind: StatefulSet</div><div class="line">metadata:</div><div class="line">  labels:</div><div class="line">    app.kubernetes.io/component: database-compactor</div><div class="line">    app.kubernetes.io/instance: thanos-compact</div><div class="line">    app.kubernetes.io/name: thanos-compact</div><div class="line">    app.kubernetes.io/version: v0.11.0</div><div class="line">  name: thanos-compact</div><div class="line">spec:</div><div class="line">  replicas: 1</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app.kubernetes.io/component: database-compactor</div><div class="line">      app.kubernetes.io/instance: thanos-compact</div><div class="line">      app.kubernetes.io/name: thanos-compact</div><div class="line">  serviceName: thanos-compact</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app.kubernetes.io/component: database-compactor</div><div class="line">        app.kubernetes.io/instance: thanos-compact</div><div class="line">        app.kubernetes.io/name: thanos-compact</div><div class="line">        app.kubernetes.io/version: v0.11.0</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - args:</div><div class="line">        - compact</div><div class="line">        - --wait</div><div class="line">        - --objstore.config-file=/etc/secret/thanos-secret.yaml</div><div class="line">        - --data-dir=/var/thanos/compact</div><div class="line">        - --debug.accept-malformed-index</div><div class="line">        image: quay.io/thanos/thanos:v0.11.0</div><div class="line">        livenessProbe:</div><div class="line">          failureThreshold: 4</div><div class="line">          httpGet:</div><div class="line">            path: /-/healthy</div><div class="line">            port: 10902</div><div class="line">            scheme: HTTP</div><div class="line">          periodSeconds: 30</div><div class="line">        name: thanos-compact</div><div class="line">        ports:</div><div class="line">        - containerPort: 10902</div><div class="line">          name: http</div><div class="line">        readinessProbe:</div><div class="line">          failureThreshold: 20</div><div class="line">          httpGet:</div><div class="line">            path: /-/ready</div><div class="line">            port: 10902</div><div class="line">            scheme: HTTP</div><div class="line">          periodSeconds: 5</div><div class="line">        terminationMessagePolicy: FallbackToLogsOnError</div><div class="line">        volumeMounts:</div><div class="line">        - mountPath: /var/thanos/compact</div><div class="line">          name: data</div><div class="line">          readOnly: false</div><div class="line">        - mountPath: /etc/secret/</div><div class="line">          name: minio-secret</div><div class="line">      volumes: </div><div class="line">      - name: minio-secret</div><div class="line">        secret:</div><div class="line">          secretName: minio-secret</div><div class="line">  volumeClaimTemplates:</div><div class="line">  - metadata:</div><div class="line">      labels:</div><div class="line">        app.kubernetes.io/component: database-compactor</div><div class="line">        app.kubernetes.io/instance: thanos-compact</div><div class="line">        app.kubernetes.io/name: thanos-compact</div><div class="line">      name: data</div><div class="line">    spec:</div><div class="line">      storageClassName: managed-nfs-storage</div><div class="line">      accessModes:</div><div class="line">      - ReadWriteOnce</div><div class="line">      resources:</div><div class="line">        requests:</div><div class="line">          storage: 10Gi</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>需要本地磁盘空间来存储中间数据以进行处理，建议使用大约100GB的空间以保持正常工作。在重新启动之间可以安全地删除磁盘上的数据</p>
+<h4 id="Receiver介绍"><a href="#Receiver介绍" class="headerlink" title="Receiver介绍"></a>Receiver介绍</h4><p>主要解决大规模场景下 Query都调所有 thanos-Sidecar会消耗很多资源，所以统一通过prometheus的remote-write接口将数据传送给thanos-Receiver，Query从thanos-Receiver获取数据<br><a href="https://thanos.io/proposals/201812_thanos-remote-receive.md/" target="_blank" rel="external">https://thanos.io/proposals/201812_thanos-remote-receive.md/</a></p>
+<h4 id="Grafana对接"><a href="#Grafana对接" class="headerlink" title="Grafana对接"></a>Grafana对接</h4><p>使用thanos后grafana对接直接对接Query就可以了</p>
+<p>启动grafana</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -d --name=grafana -p 3000:3000 grafana/grafana</div></pre></td></tr></table></figure>
+<p>添加DataSource这填写Query的地址</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_11.png" alt="">  </p>
+<p>添加dashboard，因为我们之有node-exporter的数据所以这块需要使直接使用主机节点的dashboard，导入dashboard输入id号8919</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/thanos_12.png" alt="">  </p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p> Thanos做为prometheus的一个附加组件，还是能解决目前在使用prometheus时的一些高可用，历史数据存储和大规模集群的问题，目前社区也在大力发展。  </p>
+<p>参考链接：<br><a href="https://github.com/thanos-io/thanos/blob/master/docs/quick-tutorial.md" target="_blank" rel="external">https://github.com/thanos-io/thanos/blob/master/docs/quick-tutorial.md</a><br><a href="https://engineering.hellofresh.com/monitoring-at-hellofresh-part-1-architecture-677b4bd6b728" target="_blank" rel="external">https://engineering.hellofresh.com/monitoring-at-hellofresh-part-1-architecture-677b4bd6b728</a><br><a href="https://github.com/thanos-io/kube-thanos/tree/master/manifests" target="_blank" rel="external">https://github.com/thanos-io/kube-thanos/tree/master/manifests</a><br><a href="https://github.com/thanos-io/thanos/blob/master/docs/components/sidecar.md" target="_blank" rel="external">https://github.com/thanos-io/thanos/blob/master/docs/components/sidecar.md</a><br><a href="https://www.qikqiak.com/k8strain/monitor/thanos/#ruler" target="_blank" rel="external">https://www.qikqiak.com/k8strain/monitor/thanos/#ruler</a><br><a href="https://github.com/thanos-io/kube-thanos/tree/release-0.11/examples/all/manifests" target="_blank" rel="external">https://github.com/thanos-io/kube-thanos/tree/release-0.11/examples/all/manifests</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/02/22/harbor_notary/" title="容器镜像签名">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
