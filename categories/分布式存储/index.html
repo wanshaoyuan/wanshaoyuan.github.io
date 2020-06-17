@@ -16,46 +16,18 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>Docker单主机网络 | 我爱西红柿</title>
-  <meta name="description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。docker网络（单host上容器网络)显示docker网络docker network list
-docker run时通过–network指定网络  
-none网络1docker run -it --network=none busybox
-none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Docker单主机网络">
-<meta property="og:url" content="http://yoursite.com/2017/11/03/docker_network/index.html">
+  <title>分类: 分布式存储 | 我爱西红柿</title>
+  <meta name="description" content="好好学习、天天向上">
+<meta property="og:type" content="website">
+<meta property="og:title" content="我爱西红柿">
+<meta property="og:url" content="http://yoursite.com/categories/分布式存储/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。docker网络（单host上容器网络)显示docker网络docker network list
-docker run时通过–network指定网络  
-none网络1docker run -it --network=none busybox
-none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_13.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_14.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_15.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_16.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_17.png">
-<meta property="og:updated_time" content="2017-11-03T13:45:59.000Z">
+<meta property="og:description" content="好好学习、天天向上">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Docker单主机网络">
-<meta name="twitter:description" content="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。docker网络（单host上容器网络)显示docker网络docker network list
-docker run时通过–network指定网络  
-none网络1docker run -it --network=none busybox
-none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_1.png">
+<meta name="twitter:title" content="我爱西红柿">
+<meta name="twitter:description" content="好好学习、天天向上">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2017/11/03/docker_network/index.html">
+  <link rel="canonical" href="http://yoursite.com/categories/分布式存储/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -354,168 +326,77 @@ none网络就是什么都没有的网络，挂载在这个网络的容器除了l
 
   
   
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    <nav id="toc" class="article-toc">
-      <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><span class="toc-number">1.</span> <span class="toc-text">此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#none网络"><span class="toc-number">1.1.</span> <span class="toc-text">none网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host网络"><span class="toc-number">1.2.</span> <span class="toc-text">host网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bridge网络"><span class="toc-number">1.3.</span> <span class="toc-text">bridge网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#user-define-用户自定义网络"><span class="toc-number">1.4.</span> <span class="toc-text">user-define(用户自定义网络)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#容器和容器间的通信"><span class="toc-number">1.5.</span> <span class="toc-text">容器和容器间的通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#容器访问外网"><span class="toc-number">1.6.</span> <span class="toc-text">容器访问外网</span></a></li></ol></li></ol>
-    </nav>
-  </div>
-</aside>
-
 <main class="main" role="main">
-  <div class="content">
-  <article id="post-docker_network" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
-    
-    <div class="article-header">
-      
-        
+  	<article class="content article article-archives article-type-list" itemscope="">
+	    <header class="article-header">
+	      <h1 itemprop="title"></h1>
+	      <p class="text-muted">共 2 篇文章</p>
+	    </header>
+	    <div class="article-body">
+	      
   
-    <h1 class="article-title" itemprop="name">
-      Docker单主机网络
-    </h1>
-  
-
-      
-      <div class="article-meta">
-        <span class="article-date">
-    <i class="fa fa-calendar-check-o"></i>
-	<a href="/2017/11/03/docker_network/" class="article-date">
-	  <time datetime="2017-11-03T13:45:59.000Z" itemprop="datePublished">2017-11-03</time>
-	</a>
-</span>
-        
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/docker/">docker</a>
-  </span>
-
-        
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/docker/">docker</a>
-  </span>
-
-
-        
-
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/11/03/docker_network/#comments" class="article-comment-link">评论</a></span>
-        
-	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 910(字)</span>
-	
-	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
-	
-
-      </div>
-      
-      <div class="toggle-toc hidden-xs" data-stick-top>
-        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
-          <i class="text-collapsed fa fa-anchor"></i>
-          <i class="text-in fa fa-close"></i>
-        </a>
-      </div>
-      
-    </div>
-    <div class="article-entry markdown-body" itemprop="articleBody">
-      
-        <h2 id="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"><a href="#此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。" class="headerlink" title="此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。"></a>此文档为翻阅cloudman的每天5分钟玩转docker技术的读书笔记。</h2><p>docker网络（单host上容器网络)<br>显示docker网络<br>docker network list<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_1.png" alt=""></p>
-<p>docker run时通过–network指定网络  </p>
-<h3 id="none网络"><a href="#none网络" class="headerlink" title="none网络"></a>none网络</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -it --network=none busybox</div></pre></td></tr></table></figure>
-<p>none网络就是什么都没有的网络，挂载在这个网络的容器除了loopback没有其他任何网卡。</p>
-<p>使用场景：对于一些安全性要求高且不需要联网的应用可以使用。</p>
-<h3 id="host网络"><a href="#host网络" class="headerlink" title="host网络"></a>host网络</h3><p>连接到host网络的容器，共享docker 宿主机的网络，并且连hostname也是宿主机的。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd  --network=hhost busybox</div></pre></td></tr></table></figure></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_2.png" alt=""></p>
-<p>使用场景：用host网络性能比较高，容器可以直接操作宿主机网络，缺点是牺牲了灵活性，需要考虑端口冲突问题。</p>
-<h3 id="bridge网络"><a href="#bridge网络" class="headerlink" title="bridge网络"></a>bridge网络</h3><p>docker使用最广泛的方式，docker安装时会创建一个docker0的linux bridge，如果不指定容器网络默认都会挂到docker0上</p>
-<p>启动个容器，查看docker0<br>docker run -itd   centos_10_23  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_3.png" alt=""></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_4.png" alt=""></p>
-<p>docker 内的网卡eth0@if28和linux bridge上的vethfe788c9是一堆veth-pair</p>
-<p>默认bridge配置的subnet就是172.17.0.3/16网关为172.17.0.1配在docker0上，容器创建时会自动从172.17.0.3/16里面抽出一个地址。</p>
-<h3 id="user-define-用户自定义网络"><a href="#user-define-用户自定义网络" class="headerlink" title="user-define(用户自定义网络)"></a>user-define(用户自定义网络)</h3><p>user-define网络支持：bridge，overlay和macvlan网络驱动，macvlan和overlay属于跨宿主机的容器的通信，这里先不讨论，这里讨论使用bridge驱动创建user-define网络。</p>
-<p>创建一个bridge为driver的user-define网络</p>
-<p>docker network create –driver bridge my_net</p>
-<p>查看网络状态<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_5.png" alt=""></p>
-<p>inspect一下，发现新创建的网络默认subnet地址自动会从上一个开始，  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_6.png" alt=""></p>
-<p>创建好后，多了个网桥</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_7.png" alt=""></p>
-<p>指定网段,只需要加–subnet 和–gateway参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker network create --driver bridge --subnet 192.168.1.0/24 --gateway 192.168.1.1 my_net</div></pre></td></tr></table></figure></p>
-<p>容器指定ip，run时加上–ip，只能是使用的–subnet的网络的容器才能使用指定ip功能<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_8.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --network=my_net --ip 192.168.1.100 centos_10_23</div></pre></td></tr></table></figure>
-<p>定义另外一个network网络<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker network create --subnet 192.168.2.0/24 --gateway=192.168.2.1 my_net2</div></pre></td></tr></table></figure></p>
-<p>在mynet_2上创建容器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd --network=my_net2 centos_10_23</div></pre></td></tr></table></figure></p>
-<p>宿主机上查看路由<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_9.png" alt=""></p>
-<p>开启路由转发<br>sysctl net.ipv4.ip_forward</p>
-<p>在容器内测试192.168.2.2 ping 192.168.1.100，发现网关都能通就是ping不通192.168.1.100  </p>
-<p>默认宿主机上的iptables DROP掉了这两个网桥的连接  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_10.png" alt=""></p>
-<p>给my_net2的容器加入my_net网络  </p>
-<p>docker network connect my_net 60cae2aee142  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_11.png" alt=""></p>
-<p>在去ping 192.168.1.100 就ok了  </p>
-<h3 id="容器和容器间的通信"><a href="#容器和容器间的通信" class="headerlink" title="容器和容器间的通信"></a>容器和容器间的通信</h3><p>3种方式：IP、Docker DNS server 、joined  </p>
-<p>IP方式<br>使用docker network connect将现有容器加入到指定网络实现容器间的通信。  </p>
-<p>Docker DNS server<br>Docker daemon内嵌了一个DNS Server通过Docker run –name定义的容器名进行通信，只能是user-define网络可以使用，默认的bridge不行 。  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker run -itd  --name=wan_1 --network=mynet centos_10_23 </div><div class="line">docker run -itd  --name=wan_2 --network=my_net centos_10_23</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker exec -it 8549430966f7 bash</div></pre></td></tr></table></figure>
-<p>ping wan_1<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_12.png" alt=""></p>
-<p>joined方式<br>两个容器共享一个网络栈他，共享网卡核配置信息。joined容器之间通过127.0.0.1直接通信  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">docker run -itd --name=wan1 centos_10_23</div><div class="line">docker run -itd --name=wan2 --network=container:wan1  centos_10_23</div></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_13.png" alt=""></p>
-<p>joined合适以下场景<br>1，不同容器中的程序希望通过loopback高效快速通信，比如web-Server和app-serve。<br>2，独立的网络监控容器用来监控网络流量。</p>
-<h3 id="容器访问外网"><a href="#容器访问外网" class="headerlink" title="容器访问外网"></a>容器访问外网</h3><p>容器访问外网(SNAT)<br>通过宿主机的iptables的snat，在宿主机查看  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_14.png" alt=""></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_15.png" alt=""></p>
-<p>外界访问容器<br>通过Docker-proxy<br>每一个映射端口，host都会启动一个Docker-proxy进程来处理访问容器的流量  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_16.png" alt=""></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_network_17.png" alt=""></p>
-
-      
-    </div>
-    <div class="article-footer">
-      
-    </div>
-  </article>
   
     
-  <section id="comments">
-  	
-  </section>
-
-
-  
-</div>
-
-  <nav class="bar bar-footer clearfix" data-stick-bottom>
-  <div class="bar-inner">
-  
-  <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2017/11/17/docker_network_overlay/" title="Docker多主机网络(overlay)"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
-    </li>
+      
+      
+      <section class="panel panel-default b-no">
+        <div class="panel-heading" role="tab">
+          <h3 class="panel-title">
+            <a data-toggle="collapse" href="#collapse2019" aria-expanded="true">
+              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
+              2019
+            </a>
+            <!-- <a href="/archives/2019" class="archive-year">2019</a> -->
+          </h3>
+        </div>
+        <div id="collapse2019" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2019">
+        <div class="panel-body">
+          <div class="collection">
     
     
-    <li class="next">
-      <a href="/2017/10/30/docker_machine/" title="Docker machine(docker 多主机部署)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
-    </li>
-    
-  </ul>
-  
-  
-  
-  <div class="bar-right">
-    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
-  </div>
-  
-  </div>
-</nav>
-  
+<a href="/2019/12/01/ceph_deploy/" class="collection-item" target="_blank" itemprop="url">
+  <time datetime="2019-12-01T13:45:59.000Z" itemprop="datePublished">2019-12-01</time>
+  <span>&nbsp;&nbsp;&nbsp;</span> ceph部署
+</a>
 
 
+  
+    
+    
+      
+        </div></div></div></section>
+      
+      
+      <section class="panel panel-default b-no">
+        <div class="panel-heading" role="tab">
+          <h3 class="panel-title">
+            <a data-toggle="collapse" href="#collapse2017" aria-expanded="true">
+              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
+              2017
+            </a>
+            <!-- <a href="/archives/2017" class="archive-year">2017</a> -->
+          </h3>
+        </div>
+        <div id="collapse2017" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2017">
+        <div class="panel-body">
+          <div class="collection">
+    
+    
+<a href="/2017/08/05/ceph_clone/" class="collection-item" target="_blank" itemprop="url">
+  <time datetime="2017-08-05T07:19:59.000Z" itemprop="datePublished">2017-08-05</time>
+  <span>&nbsp;&nbsp;&nbsp;</span> openstack秒级创建云主级秒级创建快照原理
+</a>
+
+
+  
+  
+    </div></div></div></section>
+  
+
+	    </div>
+  	</article>
+  	 	
 </main>
 
   
@@ -553,8 +434,6 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
-    
-        
     
     
 
