@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Longhorn部署安装和管理 | 我爱西红柿</title>
+  <meta name="description" content="Longhorn部署环境信息
+
+
+软件
+版本
+
+
+
+
+操作系统
+centos7.8
+
+
+rancher
+v2.3.6-ent2
+
+
+Kubernetes
+1.17.4
+
+
+Longhorn
+
+0.8.1
+
+
+
+初始化节点上安装iscsi插件1yum install iscsi-initiator-utils
+将需要添加到Longhorn的磁盘进行格式化和挂载到/var/lib/longhorn目录">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Longhorn部署安装和管理">
+<meta property="og:url" content="http://yoursite.com/2020/06/16/longhorn_install/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="Longhorn部署环境信息
+
+
+软件
+版本
+
+
+
+
+操作系统
+centos7.8
+
+
+rancher
+v2.3.6-ent2
+
+
+Kubernetes
+1.17.4
+
+
+Longhorn
+
+0.8.1
+
+
+
+初始化节点上安装iscsi插件1yum install iscsi-initiator-utils
+将需要添加到Longhorn的磁盘进行格式化和挂载到/var/lib/longhorn目录">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1d77fc2a9a83be50cb29d.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1d7a6c2a9a83be50ce522.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1d855c2a9a83be50dc5ad.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1d892c2a9a83be50e105f.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1d8eec2a9a83be50e815c.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1f81ac2a9a83be535b93f.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed1f866c2a9a83be535fce0.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed2200bc2a9a83be5658a4d.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed2216ec2a9a83be567a3e8.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-4.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed20017c2a9a83be53ebac6.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-7.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed20429c2a9a83be5433ddd.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-11.png">
+<meta property="og:updated_time" content="2020-06-16T07:19:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Longhorn部署安装和管理">
+<meta name="twitter:description" content="Longhorn部署环境信息
+
+
+软件
+版本
+
+
+
+
+操作系统
+centos7.8
+
+
+rancher
+v2.3.6-ent2
+
+
+Kubernetes
+1.17.4
+
+
+Longhorn
+
+0.8.1
+
+
+
+初始化节点上安装iscsi插件1yum install iscsi-initiator-utils
+将需要添加到Longhorn的磁盘进行格式化和挂载到/var/lib/longhorn目录">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5ed1d77fc2a9a83be50cb29d.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/06/16/longhorn_install/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">17</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.43px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.71px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Python/" style="font-size: 13.14px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.29px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.43px;">ceph</a> <a href="/tags/docker/" style="font-size: 14px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 13.86px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.29px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.57px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.14px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.14px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/分布式存储/">分布式存储</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/16/longhorn_install/" class="title">Longhorn部署安装和管理</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-16T07:19:59.000Z" itemprop="datePublished">2020-06-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/分布式存储/">分布式存储</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/05/25/rook_ceph/" class="title">Rook-ceph</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-05-25T07:19:59.000Z" itemprop="datePublished">2020-05-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/04/26/rancher_network/" class="title">Rancher容器集群跨主机网络模式切换</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-04-26T13:45:59.000Z" itemprop="datePublished">2020-04-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/prometheus/">prometheus</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/03/14/thanos/" class="title">Thanos初体验</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-03-14T15:27:44.000Z" itemprop="datePublished">2020-03-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/docker/">docker</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/02/22/harbor_notary/" class="title">容器镜像签名</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-02-22T15:27:44.000Z" itemprop="datePublished">2020-02-22</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Longhorn部署"><span class="toc-number">1.</span> <span class="toc-text">Longhorn部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境信息"><span class="toc-number">1.1.</span> <span class="toc-text">环境信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化"><span class="toc-number">1.2.</span> <span class="toc-text">初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署Longhorn"><span class="toc-number">1.3.</span> <span class="toc-text">部署Longhorn</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#扩容磁盘"><span class="toc-number">1.4.</span> <span class="toc-text">扩容磁盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储卷扩容"><span class="toc-number">1.5.</span> <span class="toc-text">存储卷扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#存储卷快照"><span class="toc-number">1.6.</span> <span class="toc-text">存储卷快照</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Longhorn备份和灾难恢复"><span class="toc-number">2.</span> <span class="toc-text">Longhorn备份和灾难恢复</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">2.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据卷备份"><span class="toc-number">2.2.</span> <span class="toc-text">数据卷备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据卷还原"><span class="toc-number">2.3.</span> <span class="toc-text">数据卷还原</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据卷的灾难恢复"><span class="toc-number">2.4.</span> <span class="toc-text">数据卷的灾难恢复</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-longhorn_install" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Longhorn部署安装和管理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/06/16/longhorn_install/" class="article-date">
+	  <time datetime="2020-06-16T07:19:59.000Z" itemprop="datePublished">2020-06-16</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/分布式存储/">分布式存储</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/Longhorn/">Longhorn</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/06/16/longhorn_install/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 863(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="Longhorn部署"><a href="#Longhorn部署" class="headerlink" title="Longhorn部署"></a>Longhorn部署</h2><h3 id="环境信息"><a href="#环境信息" class="headerlink" title="环境信息"></a>环境信息</h3><table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>centos7.8</td>
+</tr>
+<tr>
+<td>rancher</td>
+<td>v2.3.6-ent2</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>1.17.4</td>
+</tr>
+<tr>
+<td>Longhorn</td>
+<td></td>
+<td>0.8.1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>节点上安装iscsi插件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install iscsi-initiator-utils</div></pre></td></tr></table></figure></p>
+<p>将需要添加到Longhorn的磁盘进行格式化和挂载到/var/lib/longhorn目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkfs.xfs /dev/vdb</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount /dev/vdb /var/lib/longhorn</div></pre></td></tr></table></figure>
+<h3 id="部署Longhorn"><a href="#部署Longhorn" class="headerlink" title="部署Longhorn"></a>部署Longhorn</h3><p>通过Rancher应用商店启动Longhorn<br><img src="https://pic.downk.cc/item/5ed1d77fc2a9a83be50cb29d.jpg" alt=""></p>
+<p>根据实际情况配置参数<br><img src="https://pic.downk.cc/item/5ed1d7a6c2a9a83be50ce522.jpg" alt=""></p>
+<p>启动后访问Longhorn</p>
+<p><img src="https://pic.downk.cc/item/5ed1d855c2a9a83be50dc5ad.jpg" alt=""></p>
+<p>在rancher中创建workload绑定PVC进行测试</p>
+<p><img src="https://pic.downk.cc/item/5ed1d892c2a9a83be50e105f.jpg" alt=""></p>
+<p><img src="https://pic.downk.cc/item/5ed1d8eec2a9a83be50e815c.jpg" alt=""></p>
+<h3 id="扩容磁盘"><a href="#扩容磁盘" class="headerlink" title="扩容磁盘"></a>扩容磁盘</h3><p>在Longhorn界面上选择对应的节点<br><img src="https://pic.downk.cc/item/5ed1f81ac2a9a83be535b93f.jpg" alt=""></p>
+<p>添加磁盘挂载路径即可  </p>
+<p><img src="https://pic.downk.cc/item/5ed1f866c2a9a83be535fce0.jpg" alt=""></p>
+<h3 id="存储卷扩容"><a href="#存储卷扩容" class="headerlink" title="存储卷扩容"></a>存储卷扩容</h3><p>有两种扩展Longhorn体积的方法：使用PersistentVolumeClaim（PVC）和Longhorn UI。</p>
+<p>如果使用的是Kubernetes v1.14或v1.15，则只能使用Longhorn UI扩展卷。</p>
+<p>通过PVC<br>仅在以下情况下应用此方法：</p>
+<ul>
+<li>Kubernetes版本v1.16或更高版本。</li>
+<li>Kubernetes使用Longhorn StorageClass动态设置PVC。</li>
+<li>StorageClass中的allowVolumeExpansion字段设置为true。  </li>
+</ul>
+<p>用法：将workload副本设置为0，在Longhorn卷找到相应的PVC，然后通过kubectl修改对应的pvc中的spec.resources.requests.字段，在Longhorn中对应的卷大小会自动更新。</p>
+<h3 id="存储卷快照"><a href="#存储卷快照" class="headerlink" title="存储卷快照"></a>存储卷快照</h3><p>选择对应的存储卷，创建快照<br><img src="https://pic.downk.cc/item/5ed2200bc2a9a83be5658a4d.jpg" alt=""></p>
+<p>还原快照<br>1、将挂载此卷的workload副本数设置为0<br>2、重新将此卷使用维护模式挂载到对应的节点。</p>
+<p><img src="https://pic.downk.cc/item/5ed2216ec2a9a83be567a3e8.jpg" alt=""></p>
+<p>3、将此卷重新卸载，并以非维护模式挂载到节点上。<br>4、应用启动查看数据。    </p>
+<h2 id="Longhorn备份和灾难恢复"><a href="#Longhorn备份和灾难恢复" class="headerlink" title="Longhorn备份和灾难恢复"></a>Longhorn备份和灾难恢复</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Longhorn做为分布式块存储，本身能支持针对存储卷的备份和数据卷的灾难恢复。用以下示例讲解Longhorn存储卷备份和灾难恢复。</p>
+<h3 id="数据卷备份"><a href="#数据卷备份" class="headerlink" title="数据卷备份"></a>数据卷备份</h3><p>Longhorn支持存储卷的备份，将数据卷备份到AWS S3、NFSv4，采用快照方式增量备份到后端的backend存储上。以NFSv4做为后端backend为例配置后端存储。</p>
+<p>节点安装NFS套件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install nfs-utils</div></pre></td></tr></table></figure></p>
+<p>创建共享目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir /nfsdata</div></pre></td></tr></table></figure></p>
+<p>配置exports<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vim /etc/exports</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/nfsdata  *(rw,sync,no_root_squash)</div></pre></td></tr></table></figure>
+<p>启动服务并设置开机启动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">systemctl enable rpcbind</div><div class="line">systemctl enable nfs-server</div><div class="line">systemctl enable nfs-lock</div><div class="line">systemctl enable nfs-idmap</div><div class="line">systemctl start rpcbind</div><div class="line">systemctl start nfs-server</div><div class="line">systemctl start nfs-lock</div><div class="line">systemctl start nfs-idmap</div></pre></td></tr></table></figure></p>
+<p>NFSV4挂载测试  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount -t nfs host_ip:/nfsdata /mnt/</div></pre></td></tr></table></figure>
+<p>在Longhorn界面上配置存储对接  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-1.png" alt=""></p>
+<p>创建备份  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-2.png" alt=""></p>
+<p>在对应的backup选项内可以看见创建出来的备份</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-3.png" alt=""></p>
+<p>对应nfs服务器查看数据，可以看见数据被分成了一个个块，以分块的方式存储。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">[root@iZ2zegq8vbaetetmgkyq4pZ /]# tree /nfsdata/</div><div class="line">/nfsdata/</div><div class="line">└── backupstore</div><div class="line">    └── volumes</div><div class="line">        └── 5d</div><div class="line">            └── d6</div><div class="line">                └── pvc-0853fa8c-512a-11ea-98d5-00163e122063</div><div class="line">                    ├── backups</div><div class="line">                    │   └── backup_backup-b39c1feeeef94bf5.cfg</div><div class="line">                    ├── blocks</div><div class="line">                    │   ├── 2e</div><div class="line">                    │   │   └── 96</div><div class="line">                    │   │       └── 2e96c43b271147b95c36f12d09a284062e7ca746185a99f203d6e857cb62721a.blk</div><div class="line">                    │   ├── 4b</div><div class="line">                    │   │   └── f3</div><div class="line">                    │   │       └── 4bf324201d1805d2c15fe5f97158ac376c7e01ffb21eaca00094eb70ecf673b5.blk</div><div class="line">                    │   ├── 73</div><div class="line">                    │   │   └── 18</div><div class="line">                    │   │       └── 731859029215873fdac1c9f2f8bd25a334abf0f3a9e1b057cf2cacc2826d86b0.blk</div><div class="line">                    │   ├── a6</div><div class="line">                    │   │   └── b3</div><div class="line">                    │   │       └── a6b3b084f3a14e2557a4185d34fd07707ece662570298a02cf3fd745c6521725.blk</div><div class="line">                    │   ├── b2</div><div class="line">                    │   │   └── 2c</div><div class="line">                    │   │       └── b22c71a142d7c1f8b8ba287e27bf62752087cec2bc0c8b58db5a96047d138a73.blk</div><div class="line">                    │   ├── bd</div><div class="line">                    │   │   └── 90</div><div class="line">                    │   │       └── bd90eab7f660b8ae3c97a3a4cd4808d361518730282befc8e2113ae31b0a45ee.blk</div><div class="line">                    │   ├── d9</div><div class="line">                    │   │   └── 46</div><div class="line">                    │   │       └── d9462886143128037ae7c2e07bebd980c87ae4f1590c2dc4307962cc6d9f9f9f.blk</div><div class="line">                    │   └── ea</div><div class="line">                    │       └── 2c</div><div class="line">                    │           └── ea2c43cad3a82e7cc76695b0fa04bacced0c5bb4d041785eef85580d120fb383.blk</div><div class="line">                    └── volume.cfg</div><div class="line"></div><div class="line">23 directories, 10 files</div></pre></td></tr></table></figure></p>
+<h3 id="数据卷还原"><a href="#数据卷还原" class="headerlink" title="数据卷还原"></a>数据卷还原</h3><p>数据卷还原步骤：<br>1、基于备份卷创建一个还原卷。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-4.png" alt=""></p>
+<p>2、基于还原卷可创建新的PV和PVC或覆盖原有pvc。</p>
+<p><img src="https://pic.downk.cc/item/5ed20017c2a9a83be53ebac6.jpg" alt=""></p>
+<p>注意：<br>1、workload暂停使用。<br>2、覆盖原有pvc需要在Longhorn界面将原有volume删除。<br>3、将新创建的PVC挂载到POD上,查看卷内数据。  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-7.png" alt=""></p>
+<h3 id="数据卷的灾难恢复"><a href="#数据卷的灾难恢复" class="headerlink" title="数据卷的灾难恢复"></a>数据卷的灾难恢复</h3><p><img src="https://pic.downk.cc/item/5ed20429c2a9a83be5433ddd.jpg" alt=""><br>Longhorn数据卷的灾难恢复步骤：</p>
+<p>1、A集群做为主集群对数据卷进行备份到远端backend。<br>2、B集群做为备集群指向与A集群一样的远端backend。</p>
+<p>3、在B集群基于备份卷创建Create Disaster Recovery Volume。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-8.png" alt=""></p>
+<p>4、基于创建的Create Disaster Recovery Volume创建PVC到对应的namespace。</p>
+<p>激活Disaster Recovery</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-9.png" alt="">  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-10.png" alt=""></p>
+<p>5、创建POD挂载新建的PVC。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Longhorn-11.png" alt=""></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/05/25/rook_ceph/" title="Rook-ceph">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
