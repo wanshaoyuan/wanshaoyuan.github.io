@@ -16,18 +16,46 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2019/12 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2019/12/index.html">
+  <title>容器云平台GPU资源的应用 | 我爱西红柿</title>
+  <meta name="description" content="环境准备阿里云创建GPU计算型，规格型号为GPU计算型GN5，对应NVIDA的GPU型号为Nvidia P100 GPU
+先决条件
+主机安装gcc
+bios禁用禁用secure boot，也就是设置为disable
+如果没有禁用secure boot,会导致NVIDIA驱动安装失败，或者不正常。
+禁用nouveau打开编辑配置文件：
+1234sudo gedit /etc/modprobe.d/b">
+<meta property="og:type" content="article">
+<meta property="og:title" content="容器云平台GPU资源的应用">
+<meta property="og:url" content="http://yoursite.com/2020/04/26/gpu_user/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="环境准备阿里云创建GPU计算型，规格型号为GPU计算型GN5，对应NVIDA的GPU型号为Nvidia P100 GPU
+先决条件
+主机安装gcc
+bios禁用禁用secure boot，也就是设置为disable
+如果没有禁用secure boot,会导致NVIDIA驱动安装失败，或者不正常。
+禁用nouveau打开编辑配置文件：
+1234sudo gedit /etc/modprobe.d/b">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb03b66c2a9a83be5ff0559.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb04772c2a9a83be50c1bd9.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb047ebc2a9a83be50c91af.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb04830c2a9a83be50cd60a.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb04872c2a9a83be50d1978.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb048a6c2a9a83be50d48e2.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb048c7c2a9a83be50d641b.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb048f3c2a9a83be50d8d7e.png">
+<meta property="og:updated_time" content="2020-04-26T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="容器云平台GPU资源的应用">
+<meta name="twitter:description" content="环境准备阿里云创建GPU计算型，规格型号为GPU计算型GN5，对应NVIDA的GPU型号为Nvidia P100 GPU
+先决条件
+主机安装gcc
+bios禁用禁用secure boot，也就是设置为disable
+如果没有禁用secure boot,会导致NVIDIA驱动安装失败，或者不正常。
+禁用nouveau打开编辑配置文件：
+1234sudo gedit /etc/modprobe.d/b">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5eb03b66c2a9a83be5ff0559.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2019/12/index.html">
+  <link rel="canonical" href="http://yoursite.com/2020/04/26/gpu_user/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,49 +354,157 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境准备"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#先决条件"><span class="toc-number">1.1.</span> <span class="toc-text">先决条件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装NVIDIA驱动"><span class="toc-number">2.</span> <span class="toc-text">安装NVIDIA驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置docker使用GPU"><span class="toc-number">3.</span> <span class="toc-text">配置docker使用GPU</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装NVIDIA-docker2"><span class="toc-number">3.1.</span> <span class="toc-text">安装NVIDIA-docker2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#修改默认RUNTIME"><span class="toc-number">3.2.</span> <span class="toc-text">修改默认RUNTIME</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试docker调用"><span class="toc-number">3.3.</span> <span class="toc-text">测试docker调用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#k8s配置对接"><span class="toc-number">4.</span> <span class="toc-text">k8s配置对接</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2019/12</h1>
-	      <p class="text-muted">共 1 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-gpu_user" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      容器云平台GPU资源的应用
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2019" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2019
-            </a>
-            <!-- <a href="/archives/2019" class="archive-year">2019</a> -->
-          </h3>
-        </div>
-        <div id="collapse2019" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2019">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/04/26/gpu_user/" class="article-date">
+	  <time datetime="2020-04-26T13:45:59.000Z" itemprop="datePublished">2020-04-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/04/26/gpu_user/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 927(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 4(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><p>阿里云创建GPU计算型，规格型号为GPU计算型GN5，对应NVIDA的GPU型号为Nvidia P100 GPU</p>
+<h4 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h4><ul>
+<li>主机安装gcc</li>
+<li>bios禁用禁用secure boot，也就是设置为disable</li>
+<li>如果没有禁用secure boot,会导致NVIDIA驱动安装失败，或者不正常。</li>
+<li><p>禁用nouveau<br>打开编辑配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sudo gedit /etc/modprobe.d/blacklist.conf</div><div class="line">在最后一行添加：</div><div class="line"></div><div class="line">blacklist nouveau</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装使用docker-ce:19.03</p>
+</li>
+</ul>
+<h3 id="安装NVIDIA驱动"><a href="#安装NVIDIA驱动" class="headerlink" title="安装NVIDIA驱动"></a>安装NVIDIA驱动</h3><p>阿里云启动机器时也可以选择自动安装驱动，这里为了方便连接使用手动方式。  </p>
+<p>linux上安装NVIDIA驱动有两种方式</p>
+<p>方式一：通过执行二进制脚本安装</p>
+<p>方式二：通过安装cuda的rpm包的方式安装</p>
+<p>查看GPU型号<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"> lspci|grep NV</div><div class="line">00:08.0 3D controller: NVIDIA Corporation GP100GL [Tesla P100 PCIe 16GB] (rev a1)</div></pre></td></tr></table></figure></p>
+<p>选择对应的型号下载gpu驱动<br><a href="https://www.nvidia.cn/Download/index.aspx?lang=cn" target="_blank" rel="external">https://www.nvidia.cn/Download/index.aspx?lang=cn</a><br><img src="https://pic.downk.cc/item/5eb03b66c2a9a83be5ff0559.jpg" alt=""><br>安装gcc<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">yum install gcc* -y</div></pre></td></tr></table></figure></p>
+<p>下载驱动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget https://cn.download.nvidia.cn/tesla/440.64.00/nvidia-driver-local-repo-rhel7-440.64.00-1.0-1.x86_64.rpm</div></pre></td></tr></table></figure></p>
+<p>若下载慢，也可以通过以下链接下载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https://v2.fangcloud.com/share/cec9fca23cb2fe56b2d9d0732f</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rpm -ihv nvidia-driver-local-repo-rhel7-440.64.00-1.0-1.x86_64.rpm</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install cuda-driver -y</div></pre></td></tr></table></figure>
+<p>重启节点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">reboot</div></pre></td></tr></table></figure></p>
+<p>查看gpu<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">nvidia-smi </div><div class="line">Sat Apr 25 00:32:30 2020       </div><div class="line">+-----------------------------------------------------------------------------+</div><div class="line">| NVIDIA-SMI 440.64.00    Driver Version: 440.64.00    CUDA Version: 10.2     |</div><div class="line">|-------------------------------+----------------------+----------------------+</div><div class="line">| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |</div><div class="line">| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |</div><div class="line">|===============================+======================+======================|</div><div class="line">|   0  Tesla P100-PCIE...  Off  | 00000000:00:08.0 Off |                    0 |</div><div class="line">| N/A   24C    P0    26W / 250W |      0MiB / 16280MiB |      4%      Default |</div><div class="line">+-------------------------------+----------------------+----------------------+</div><div class="line">                                                                               </div><div class="line">+-----------------------------------------------------------------------------+</div><div class="line">| Processes:                                                       GPU Memory |</div><div class="line">|  GPU       PID   Type   Process name                             Usage      |</div><div class="line">|=============================================================================|</div><div class="line">|  No running processes found                                                 |</div><div class="line">+-----------------------------------------------------------------------------+</div></pre></td></tr></table></figure></p>
+<h3 id="配置docker使用GPU"><a href="#配置docker使用GPU" class="headerlink" title="配置docker使用GPU"></a>配置docker使用GPU</h3><p>docker要使用GPU，需要将docker的runtime替换为NVIDIA的docker-runtime，替换方法如下<br><img src="https://pic.downk.cc/item/5eb04772c2a9a83be50c1bd9.jpg" alt=""></p>
+<h4 id="安装NVIDIA-docker2"><a href="#安装NVIDIA-docker2" class="headerlink" title="安装NVIDIA-docker2"></a>安装NVIDIA-docker2</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">distribution=$(. /etc/os-release;echo $ID$VERSION_ID)</div><div class="line">curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.repo | \</div><div class="line">sudo tee /etc/yum.repos.d/nvidia-docker.repo</div></pre></td></tr></table></figure>
+<p>更新yum源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">DIST=$(sed -n &apos;s/releasever=//p&apos; /etc/yum.conf)</div><div class="line">DIST=$&#123;DIST:-$(. /etc/os-release; echo $VERSION_ID)&#125;</div><div class="line">sudo rpm -e gpg-pubkey-f796ecb0</div><div class="line">sudo gpg --homedir /var/lib/yum/repos/$(uname -m)/$DIST/*/gpgdir --delete-key f796ecb0</div><div class="line">sudo gpg --homedir /var/lib/yum/repos/$(uname -m)/latest/nvidia-docker/gpgdir --delete-key f796ecb0</div><div class="line">sudo gpg --homedir /var/lib/yum/repos/$(uname -m)/latest/nvidia-container-runtime/gpgdir --delete-key f796ecb0</div><div class="line">sudo gpg --homedir /var/lib/yum/repos/$(uname -m)/latest/libnvidia-container/gpgdir --delete-key f796ecb0</div><div class="line">sudo yum update</div></pre></td></tr></table></figure></p>
+<p>安装NVIDIA-docker2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo yum install nvidia-docker2 -y</div></pre></td></tr></table></figure></p>
+<h4 id="修改默认RUNTIME"><a href="#修改默认RUNTIME" class="headerlink" title="修改默认RUNTIME"></a>修改默认RUNTIME</h4><p>安装后会自动替换原有的daemon.json文件，需要重新修改替换，将默认的runtime替换为NVIDIA-container-runtime<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">tee  /etc/docker/daemon.json &lt;&lt; EOF</div><div class="line">&#123;</div><div class="line">    &quot;default-runtime&quot;: &quot;nvidia&quot;,</div><div class="line">    &quot;registry-mirrors&quot;: [&quot;https://vqgjby9l.mirror.aliyuncs.com&quot;],</div><div class="line">    &quot;runtimes&quot;: &#123;</div><div class="line">        &quot;nvidia&quot;: &#123;</div><div class="line">            &quot;path&quot;: &quot;nvidia-container-runtime&quot;,</div><div class="line">            &quot;runtimeArgs&quot;: []</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">   &quot;log-opts&quot;: &#123;</div><div class="line">      &quot;max-size&quot;: &quot;100m&quot;,</div><div class="line">      &quot;max-file&quot;: &quot;3&quot;</div><div class="line"> &#125;</div><div class="line">&#125;</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>重启docker<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl daemon-reload &amp;&amp; systemctl restart docker</div></pre></td></tr></table></figure></p>
+<p>执行docker info检查</p>
+<p><img src="https://pic.downk.cc/item/5eb047ebc2a9a83be50c91af.png" alt=""></p>
+<h4 id="测试docker调用"><a href="#测试docker调用" class="headerlink" title="测试docker调用"></a>测试docker调用</h4><p>使用一个简单的训练任务容器测试是否能正常通过docker调用GPU<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd wanshaoyuan/pytorch:v1.0</div></pre></td></tr></table></figure></p>
+<p>查看GPU状态，有将正常进程调度到GPU上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nvida-smi</div></pre></td></tr></table></figure></p>
+<p><img src="https://pic.downk.cc/item/5eb04830c2a9a83be50cd60a.png" alt=""></p>
+<h3 id="k8s配置对接"><a href="#k8s配置对接" class="headerlink" title="k8s配置对接"></a>k8s配置对接</h3><p>docker对接成功后就可以正常使用容器应用调用GPU资源了，但此时kubernetes还是无法发现GPU资源对象，需要在在kubernetes中安装k8s-device-plugin插件这样kubelet就能正常上报GPU资源信息<br>安装k8s-device-plugin<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml</div></pre></td></tr></table></figure></p>
+<p>安装完成后会在kube-system命名空间中以daemonset方式部署nvidia-device-plugin<br>此时通过kubectl查看节点上报资源信息可以看见GPU资源对象了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl describe node/xxx</div></pre></td></tr></table></figure></p>
+<p><img src="https://pic.downk.cc/item/5eb04872c2a9a83be50d1978.png" alt=""></p>
+<p>在kubernetes中运行训练任务进行测试<br><img src="https://pic.downk.cc/item/5eb048a6c2a9a83be50d48e2.png" alt=""></p>
+<p>默认情况下采用独占模式，在资源配置中设置gpu资源对象<br><img src="https://pic.downk.cc/item/5eb048c7c2a9a83be50d641b.png" alt=""></p>
+<p>kubernetes会将workload自动调度到有GPU的节点上<br>在此查看GPU资源使用信息，调度成功。</p>
+<p><img src="https://pic.downk.cc/item/5eb048f3c2a9a83be50d8d7e.png" alt=""><br>参考文档：<br><a href="https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#redhat-x86_64" target="_blank" rel="external">https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#redhat-x86_64</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/04/26/rancher_network/" title="Rancher容器集群跨主机网络模式切换"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
     
     
-<a href="/2019/12/01/ceph_deploy/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2019-12-01T13:45:59.000Z" itemprop="datePublished">2019-12-01</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> ceph部署
-</a>
-
-
+    <li class="next">
+      <a href="/2020/03/14/thanos/" title="Thanos初体验">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   
@@ -406,6 +542,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 

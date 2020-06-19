@@ -16,18 +16,52 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档: 2019/12 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/2019/12/index.html">
+  <title>POD间网络不通的排查思路 | 我爱西红柿</title>
+  <meta name="description" content="POD间网络不通VXLAN网络模式canal网络插件测试以下场景  
+
+
+通过Rancher UI检查system项目下canal网络插件是否运行正常。
+在对应项目下以daemonset方式启动多个POD，分布到不同节点，POD内进行ping测试。
+POD内直接ping对端宿主机的flannel.1网卡。
+在POD所在宿主机上ping对应POD ip。
+主机上udp 8472端口是否监听
+
+
+ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="POD间网络不通的排查思路">
+<meta property="og:url" content="http://yoursite.com/2020/06/26/pod_network/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="POD间网络不通VXLAN网络模式canal网络插件测试以下场景  
+
+
+通过Rancher UI检查system项目下canal网络插件是否运行正常。
+在对应项目下以daemonset方式启动多个POD，分布到不同节点，POD内进行ping测试。
+POD内直接ping对端宿主机的flannel.1网卡。
+在POD所在宿主机上ping对应POD ip。
+主机上udp 8472端口是否监听
+
+
+ma">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed27dbdc2a9a83be5fb3d85.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ed27f6fc2a9a83be5fe1778.jpg">
+<meta property="og:updated_time" content="2020-06-26T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="POD间网络不通的排查思路">
+<meta name="twitter:description" content="POD间网络不通VXLAN网络模式canal网络插件测试以下场景  
+
+
+通过Rancher UI检查system项目下canal网络插件是否运行正常。
+在对应项目下以daemonset方式启动多个POD，分布到不同节点，POD内进行ping测试。
+POD内直接ping对端宿主机的flannel.1网卡。
+在POD所在宿主机上ping对应POD ip。
+主机上udp 8472端口是否监听
+
+
+ma">
+<meta name="twitter:image" content="https://pic.downk.cc/item/5ed27dbdc2a9a83be5fb3d85.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/2019/12/index.html">
+  <link rel="canonical" href="http://yoursite.com/2020/06/26/pod_network/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,49 +360,151 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#POD间网络不通"><span class="toc-number">1.</span> <span class="toc-text">POD间网络不通</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#VXLAN网络模式"><span class="toc-number">1.1.</span> <span class="toc-text">VXLAN网络模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#macvlan网络插件"><span class="toc-number">1.2.</span> <span class="toc-text">macvlan网络插件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#端口多vlan通过场景验证"><span class="toc-number">1.3.</span> <span class="toc-text">端口多vlan通过场景验证</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档: 2019/12</h1>
-	      <p class="text-muted">共 1 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
+  <div class="content">
+  <article id="post-pod_network" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    
+    <div class="article-header">
       
+        
+  
+    <h1 class="article-title" itemprop="name">
+      POD间网络不通的排查思路
+    </h1>
+  
+
       
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2019" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2019
-            </a>
-            <!-- <a href="/archives/2019" class="archive-year">2019</a> -->
-          </h3>
-        </div>
-        <div id="collapse2019" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2019">
-        <div class="panel-body">
-          <div class="collection">
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/06/26/pod_network/" class="article-date">
+	  <time datetime="2020-06-26T13:45:59.000Z" itemprop="datePublished">2020-06-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/06/26/pod_network/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,477(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="POD间网络不通"><a href="#POD间网络不通" class="headerlink" title="POD间网络不通"></a>POD间网络不通</h3><h4 id="VXLAN网络模式"><a href="#VXLAN网络模式" class="headerlink" title="VXLAN网络模式"></a>VXLAN网络模式</h4><p>canal网络插件<br>测试以下场景  </p>
+<p><img src="https://pic.downk.cc/item/5ed27dbdc2a9a83be5fb3d85.jpg" alt=""></p>
+<ul>
+<li>通过Rancher UI检查system项目下canal网络插件是否运行正常。</li>
+<li>在对应项目下以daemonset方式启动多个POD，分布到不同节点，POD内进行ping测试。</li>
+<li>POD内直接ping对端宿主机的flannel.1网卡。</li>
+<li>在POD所在宿主机上ping对应POD ip。</li>
+<li>主机上udp 8472端口是否监听</li>
+<li></li>
+</ul>
+<h4 id="macvlan网络插件"><a href="#macvlan网络插件" class="headerlink" title="macvlan网络插件"></a>macvlan网络插件</h4><p><img src="https://pic.downk.cc/item/5ed27f6fc2a9a83be5fe1778.jpg" alt=""></p>
+<p>端口单vlan通过场景验证<br>找2台机器worker1和worker2，在2台机器中，分别给需要支持macvlan的网卡手动添加一个IP，假如网卡为eth0。 添加IP 在worker1中执行如下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip address add 192.168.1.2/24 dev eth0</div></pre></td></tr></table></figure></p>
+<p>在worker2中执行如下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip address add 192.168.1.3/24 dev eth0</div></pre></td></tr></table></figure></p>
+<p>检查IP是否添加成功 以worker1为例，添加前<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">ip a</div><div class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1</div><div class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</div><div class="line">    inet 127.0.0.1/8 scope host lo</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 ::1/128 scope host</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9001 qdisc mq state UP group default qlen 1000</div><div class="line">    link/ether 0a:06:7c:64:b7:f6 brd ff:ff:ff:ff:ff:ff</div><div class="line">    inet 172.31.15.100/20 brd 172.31.15.255 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 fe80::806:7cff:fe64:b7f6/64 scope link</div><div class="line">       valid_lft forever preferred_lft forever</div></pre></td></tr></table></figure></p>
+<p>添加后<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1</div><div class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</div><div class="line">    inet 127.0.0.1/8 scope host lo</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 ::1/128 scope host</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9001 qdisc mq state UP group default qlen 1000</div><div class="line">    link/ether 0a:06:7c:64:b7:f6 brd ff:ff:ff:ff:ff:ff</div><div class="line">    inet 172.31.15.100/20 brd 172.31.15.255 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet 192.168.1.2/24 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 fe80::806:7cff:fe64:b7f6/64 scope link</div><div class="line">       valid_lft forever preferred_lft forever</div></pre></td></tr></table></figure></p>
+<p>检查路由规则 给网卡添加IP时，会自动添加路由规则，可通过route -n查看。</p>
+<p>添加前</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">route -n</div><div class="line">Kernel IP routing table</div><div class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</div><div class="line">0.0.0.0         172.31.0.1      0.0.0.0         UG    0      0        0 eth0</div><div class="line">172.31.0.0      0.0.0.0         255.255.240.0   U     0      0        0 eth0</div></pre></td></tr></table></figure>
+<p>添加后<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">route -n</div><div class="line">Kernel IP routing table</div><div class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</div><div class="line">0.0.0.0         172.31.0.1      0.0.0.0         UG    0      0        0 eth0</div><div class="line">172.31.0.0      0.0.0.0         255.255.240.0   U     0      0        0 eth0</div><div class="line">192.168.1.0     0.0.0.0         255.255.255.0   U     0      0        0 eth0</div></pre></td></tr></table></figure></p>
+<p>跨主机互ping验证 只要跨主机在网卡上添加ip且互相可以ping通，说明iaas层就没问题，此时worker1和worker2上的eth0网卡详情如下  </p>
+<p>worker1 eth0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9001 qdisc mq state UP group default qlen 1000</div><div class="line">    link/ether 0a:06:7c:64:b7:f6 brd ff:ff:ff:ff:ff:ff</div><div class="line">    inet 172.31.15.100/20 brd 172.31.15.255 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet 192.168.1.2/24 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 fe80::806:7cff:fe64:b7f6/64 scope link</div><div class="line">       valid_lft forever preferred_lft forever</div></pre></td></tr></table></figure></p>
+<p>worker2 eth0  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 9001 qdisc mq state UP group default qlen 1000</div><div class="line">    link/ether 0a:16:e4:de:a5:68 brd ff:ff:ff:ff:ff:ff</div><div class="line">    inet 172.31.1.41/20 brd 172.31.15.255 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet 192.168.1.3/24 scope global eth0</div><div class="line">       valid_lft forever preferred_lft forever</div><div class="line">    inet6 fe80::816:e4ff:fede:a568/64 scope link</div><div class="line">       valid_lft forever preferred_lft forever</div></pre></td></tr></table></figure>
+<p>从worker1上ping worker2机器使用macvlan ip进行互ping</p>
+<h4 id="端口多vlan通过场景验证"><a href="#端口多vlan通过场景验证" class="headerlink" title="端口多vlan通过场景验证"></a>端口多vlan通过场景验证</h4><p>验证方式与单端口一致，唯一区别在于多vlan情况下，交换机端口配置的是trunk模式，允许多个vlan通过，也就是交换机本身不会对端口打vlan-tag了，需要通过软件层面给对应的网卡的数据包打上vlan-tag，否则不能通信，在linux操作系统中可以通过建立子vlan口的方式将IP地址配置在子vlan口上，对应的数据包经过子vlan口后会自动打上vlan-tag 实现使用以下方式：</p>
+<p>在需要测试的两台worker节点上按下述方法创建好子vlan口，然后在子vlan口上配置ip，互相ping测试。 测试跨子网通信，则需要提前配置好路由，手动添加静态路由由即可。</p>
+<p>安装vconfig命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install -y vlan</div></pre></td></tr></table></figure></p>
+<p>给eth0设置vlan 404<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">vconfig add eth0 404    </div><div class="line">//添加eth0.404子接口</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip address add 192.168.1.101  dev eth0.404  //设置IP</div></pre></td></tr></table></figure>
+<p>测试路由<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip route add 192.168.1.0/24 dev eth0.404</div></pre></td></tr></table></figure></p>
+<p>//设置路由,192.168.1.0网段的从eth0.404发出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ifconfig eth0.404 up</div></pre></td></tr></table></figure>
+<p>删除方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vconfig rem eth0.404</div></pre></td></tr></table></figure></p>
+<p>实际生产环境中建议配置使用多网卡做Bond方式，保证网卡的高可用，一般推荐模式为Bond1模式即为主备模式，需要提前验证Bond配置是否生效。 </p>
+<p>验证</p>
+<p>查看bond状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">cat /proc/net/bonding/bond0  </div><div class="line">Ethernet Channel Bonding Driver: v3.7.1 (April 27, 2011)</div><div class="line"></div><div class="line">Bonding Mode: fault-tolerance (active-backup)</div><div class="line">Primary Slave: None</div><div class="line">Currently Active Slave: eth1   #当前主接口</div><div class="line">MII Status: up</div><div class="line">MII Polling Interval (ms): 100</div><div class="line">Up Delay (ms): 0</div><div class="line">Down Delay (ms): 0</div><div class="line"></div><div class="line">Slave Interface: eth1</div><div class="line">MII Status: up</div><div class="line">Speed: Unknown  //openstack虚拟化网卡默认不显示速率</div><div class="line">Duplex: Unknown //openstack虚拟化网卡默认不显示双工</div><div class="line">Link Failure Count: 0 </div><div class="line">Permanent HW addr: fa:16:3e:47:c7:a0</div><div class="line">Slave queue ID: 0</div></pre></td></tr></table></figure></p>
+<p>测试方法 Down掉当前主接口，进行测试，看是否会进行网卡切换，网络是否会中断。</p>
+<p>模拟容器内macvlan网络测试 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"># 创建namespace</div><div class="line">ip netns add ns1</div><div class="line">ip netns add ns2</div><div class="line"></div><div class="line"># 基于物理网卡创建macvlan网卡</div><div class="line">ip link add mv1 link eno1 type macvlan mode bridge</div><div class="line">ip link add mv2 link eno1 type macvlan mode bridge</div><div class="line"></div><div class="line"># 将网卡挂载到对应namespace中(若trunk模式，需要配置子vlan口，将子vlan口加入)  </div><div class="line">ip link set mv1 netns ns1</div><div class="line">ip link set mv2 netns ns2</div><div class="line"></div><div class="line"># 启动网卡 </div><div class="line">ip netns exec ns1 ip link set dev mv1 up</div><div class="line">ip netns exec ns2 ip link set dev mv2 up</div><div class="line"></div><div class="line"># 设置IP地址  </div><div class="line">ip netns exec ns1 ifconfig mv1 192.168.1.50/24 up</div><div class="line">ip netns exec ns2 ifconfig mv2 192.168.1.60/24 up</div><div class="line"></div><div class="line"># 查看端口详细情况  </div><div class="line">ip netns exec ns1 ip a</div><div class="line">ip netns exec ns2 ip a</div><div class="line"></div><div class="line"># ping测试</div><div class="line">ip netns exec ns1 ping -c 4 192.168.1.60</div><div class="line"></div><div class="line"># 清除</div><div class="line">ip netns del ns1</div><div class="line">ip netns del ns2</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
     
     
-<a href="/2019/12/01/ceph_deploy/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2019-12-01T13:45:59.000Z" itemprop="datePublished">2019-12-01</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> ceph部署
-</a>
-
-
+    <li class="next">
+      <a href="/2020/06/16/longhorn_install/" title="Longhorn部署安装和管理">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
   
   
-    </div></div></div></section>
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
   
 
-	    </div>
-  	</article>
-  	 	
+
 </main>
 
   
@@ -406,6 +542,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
