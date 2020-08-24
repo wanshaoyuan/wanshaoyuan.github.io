@@ -16,24 +16,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>ETCD集群的备份与还原 | 我爱西红柿</title>
-  <meta name="description" content="概述：etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)/2个，比如你有3个节点做etcd-ha那么最多可以挂掉(">
+  <title>Kubernetes资源模型概述 | 我爱西红柿</title>
+  <meta name="description" content="为业务配置Request和Limit容器本身共享宿主机的资源，通过配置资源限制，能够更大程度利用宿主机的硬件资源，必免因为部分应用的问题导致影响其他运行的业务，在Kubernetes中资源限制方式主要通过Request和Limit。其中Request表示应用使用资源的最小值，Limit表示应用使用资源的最大值。资源管理的对象主要分为两种类型，可压缩资源和不可压缩资源，其中可压缩资源一般都以CPU资">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ETCD集群的备份与还原">
-<meta property="og:url" content="http://yoursite.com/2019/01/31/etcd_backup/index.html">
+<meta property="og:title" content="Kubernetes资源模型概述">
+<meta property="og:url" content="http://yoursite.com/2020/08/24/kubernetes_request_limit/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="概述：etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)/2个，比如你有3个节点做etcd-ha那么最多可以挂掉(">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_4.png">
-<meta property="og:updated_time" content="2019-01-31T13:45:59.000Z">
+<meta property="og:description" content="为业务配置Request和Limit容器本身共享宿主机的资源，通过配置资源限制，能够更大程度利用宿主机的硬件资源，必免因为部分应用的问题导致影响其他运行的业务，在Kubernetes中资源限制方式主要通过Request和Limit。其中Request表示应用使用资源的最小值，Limit表示应用使用资源的最大值。资源管理的对象主要分为两种类型，可压缩资源和不可压缩资源，其中可压缩资源一般都以CPU资">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/H254e4cdd48e740928b1a0dd3bec80f036.jpg">
+<meta property="og:updated_time" content="2020-08-24T13:45:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ETCD集群的备份与还原">
-<meta name="twitter:description" content="概述：etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)/2个，比如你有3个节点做etcd-ha那么最多可以挂掉(">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png">
+<meta name="twitter:title" content="Kubernetes资源模型概述">
+<meta name="twitter:description" content="为业务配置Request和Limit容器本身共享宿主机的资源，通过配置资源限制，能够更大程度利用宿主机的硬件资源，必免因为部分应用的问题导致影响其他运行的业务，在Kubernetes中资源限制方式主要通过Request和Limit。其中Request表示应用使用资源的最小值，Limit表示应用使用资源的最大值。资源管理的对象主要分为两种类型，可压缩资源和不可压缩资源，其中可压缩资源一般都以CPU资">
+<meta name="twitter:image" content="https://ae01.alicdn.com/kf/H254e4cdd48e740928b1a0dd3bec80f036.jpg">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/2019/01/31/etcd_backup/index.html">
+  <link rel="canonical" href="http://yoursite.com/2020/08/24/kubernetes_request_limit/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -336,21 +333,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述："><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#etcd备份"><span class="toc-number">2.</span> <span class="toc-text">etcd备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#etcd还原"><span class="toc-number">3.</span> <span class="toc-text">etcd还原</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#单节点还原"><span class="toc-number">3.1.</span> <span class="toc-text">单节点还原</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HA环境下还原（多个etcd节点"><span class="toc-number">3.2.</span> <span class="toc-text">HA环境下还原（多个etcd节点)</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#为业务配置Request和Limit"><span class="toc-number">1.</span> <span class="toc-text">为业务配置Request和Limit</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CPU-Request的实现原理"><span class="toc-number">2.</span> <span class="toc-text">CPU Request的实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Memory、cpu-Limit的实现原理"><span class="toc-number">3.</span> <span class="toc-text">Memory、cpu Limit的实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#到达资源限制后的响应措施"><span class="toc-number">4.</span> <span class="toc-text">到达资源限制后的响应措施</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置的最佳实践"><span class="toc-number">5.</span> <span class="toc-text">配置的最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#配置方式最佳实践："><span class="toc-number">5.1.</span> <span class="toc-text">配置方式最佳实践：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#配置值的最佳实际"><span class="toc-number">5.2.</span> <span class="toc-text">配置值的最佳实际</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-etcd_backup" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-kubernetes_request_limit" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      ETCD集群的备份与还原
+      Kubernetes资源模型概述
     </h1>
   
 
@@ -358,8 +355,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
-	<a href="/2019/01/31/etcd_backup/" class="article-date">
-	  <time datetime="2019-01-31T13:45:59.000Z" itemprop="datePublished">2019-01-31</time>
+	<a href="/2020/08/24/kubernetes_request_limit/" class="article-date">
+	  <time datetime="2020-08-24T13:45:59.000Z" itemprop="datePublished">2020-08-24</time>
 	</a>
 </span>
         
@@ -377,13 +374,13 @@
 
         
 
-        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/01/31/etcd_backup/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/08/24/kubernetes_request_limit/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,533(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,490(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
 	
 
       </div>
@@ -398,38 +395,51 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)/2个，比如你有3个节点做etcd-ha那么最多可以挂掉(3-1)/2个节点，虽然有HA集群可以保证一定的高可用，但在实际生产环境中还是建议将etcd数据进行备份，方便在出现问题时进行还原。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png" alt=""></p>
-<p>环境信息：<br>OS：ubuntu16.04<br>docker：17.03-2<br>Kubernetes：v1.11.6<br>etcd：v3.2.18<br>Rancher：v2.1.5</p>
-<p>节点信息与角色：<br>172.31.164.58   control worker etcd<br>172.31.164.59   control worker etcd<br>172.31.164.139   control worker etcd</p>
-<p>操作：<br>以Rancher2.0部署的Kubernetes集群为例，其他部署工具部署的也是一样。</p>
-<h3 id="etcd备份"><a href="#etcd备份" class="headerlink" title="etcd备份"></a>etcd备份</h3><p>备份步骤<br>1、 如果是使用Rancher部署的Kubernetes集群可以直接使用rancher自动备份</p>
-<p>Rancherv2.1.5 在部署集群的高级选项内是可以配置etcd的自动备份的，按照配置的备份策略会进行自动备份，默认的备份策略是每12小时备份一次，备份文件的轮转周期是72小时，避免因备份文件过多占用磁盘空间.也可以根据自己实际需求进行调整。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_2.png" alt=""></p>
-<p>备份的文件放置在master节点宿主机的/opt/rke/etcd-snapshots目录下以etcd结尾的就是etcd就是备份文件，pki.bundle.tar.gz文件是对应的集群证书的备份。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_3.png" alt=""></p>
-<p>Rancher部署的Kubernetes集群etcd是以容器化的方式运行要使用etcdctl命令有两种方式<br>1、etcd容器内执行etcdctl;docker exec -it etcd sh<br>2、或直接在宿主机上安装一个etcd不用启动，只是使用它的etcdctl命令,那可以通过<a href="https://github.com/etcd-io/etcd/releases下载对应的etcd版本。" target="_blank" rel="external">https://github.com/etcd-io/etcd/releases下载对应的etcd版本。</a></p>
-<p>推荐使用方式二在宿主机上安装etcd使用etcdctl执行，因为在还原时需要将etcd关闭，还是需要准备etcdctl命令<br>执行以下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export ETCDCTL_API=3</div><div class="line">etcdctl --endpoints=https://172.31.164.58:2379 --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem --cacert=/etc/kubernetes/ssl/kube-ca.pem snapshot save  /var/lib/rancher/etcd/etcd_2019_1_31.db</div></pre></td></tr></table></figure></p>
-<p>1、/var/lib/rancher/etcd这个目录是根宿主机的/var/lib/etcd/目录相映射的,所以备份在这个目录在对应的宿主机上也是能看见的。<br>2、这些证书对应文件可以直接在etcd容器内通过ps aux|more看见</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_4.png" alt=""></p>
-<p>其中–cert-file对应–cert，–key对应–key-file –cacert对应–trusted-ca-file</p>
-<p>集群方式备份根上述一样</p>
-<h3 id="etcd还原"><a href="#etcd还原" class="headerlink" title="etcd还原"></a>etcd还原</h3><h4 id="单节点还原"><a href="#单节点还原" class="headerlink" title="单节点还原"></a>单节点还原</h4><p>1、将kube-api-server关闭<br>2、将etcd关闭<br>在宿主机上执行<br>将现有的etcd目录移除<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mv /var/lib/etcd /var/lib/etcd.bak</div></pre></td></tr></table></figure></p>
-<p>执行还原<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">export ETCDCTL_API=3</div><div class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</div><div class="line">    --endpoints=172.31.164.58:2379 \</div><div class="line">    --name=etcd-rke-node2 \</div><div class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</div><div class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</div><div class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</div><div class="line">    --initial-advertise-peer-urls=https://172.31.164.58:2380 \</div><div class="line">    --initial-cluster-token=etcd-cluster-1 \</div><div class="line">    --initial-cluster=etcd-rke-node2=https://172.31.164.58:2380 \</div><div class="line">    --data-dir=/var/lib/etcd</div></pre></td></tr></table></figure></p>
-<p>3、启动etcd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker start etcd</div></pre></td></tr></table></figure></p>
-<p>4、启动kube-apiserver<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker start kube-apiserver</div></pre></td></tr></table></figure></p>
-<p>5、检查数据是否还原<br>使用kubectl查看资源对象是否已恢复或直接get all<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get all --all-namespace</div></pre></td></tr></table></figure></p>
-<h4 id="HA环境下还原（多个etcd节点"><a href="#HA环境下还原（多个etcd节点" class="headerlink" title="HA环境下还原（多个etcd节点)"></a>HA环境下还原（多个etcd节点)</h4><p>将一个节点上的备份数据可以拷贝到其他全部节点，所有节点可以使用同一份数据进行恢复。</p>
-<p>1、查看etcd集群信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">export ETCDCTL_API=3</div><div class="line">etcdctl --endpoints=https://172.31.164.58:2379 --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem --cacert=/etc/kubernetes/ssl/kube-ca.pem member list</div><div class="line"></div><div class="line">2019-01-31 17:34:55.080375 I | warning: ignoring ServerName for user-provided CA for backwards compatibility is deprecated</div><div class="line">abfc00bfbb85856d, started, etcd-rke-node3, https://172.31.164.59:2380, https://172.31.164.59:2379,https://172.31.164.59:4001</div><div class="line">cb7997809d89fa30, started, etcd-rke-node2, https://172.31.164.58:2380, https://172.31.164.58:2379,https://172.31.164.58:4001</div><div class="line">d3f1ec5a741e4dd1, started, etcd-rke-node4, https://172.31.164.139:2380, https://172.31.164.139:2379,https://172.31.164.139:4001</div></pre></td></tr></table></figure>
-<p>2、关闭集群的全部api-server和etcd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker stop etcd &amp;&amp; docker stop kube-apiserver</div></pre></td></tr></table></figure></p>
-<p>3、将集群内宿主机现有的etcd目录移除<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mv /var/lib/etcd /var/lib/etcd.bak</div></pre></td></tr></table></figure></p>
-<p>4、恢复数据<br>在172.31.164.58上执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">export ETCDCTL_API=3</div><div class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</div><div class="line">    --endpoints=172.31.164.58:2379 \</div><div class="line">    --name=etcd-rke-node2 \</div><div class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</div><div class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</div><div class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</div><div class="line">    --initial-advertise-peer-urls=https://172.31.164.58:2380 \</div><div class="line">    --initial-cluster-token=etcd-cluster-1 \</div><div class="line">    --initial-cluster=etcd-rke-node4=https://172.31.164.139:2380,etcd-rke-node3=https://172.31.164.59:2380,etcd-rke-node2=https://172.31.164.58:2380 \</div><div class="line">    --data-dir=/var/lib/etcd</div></pre></td></tr></table></figure></p>
-<p>在172.31.164.59上执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">export ETCDCTL_API=3</div><div class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</div><div class="line">    --endpoints=172.31.164.59:2379 \</div><div class="line">    --name=etcd-rke-node3 \</div><div class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</div><div class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</div><div class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</div><div class="line">    --initial-advertise-peer-urls=https://172.31.164.59:2380 \</div><div class="line">    --initial-cluster-token=etcd-cluster-1 \</div><div class="line">    --initial-cluster=etcd-rke-node4=https://172.31.164.139:2380,etcd-rke-node3=https://172.31.164.59:2380,etcd-rke-node2=https://172.31.164.58:2380 \</div><div class="line">    --data-dir=/var/lib/etcd</div></pre></td></tr></table></figure></p>
-<p>在172.31.164.139上执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">export ETCDCTL_API=3</div><div class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</div><div class="line">    --endpoints=172.31.164.139:2379 \</div><div class="line">    --name=etcd-rke-node4 \</div><div class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</div><div class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</div><div class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</div><div class="line">    --initial-advertise-peer-urls=https://172.31.164.139:2380 \</div><div class="line">    --initial-cluster-token=etcd-cluster-1 \</div><div class="line">    --initial-cluster=etcd-rke-node4=https://172.31.164.139:2380,etcd-rke-node3=https://172.31.164.59:2380,etcd-rke-node2=https://172.31.164.58:2380 \</div><div class="line">    --data-dir=/var/lib/etcd</div></pre></td></tr></table></figure></p>
-<p>5、检查数据是否恢复</p>
-<p>使用kubectl查看资源对象是否已恢复或直接get all<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get all --all-namespace</div></pre></td></tr></table></figure></p>
-<p>以上操作也可以写成一个自动化备份的脚本，但若使用Rancher部署的集群有自动定时备份更方便。</p>
+        <h3 id="为业务配置Request和Limit"><a href="#为业务配置Request和Limit" class="headerlink" title="为业务配置Request和Limit"></a>为业务配置Request和Limit</h3><p>容器本身共享宿主机的资源，通过配置资源限制，能够更大程度利用宿主机的硬件资源，必免因为部分应用的问题导致影响其他运行的业务，在Kubernetes中资源限制方式主要通过Request和Limit。其中Request表示应用使用资源的最小值，Limit表示应用使用资源的最大值。资源管理的对象主要分为两种类型，可压缩资源和不可压缩资源，其中可压缩资源一般都以CPU资源为例，不可压缩资源主要对应的是内存。</p>
+<p>配置Request  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"> </div><div class="line">apiVersion: apps/v1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: nginx-deployment-request</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: nginx</div><div class="line">  replicas: 1</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: nginx</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: nginx</div><div class="line">        image: nginx:1.14.2</div><div class="line">        ports:</div><div class="line">        - containerPort: 80</div><div class="line">        resources:</div><div class="line">         requests:</div><div class="line">           memory: &quot;500m&quot;</div><div class="line">           cpu: &quot;100m&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>配置Limit<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: apps/v1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: nginx-deployment-limit</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: nginx</div><div class="line">  replicas: 1</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: nginx</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: nginx</div><div class="line">        image: nginx:1.14.2</div><div class="line">        ports:</div><div class="line">        - containerPort: 80</div><div class="line">        resources:</div><div class="line">         limits:</div><div class="line">           memory: &quot;1Gi&quot;</div><div class="line">           cpu: &quot;500m&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>CPU和RAM单位<br>CPU资源以cpus为单位。允许小数值。单位为millicores ，你可以用后缀m来表示mili。例如100m， 意思是使用单个核心的1/100。1core=1000m，若节点是4cpu对应的为4*1000=4000m。  </p>
+<p>1000m (milicores) = 1 core<br>100m (milicores) = 0.1 core</p>
+<p>RAM资源以bytes为单位。你可以将RAM表示为纯整数或具有这些后缀之一的定点整数：<br>E, P, T, G, M, K, Ei, Pi, Ti, Gi, Mi, Ki。例如，以下代表大约相同的数值：</p>
+<p>k8s中内存M和Mi的区别<br>M=1000<em>1000<br>Mi=1024</em>1024</p>
+<h3 id="CPU-Request的实现原理"><a href="#CPU-Request的实现原理" class="headerlink" title="CPU Request的实现原理"></a>CPU Request的实现原理</h3><p>request则主要用以声明最小的CPU核数。一方面则体现在设置cpushare上。比如request.cpu=3，则cpushare=1024*3=3072。</p>
+<p>以刚刚部署的nginx-deployment-request和nginx-deployment-limit为例查看对应的操作系统上的cgroup</p>
+<p>查看对应POD所在节点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">kubectl get pod  -o wide</div><div class="line">NAME                                        READY   STATUS    RESTARTS   AGE   IP           NODE        NOMINATED NODE   READINESS GATES</div><div class="line">nginx-deployment-limit-6f555f68df-pt45x     1/1     Running   0          18s   10.42.1.41   rke-node3   &lt;none&gt;           &lt;none&gt;</div><div class="line">nginx-deployment-request-76d9f4d69d-7nh6j   1/1     Running   0          46s   10.42.1.40   rke-node3   &lt;none&gt;           &lt;none&gt;</div><div class="line">test-7fd4b897b8-592fl                       1/1     Running   0          64m   10.42.0.30   rke-node2   &lt;none&gt;           &lt;none&gt;</div></pre></td></tr></table></figure>
+<p>ssh连接到节点，通过docker查看对应的cgroup目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">docker ps | grep request|grep -v pause | cut -d&apos; &apos; -f1</div><div class="line"></div><div class="line">fa82dcca40b4</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">docker inspect fa82dcca40b4 --format &apos;&#123;&#123;.HostConfig.CgroupParent&#125;&#125;&apos;</div><div class="line"></div><div class="line">/kubepods/burstable/pod51932f96-0e7f-4528-92bd-c01023e97abd</div></pre></td></tr></table></figure>
+<p>查看对应cgroup目录  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cat /sys/fs/cgroup/cpu,cpuacct/kubepods/burstable/pod51932f96-0e7f-4528-92bd-c01023e97abd/cpu.shares </div><div class="line"></div><div class="line"></div><div class="line">102</div></pre></td></tr></table></figure>
+<p>比如nginx-deployment-request设置request.cpu=100m，则102 = (request.cpu * 1024) /1000</p>
+<p>通过cpu.shares实现<br>在cpu繁忙情况下仍然能给优先级高的应用分配到对应的CPU计算量。</p>
+<h3 id="Memory、cpu-Limit的实现原理"><a href="#Memory、cpu-Limit的实现原理" class="headerlink" title="Memory、cpu Limit的实现原理"></a>Memory、cpu Limit的实现原理</h3><p>cpu limit主要用以声明使用的最大的CPU核数。通过设置cfs_quota_us和cfs_period_us。比如limits.cpu=3，则cfs_quota_us=300000。<br>cfs_period_us值一般都使用默认的100000<br>在cgroup，cpu子系统中通过cfs_quota_us/cfs_period_us严格限制cpu的的使用量</p>
+<p>继续以部署的nginx-deployment-limit为例讲解，找到对应的cgroup目录</p>
+<p>cpu.cfs_quota_us参数为<br>50000</p>
+<p>cfs_period_us参数为 100000</p>
+<p>cfs_quota_us/cfs_period_us=0.5</p>
+<p>对应的500m</p>
+<p>memory limit通过对应的cgroup子目录的memory.limit_in_bytes字段进行限制。  </p>
+<h3 id="到达资源限制后的响应措施"><a href="#到达资源限制后的响应措施" class="headerlink" title="到达资源限制后的响应措施"></a>到达资源限制后的响应措施</h3><p>当pod 内存超过limit时，会被oom。<br>当cpu超过limit时，不会被kill，但是会限制不超过limit值。  </p>
+<p>内存资源限制   </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: apps/v1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: deployment-oom</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: nginx</div><div class="line">  replicas: 1</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: nginx</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: nginx</div><div class="line">        image: polinux/stress</div><div class="line">        command:</div><div class="line">        - stress</div><div class="line">        - --vm</div><div class="line">        - &quot;1&quot;</div><div class="line">        - --vm-bytes</div><div class="line">        - 250M</div><div class="line">        - --vm-hang</div><div class="line">        - &quot;1&quot;</div><div class="line">        ports:</div><div class="line">        - containerPort: 80</div><div class="line">        resources:</div><div class="line">         limits:</div><div class="line">           memory: &quot;100Mi&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>部署一个压测容器，压测时会分配250M内存，但实际pod的内存limit为100Mi。</p>
+<p>一达到设置的阈值，便会被OOMKILL掉。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl get pod </div><div class="line">NAME                                        READY   STATUS      RESTARTS   AGE</div><div class="line">deployment-oom-75d47b57c4-sst77             0/1     OOMKilled   0          33s</div></pre></td></tr></table></figure></p>
+<p>将limits值调整到1000Mi查看<br>可以看见内存使用值稳定在250MB左右，因将limit值调大了，所以它不会被杀死。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl top pod</div><div class="line">NAME                                        CPU(cores)   MEMORY(bytes)   </div><div class="line">deployment-oom-76cd9448cc-gxprn             230m         251Mi</div></pre></td></tr></table></figure></p>
+<p>cpu使用率超过limit时，不会被kill，但是会限制不超过limit值，影响实际业务性能。</p>
+<p>可以看见cpu使用在快速增长<br><img src="https://ae01.alicdn.com/kf/H254e4cdd48e740928b1a0dd3bec80f036.jpg" alt="">  </p>
+<p>配置cpu limit限制cpu使用为1000 查看资源监控</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: apps/v1</div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: test-cpu</div><div class="line">  namespace: default</div><div class="line">spec:</div><div class="line">  replicas: 1</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: nginx</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: nginx</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: nginx</div><div class="line">        args:</div><div class="line">        - -cpus</div><div class="line">        - &quot;2&quot;</div><div class="line">        image: vish/stress</div><div class="line">        resources:</div><div class="line">         limits:</div><div class="line">           cpu: &quot;1&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>查看监控，cpu usage为cpu使用率，当使用率达到限制值1000后，便不在增长，保持平稳。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl top pod </div><div class="line">NAME                                        CPU(cores)   MEMORY(bytes)   </div><div class="line">test-cpu-6c945c9469-bnprz                   999m         1Mi</div></pre></td></tr></table></figure>
+<h3 id="配置的最佳实践"><a href="#配置的最佳实践" class="headerlink" title="配置的最佳实践"></a>配置的最佳实践</h3><p>POD对应多个不同的QOS级别，不同的QOS级别在资源抢占时对应不同的策略</p>
+<h4 id="配置方式最佳实践："><a href="#配置方式最佳实践：" class="headerlink" title="配置方式最佳实践："></a>配置方式最佳实践：</h4><p>Guaranteed 级别<br>1、 pod 中的每一个 container 都必须包含cpu和内存资源的 limit、request 信息，并且这两个值必须相等  </p>
+<p>Burstable 级别<br>1、资源申请信息不满足 Guaranteed 级别的要求• 2、pod 中至少有一个 container 指定了 cpu 或者 memory 的 request。</p>
+<p>BestEffort级别<br>1、 pod 中任何一个container都没有配置cpu或者 memory的request，limit信息</p>
+<p>所以建议对于一些关键型业务为避免因为资源不够被杀，建议配置好cpu和内存的Request和limit并使他们相等。  </p>
+<h4 id="配置值的最佳实际"><a href="#配置值的最佳实际" class="headerlink" title="配置值的最佳实际"></a>配置值的最佳实际</h4><p>实际上应用容器化改造上线时，切不可以当时申请虚拟机的cpu和内存值做为参考值，因为这部分值是偏大的，容易造成资源浪费，实际上我们可以用两种方式获取业务的实际资源值。</p>
+<p>方式一：通过是旧的业务，我们可以通过历史的监控信息看见对应的cpu和内存在不同业务量下小的消耗值，这个值可以做为我们实际的配置值。</p>
+<p>方式二：新业务可以通过性能压测，模拟业务请求量得到对应业务量下的资源消耗，这样往往得到的值是准确的。</p>
 
       
     </div>
@@ -452,13 +462,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2019/02/07/flexvolume/" title="flexvolume简介"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2018/12/29/k8sA_cicd/" title="Kubernetes下CICD工具的选型">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/08/16/k3s_install_cilium/" title="k3s集群部署和使用cilium网络插件">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
     </li>
     
   </ul>
