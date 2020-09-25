@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>使用ECK部署ElasticSearch到Kubernetes中 | 我爱西红柿</title>
+  <meta name="description" content="概述通过operator对有状态应用可以快速进行部署，将ElasticSearch集群快速部署在Kubernetes集群上，并且可以通过operator快速对集群进行管理和扩容。
+环境信息
+
+
+软件
+版本
+
+
+
+
+Rancher
+2.3.8-ent
+
+
+Kubernetes
+1.17.6
+
+
+OS
+centos7.6
+
+
+ElasticSearch
+7.9
+
+
+ECK-Opera
+1.2
+
+
+
+架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用ECK部署ElasticSearch到Kubernetes中">
+<meta property="og:url" content="http://yoursite.com/2020/09/25/logging_1/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述通过operator对有状态应用可以快速进行部署，将ElasticSearch集群快速部署在Kubernetes集群上，并且可以通过operator快速对集群进行管理和扩容。
+环境信息
+
+
+软件
+版本
+
+
+
+
+Rancher
+2.3.8-ent
+
+
+Kubernetes
+1.17.6
+
+
+OS
+centos7.6
+
+
+ElasticSearch
+7.9
+
+
+ECK-Opera
+1.2
+
+
+
+架">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_1.png">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-2fcadfa9e850bdc75e27859f2edcfe2f_b.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_4.png">
+<meta property="og:updated_time" content="2020-09-25T15:27:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用ECK部署ElasticSearch到Kubernetes中">
+<meta name="twitter:description" content="概述通过operator对有状态应用可以快速进行部署，将ElasticSearch集群快速部署在Kubernetes集群上，并且可以通过operator快速对集群进行管理和扩容。
+环境信息
+
+
+软件
+版本
+
+
+
+
+Rancher
+2.3.8-ent
+
+
+Kubernetes
+1.17.6
+
+
+OS
+centos7.6
+
+
+ElasticSearch
+7.9
+
+
+ECK-Opera
+1.2
+
+
+
+架">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_2.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/09/25/logging_1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">11</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">20</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.5px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.75px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Python/" style="font-size: 13.13px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.25px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.38px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.88px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/neutron/" style="font-size: 13.25px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.63px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.13px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.13px;">数据库</a> <a href="/tags/监控和日志/" style="font-size: 13px;">监控和日志</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/监控和日志/">监控和日志</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/09/25/logging_1/" class="title">使用ECK部署ElasticSearch到Kubernetes中</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-09-25T15:27:44.000Z" itemprop="datePublished">2020-09-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/09/17/cicd_demo/" class="title">CICD_DEMO完整版示例</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-09-17T13:45:59.000Z" itemprop="datePublished">2020-09-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/24/kubernetes_request_limit/" class="title">Kubernetes资源模型概述</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-24T13:45:59.000Z" itemprop="datePublished">2020-08-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/16/k3s_install_cilium/" class="title">k3s集群部署和使用cilium网络插件</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-16T13:45:59.000Z" itemprop="datePublished">2020-08-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/06/26/pod_network/" class="title">POD间网络不通的排查思路</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-06-26T13:45:59.000Z" itemprop="datePublished">2020-06-26</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#环境信息"><span class="toc-number">2.</span> <span class="toc-text">环境信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#架构规划"><span class="toc-number">3.</span> <span class="toc-text">架构规划</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#详细部署"><span class="toc-number">4.</span> <span class="toc-text">详细部署</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#调整宿主机操作系统内核参数"><span class="toc-number">4.1.</span> <span class="toc-text">调整宿主机操作系统内核参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署Local-pv"><span class="toc-number">4.2.</span> <span class="toc-text">部署Local-pv</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署es-operator"><span class="toc-number">4.3.</span> <span class="toc-text">部署es-operator</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署ElasticSearch"><span class="toc-number">4.4.</span> <span class="toc-text">部署ElasticSearch</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署Kibana"><span class="toc-number">4.5.</span> <span class="toc-text">部署Kibana</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#部署Fluentd"><span class="toc-number">4.6.</span> <span class="toc-text">部署Fluentd</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-logging_1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用ECK部署ElasticSearch到Kubernetes中
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/09/25/logging_1/" class="article-date">
+	  <time datetime="2020-09-25T15:27:44.000Z" itemprop="datePublished">2020-09-25</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/监控和日志/">监控和日志</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/监控和日志/">监控和日志</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/09/25/logging_1/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,507(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>通过operator对有状态应用可以快速进行部署，将ElasticSearch集群快速部署在Kubernetes集群上，并且可以通过operator快速对集群进行管理和扩容。</p>
+<h3 id="环境信息"><a href="#环境信息" class="headerlink" title="环境信息"></a>环境信息</h3><table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rancher</td>
+<td>2.3.8-ent</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>1.17.6</td>
+</tr>
+<tr>
+<td>OS</td>
+<td>centos7.6</td>
+</tr>
+<tr>
+<td>ElasticSearch</td>
+<td>7.9</td>
+</tr>
+<tr>
+<td>ECK-Opera</td>
+<td>1.2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="架构规划"><a href="#架构规划" class="headerlink" title="架构规划"></a>架构规划</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_2.png" alt=""></p>
+<h3 id="详细部署"><a href="#详细部署" class="headerlink" title="详细部署"></a>详细部署</h3><h4 id="调整宿主机操作系统内核参数"><a href="#调整宿主机操作系统内核参数" class="headerlink" title="调整宿主机操作系统内核参数"></a>调整宿主机操作系统内核参数</h4><p>限制一个进程可以拥有的VMA(虚拟内存区域)的数量要超过262144，不然elasticsearch会报max virtual memory areas vm.max_map_count [65535] is too low, increase to at least [262144]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">echo &quot;vm.max_map_count=655360&quot;&gt;&gt;/etc/sysctl.conf</div></pre></td></tr></table></figure>
+<p>执行生效</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sysctl -p</div></pre></td></tr></table></figure>
+<h4 id="部署Local-pv"><a href="#部署Local-pv" class="headerlink" title="部署Local-pv"></a>部署Local-pv</h4><p>使用Rancher开源的local-path-provisioner驱动将节点本地存储用于存储ElasticSearch的数据  </p>
+<p><a href="https://github.com/rancher/local-path-provisioner" target="_blank" rel="external">https://github.com/rancher/local-path-provisioner</a></p>
+<p><a href="https://www.bladewan.com/2018/05/19/kubernetes_storage/" target="_blank" rel="external">https://www.bladewan.com/2018/05/19/kubernetes_storage/</a></p>
+<h4 id="部署es-operator"><a href="#部署es-operator" class="headerlink" title="部署es-operator"></a>部署es-operator</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl apply -f https://download.elastic.co/downloads/eck/1.2.1/all-in-one.yaml</div></pre></td></tr></table></figure>
+<p>检查es-operator状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl -n elastic-system logs -f statefulset.apps/elastic-operator</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl get pod/elastic-operator-0 -n elastic-system</div><div class="line">NAME                 READY   STATUS    RESTARTS   AGE</div><div class="line">elastic-operator-0   1/1     Running   0          2d23h</div></pre></td></tr></table></figure>
+<h4 id="部署ElasticSearch"><a href="#部署ElasticSearch" class="headerlink" title="部署ElasticSearch"></a>部署ElasticSearch</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line"></div><div class="line">apiVersion: elasticsearch.k8s.elastic.co/v1</div><div class="line">kind: Elasticsearch</div><div class="line">metadata:</div><div class="line">  name: quickstart</div><div class="line">spec:</div><div class="line">  version: 7.9.0</div><div class="line">  nodeSets:</div><div class="line">  - name: master-nodes</div><div class="line">    count: 3</div><div class="line">    podTemplate:</div><div class="line">      spec:</div><div class="line">        containers:</div><div class="line">        - name: elasticsearch</div><div class="line">          env:</div><div class="line">          - name: ES_JAVA_OPTS</div><div class="line">            value: -Xms2g -Xmx2g</div><div class="line">          resources:</div><div class="line">            requests:</div><div class="line">              memory: 4Gi</div><div class="line">              cpu: 0.5</div><div class="line">            limits:</div><div class="line">              memory: 4Gi</div><div class="line">              cpu: 2</div><div class="line">          image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0 </div><div class="line">    config:</div><div class="line">      node.master: true</div><div class="line">      node.data: false</div><div class="line">      node.ingest: false</div><div class="line">    volumeClaimTemplates:</div><div class="line">    - metadata:</div><div class="line">        name: elasticsearch-data</div><div class="line">      spec:</div><div class="line">        accessModes:</div><div class="line">        - ReadWriteOnce</div><div class="line">        resources:</div><div class="line">          requests:</div><div class="line">            storage: 10Gi</div><div class="line">        storageClassName: local-path</div><div class="line">  - name: data-nodes</div><div class="line">    count: 3</div><div class="line">    podTemplate:</div><div class="line">      spec:</div><div class="line">        containers:</div><div class="line">        - name: elasticsearch</div><div class="line">          env:</div><div class="line">          - name: ES_JAVA_OPTS</div><div class="line">            value: -Xms2g -Xmx2g</div><div class="line">          resources:</div><div class="line">            requests:</div><div class="line">              memory: 4Gi</div><div class="line">              cpu: 0.5</div><div class="line">            limits:</div><div class="line">              memory: 4Gi</div><div class="line">              cpu: 2</div><div class="line">          image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0             </div><div class="line">    config:</div><div class="line">      node.master: false</div><div class="line">      node.data: true</div><div class="line">      node.ingest: false</div><div class="line">    volumeClaimTemplates:</div><div class="line"></div><div class="line">    - metadata:</div><div class="line">        name: elasticsearch-data</div><div class="line">      spec:</div><div class="line">        accessModes:</div><div class="line">        - ReadWriteOnce</div><div class="line">        resources:</div><div class="line">          requests:</div><div class="line">            storage: 10Gi</div><div class="line">        storageClassName: local-path</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>注意点：<br>1、修改实际的Request和limit,Xms和Xmx设置为实际limit的一半。<br>2、storageClassName修改为实际的存储名称。<br>3、镜像地址修改为实际镜像地址。</p>
+<p>查看部署状态 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl get elasticsearch</div><div class="line">NAME         HEALTH   NODES   VERSION   PHASE   AGE</div><div class="line">quickstart   green    6       7.9.0     Ready   41m</div></pre></td></tr></table></figure>
+<p>查看部署的POD状态信息，部署了3个Master+3个Data节点  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">kubectl get pod </div><div class="line">NAME                           READY   STATUS    RESTARTS   AGE</div><div class="line">quickstart-es-data-nodes-0     1/1     Running   0          10m</div><div class="line">quickstart-es-data-nodes-1     1/1     Running   0          12m</div><div class="line">quickstart-es-data-nodes-2     1/1     Running   0          14m</div><div class="line">quickstart-es-master-nodes-0   1/1     Running   0          5m57s</div><div class="line">quickstart-es-master-nodes-1   1/1     Running   0          7m23s</div><div class="line">quickstart-es-master-nodes-2   1/1     Running   0          8m36s</div></pre></td></tr></table></figure>
+<p>默认开启了x-pack插件有认证系统，帐户默认为elastic，密码保存在secret密钥中</p>
+<p>获取访问密钥<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PASSWORD=$(kubectl get secret quickstart-es-elastic-user -o go-template=&apos;&#123;&#123;.data.elastic | base64decode&#125;&#125;&apos;)</div></pre></td></tr></table></figure></p>
+<p>使用NodePort方式对外暴露</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl patch svc quickstart-es-http -p &apos;&#123;&quot;spec&quot;: &#123;&quot;type&quot;: &quot;NodePort&quot;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<p>访问ElasticSearch</p>
+<p>查看集群状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">curl --insecure  -u &quot;elastic:$PASSWORD&quot; -k  https://node_ip:NodePort/_cat/health?v </div><div class="line">epoch      timestamp cluster    status node.total node.data shards pri relo init unassign pending_tasks max_task_wait_time active_shards_percent</div><div class="line">1599476283 10:58:03  quickstart green           6         3      0   0    0    0        0             0                  -                100.0%</div></pre></td></tr></table></figure></p>
+<p>查看集群节点信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">curl --insecure  -u &quot;elastic:$PASSWORD&quot; -k  https://172.16.1.6:30620/_cat/nodes?v</div><div class="line">ip          heap.percent ram.percent cpu load_1m load_5m load_15m node.role master name</div><div class="line">10.42.1.92            27          58  16    2.97    2.15     1.66 dlrt      -      quickstart-es-data-nodes-1</div><div class="line">10.42.4.15             8          58  15    2.00    1.03     0.95 lmr       -      quickstart-es-master-nodes-0</div><div class="line">10.42.0.41             5          58  15    1.88    2.82     2.92 dlrt      -      quickstart-es-data-nodes-0</div><div class="line">10.42.2.183           35          58   6    0.12    0.09     0.09 lmr       *      quickstart-es-master-nodes-2</div><div class="line">10.42.5.8              8          58  12    0.85    0.45     0.34 dlrt      -      quickstart-es-data-nodes-2</div><div class="line">10.42.3.20            56          58   8    0.05    0.18     0.38 lmr       -      quickstart-es-master-nodes-1</div></pre></td></tr></table></figure>
+<p>角色说明：</p>
+<p>d (data node)<br>i (ingest node)<br>m (master-eligible node)<br>l (machine learning node)<br>v (voting-only node)<br>t (transform node)<br>r (remote cluster client node)<br>‘-‘ (coordinating node only).</p>
+<p>master处带*表示为3个master节点中选举出来的leader节点。  </p>
+<h4 id="部署Kibana"><a href="#部署Kibana" class="headerlink" title="部署Kibana"></a>部署Kibana</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | kubectl apply -f -</div><div class="line">apiVersion: kibana.k8s.elastic.co/v1</div><div class="line">kind: Kibana</div><div class="line">metadata:</div><div class="line">  name: quickstart</div><div class="line">spec:</div><div class="line">  version: 7.9.1</div><div class="line">  count: 1</div><div class="line">  elasticsearchRef:</div><div class="line">    name: quickstart</div><div class="line">  podTemplate:</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: kibana</div><div class="line">        resources:</div><div class="line">          requests:</div><div class="line">            memory: 1Gi</div><div class="line">            cpu: 0.5</div><div class="line">          limits:</div><div class="line">            memory: 2Gi</div><div class="line">            cpu: 2</div><div class="line">        image: docker.elastic.co/kibana/kibana:7.9.1</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<p>检查kibana部署状态<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kubectl get kibana</div><div class="line"></div><div class="line">NAME         HEALTH   NODES   VERSION   AGE</div><div class="line">quickstart   green            7.9.1     6m21s</div></pre></td></tr></table></figure></p>
+<p>使用NodePort对外暴露</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl patch svc quickstart-kb-http -p &apos;&#123;&quot;spec&quot;: &#123;&quot;type&quot;: &quot;NodePort&quot;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<p>获取密码，默认情况下kibana的密码也是存储在secret中  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get secret quickstart-es-elastic-user -o=jsonpath=&apos;&#123;.data.elastic&#125;&apos; | base64 --decode; echo</div></pre></td></tr></table></figure>
+<p>通过<a href="https://host_ip:nodeport访问kibana" target="_blank" rel="external">https://host_ip:nodeport访问kibana</a></p>
+<p>帐号为elastic，密码为刚刚通过secret获取的密码</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_1.png" alt=""></p>
+<h4 id="部署Fluentd"><a href="#部署Fluentd" class="headerlink" title="部署Fluentd"></a>部署Fluentd</h4><p>部署Fluentd<br>Fluentd是使用c+Ruby语言开发的一个日志收集端，目前也是CNCF官方项目，拥有非常丰富的插件生态。</p>
+<p><img src="https://pic4.zhimg.com/v2-2fcadfa9e850bdc75e27859f2edcfe2f_b.jpg" alt=""></p>
+<p>优点：</p>
+<ul>
+<li>1、插件生态丰富，可以使用目前社区比较丰富的插件避免重复造轮子。</li>
+<li>2、插件使用Ruby语言自定义编写方便</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>1、受限于Ruby的GIL无法实现真正高性能</li>
+</ul>
+<p>部署Fluentd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div></pre></td><td class="code"><pre><div class="line">---</div><div class="line">apiVersion: v1</div><div class="line">kind: ServiceAccount</div><div class="line">metadata:</div><div class="line">  name: fluentd</div><div class="line">  namespace: kube-system</div><div class="line"></div><div class="line">---</div><div class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</div><div class="line">kind: ClusterRole</div><div class="line">metadata:</div><div class="line">  name: fluentd</div><div class="line">  namespace: kube-system</div><div class="line">rules:</div><div class="line">- apiGroups:</div><div class="line">  - &quot;&quot;</div><div class="line">  resources:</div><div class="line">  - pods</div><div class="line">  - namespaces</div><div class="line">  verbs:</div><div class="line">  - get</div><div class="line">  - list</div><div class="line">  - watch</div><div class="line"></div><div class="line">---</div><div class="line">kind: ClusterRoleBinding</div><div class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</div><div class="line">metadata:</div><div class="line">  name: fluentd</div><div class="line">roleRef:</div><div class="line">  kind: ClusterRole</div><div class="line">  name: fluentd</div><div class="line">  apiGroup: rbac.authorization.k8s.io</div><div class="line">subjects:</div><div class="line">- kind: ServiceAccount</div><div class="line">  name: fluentd</div><div class="line">  namespace: kube-system</div><div class="line">---</div><div class="line">apiVersion: apps/v1</div><div class="line">kind: DaemonSet</div><div class="line">metadata:</div><div class="line">  name: fluentd</div><div class="line">  namespace: kube-system</div><div class="line">  labels:</div><div class="line">    k8s-app: fluentd-logging</div><div class="line">    version: v1</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      k8s-app: fluentd-logging</div><div class="line">      version: v1</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        k8s-app: fluentd-logging</div><div class="line">        version: v1</div><div class="line">    spec:</div><div class="line">      serviceAccount: fluentd</div><div class="line">      serviceAccountName: fluentd</div><div class="line">      tolerations:</div><div class="line">      - key: node-role.kubernetes.io/master</div><div class="line">        effect: NoSchedule</div><div class="line">      containers:</div><div class="line">      - name: fluentd</div><div class="line">        image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch</div><div class="line">        env:</div><div class="line">          - name:  FLUENT_ELASTICSEARCH_HOST</div><div class="line">            value: &quot;10.43.7.26&quot;</div><div class="line">          - name:  FLUENT_ELASTICSEARCH_PORT</div><div class="line">            value: &quot;9200&quot;</div><div class="line">          - name: FLUENT_ELASTICSEARCH_SCHEME</div><div class="line">            value: &quot;https&quot;</div><div class="line">          # Option to configure elasticsearch plugin with self signed certs</div><div class="line">          # ================================================================</div><div class="line">          - name: FLUENT_ELASTICSEARCH_SSL_VERIFY</div><div class="line">            value: &quot;false&quot;</div><div class="line">          # Option to configure elasticsearch plugin with tls</div><div class="line">          # ================================================================</div><div class="line">          - name: FLUENT_ELASTICSEARCH_SSL_VERSION</div><div class="line">            value: &quot;TLSv1_2&quot;</div><div class="line">          # X-Pack Authentication</div><div class="line">          # =====================</div><div class="line">          - name: FLUENT_ELASTICSEARCH_USER</div><div class="line">            value: &quot;elastic&quot;</div><div class="line">          - name: FLUENT_ELASTICSEARCH_PASSWORD</div><div class="line">            value: &quot;g38SlQ408i5SI6E24SoqdE3N&quot;</div><div class="line">        resources:</div><div class="line">          limits:</div><div class="line">            memory: 200Mi</div><div class="line">          requests:</div><div class="line">            cpu: 100m</div><div class="line">            memory: 200Mi</div><div class="line">        volumeMounts:</div><div class="line">        - name: varlog</div><div class="line">          mountPath: /var/log</div><div class="line">        - name: varlibdockercontainers</div><div class="line">          mountPath: /var/lib/docker/containers</div><div class="line">          readOnly: true</div><div class="line">      terminationGracePeriodSeconds: 30</div><div class="line">      volumes:</div><div class="line">      - name: varlog</div><div class="line">        hostPath:</div><div class="line">          path: /var/log</div><div class="line">      - name: varlibdockercontainers</div><div class="line">        hostPath:</div><div class="line">          path: /var/lib/docker/containers</div></pre></td></tr></table></figure>
+<p>注意将以下几个环境变量改为实际得ElasticSearch地址和配置帐号<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">FLUENT_ELASTICSEARCH_HOST #修改为实际的ElasticSearch地址</div><div class="line">FLUENT_ELASTICSEARCH_PORT</div><div class="line">#修改为实际的ElasticSearch的端口</div><div class="line">FLUENT_ELASTICSEARCH_SSL_VERIFY</div><div class="line">#因为采用的是自签名证书，所以这里关闭SSL认证</div><div class="line">FLUENT_ELASTICSEARCH_USER</div><div class="line">#连接的x-pack的帐号</div><div class="line">FLUENT_ELASTICSEARCH_PASSWORD</div><div class="line">#连接的x-pack的密码</div></pre></td></tr></table></figure></p>
+<p>采用Daemonset方式进行部署，部署后会将主机的/var/log目录映射到了容器内，在fluentd内配置文件对应的<code>/fluentd/etc/kubernetes.conf</code>文件中，tail插件对/var/log/container/目录的*.log文件进行收集，此目录存储的是对应的容器标准输出的日志文件的软链接。</p>
+<p>配置kibana，选择对应的Index，查看</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/efk_operator_4.png" alt=""></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/09/17/cicd_demo/" title="CICD_DEMO完整版示例">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
