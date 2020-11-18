@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>calico网络插件运维 | 我爱西红柿</title>
+  <meta name="description" content="适用范围本文档测试范围
+
+
+
+软件
+版本
+
+
+
+
+Kubernetes
+v1.14.x,v1.15.x,v1.16.x
+
+
+calico
+v3.13.4
+
+
+
+概述Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。
+
+BGP模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="calico网络插件运维">
+<meta property="og:url" content="http://yoursite.com/2020/11/18/calico_ops/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="适用范围本文档测试范围
+
+
+
+软件
+版本
+
+
+
+
+Kubernetes
+v1.14.x,v1.15.x,v1.16.x
+
+
+calico
+v3.13.4
+
+
+
+概述Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。
+
+BGP模式">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_6.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb58365c2a9a83be5de25d1.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb583bdc2a9a83be5de6a23.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb584b0c2a9a83be5df35b0.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb5853cc2a9a83be5df9db0.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb585c1c2a9a83be5e043cb.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb5869bc2a9a83be5e0f0fa.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb586c3c2a9a83be5e10f13.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb58710c2a9a83be5e15062.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb58738c2a9a83be5e1782a.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb587fac2a9a83be5e21475.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb588c7c2a9a83be5e2abbe.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb58997c2a9a83be5e34deb.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb589c7c2a9a83be5e37132.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb58a75c2a9a83be5e3ec4e.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5eb58a98c2a9a83be5e4079e.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/%20calico_ops_5.png">
+<meta property="og:updated_time" content="2020-11-18T03:50:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="calico网络插件运维">
+<meta name="twitter:description" content="适用范围本文档测试范围
+
+
+
+软件
+版本
+
+
+
+
+Kubernetes
+v1.14.x,v1.15.x,v1.16.x
+
+
+calico
+v3.13.4
+
+
+
+概述Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。
+
+BGP模式">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_5.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/11/18/calico_ops/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">21</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.56px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Network/" style="font-size: 13.33px;">Network</a> <a href="/tags/Python/" style="font-size: 13.11px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.44px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/neutron/" style="font-size: 13px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.67px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.11px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13.22px;">安全</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.11px;">数据库</a> <a href="/tags/监控和日志/" style="font-size: 13px;">监控和日志</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/network/">network</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/18/calico_ops/" class="title">calico网络插件运维</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-18T03:50:44.000Z" itemprop="datePublished">2020-11-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/安全/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/kubernetes_security_2/" class="title">Kubernetes安全机制(二)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:50:27.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/监控和日志/">监控和日志</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/09/25/logging_1/" class="title">使用ECK部署ElasticSearch到Kubernetes中</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-09-25T15:27:44.000Z" itemprop="datePublished">2020-09-25</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/09/17/cicd_demo/" class="title">CICD_DEMO完整版示例</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-09-17T13:45:59.000Z" itemprop="datePublished">2020-09-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/08/24/kubernetes_request_limit/" class="title">Kubernetes资源模型概述</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-08-24T13:45:59.000Z" itemprop="datePublished">2020-08-24</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#适用范围"><span class="toc-number">1.</span> <span class="toc-text">适用范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#calico切换BGP模式"><span class="toc-number">3.</span> <span class="toc-text">calico切换BGP模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#calico切换cross-subnet模式"><span class="toc-number">4.</span> <span class="toc-text">calico切换cross-subnet模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置Route-reflector"><span class="toc-number">5.</span> <span class="toc-text">配置Route reflector</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装calicoctl"><span class="toc-number">5.1.</span> <span class="toc-text">安装calicoctl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#calico-node-to-node-mesh"><span class="toc-number">5.2.</span> <span class="toc-text">calico node-to-node mesh</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Route-reflector角色介绍"><span class="toc-number">5.3.</span> <span class="toc-text">Route reflector角色介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#关闭node-to-node-mesh"><span class="toc-number">5.4.</span> <span class="toc-text">关闭node-to-node mesh</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#设置Route-reflector"><span class="toc-number">5.5.</span> <span class="toc-text">设置Route reflector</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置veth网卡mtu"><span class="toc-number">6.</span> <span class="toc-text">设置veth网卡mtu</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置全局AS号"><span class="toc-number">7.</span> <span class="toc-text">设置全局AS号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#设置单个主机和AS号"><span class="toc-number">8.</span> <span class="toc-text">设置单个主机和AS号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改节点地址范围"><span class="toc-number">9.</span> <span class="toc-text">修改节点地址范围</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#根据节点标签定义对应的ippool"><span class="toc-number">10.</span> <span class="toc-text">根据节点标签定义对应的ippool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭SNAT"><span class="toc-number">11.</span> <span class="toc-text">关闭SNAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#固定POD-IP"><span class="toc-number">12.</span> <span class="toc-text">固定POD IP</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-calico_ops" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      calico网络插件运维
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/11/18/calico_ops/" class="article-date">
+	  <time datetime="2020-11-18T03:50:44.000Z" itemprop="datePublished">2020-11-18</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/network/">network</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/network/">network</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/11/18/calico_ops/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,741(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 11(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="适用范围"><a href="#适用范围" class="headerlink" title="适用范围"></a>适用范围</h3><p>本文档测试范围</p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kubernetes</td>
+<td>v1.14.x,v1.15.x,v1.16.x</td>
+</tr>
+<tr>
+<td>calico</td>
+<td>v3.13.4</td>
+</tr>
+</tbody>
+</table>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。</p>
+<ul>
+<li>BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。</li>
+<li>IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。</li>
+<li>cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。</li>
+<li><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_5.png" alt=""></li>
+</ul>
+<h3 id="calico切换BGP模式"><a href="#calico切换BGP模式" class="headerlink" title="calico切换BGP模式"></a>calico切换BGP模式</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_6.png" alt=""></p>
+<p>部署完成后默认使用calico-ipip的模式，通过在节点的路由即可得知，通往其他节点路由通过tunl0网卡出去</p>
+<p><img src="https://pic.downk.cc/item/5eb58365c2a9a83be5de25d1.png" alt=""></p>
+<p>修改为BGP网络模式，在system项目中修改calico-node daemonset</p>
+<p><img src="https://pic.downk.cc/item/5eb583bdc2a9a83be5de6a23.png" alt=""></p>
+<p><img src="https://pic.downk.cc/item/5eb584b0c2a9a83be5df35b0.png" alt=""></p>
+<p>修改<code>CALICO_IPV4POOL_IPIP</code>改为off，添加新环境变量<code>FELIX_IPINIPENABLED</code>为false  </p>
+<p><img src="https://pic.downk.cc/item/5eb5853cc2a9a83be5df9db0.png" alt=""></p>
+<p>修改完成后对节点进行重启，等待恢复后查看主机路由，与ipip最大区别在于去往其他节点的路由，由Tunnel0走向网络网卡。</p>
+<p><img src="https://pic.downk.cc/item/5eb585c1c2a9a83be5e043cb.png" alt=""></p>
+<h3 id="calico切换cross-subnet模式"><a href="#calico切换cross-subnet模式" class="headerlink" title="calico切换cross-subnet模式"></a>calico切换cross-subnet模式</h3><p>Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。</p>
+<p>部署集群网络选择calico网络插件<br><img src="https://pic.downk.cc/item/5eb5869bc2a9a83be5e0f0fa.png" alt=""></p>
+<p>默认部署出来是calico的ip-in-ip的模式<br>查看宿主机网卡，会发现多了个tunl0网卡，这个是建立ip隧道的网卡</p>
+<p><img src="https://pic.downk.cc/item/5eb586c3c2a9a83be5e10f13.png" alt=""></p>
+<p>去其他主机的路由都是走tunl0网卡出去</p>
+<p><img src="https://pic.downk.cc/item/5eb58710c2a9a83be5e15062.png" alt=""></p>
+<p>切换到cross-subnet模式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl edit ipPool/default-ipv4-ippool</div></pre></td></tr></table></figure></p>
+<p>将ipipMode改为crossSubnet</p>
+<p><img src="https://pic.downk.cc/item/5eb58738c2a9a83be5e1782a.png" alt=""><br>在UI将calico-node的POD删了重建</p>
+<p><img src="https://pic.downk.cc/item/5eb587fac2a9a83be5e21475.png" alt=""></p>
+<p>重启检查calico网络<br><img src="https://pic.downk.cc/item/5eb588c7c2a9a83be5e2abbe.png" alt=""></p>
+<p>可以看见同子网的主机出口走的是bgp，不同子网主机走的是tunl0网卡走ipip模式<br>验证<br>创建应用测试跨主机网络，在不同主机上互相ping测试，看看跨主机网络是否正常。 </p>
+<h3 id="配置Route-reflector"><a href="#配置Route-reflector" class="headerlink" title="配置Route reflector"></a>配置Route reflector</h3><h4 id="安装calicoctl"><a href="#安装calicoctl" class="headerlink" title="安装calicoctl"></a>安装calicoctl</h4><p>安装方式<br>Single host上面binary安装<br>Single host上面continer安装<br>作为k8s pod运行<br>实际经验：<br>Binary方式在集群里面的一台worker节点安装（比如RR）<br>calicoctl会检测bird/felix的运行状态<br>在非calico node节点运行只能使用部分命令，不能运行calico node相关命令<br>通过配置calicoctl来对calico进行控制，通常情况下建议将<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -O -L  https://github.com/projectcalico/calicoctl/releases/download/v3.13.3/calicoctl</div></pre></td></tr></table></figure></p>
+<p>配置可执行权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod +x calicoctl</div></pre></td></tr></table></figure></p>
+<p>复制的/usr/bin/目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp calicoctl /usr/bin/</div></pre></td></tr></table></figure></p>
+<p>配置calicoctl连接Kubernetes集群<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">export CALICO_DATASTORE_TYPE=kubernetes</div><div class="line">export CALICO_KUBECONFIG=~/.kube/config</div><div class="line">calicoctl node status</div></pre></td></tr></table></figure></p>
+<p><img src="https://pic.downk.cc/item/5eb58997c2a9a83be5e34deb.png" alt=""></p>
+<h4 id="calico-node-to-node-mesh"><a href="#calico-node-to-node-mesh" class="headerlink" title="calico node-to-node mesh"></a>calico node-to-node mesh</h4><p>默认情况下calico采用node-to-node mesh方式 ，为了防止BGP路由环路，BGP协议规定在一个AS（自治系统）内部，IBGP路由器之间只能传一跳路由信息，所以在一个AS内部，IBGP路由器之间为了学习路由信息需要建立全互联的对等体关系，但是当一个AS规模很大的时候，这种全互联的对等体关系维护会大量消耗网络和CPU资源，所以这种情况下就需要建立路由反射器以减少IBGP路由器之间的对等体关系数量。<br><img src="https://pic.downk.cc/item/5eb589c7c2a9a83be5e37132.png" alt=""></p>
+<h4 id="Route-reflector角色介绍"><a href="#Route-reflector角色介绍" class="headerlink" title="Route reflector角色介绍"></a>Route reflector角色介绍</h4><p>早期calico版本提供专门的route reflector镜像，在新版本calico node内置集成route reflector功能。<br>Route reflector可以是以下角色：  </p>
+<ul>
+<li>集群内部的node节点</li>
+<li>集群外部节点运行calico node</li>
+<li>其他支持route reflector的软件或者设备。  </li>
+</ul>
+<p>这里以一个集群内部的node节点为例：</p>
+<h4 id="关闭node-to-node-mesh"><a href="#关闭node-to-node-mesh" class="headerlink" title="关闭node-to-node mesh"></a>关闭node-to-node mesh</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | calicoctl apply -f -</div><div class="line"></div><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">kind: BGPConfiguration</div><div class="line">metadata:</div><div class="line"> name: default</div><div class="line">spec:</div><div class="line">  logSeverityScreen: Info</div><div class="line">  nodeToNodeMeshEnabled: false</div><div class="line">  asNumber: 63400</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<h4 id="设置Route-reflector"><a href="#设置Route-reflector" class="headerlink" title="设置Route reflector"></a>设置Route reflector</h4><p>配置Route reflector支持多种配置方式如：1、支持配置全局BGP peer，。2、支持针对单个节点进行配置BGP Peer。也可以将calico节点充当Route reflector 这里以配置calico节点充当Router reflector为例。  </p>
+<p>配置节点充当BGP Route Reflector  </p>
+<p>可将Calico节点配置为充当路由反射器。为此，要用作路由反射器的每个节点必须具有群集ID-通常是未使用的IPv4地址。  </p>
+<p>要将节点配置为集群ID为244.0.0.1的路由反射器，请运行以下命令。这里将节点名为rke-node4的节点配置为Route Reflector，若一个集群中要配置主备rr，为了防止rr之间的路由环路，需要将集群ID配置成一样<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">calicoctl patch node rke-node4 -p &apos;&#123;&quot;spec&quot;: &#123;&quot;bgp&quot;: &#123;&quot;routeReflectorClusterID&quot;: &quot;244.0.0.1&quot;&#125;&#125;&#125;&apos;</div></pre></td></tr></table></figure></p>
+<p>给节点打上对应的label标记该节点以表明它是Route Reflector，从而允许BGPPeer资源选择它。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl label node rke-node4 route-reflector=true</div></pre></td></tr></table></figure></p>
+<p>创建BGPPeer<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">export CALICO_DATASTORE_TYPE=kubernetes</div><div class="line">export CALICO_KUBECONFIG=~/.kube/config</div><div class="line">cat &lt;&lt;EOF | calicoctl apply -f -</div><div class="line">kind: BGPPeer</div><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">metadata:</div><div class="line">  name: peer-with-route-reflectors</div><div class="line">spec:</div><div class="line">  nodeSelector: all()</div><div class="line">  peerSelector: route-reflector == &apos;true&apos;</div><div class="line">EOF</div></pre></td></tr></table></figure></p>
+<p>查看BGP节点状态<br>node上查看，peer type由node-to-node mesh变为 node specific</p>
+<p><img src="https://pic.downk.cc/item/5eb58a75c2a9a83be5e3ec4e.png" alt=""></p>
+<p>Route Reflector上节点查看，节点已正常建立连接<br><img src="https://pic.downk.cc/item/5eb58a98c2a9a83be5e4079e.png" alt=""></p>
+<h3 id="设置veth网卡mtu"><a href="#设置veth网卡mtu" class="headerlink" title="设置veth网卡mtu"></a>设置veth网卡mtu</h3><p>通常，通过使用最高MTU值（不会在路径上引起碎片或丢包）来实现最高性能。对于给定的流量速率，最大带宽增加，CPU消耗可能下降。对于一些支持jumbo frames的网络设备，可以配置calico支持使用<br>下表列举了，常见几种MTU配置下calico对应的网卡mtu的配置</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_1.png" alt=""></p>
+<p>IPIP和VXLAN协议中的IP中使用的额外报文头，通过头的大小减小了最小MTU。（IP中的IP使用20字节的标头，而VXLAN使用50字节的标头）。<br>如果在Pod网络中的任何地方使用VXLAN，请将MTU大小配置为“物理网络MTU大小减去50”。<br>如果仅在IP中使用IP，则将MTU大小配置为“物理网络MTU大小减去20” 。<br>将工作负载端点MTU和隧道MTU设置为相同的值</p>
+<p>配置方法：  </p>
+<p>升级集群</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_2.png" alt=""></p>
+<p>配置网卡MTU<br>此时通过system项目下calico-config文件可以看见对应的mtu设置</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_3.png" alt=""></p>
+<p>创建workload查看POD网卡MTU为9001</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_4.png" alt=""></p>
+<h3 id="设置全局AS号"><a href="#设置全局AS号" class="headerlink" title="设置全局AS号"></a>设置全局AS号</h3><p>默认情况下，除非已为节点指定每个节点的AS，否则所有Calico节点都使用64512自治系统。可以通过修改默认的BGPConfiguration资源来更改所有节点的全局默认值。以下示例命令将全局默认AS编号设置为64513。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">cat &lt;&lt;EOF | calicoctl apply -f -</div><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">kind: BGPConfiguration</div><div class="line">metadata:</div><div class="line">  name: default</div><div class="line">spec:</div><div class="line">  logSeverityScreen: Info</div><div class="line">  nodeToNodeMeshEnabled: false</div><div class="line">  asNumber: 64513</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<h3 id="设置单个主机和AS号"><a href="#设置单个主机和AS号" class="headerlink" title="设置单个主机和AS号"></a>设置单个主机和AS号</h3><p>例如，以下命令将名为node-1的节点更改为属于AS 64514。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">calicoctl patch node node-1 -p &apos;&#123;&quot;spec&quot;: &#123;&quot;bgp&quot;: &#123;“asNumber”: “64514”&#125;&#125;&#125;&apos;</div></pre></td></tr></table></figure>
+<h3 id="修改节点地址范围"><a href="#修改节点地址范围" class="headerlink" title="修改节点地址范围"></a>修改节点地址范围</h3><p>此操作建议在部署完集群后立刻进行。  </p>
+<p>默认情况下calico在集群层面分配一个10.42.0.0/16的CIDR网段，在这基础上在单独为每个主机划分一个单独子网采用26位子网掩码对应的集群支持的节点数为2^10=1024节点，单个子网最大支持64个POD，当单个子网对应IP消耗后，calico会重新在本机上划分一个新的子网如下，在集群对端主机可以看见对应的多个CIDR路由信息。  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/%20calico_ops_5.png" alt=""></p>
+<p>注意：<br>块大小将影响节点POD的IP地址分配和路由条目数量，如果主机在一个CIDR中分配所有地址，则将为其分配一个附加CIDR。如果没有更多可用的块，则主机可以从分配给其他主机的CIDR中获取地址。为借用的地址添加了特定的路由，这会影响路由表的大小。</p>
+<p>将块大小从默认值增加（例如，使用/24则为每个块提供256个地址）意味着每个主机更少的块，会减少路由。但是对应的集群可容纳主机数也对应减少为2^8</p>
+<p>从默认值减小CIDR大小（例如，使用/28为每个块提供16个地址）意味着每个主机有更多CIDR，因此会有更多路由。</p>
+<p>calico允许用户修改对应的IP池和集群CIDR</p>
+<p>创建和替换步骤<br>注意：删除Pod时，应用程序会出现暂时不可用</p>
+<ul>
+<li>添加一个新的IP池。</li>
+<li>注意：新IP池必须在同一群集CIDR中。</li>
+<li>禁用旧的IP池（注意：禁用IP池只会阻止分配新的IP地址。它不会影响现有POD的联网）</li>
+<li>从旧的IP池中删除Pod。</li>
+<li>验证新的Pod是否从新的IP池中获取地址。</li>
+<li>删除旧的IP池。</li>
+</ul>
+<p>定义ippool资源</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">kind: IPPool</div><div class="line">metadata:</div><div class="line">  name: my-ippool</div><div class="line">spec:</div><div class="line">  blockSize: 24</div><div class="line">  cidr: 192.0.0.0/16</div><div class="line">  ipipMode: Always</div><div class="line">  natOutgoing: true</div></pre></td></tr></table></figure>
+<p>修改对应的blockSize号</p>
+<p>创建新的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">calicoctl apply -f pool.yaml</div></pre></td></tr></table></figure></p>
+<p>将旧的ippool禁用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">calicoctl patch ippool default-ipv4-ippool -p &apos;&#123;&quot;spec&quot;: &#123;&quot;disabled&quot;: “true”&#125;&#125;&apos;</div></pre></td></tr></table></figure></p>
+<p>创建workload测试  </p>
+<h3 id="根据节点标签定义对应的ippool"><a href="#根据节点标签定义对应的ippool" class="headerlink" title="根据节点标签定义对应的ippool"></a>根据节点标签定义对应的ippool</h3><p>Calico 能够进行配置，为不同拓扑指定 IP 地址池。例如可能希望某些机架、地区、或者区域能够从同一个 IP 池中获取地址。这对于降低路由数量或者配合防火墙策略的要求会很有帮助。</p>
+<p>给节点配置对应label</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">kubectl label nodes kube-node-0 rack=0</div><div class="line">kubectl label nodes kube-node-1 rack=1</div></pre></td></tr></table></figure>
+<p>通过标签定义对应的节点IPpool</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">calicoctl create -f -&lt;&lt;EOF</div><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">kind: IPPool</div><div class="line">metadata:</div><div class="line">  name: rack-0-ippool</div><div class="line">spec:</div><div class="line">  cidr: 192.168.0.0/24</div><div class="line">  ipipMode: Always</div><div class="line">  natOutgoing: true</div><div class="line">  nodeSelector: rack == &quot;0&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">calicoctl create -f -&lt;&lt;EOF</div><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">kind: IPPool</div><div class="line">metadata:</div><div class="line">  name: rack-1-ippool</div><div class="line">spec:</div><div class="line">  cidr: 192.168.1.0/24</div><div class="line">  ipipMode: Always</div><div class="line">  natOutgoing: true</div><div class="line">  nodeSelector: rack == &quot;1&quot;</div><div class="line">EOF</div></pre></td></tr></table></figure>
+<h3 id="关闭SNAT"><a href="#关闭SNAT" class="headerlink" title="关闭SNAT"></a>关闭SNAT</h3><p>默认情况下，calico访问集群外网络是通过SNAT成宿主机ip方式，在一些金融客户环境中为了能实现防火墙规则，需要直接针对POD ip进行进行规则配置，所以需要关闭natOutgoing</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl edit ippool/default-ipv4-ippool</div></pre></td></tr></table></figure>
+<p>将  <code>natOutgoing: true</code>修改为<code>natOutgoing: false</code></p>
+<p>此时，calico网络访问集群外的ip源ip就不会snat成<br>宿主机的ip地址。</p>
+<h3 id="固定POD-IP"><a href="#固定POD-IP" class="headerlink" title="固定POD IP"></a>固定POD IP</h3><p>固定单个ip<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">apiVersion: apps/v1 </div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: nginx-test</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: nginx</div><div class="line">  replicas: 1 # tells deployment to run 1 pods matching the template</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: nginx</div><div class="line">      annotations:</div><div class="line">        &quot;cni.projectcalico.org/ipAddrs&quot;: &quot;[\&quot;10.42.210.135\&quot;]&quot;</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: nginx</div><div class="line">        image: nginx:1.7.9</div><div class="line">        ports:</div><div class="line">        - containerPort: 80</div></pre></td></tr></table></figure></p>
+<p>固定多个ip，只能通过ippool的方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat ippool1.yaml</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">apiVersion: projectcalico.org/v3</div><div class="line">kind: IPPool</div><div class="line">metadata:</div><div class="line">  name: pool-1</div><div class="line">spec:</div><div class="line">  blockSize: 31</div><div class="line">  cidr: 10.21.0.0/31</div><div class="line">  ipipMode: Never</div><div class="line">  natOutgoing: true</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">apiVersion: apps/v1 </div><div class="line">kind: Deployment</div><div class="line">metadata:</div><div class="line">  name: nginx-test</div><div class="line">spec:</div><div class="line">  selector:</div><div class="line">    matchLabels:</div><div class="line">      app: nginx</div><div class="line">  replicas: 1 # tells deployment to run 1 pods matching the template</div><div class="line">  template:</div><div class="line">    metadata:</div><div class="line">      labels:</div><div class="line">        app: nginx</div><div class="line">      annotations:</div><div class="line">        &quot;cni.projectcalico.org/ipv4pools&quot;: &quot;[\&quot;pool-1\&quot;]&quot;</div><div class="line">    spec:</div><div class="line">      containers:</div><div class="line">      - name: nginx</div><div class="line">        image: nginx:1.7.9</div><div class="line">        ports:</div><div class="line">        - containerPort: 80</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/10/11/kubernetes_security_2/" title="Kubernetes安全机制(二)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
