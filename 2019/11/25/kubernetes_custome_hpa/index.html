@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes pod的弹性伸缩(二)(基于自定义监控指标的弹性伸缩) | 我爱西红柿</title>
+  <meta name="description" content="实际生产环境中，通过CPU和内存的监控指标弹性伸缩不能很好的反映应用真实的状态，所以我们需要根据应用本身自定义一些监控指标来进行弹性伸缩，如web应用，根据当前QPS来进行弹性，在这里Kubernetes HPA本身也支持自定义监控指标。
+自定义监控指标收集过程：
+
+pod 内置一个metrics 或者挂一个sidecar 当作exporter对外暴露。
+
+Prometheus收集对应的监控指标。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes pod的弹性伸缩(二)(基于自定义监控指标的弹性伸缩)">
+<meta property="og:url" content="http://yoursite.com/2019/11/25/kubernetes_custome_hpa/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="实际生产环境中，通过CPU和内存的监控指标弹性伸缩不能很好的反映应用真实的状态，所以我们需要根据应用本身自定义一些监控指标来进行弹性伸缩，如web应用，根据当前QPS来进行弹性，在这里Kubernetes HPA本身也支持自定义监控指标。
+自定义监控指标收集过程：
+
+pod 内置一个metrics 或者挂一个sidecar 当作exporter对外暴露。
+
+Prometheus收集对应的监控指标。">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/prometheus1_10.png">
+<meta property="og:updated_time" content="2019-11-25T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kubernetes pod的弹性伸缩(二)(基于自定义监控指标的弹性伸缩)">
+<meta name="twitter:description" content="实际生产环境中，通过CPU和内存的监控指标弹性伸缩不能很好的反映应用真实的状态，所以我们需要根据应用本身自定义一些监控指标来进行弹性伸缩，如web应用，根据当前QPS来进行弹性，在这里Kubernetes HPA本身也支持自定义监控指标。
+自定义监控指标收集过程：
+
+pod 内置一个metrics 或者挂一个sidecar 当作exporter对外暴露。
+
+Prometheus收集对应的监控指标。">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_23.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2019/11/25/kubernetes_custome_hpa/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/应用上云/">应用上云</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">21</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应用上云/">应用上云</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.63px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.75px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Network/" style="font-size: 13.38px;">Network</a> <a href="/tags/Python/" style="font-size: 13.13px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.38px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.5px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.88px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/neutron/" style="font-size: 13px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.63px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.13px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13.25px;">安全</a> <a href="/tags/应用上云/" style="font-size: 13px;">应用上云</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.13px;">数据库</a> <a href="/tags/监控和日志/" style="font-size: 13px;">监控和日志</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/应用上云/">应用上云</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/05/26/graceful_close/" class="title">容器应用优雅关闭</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-26T13:45:59.000Z" itemprop="datePublished">2021-05-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/01/27/argo_cd_2/" class="title">ArgoCD二：一个完整的CICD流程例子</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-27T13:45:59.000Z" itemprop="datePublished">2021-01-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/argo_1/" class="title">ArgoCD一：基本介绍和使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T13:45:59.000Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/network/">network</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/18/calico_ops/" class="title">calico网络插件运维</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-18T03:50:44.000Z" itemprop="datePublished">2020-11-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/安全/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/11/kubernetes_security_2/" class="title">Kubernetes安全机制(二)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-11T11:50:27.000Z" itemprop="datePublished">2020-10-11</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#部署prometheus"><span class="toc-number">1.</span> <span class="toc-text">部署prometheus</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#部署kubernetes-prometheus-adapter"><span class="toc-number">2.</span> <span class="toc-text">部署kubernetes-prometheus-adapter</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_custome_hpa" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes pod的弹性伸缩(二)(基于自定义监控指标的弹性伸缩)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2019/11/25/kubernetes_custome_hpa/" class="article-date">
+	  <time datetime="2019-11-25T13:45:59.000Z" itemprop="datePublished">2019-11-25</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/11/25/kubernetes_custome_hpa/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,559(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>实际生产环境中，通过CPU和内存的监控指标弹性伸缩不能很好的反映应用真实的状态，所以我们需要根据应用本身自定义一些监控指标来进行弹性伸缩，如web应用，根据当前QPS来进行弹性，在这里Kubernetes HPA本身也支持自定义监控指标。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_23.png" alt="image"><br>自定义监控指标收集过程：</p>
+<ul>
+<li><p>pod 内置一个metrics 或者挂一个sidecar 当作exporter对外暴露。</p>
+</li>
+<li><p>Prometheus收集对应的监控指标。</p>
+</li>
+<li><p>Prometheus-adapter定期从prometheus收集指标对抓取的监控指标进行过滤和晒算，通过custom-metrics-apiserver将指标对外暴露。</p>
+</li>
+<li><p>HPA控制器从custom-metrics-apiserver获取数据。</p>
+</li>
+</ul>
+<h3 id="部署prometheus"><a href="#部署prometheus" class="headerlink" title="部署prometheus"></a>部署prometheus</h3><p>clone代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/stefanprodan/k8s-prom-hpa</div></pre></td></tr></table></figure></p>
+<p>切换到k8s-prom-hpa目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">kubectl create namespace monitoring   </div><div class="line">kubectl create -f ./prometheus</div></pre></td></tr></table></figure></p>
+<p>查看prometheus<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">kubectl get pod -n monitoring</div><div class="line">NAME                                        READY   STATUS    RESTARTS   AGE</div><div class="line">prometheus-64bc56989f-qcs4p                 1/1     Running   1          22h</div><div class="line"></div><div class="line">kubectl  get svc -n monitoring</div><div class="line">NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</div><div class="line">prometheus                 NodePort    10.104.215.207   &lt;none&gt;        9090:31190/TCP   22h</div></pre></td></tr></table></figure></p>
+<p>访问prometheus<br><a href="http://node_ip:31190" target="_blank" rel="external">http://node_ip:31190</a></p>
+<p>prometheus内prometheus-cfg.yaml 配置了自动发生规则，会自动将组件注册。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/prometheus1_10.png" alt="">  </p>
+<p>监控指标被prometheus收集 –&gt;Prometheus adapter变换指标格式–&gt;custom metrics apiserver–&gt;k8s hpa  </p>
+<h3 id="部署kubernetes-prometheus-adapter"><a href="#部署kubernetes-prometheus-adapter" class="headerlink" title="部署kubernetes-prometheus-adapter"></a>部署kubernetes-prometheus-adapter</h3><p>进入k8s-prom-hpa目录<br>生成Prometheus-adapter所需的TLS证书：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make certs</div></pre></td></tr></table></figure></p>
+<p>custom-metrics-api/custom-metrics-apiservice.yaml中配置了<br>insecureSkipTLSVerify: true选项，所以生成的证书是否受信任都无所谓。  </p>
+<p>查看output文件夹有以下文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ls output/</div><div class="line">apiserver.csr  apiserver-key.pem  apiserver.pem</div></pre></td></tr></table></figure></p>
+<p> 部署k8s-prometheus-adapter<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f ./custom-metrics-api</div></pre></td></tr></table></figure></p>
+<p>prometheus-adapter配置文件查看<br>custom-metrics-apiserver-deployment.yaml文件  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">args:</div><div class="line">       - /adapter</div><div class="line">       - --secure-port=6443</div><div class="line">       - --tls-cert-file=/var/run/serving-cert/serving.crt //连接custom-metrics-apiserver的证书</div><div class="line">       - --tls-private-key-file=/var/run/serving-cert/serving.key</div><div class="line">       - --logtostderr=true //日志标准错误输出</div><div class="line">       - --prometheus-url=http://prometheus.monitoring.svc:9090/ //连接prometheus的地址，因为prometheus部署在集群内，所以可以直接用Service地址</div><div class="line">       - --metrics-relist-interval=30s</div><div class="line">       - --v=10 //日志debug等级，值越高日志越详细，可以适当调小</div><div class="line">       - --config=/etc/adapter/config.yaml //prometheus-adapter收集到prometheus监控指标后的过滤规则</div></pre></td></tr></table></figure>
+<p>custom-metrics-config-map.yaml文件</p>
+<p>custom-metrics-config-map.yaml文件主要定义的是prometheus-adapter去prometheus获取指标的规则，因为prometheus的指标不能直接拿来用，需要通过prometheus-adapter进行一层中转和修改，然后将重新组装的指标通过自己接口暴露给custom-metrics-apiserver。  </p>
+<p>所以这个文件内的值，实际上定义的就是从prometheus抓取规则的语句。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- seriesQuery: &apos;&#123;namespace!=&quot;&quot;,__name__!~&quot;^container_.*&quot;&#125;&apos;</div><div class="line">     seriesFilters:</div><div class="line">     - isNot: .*_seconds_total</div><div class="line">     resources:</div><div class="line">       template: &lt;&lt;.Resource&gt;&gt;</div><div class="line">     name:</div><div class="line">       matches: ^(.*)_total$</div><div class="line">       as: &quot;&quot;</div><div class="line">     metricsQuery: sum(rate(&lt;&lt;.Series&gt;&gt;&#123;&lt;&lt;.LabelMatchers&gt;&gt;&#125;[1m])) by (&lt;&lt;.GroupBy&gt;&gt;)</div></pre></td></tr></table></figure></p>
+<p>这个文件内容分为两部分第一个部分是 rules，用于 custom metrics；第二部分是 resourceRules，用于 metrics。<br> Prometheus adapter，可以将 Prometheus 中的任何一个指标都用于 HPA，但需要在prometheus-adapter内定义查询语句将它拿到。如果只需要使用一个指标做 HPA，可以只写一条查询，而不需要像这里面使用了多个查询。</p>
+<p> 字段解释：    </p>
+<ul>
+<li>seriesQuery：prometheus的查询语句  </li>
+<li>seriesFilters：指标过滤</li>
+<li>is：需要筛选保留下来的。</li>
+<li>isNot：需要过滤掉的。  </li>
+<li>resource：将指标中的标签和k8s资源对应起来有两种方式一种是用overrides方式</li>
+<li>name：用来给对应的指重命名的，有些指标是递增的http_request但采集的原始指标是http_request_total，需要进行一层计算然后过滤掉_total</li>
+<li>matches：通过正则表达式来匹配指标名，可以进行分组；</li>
+<li>as：默认值为 $1，也就是第一个分组。as 为空就是使用默认值的意思,也就是去<code>.*</code>对应的值。</li>
+<li>metricsQuery： metricsQuery字段是一个Go模板，对调用出来的prometheus指标进行特定的处理。  </li>
+<li>Series：指标名称</li>
+<li>LabelMatchers：标签匹配列表。</li>
+<li>1md：定义时间范围</li>
+</ul>
+<p>总体来说就是获取多次http_request_total指标，然后进行处理计算过去1分钟内每秒http_request，最后结果返回为http_request指标。  </p>
+<p>查看k8s-prometheus-adapter部署情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kubectl  get pod -n monitoring</div><div class="line">NAME                                        READY   STATUS    RESTARTS   AGE</div><div class="line">custom-metrics-apiserver-6c6c7f67d8-9vdkt   1/1     Running   0          4h58m</div><div class="line">prometheus-64bc56989f-qcs4p                 1/1     Running   0          4h59m</div></pre></td></tr></table></figure>
+<p>查看创建的api组<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl api-versions  | grep metrics</div><div class="line">custom.metrics.k8s.io/v1beta1</div><div class="line">metrics.k8s.io/v1beta1</div></pre></td></tr></table></figure></p>
+<p>获取自定义监控指标<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">yum install jq -y</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl get --raw &quot;/apis/custom.metrics.k8s.io/v1beta1&quot; | jq .</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;kind&quot;: &quot;APIResourceList&quot;,</div><div class="line">  &quot;apiVersion&quot;: &quot;v1&quot;,</div><div class="line">  &quot;groupVersion&quot;: &quot;custom.metrics.k8s.io/v1beta1&quot;,</div><div class="line">  &quot;resources&quot;: [</div><div class="line">    &#123;</div><div class="line">      &quot;name&quot;: &quot;namespaces/go_gc_duration_seconds_count&quot;,</div><div class="line">      &quot;singularName&quot;: &quot;&quot;,</div><div class="line">      &quot;namespaced&quot;: false,</div><div class="line">      &quot;kind&quot;: &quot;MetricValueList&quot;,</div><div class="line">      &quot;verbs&quot;: [</div><div class="line">        &quot;get&quot;</div><div class="line">      ]</div><div class="line">    &#125;,</div></pre></td></tr></table></figure>
+<p>部署Podinfo应用测试custom-metric autoscale<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create -f ./podinfo/podinfo-svc.yaml,./podinfo/podinfo-dep.yaml</div></pre></td></tr></table></figure></p>
+<p>prometheus配置了自动发现规则，在podinfo-dep.yaml里面配置了对应的规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">annotations:</div><div class="line">        prometheus.io/scrape: &apos;true&apos;</div><div class="line">```        </div><div class="line">所以应用一启动就能直接在prometheus-target中发现。  </div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">获取自定义监控指标</div></pre></td></tr></table></figure></p>
+<p>kubectl get –raw “/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/*/http_requests” | jq .<br>{<br>  “kind”: “MetricValueList”,<br>  “apiVersion”: “custom.metrics.k8s.io/v1beta1”,<br>  “metadata”: {<br>    “selfLink”: “/apis/custom.metrics.k8s.io/v1beta1/namespaces/default/pods/%2A/http_requests”<br>  },<br>  “items”: [<br>    {<br>      “describedObject”: {<br>        “kind”: “Pod”,<br>        “namespace”: “default”,<br>        “name”: “podinfo-58b68656c9-b9cmg”,<br>        “apiVersion”: “/v1”<br>      },<br>      “metricName”: “http_requests”,<br>      “timestamp”: “2019-11-09T09:00:09Z”,<br>      “value”: “888m”<br>    },<br>    {<br>      “describedObject”: {<br>        “kind”: “Pod”,<br>        “namespace”: “default”,<br>        “name”: “podinfo-58b68656c9-mr265”,<br>        “apiVersion”: “/v1”<br>      },<br>      “metricName”: “http_requests”,<br>      “timestamp”: “2019-11-09T09:00:09Z”,<br>      “value”: “911m”<br>    }<br>  ]<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">配置podinfo custom hpa</div></pre></td></tr></table></figure></p>
+<p>kubectl create -f ./podinfo/podinfo-hpa-custom.yaml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">```</div><div class="line">apiVersion: autoscaling/v2beta1</div><div class="line">kind: HorizontalPodAutoscaler</div><div class="line">metadata:</div><div class="line">  name: podinfo</div><div class="line">spec:</div><div class="line">  scaleTargetRef:</div><div class="line">    apiVersion: extensions/v1beta1</div><div class="line">    kind: Deployment</div><div class="line">    name: podinfo</div><div class="line">  minReplicas: 2</div><div class="line">  maxReplicas: 10</div><div class="line">  metrics:</div><div class="line">  - type: Pods</div><div class="line">    pods:</div><div class="line">      metricName: http_requests</div><div class="line">      targetAverageValue: 10</div></pre></td></tr></table></figure></p>
+<p>这里10指的是每秒10个请求，按照定义的规则metricsQuery中的时间范围1分钟，这就意味着过去1分钟内每秒如果达到10个请求则会进行扩容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl  get hpa</div><div class="line">NAME      REFERENCE            TARGETS   MINPODS   MAXPODS   REPLICAS   AGE</div><div class="line">podinfo   Deployment/podinfo   713m/10   2         10        8          18h</div></pre></td></tr></table></figure>
+<p>713m是什么意思？<br>自定义API SERVER收到请求后会从Prometheus里面查询http_requests_total的值，然后把这个值换算成一个以时间为单位的请求率。713m的m就是milli-requests，按照定义的规则metricsQuery中的时间范围1分钟，大概每秒为0.71个请求</p>
+<p>使用webbench进行压测<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">webbench -c 100  http://172.31.48.86:31198/</div><div class="line"></div><div class="line">-c表示发送100个请求</div></pre></td></tr></table></figure></p>
+<p>查看hpa，可以看见请求数暴涨<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl  get hpa</div><div class="line">NAME      REFERENCE            TARGETS     MINPODS   MAXPODS   REPLICAS   AGE</div><div class="line">podinfo   Deployment/podinfo   57610m/10   2         10        8          12h</div></pre></td></tr></table></figure></p>
+<p>查看HPA事件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kubectl describe hpa/podinfo</div><div class="line">Type     Reason                        Age                From                       Message</div><div class="line">  ----     ------                        ----               ----                       -------</div><div class="line">  Normal   SuccessfulRescale             33s                horizontal-pod-autoscaler  New size: 4; reason: pods metric http_requests above target</div><div class="line">  Normal   SuccessfulRescale             17s                horizontal-pod-autoscaler  New size: 8; reason: pods metric http_requests above target</div><div class="line">  Normal   SuccessfulRescale             2s                 horizontal-pod-autoscaler  New size: 10; reason: pods metric http_requests above target</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/12/01/ceph_deploy/" title="ceph部署"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/10/28/k3s_install/" title="K3S安装">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
