@@ -16,8 +16,12 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩) | 我爱西红柿</title>
-  <meta name="description" content="软件
+  <title>我爱西红柿</title>
+  <meta name="description" content="[toc]
+
+
+
+软件
 版本
 
 
@@ -32,12 +36,16 @@ Kubernetes
 
 
 
-概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不大，并不能很">
+概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不">
 <meta property="og:type" content="article">
-<meta property="og:title" content="kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)">
+<meta property="og:title" content="我爱西红柿">
 <meta property="og:url" content="http://yoursite.com/2021/06/18/kubernetes_keda/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="软件
+<meta property="og:description" content="[toc]
+
+
+
+软件
 版本
 
 
@@ -52,18 +60,22 @@ Kubernetes
 
 
 
-概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不大，并不能很">
+概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不">
 <meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-2.png">
 <meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-3.png">
 <meta property="og:image" content="https://cloudblogs.microsoft.com/uploads/prod/sites/37/2019/05/Build-KEDA-1-1024x879.png">
 <meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-4.png">
 <meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/prometheus1_10.png">
 <meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-1.png">
-<meta property="og:updated_time" content="2021-06-18T13:45:59.000Z">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-5.png">
+<meta property="og:updated_time" content="2021-06-17T16:18:10.605Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)">
-<meta name="twitter:description" content="软件
+<meta name="twitter:title" content="我爱西红柿">
+<meta name="twitter:description" content="[toc]
+
+
+
+软件
 版本
 
 
@@ -78,7 +90,7 @@ Kubernetes
 
 
 
-概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不大，并不能很">
+概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不">
 <meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-2.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2021/06/18/kubernetes_keda/index.html">
@@ -253,7 +265,7 @@ Kubernetes
   <div class="widget">
     <h3 class="widget-title">分类</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/应用上云/">应用上云</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">21</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/应用上云/">应用上云</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -263,7 +275,7 @@ Kubernetes
   <div class="widget">
     <h3 class="widget-title">标签</h3>
     <div class="widget-body">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">22</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应用上云/">应用上云</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">21</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应用上云/">应用上云</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -298,13 +310,13 @@ Kubernetes
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+                
               </p>
               <p class="item-title">
-                <a href="/2021/06/18/kubernetes_keda/" class="title">kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)</a>
+                <a href="/2021/06/18/kubernetes_keda/" class="title">(no title)</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-06-18T13:45:59.000Z" itemprop="datePublished">2021-06-18</time>
+                <time datetime="2021-06-17T16:18:10.607Z" itemprop="datePublished">2021-06-18</time>
               </p>
             </div>
           </li>
@@ -380,55 +392,28 @@ Kubernetes
 
   
   
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    <nav id="toc" class="article-toc">
-      <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#KEDA是什么？"><span class="toc-number">1.1.</span> <span class="toc-text">KEDA是什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是事件驱动？"><span class="toc-number">1.2.</span> <span class="toc-text">什么是事件驱动？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#keda组成"><span class="toc-number">1.3.</span> <span class="toc-text">keda组成</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试使用"><span class="toc-number">2.</span> <span class="toc-text">测试使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#部署"><span class="toc-number">2.1.</span> <span class="toc-text">部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RabbitMQ弹性"><span class="toc-number">2.2.</span> <span class="toc-text">RabbitMQ弹性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基于Prometheus自定义监控指标弹性"><span class="toc-number">2.3.</span> <span class="toc-text">基于Prometheus自定义监控指标弹性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
-    </nav>
-  </div>
-</aside>
-
 <main class="main" role="main">
   <div class="content">
   <article id="post-kubernetes_keda" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
-        
-  
-    <h1 class="article-title" itemprop="name">
-      kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)
-    </h1>
-  
-
-      
       <div class="article-meta">
         <span class="article-date">
     <i class="fa fa-calendar-check-o"></i>
 	<a href="/2021/06/18/kubernetes_keda/" class="article-date">
-	  <time datetime="2021-06-18T13:45:59.000Z" itemprop="datePublished">2021-06-18</time>
+	  <time datetime="2021-06-17T16:18:10.607Z" itemprop="datePublished">2021-06-18</time>
 	</a>
 </span>
         
-  <span class="article-category">
-    <i class="fa fa-folder"></i>
-    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
-  </span>
-
         
-  <span class="article-tag">
-    <i class="fa fa-tag"></i>
-	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
-  </span>
-
 
         
 
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2021/06/18/kubernetes_keda/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,190(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,198(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 10(分)</span>
@@ -436,17 +421,11 @@ Kubernetes
 
       </div>
       
-      <div class="toggle-toc hidden-xs" data-stick-top>
-        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
-          <i class="text-collapsed fa fa-anchor"></i>
-          <i class="text-in fa fa-close"></i>
-        </a>
-      </div>
-      
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <table>
+        <p>[toc]</p>
+<table>
 <thead>
 <tr>
 <th>软件</th>
@@ -575,7 +554,9 @@ Kubernetes
 <p>keda会根据实际的值计算需要弹性的副本数，保证业务可用性。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">root@cka01:~# kubectl get hpa</div><div class="line">NAME                               REFERENCE                      TARGETS             MINPODS   MAXPODS   REPLICAS   AGE</div><div class="line">keda-hpa-prometheus-scaledobject   Deployment/podinfo             13/10 (avg)         1         30        3          3m3s</div></pre></td></tr></table></figure></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总的感受下来，还是非常好用的，像之前配一些业务自定义指标的HPA监控还需要配置Prometheus-adapter<br>配置规则，但通过keda直接可以对接Prometheus，配置对应表达式尽快。其他一些集成的事件触发器也直接使用就可以了。</p>
 <p>keda支持的业务事件触发器</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-1.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-5.png" alt=""></p>
+<p>参考链接：</p>
+<p><a href="https://keda.sh" target="_blank" rel="external">https://keda.sh</a></p>
 
       
     </div>
