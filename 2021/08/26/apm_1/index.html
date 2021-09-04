@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>应用性能监控1-Skywalking | 我爱西红柿</title>
+  <meta name="description" content="概述随着应用功能越来越多，从单体架构发展到现在微服务架构，拆分的模块越来越细粒化，需要定位应用模块之间的问题困难越来越大，需要通过一些第三方工具去帮助我们快速定位和发现应用模块的问题，实现以下功能：1、监控模块间响应时间展示2、应用模块间调用链路展示3、慢响应识别市面上也有非常多的APM软件提供。主流开源的如SkyWalking、ZipKin、CAT、PinPoint、ElasticAPM。这些都">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应用性能监控1-Skywalking">
+<meta property="og:url" content="http://yoursite.com/2021/08/26/apm_1/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述随着应用功能越来越多，从单体架构发展到现在微服务架构，拆分的模块越来越细粒化，需要定位应用模块之间的问题困难越来越大，需要通过一些第三方工具去帮助我们快速定位和发现应用模块的问题，实现以下功能：1、监控模块间响应时间展示2、应用模块间调用链路展示3、慢响应识别市面上也有非常多的APM软件提供。主流开源的如SkyWalking、ZipKin、CAT、PinPoint、ElasticAPM。这些都">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-1.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-2.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-8.png">
+<meta property="og:updated_time" content="2021-08-26T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="应用性能监控1-Skywalking">
+<meta name="twitter:description" content="概述随着应用功能越来越多，从单体架构发展到现在微服务架构，拆分的模块越来越细粒化，需要定位应用模块之间的问题困难越来越大，需要通过一些第三方工具去帮助我们快速定位和发现应用模块的问题，实现以下功能：1、监控模块间响应时间展示2、应用模块间调用链路展示3、慢响应识别市面上也有非常多的APM软件提供。主流开源的如SkyWalking、ZipKin、CAT、PinPoint、ElasticAPM。这些都">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-1.jpg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2021/08/26/apm_1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/应用上云/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">22</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应用上云/">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.57px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.71px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Network/" style="font-size: 13.29px;">Network</a> <a href="/tags/Python/" style="font-size: 13.14px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.29px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.43px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.86px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/neutron/" style="font-size: 13px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.57px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.14px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13.29px;">安全</a> <a href="/tags/应用上云/" style="font-size: 13.14px;">应用上云</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.14px;">数据库</a> <a href="/tags/监控和日志/" style="font-size: 13px;">监控和日志</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/应用上云/">应用上云</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/08/26/apm_1/" class="title">应用性能监控1-Skywalking</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-26T13:45:59.000Z" itemprop="datePublished">2021-08-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/安全/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/07/09/opa_1/" class="title">OPA概述和介绍</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-09T11:50:22.000Z" itemprop="datePublished">2021-07-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/06/18/kubernetes_keda/" class="title">kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-18T13:45:59.000Z" itemprop="datePublished">2021-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/应用上云/">应用上云</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/05/26/graceful_close/" class="title">容器应用优雅关闭</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-05-26T13:45:59.000Z" itemprop="datePublished">2021-05-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/01/27/argo_cd_2/" class="title">ArgoCD二：一个完整的CICD流程例子</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-01-27T13:45:59.000Z" itemprop="datePublished">2021-01-27</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SkyWalking介绍"><span class="toc-number">2.</span> <span class="toc-text">SkyWalking介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SkyWalking组件介绍"><span class="toc-number">3.</span> <span class="toc-text">SkyWalking组件介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SkyWalking安装"><span class="toc-number">4.</span> <span class="toc-text">SkyWalking安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#与应用集成方式"><span class="toc-number">5.</span> <span class="toc-text">与应用集成方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用Demo演示"><span class="toc-number">6.</span> <span class="toc-text">应用Demo演示</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-apm_1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      应用性能监控1-Skywalking
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2021/08/26/apm_1/" class="article-date">
+	  <time datetime="2021-08-26T13:45:59.000Z" itemprop="datePublished">2021-08-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/应用上云/">应用上云</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/应用上云/">应用上云</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2021/08/26/apm_1/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1,343(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 5(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>随着应用功能越来越多，从单体架构发展到现在微服务架构，拆分的模块越来越细粒化，需要定位应用模块之间的问题困难越来越大，需要通过一些第三方工具去帮助我们快速定位和发现应用模块的问题，实现以下功能：<br>1、监控模块间响应时间展示<br>2、应用模块间调用链路展示<br>3、慢响应识别<br>市面上也有非常多的APM软件提供。主流开源的如SkyWalking、ZipKin、CAT、PinPoint、ElasticAPM。这些都是根开发语言有强绑定关系，并且需要业务加载对应的开发包和引入SDK，对业务具有一定的侵入性。目前还有新兴的解决方案，基于云原生ServiceMesh方式，对应用没有侵入性和开发语言绑定。</p>
+<h2 id="SkyWalking介绍"><a href="#SkyWalking介绍" class="headerlink" title="SkyWalking介绍"></a>SkyWalking介绍</h2><p>基于Google分布式链路追踪论文Dapper开发，由中国工程师吴晟开发并开源贡献给Apache基金会，支持多种开发语言如Java、PHP、Go、C++、Node.js、Python、.NET、Lua……</p>
+<h2 id="SkyWalking组件介绍"><a href="#SkyWalking组件介绍" class="headerlink" title="SkyWalking组件介绍"></a>SkyWalking组件介绍</h2><p>总体架构如下<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-1.jpg" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-2.jpg" alt=""></p>
+<p>SkyWalking架构总体分为四部分：</p>
+<p>Agent：探针负责与各类开发语言和平台集成如ServiceMesh，进行Tracing和Metric数据收集。发送给Server端。<br>Server端（OAP)：接受Agent采集发送过来的数据，进行数据分析、处理、聚合、查询以及将数据发送到后端存储。<br>Storage：支持多种后端存储（ElasticSearch、Mysql、Tidb…)，接收Server端发送过来的数据。<br>UI:  进行数据计算后的结果统一展示和调用链路展示。</p>
+<h2 id="SkyWalking安装"><a href="#SkyWalking安装" class="headerlink" title="SkyWalking安装"></a>SkyWalking安装</h2><p>环境信息</p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kubernetes</td>
+<td>v1.18.20</td>
+</tr>
+<tr>
+<td>SkyWalking</td>
+<td>v8.1.0</td>
+</tr>
+</tbody>
+</table>
+<p>SkyWalking官方支持多种安装方式，这里为了快速部署，使用的是在Kubernetes上用Helm安装，后端存储使用ElasticSearch。<br>使用官方Helm安装方式最小化安装，后端存储使用ElasticSearch。  参考部署手册<br><a href="https://github.com/apache/skywalking-kubernetes" target="_blank" rel="external">https://github.com/apache/skywalking-kubernetes</a><br>环境</p>
+<p>配置环境变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export SKYWALKING_RELEASE_NAME=skywalking</div><div class="line">export SKYWALKING_RELEASE_NAMESPACE=default</div></pre></td></tr></table></figure>
+<p>配置repo<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">export REPO=skywalking</div><div class="line">helm repo add $&#123;REPO&#125; https://apache.jfrog.io/artifactory/skywalking-helm  </div><div class="line">helm repo update</div></pre></td></tr></table></figure></p>
+<p>安装skywalking，这里安装会自动帮你部署一个ElasticSearch，如果需要对接已经存在的ElasticSearch集群或使用其他的后端存储，可以使用其他参数进行部署安装。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">helm install &quot;$&#123;SKYWALKING_RELEASE_NAME&#125;&quot; $&#123;REPO&#125;/skywalking -n &quot;$&#123;SKYWALKING_RELEASE_NAMESPACE&#125;&quot; \</div><div class="line">  --set oap.image.tag=8.1.0-es7 \</div><div class="line">  --set oap.storageType=elasticsearch7 \</div><div class="line">  --set ui.image.tag=8.1.0 \</div><div class="line">  --set elasticsearch.imageTag=7.5.1</div></pre></td></tr></table></figure></p>
+<p>部署完后查看<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">kubectl get pod </div><div class="line">NAME                              READY   STATUS      RESTARTS   AGE</div><div class="line">elasticsearch-master-0            1/1     Running     0          8m54s</div><div class="line">elasticsearch-master-1            1/1     Running     0          8m54s</div><div class="line">elasticsearch-master-2            1/1     Running     0          8m54s</div><div class="line">skywalking-es-init-vl8c7          0/1     Completed   0          8m54s</div><div class="line">skywalking-oap-64df9d4b8c-dvksd   1/1     Running     0          3m50s</div><div class="line">skywalking-oap-64df9d4b8c-p6thl   1/1     Running     0          8m54s</div><div class="line">skywalking-ui-649dc77bd7-t9d7m    1/1     Running     0          8m54s</div></pre></td></tr></table></figure></p>
+<p>部署了一个ElasticSearch集群和skywalking对应的组件</p>
+<p>为了方便访问，我们将Skywalking的UI通过NodePort对外暴露出来。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl patch  svc skywalking-ui  --type=&apos;json&apos; -p &apos;[&#123;&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/spec/type&quot;,&quot;value&quot;:&quot;NodePort&quot;&#125;,&#123;&quot;op&quot;:&quot;add&quot;,&quot;path&quot;:&quot;/spec/ports/0/nodePort&quot;,&quot;value&quot;:30930&#125;]&apos;</div></pre></td></tr></table></figure>
+<p>访问<a href="http://节点ip:30930，此时默认UI界面如下：" target="_blank" rel="external">http://节点ip:30930，此时默认UI界面如下：</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-9.png" alt=""></p>
+<h2 id="与应用集成方式"><a href="#与应用集成方式" class="headerlink" title="与应用集成方式"></a>与应用集成方式</h2><p>方式一：应用启动加载agent依赖包。<br>比如通过<a href="http://skywalking.apache.org/downloads/下载对应发行版本tar包里面包含的agent文件，然后应用启动命令加载此agent依赖文件即可。如以下通过容器应用构建Dockerfile方式加载。" target="_blank" rel="external">http://skywalking.apache.org/downloads/下载对应发行版本tar包里面包含的agent文件，然后应用启动命令加载此agent依赖文件即可。如以下通过容器应用构建Dockerfile方式加载。</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">FROM registry.cn-shenzhen.aliyuncs.com/yedward/openjdk:8-jre-slim</div><div class="line">USER appuser</div><div class="line">EXPOSE 8080</div><div class="line">COPY --from=build /usr/src/app/target/*.jar /app/</div><div class="line">WORKDIR /app</div><div class="line">CMD java -jar -Xms1024m -Xmx1024m /app/spring-petclinic.jar -javaagent:/opt/skywalking/agent/skywalking-agent.jar</div></pre></td></tr></table></figure></p>
+<p>方式二：通过外部挂载和参数引用方式。下面Demo主要就是对这种方式的演示。  </p>
+<p>这两种方式最大的区别在于，方式一需要改动应用启动命令，方式二对应用本身不需要进行改动，就需要进行升级即可。</p>
+<h2 id="应用Demo演示"><a href="#应用Demo演示" class="headerlink" title="应用Demo演示"></a>应用Demo演示</h2><p>以spring-petclinic为Demo进行演示，一个简单的应用，前面有一个Gateway做为统一流量入口，通过Web模块将对应的服务请求转发到后端不同的其他服务上，进行服务调用。</p>
+<p><a href="https://github.com/wanshaoyuan/spring-petclinic-msa.git" target="_blank" rel="external">https://github.com/wanshaoyuan/spring-petclinic-msa.git</a></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-3.png" alt=""></p>
+<p>部署Demo应用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">下载</div><div class="line">git clone https://github.com/wanshaoyuan/spring-petclinic-msa.git</div><div class="line"></div><div class="line">部署yaml</div><div class="line"></div><div class="line">kubectl apply -f k8s/local-skywalking/</div></pre></td></tr></table></figure>
+<p>访问服务</p>
+<p><a href="http://host_ip:31080" target="_blank" rel="external">http://host_ip:31080</a></p>
+<p>一个宠物医院系统，可以点击进行一些资料的添加和修改。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-10.png" alt=""></p>
+<p>查看Skywalking的数据，点击右上角自动的按钮进行自动的刷新</p>
+<p>调用Top耗时显示和响应耗时范围展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-5.png" alt=""></p>
+<p>服务响应时间和调用成功率<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-6.png" alt=""></p>
+<p>全局调用链路展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-4.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-7.png" alt=""></p>
+<p>调用关系和路径耗时展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-8.png" alt=""></p>
+<p>总结：<br>Skywalking UI做的非常精美，做为一款开源产品功能覆盖还是非常全面的，APM系统对于目前微服务体系的应用进行故障排查还是有非常大的帮助。但这种非常对开发语言还是有一定依赖性，另外一种不需要开发语言依赖的方式就是ServiceMesh的实现<br>完全不侵入应用，也不需要加载Jar包，ServiceMesh主要是通过做应用透明代理和流量劫持去实现链路追踪，如Istio，但他的缺点是只能追踪HTTP请求，覆盖范围有限，并且相对追踪的数据也比埋点的要少一些。  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2021/07/09/opa_1/" title="OPA概述和介绍">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
