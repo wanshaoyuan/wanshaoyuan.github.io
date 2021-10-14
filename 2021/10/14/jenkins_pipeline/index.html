@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Jenkins-pipeline讲解和使用 | 我爱西红柿</title>
+  <meta name="description" content="什么是Jenkins-PipelinePipeline是一套运行在Jenkins上的工作流框架，2.X版本Jenkins的核心功能，主要是将一个大的工作流分拆成多个独立的功能模块，实现单个任务难以完成的复杂流程编排和可视化。Jenkins Pipeline也是实现CICD As file的一个重要工具，将Pipeline编写成Jenkinsfile与业务代码一起存放。
+Pipeline支持两种语法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jenkins-pipeline讲解和使用">
+<meta property="og:url" content="http://yoursite.com/2021/10/14/jenkins_pipeline/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="什么是Jenkins-PipelinePipeline是一套运行在Jenkins上的工作流框架，2.X版本Jenkins的核心功能，主要是将一个大的工作流分拆成多个独立的功能模块，实现单个任务难以完成的复杂流程编排和可视化。Jenkins Pipeline也是实现CICD As file的一个重要工具，将Pipeline编写成Jenkinsfile与业务代码一起存放。
+Pipeline支持两种语法">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-11.png">
+<meta property="og:image" content="http://t.eryajf.net/imgs/2021/09/f126d7d667e038cd.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-19.png">
+<meta property="og:image" content="http://yoursite.com/![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-10.png">
+<meta property="og:updated_time" content="2021-10-14T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jenkins-pipeline讲解和使用">
+<meta name="twitter:description" content="什么是Jenkins-PipelinePipeline是一套运行在Jenkins上的工作流框架，2.X版本Jenkins的核心功能，主要是将一个大的工作流分拆成多个独立的功能模块，实现单个任务难以完成的复杂流程编排和可视化。Jenkins Pipeline也是实现CICD As file的一个重要工具，将Pipeline编写成Jenkinsfile与业务代码一起存放。
+Pipeline支持两种语法">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-11.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2021/10/14/jenkins_pipeline/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">22</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/应用上云/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">22</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应用上云/">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.57px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.71px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Network/" style="font-size: 13.29px;">Network</a> <a href="/tags/Python/" style="font-size: 13.14px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.29px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.43px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.86px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/neutron/" style="font-size: 13px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.57px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.14px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13.29px;">安全</a> <a href="/tags/应用上云/" style="font-size: 13.14px;">应用上云</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.14px;">数据库</a> <a href="/tags/监控和日志/" style="font-size: 13px;">监控和日志</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/14/jenkins_Docking_external_system/" class="title">Jenkins与外部系统集成</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-14T13:45:59.000Z" itemprop="datePublished">2021-10-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/14/jenkins_pipeline/" class="title">Jenkins-pipeline讲解和使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-14T13:45:59.000Z" itemprop="datePublished">2021-10-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/应用上云/">应用上云</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/08/26/apm_1/" class="title">应用性能监控1-Skywalking</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-26T13:45:59.000Z" itemprop="datePublished">2021-08-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/安全/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/07/09/opa_1/" class="title">OPA概述和介绍</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-09T11:50:22.000Z" itemprop="datePublished">2021-07-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/06/18/kubernetes_keda/" class="title">kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-06-18T13:45:59.000Z" itemprop="datePublished">2021-06-18</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是Jenkins-Pipeline"><span class="toc-number">1.</span> <span class="toc-text">什么是Jenkins-Pipeline</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pipeline和FreeStyle对比"><span class="toc-number">2.</span> <span class="toc-text">Pipeline和FreeStyle对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkins-Pipline语法介绍"><span class="toc-number">3.</span> <span class="toc-text">Jenkins-Pipline语法介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#environment"><span class="toc-number">3.1.</span> <span class="toc-text">environment</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#options"><span class="toc-number">3.2.</span> <span class="toc-text">options</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#parameters"><span class="toc-number">3.3.</span> <span class="toc-text">parameters</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#post"><span class="toc-number">3.4.</span> <span class="toc-text">post</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tool"><span class="toc-number">3.5.</span> <span class="toc-text">tool</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#input"><span class="toc-number">3.6.</span> <span class="toc-text">input</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#when"><span class="toc-number">3.7.</span> <span class="toc-text">when</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#parallel"><span class="toc-number">3.8.</span> <span class="toc-text">parallel</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#script"><span class="toc-number">3.9.</span> <span class="toc-text">script</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#trigger"><span class="toc-number">3.10.</span> <span class="toc-text">trigger</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#withCredentials"><span class="toc-number">3.11.</span> <span class="toc-text">withCredentials</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BlueOcean使用"><span class="toc-number">4.</span> <span class="toc-text">BlueOcean使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkinsfile"><span class="toc-number">5.</span> <span class="toc-text">Jenkinsfile</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例Demo最佳实践"><span class="toc-number">6.</span> <span class="toc-text">实例Demo最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Jenkins创建连接账号"><span class="toc-number">6.1.</span> <span class="toc-text">Jenkins创建连接账号</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码库配置连接SonarQube信息"><span class="toc-number">6.2.</span> <span class="toc-text">代码库配置连接SonarQube信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pipeline创建"><span class="toc-number">6.3.</span> <span class="toc-text">Pipeline创建</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-jenkins_pipeline" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Jenkins-pipeline讲解和使用
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2021/10/14/jenkins_pipeline/" class="article-date">
+	  <time datetime="2021-10-14T13:45:59.000Z" itemprop="datePublished">2021-10-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/CI-CD/">CI/CD</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/CI-CD/">CI/CD</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2021/10/14/jenkins_pipeline/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3,166(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 14(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="什么是Jenkins-Pipeline"><a href="#什么是Jenkins-Pipeline" class="headerlink" title="什么是Jenkins-Pipeline"></a>什么是Jenkins-Pipeline</h3><p>Pipeline是一套运行在Jenkins上的工作流框架，2.X版本Jenkins的核心功能，主要是将一个大的工作流分拆成多个独立的功能模块，实现单个任务难以完成的复杂流程编排和可视化。<br>Jenkins Pipeline也是实现CICD As file的一个重要工具，将Pipeline编写成Jenkinsfile与业务代码一起存放。</p>
+<p>Pipeline支持两种语法：<br>1、声明式语法</p>
+<p>Jenkins新加入的语法规则在Jenkinsfile固定的关键字之内，所采用的语法风格大多与shell类似，这种风格更加符合日常的阅读习惯，也更简单，以后我都将采用这种方式进行介绍以及深入。</p>
+<p>2、脚本式语法<br>不是shell脚本形式，而是基于Groovy语言的语法风格，学习成本相对较高</p>
+<p>建议直接使用声明式语法清晰简单明了，合适大部分人入门</p>
+<h3 id="Pipeline和FreeStyle对比"><a href="#Pipeline和FreeStyle对比" class="headerlink" title="Pipeline和FreeStyle对比"></a>Pipeline和FreeStyle对比</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>灵活方式</th>
+<th>显示形式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FreeStyle</td>
+<td>图形化操作，合适入门操作，后期流程多后，不易于快速快速构建</td>
+<td>只有统一日志展示，没有完整阶段流程信息展示</td>
+<td></td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>结构化代码语法，易于阅读和管理，可以实现CICD as Code</td>
+<td>阶段流程信息展示清晰，每个阶段构建时间和对应的构建日志清晰可读</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Jenkins-Pipline语法介绍"><a href="#Jenkins-Pipline语法介绍" class="headerlink" title="Jenkins-Pipline语法介绍"></a>Jenkins-Pipline语法介绍</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-11.png" alt=""></p>
+<p><img src="http://t.eryajf.net/imgs/2021/09/f126d7d667e038cd.jpg" alt=""><br>图片来源:<a href="https://wiki.eryajf.net/pages/3298.html#_1-%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%E3%80%82" target="_blank" rel="external">https://wiki.eryajf.net/pages/3298.html#_1-%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D%E3%80%82</a></p>
+<ul>
+<li>Aagent: 一个 Aagent 就是一个 Jenkins执行 Step 的具体运行环境。</li>
+<li>Stage: 表示Pipeline的一个阶段，如clone code阶段，Build阶段。一个Pipeline中至少需要一个Stage。</li>
+<li>Step: 表示实际的执行步骤，小到执行一个 Shell 脚本，大到构建一个 Docker 镜像，由各类 Jenkins Plugin 提供，当插件扩展Pipeline DSL 时，通常意味着插件已经实现了一个新的步骤，在Stage下有且只能有一个step。</li>
+</ul>
+<h4 id="environment"><a href="#environment" class="headerlink" title="environment"></a>environment</h4><p>环境变量，可以定义在全局变量或者步骤中的局部变量，取决于所定义位置。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">   agent any</div><div class="line">   environment &#123;</div><div class="line">       DISABLE_AUTH = &apos;true&apos;               </div><div class="line">   &#125;</div><div class="line">   stages &#123;</div><div class="line">       stage(“Build”) &#123;</div><div class="line">           steps &#123;</div><div class="line">               echo env.DISABLE_AUTH</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>运行结果，会输出对应的环境变量。</p>
+<h4 id="options"><a href="#options" class="headerlink" title="options"></a>options</h4><p>选项，定义流水线运行时的配置选项。如历史构建记录数量保留，超时时间等操作。以下例子定义重试次数.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    options &#123;</div><div class="line">        retry(3)</div><div class="line">    &#125;</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;Example&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">               sh &quot;dwdwe&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编写一个无法执行的命令，可以通过Console Output看见会Retrying 3次才停止。  </p>
+<h4 id="parameters"><a href="#parameters" class="headerlink" title="parameters"></a>parameters</h4><p>参数，为流水线运行时设置相关的参数，不需要在UI界面上额外定义。<br>出现在Pipeline块内，并且只有一次。<br>常用参数：<br>string：字符串类型的参数，例如： <code>parameters { string(name: &#39;DEPLOY_ENV&#39;, defaultValue: &#39;staging&#39;, description: &#39;&#39;) }</code><br>文本: 一个text参数，可以包含多行，例如： <code>parameters { text(name: &#39;DEPLOY_TEXT&#39;, defaultValue: &#39;One\nTwo\nThree\n&#39;, description: &#39;&#39;) }</code><br>booleanParam: 一个布尔参数，例如： <code>parameters { booleanParam(name: &#39;DEBUG_BUILD&#39;, defaultValue: true, description: &#39;&#39;) }</code><br>choice： 选择参数，<code>例如： parameters { choice(name: &#39;CHOICES&#39;, choices: [&#39;one&#39;, &#39;two&#39;, &#39;three&#39;], description: &#39;&#39;) }</code></p>
+<p>password: 在 Jenkins 参数化构建 UI 提供一个暗文密码输入框，所有需要脱敏的信息，都可以通过这个参数来配置。<br><code>parameters { password(name: &#39;PASSWORD&#39;, defaultValue: &#39;SECRET&#39;, description: &#39;A secret password&#39;) }</code></p>
+<p>注意：<br>这种声明定义之后，需要手动构建一次，然后才会自动落位到配置好的参数化构建中了。<br>例子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    parameters &#123;</div><div class="line">        string(name: &apos;PERSON&apos;, defaultValue: &apos;Mr Jenkins&apos;, description: &apos;Who should I say hello to?&apos;)</div><div class="line"></div><div class="line">        text(name: &apos;BIOGRAPHY&apos;, defaultValue: &apos;&apos;, description: &apos;Enter some information about the person&apos;)</div><div class="line"></div><div class="line">        booleanParam(name: &apos;TOGGLE&apos;, defaultValue: true, description: &apos;Toggle this value&apos;)</div><div class="line"></div><div class="line">        choice(name: &apos;CHOICE&apos;, choices: [&apos;One&apos;, &apos;Two&apos;, &apos;Three&apos;], description: &apos;Pick something&apos;)</div><div class="line"></div><div class="line">        password(name: &apos;PASSWORD&apos;, defaultValue: &apos;SECRET&apos;, description: &apos;Enter a password&apos;)</div><div class="line">    &#125;</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;Example&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">                echo &quot;Hello $&#123;params.PERSON&#125;&quot;</div><div class="line"></div><div class="line">                echo &quot;Biography: $&#123;params.BIOGRAPHY&#125;&quot;</div><div class="line"></div><div class="line">                echo &quot;Toggle: $&#123;params.TOGGLE&#125;&quot;</div><div class="line"></div><div class="line">                echo &quot;Choice: $&#123;params.CHOICE&#125;&quot;</div><div class="line"></div><div class="line">                echo &quot;Password: $&#123;params.PASSWORD&#125;&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在执行Build时会多出这些选项<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-12.png" alt=""></p>
+<h4 id="post"><a href="#post" class="headerlink" title="post"></a>post</h4><p>运行后处理，当流水线完成后根据配置的条件做一些动作，如：构建失败后邮件通知。<br>条件：<br>always：无论怎么样总是执行。<br>changed: 当前Pipeline状态与先前不一致情况下执行。<br>failuer: 失败情况下。<br>success: 成功情况下。<br>unstable: 不稳定情况下，Pipeline状态标识为黄色。<br>aborted: Pipeline中止情况下。<br>cleanup: 无论怎么样，执行目录清理</p>
+<p>例如：<br>无论怎么样，将执行情况邮件发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">post&#123;</div><div class="line">         always&#123;</div><div class="line">         mail to : ‘team@example.com’,</div><div class="line">                   subject:”Pipeline statue:$&#123;currentBuild.fullDisplayName&#125;”,</div><div class="line">                   body:”The execution result$&#123;env.Build_url&#125;”</div><div class="line"></div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>定义三种执行状态，此时shell命令无法执行，输出always和success输出信息。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;Example&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">               sh  &apos;dwd&apos;</div><div class="line">            &#125;</div><div class="line">        </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    post &#123; </div><div class="line">        always &#123; </div><div class="line">            echo &apos;already exec&apos;</div><div class="line">        &#125;</div><div class="line">        success &#123;</div><div class="line">            echo &apos;exec success &apos;</div><div class="line">        &#125;</div><div class="line">        failure &#123;</div><div class="line">            echo &apos;exec failure&apos;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="tool"><a href="#tool" class="headerlink" title="tool"></a>tool</h4><p>构建工具，获取通过自动安装或手动安装工具的环境变量，支持maven、jdk、gradle，工具的名称必须预先在Jenkins的系统设置-&gt;全局工具配置中定义。<br>例如在Jenkins—&gt;Global Tool Configuration中添加工具对应的环境变量，然后在项目中引用。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    tools &#123;</div><div class="line">        maven &apos;maven&apos; </div><div class="line">    &#125;</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;Example&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">                sh &apos;mvn --version&apos;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="input"><a href="#input" class="headerlink" title="input"></a>input</h4><p>交互输入，在流水线执行各个阶段的时候，由人工确认是否继续执行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">pipeline&#123;</div><div class="line">    agent any</div><div class="line">    environment&#123;</div><div class="line">    approvalMap = &apos;&apos;</div><div class="line">    &#125;</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;pre deploy&apos;)&#123;</div><div class="line">            steps&#123;</div><div class="line">                script&#123;</div><div class="line">                    approvalMap = input (</div><div class="line">                        message: &apos;发布到哪个环境？&apos;,</div><div class="line">                        ok: &apos;确定&apos;,</div><div class="line">                        parameters:[</div><div class="line">                            choice(name: &apos;ENV&apos;,choices: &apos;test\npre\nprod&apos;,description: &apos;发布到什么环境？&apos;),</div><div class="line">                            string(name: &apos;username&apos;,defaultValue: &apos;&apos;,description: &apos;输入用户名&apos;)</div><div class="line">                        ],</div><div class="line">                        submitter: &apos;admin&apos;,</div><div class="line">                    )</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        stage(&apos;deploy&apos;)&#123;</div><div class="line">            steps&#123;</div><div class="line">                echo &quot;操作者是 $&#123;approvalMap[&apos;username&apos;]&#125;&quot;</div><div class="line">                echo &quot;发布到什么环境 $&#123;approvalMap[&apos;ENV&apos;]&#125;&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>点击构建，程序将会在input的步骤停住，等待用户进行相应输入和选择。<br>message ：必填。页面展示信息</p>
+<p>ok：input表单上“ok”按钮的可选文本。</p>
+<p>submitter：允许提交此input选项的用户或外部组名列表，用逗号分隔。默认允许任何用户。</p>
+<p>例子结果如图所示：<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-13.png" alt=""></p>
+<h4 id="when"><a href="#when" class="headerlink" title="when"></a>when</h4><p>条件判断，允许流水线根据给定的条件决定是否应该执行阶段，when 指令必须包含至少一个条件.<br>内置条件<br>branch：分支匹配，如<code>when { branch &#39;release-v2.5&#39; }</code><br>environment：环境变量匹配如<code>when { environment name: &#39;DEPLOY_TO&#39;, value: &#39;production&#39; }</code>    </p>
+<p>not：当嵌套条件为false时执行stage。必须包含至少一个条件例如：<code>when { not { branch &#39;master&#39; } }</code><br>allOf：当所有嵌套条件都为真时，执行舞台。必须包含至少一个条件。例如：<code>when { allOf { branch &#39;master&#39;; environment name: &#39;DEPLOY_TO&#39;, value: &#39;production&#39; } }</code><br>anyOf: 当至少一个嵌套条件为真时执行。必须至少包含一个条件。例如：<code>when { anyOf { branch &#39;master&#39;; branch &#39;staging&#39; } }</code></p>
+<p>以上例子支持通配符配置，如<code>when { branch &#39;release-v2.*&#39; }</code><br>例子:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;Example&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">               git branch: &apos;main&apos;, url: &apos;https://gitee.com/wanshaoyuan/spring-petclinic.git&apos;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        stage(&apos;deploy to proc&apos;)&#123;</div><div class="line">           when &#123;</div><div class="line">             branch &apos;main&apos;</div><div class="line">           &#125;</div><div class="line">            steps&#123;</div><div class="line">              echo &quot;deploy to proc env&quot;</div><div class="line">            &#125;</div><div class="line">            </div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>执行后因为是clone main分支，将输出deploy to proc env。</p>
+<h4 id="parallel"><a href="#parallel" class="headerlink" title="parallel"></a>parallel</h4><p>默认Pipeline是串行，可以通过parallel配置并行构建，阶段可以在他们内部声明多嵌套阶段, 它们将并行执行，一个阶段只能有一个 steps 或 parallel的阶段。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line"></div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;one&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">               echo &quot;stage1&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        stage(&apos;two&apos;) &#123;</div><div class="line">            failFast true</div><div class="line">            parallel &#123;</div><div class="line">                stage(&apos;并行1&apos;) &#123;</div><div class="line">                  steps &#123;</div><div class="line">                    echo &quot;并行一&quot;</div><div class="line">                  &#125;</div><div class="line">            &#125;</div><div class="line">                stage(&apos;并行2&apos;) &#123;</div><div class="line">                  steps &#123;</div><div class="line">                    echo &quot;并行二&quot;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注:添加failFast true到包含parallel的stage中，其中一个失败时中止所有parallel内的stage。<br>本阶段会执行多个步骤。<br> 通过BlueOcean查看Pipeline效果图<br> <img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-15.png" alt=""></p>
+<h4 id="script"><a href="#script" class="headerlink" title="script"></a>script</h4><p>脚本标签，需要执行一些系统命令语法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;Example&apos;) &#123;</div><div class="line">            steps &#123;</div><div class="line">               sh &apos;date&apos;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过sh执行对应的shell命令。  </p>
+<h4 id="trigger"><a href="#trigger" class="headerlink" title="trigger"></a>trigger</h4><p>触发器，设置构建触发器，比如根据周期计划定时构建。<br>cron定时构建<br>根Linux内crontab对应的，分、时、日、月、周。这里例子定义每分钟执行一次。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    triggers&#123;</div><div class="line">      cron(&apos;* * * * 1&apos;)</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;cat文件&apos;)&#123;</div><div class="line">            steps&#123;</div><div class="line">                sh &apos;&apos;&apos;cat README.md&apos;&apos;&apos;</div><div class="line"></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">     &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>注意点：<br>H关键字为Hash，表示当前设置的时间跨度范围内随机一值例如<br><code>triggers{ cron(&#39;H/15 * * * *&#39;) }</code><br>每15分钟执行一次，可能在 :07,:22,:37,:52执行</p>
+<h4 id="withCredentials"><a href="#withCredentials" class="headerlink" title="withCredentials"></a>withCredentials</h4><p>将secret与变量对应起来。在jenkins中创建的密钥，在Pipeline中希望通过变量方式引用，可以通过withCredentials进行。</p>
+<p>例子<br>在全局凭据中创建个Username with password的凭证，输入用户名和密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">    agent any</div><div class="line">    stages &#123;</div><div class="line">        stage(&apos;部署到测试环境&apos;)&#123;</div><div class="line">            steps&#123;</div><div class="line">                 withCredentials([usernamePassword(credentialsId: &apos;harbor_account&apos;, passwordVariable: &apos;password&apos;, usernameVariable: &apos;username&apos;)]) &#123;</div><div class="line">                 sh &apos;echo $username&apos;</div><div class="line">               &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">     &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>执行构建后会输出密钥中的用户名<br>注：<br>usernamePassword：withCredentials的类型，相应的还支持sshUserPrivateKey(ssh key)和certificate（证书）。<br>credentialsId：Jenkins中对应的配置名称。<br>passwordVariable： 密码项目转成对应的变量。<br>usernameVariable：  用户名项转换成对应的变量。  </p>
+<p>SSH User Private Key 示例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">withCredentials(bindings: [sshUserPrivateKey(credentialsId: &apos;jenkins-ssh-key-for-abc&apos;, \</div><div class="line">                                             keyFileVariable: &apos;SSH_KEY_FOR_ABC&apos;, \</div><div class="line">                                             passphraseVariable: &apos;&apos;, \</div><div class="line">                                             usernameVariable: &apos;&apos;)]) &#123;</div><div class="line">  // some block</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Certificate 示例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">withCredentials(bindings: [certificate(aliasVariable: &apos;&apos;, \</div><div class="line">                                       credentialsId: &apos;jenkins-certificate-for-xyz&apos;, \</div><div class="line">                                       keystoreVariable: &apos;CERTIFICATE_FOR_XYZ&apos;, \</div><div class="line">                                       passwordVariable: &apos;XYZ-CERTIFICATE-PASSWORD&apos;)]) &#123;</div><div class="line">  // some block</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>参考： <a href="https://www.jenkins.io/zh/doc/book/pipeline/jenkinsfile/#usernames-and-passwords" target="_blank" rel="external">https://www.jenkins.io/zh/doc/book/pipeline/jenkinsfile/#usernames-and-passwords</a></p>
+<h3 id="BlueOcean使用"><a href="#BlueOcean使用" class="headerlink" title="BlueOcean使用"></a>BlueOcean使用</h3><p>Jenkins针对pipeline提供了全新的Blue Ocean界面，可以清晰的查看流水线的执行情况：</p>
+<p>安装blueocean插件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-14.png" alt=""></p>
+<p>安装完以后在对应的项目处会多出一个打开Blue Ocean按钮，<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-16.png" alt=""></p>
+<p>界面美化后的扁平化风格，可以通过此界面，进行一些常规的配置和操作<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-17.png" alt=""></p>
+<p>阶段性Pipeline重跑<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-18.png" alt=""></p>
+<p>日志统一下载<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-19.png" alt=""></p>
+<h3 id="Jenkinsfile"><a href="#Jenkinsfile" class="headerlink" title="Jenkinsfile"></a>Jenkinsfile</h3><p>目前主流大部分CI工具都支持Pipeline as Code，就是将整CI流程通过代码方式实现，然后将对应的代码和业务代码放置在一起，对应的CI工具在拉取业务代码后可以直接解析CI的流程代码进行执行。Jenkins也是支持这种方式的，通过将写好的Pipeline写在Jenkinsfile中存放在代码仓库中，Jenkins配置读取指定目录的Jenkinsfile文件即可。<br><img src="![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-20.png" alt=""></p>
+<h3 id="实例Demo最佳实践"><a href="#实例Demo最佳实践" class="headerlink" title="实例Demo最佳实践"></a>实例Demo最佳实践</h3><p>完整CICD步骤<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-2.png" alt=""></p>
+<p>1、clone 源码。<br>2、编译源码。<br>3、编译后进行代码扫描和编译后可执行文件扫描。<br>4、将编译后生成的制品上传到制品库。<br>5、镜像构建，将构建后的镜像上传到Harbor。<br>6、更新Gitlab中的部署文件。<br>7、触发ArgoCD同步。手动或自动部署到Kubernetes环境中。</p>
+<h4 id="Jenkins创建连接账号"><a href="#Jenkins创建连接账号" class="headerlink" title="Jenkins创建连接账号"></a>Jenkins创建连接账号</h4><p>因为要进行镜像上传和修改gitlab中的部署yaml，需要进行修改。<br>系统管理——&gt;Manage Credentials——&gt;创建全局域的认证信息<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-3.png" alt=""></p>
+<p>添加凭据<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-4.png" alt=""></p>
+<p>类型为Username with password<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-5.png" alt=""></p>
+<p>创建id为harbor_account和gitlab_account的凭证用于Pipeline连接。</p>
+<h4 id="代码库配置连接SonarQube信息"><a href="#代码库配置连接SonarQube信息" class="headerlink" title="代码库配置连接SonarQube信息"></a>代码库配置连接SonarQube信息</h4><p>使用Pipeline流水线，需要在添加以下步骤</p>
+<p>1、在对应的代码库的根目录创建sonar-project.properties文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">sonar.projectKey=test2</div><div class="line">sonar.projectName=test2</div><div class="line">sonar.projectVersion=1.0</div><div class="line">sonar.sources=src</div><div class="line">sonar.java.binaries=target/classes</div><div class="line">sonar.java.source=1.8</div><div class="line">sonar.java.target=1.8</div><div class="line">sonar.language=java</div><div class="line">sonar.sourceEncoding=UTF-8</div></pre></td></tr></table></figure></p>
+<p>Pipeline中添加以下步骤<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">stage(&apos;SonarQube analysis&apos;) &#123;</div><div class="line">      steps &#123;</div><div class="line">        script &#123;</div><div class="line">        def sonarqubeScannerHome = tool name: &apos;SonarQubeScanner&apos;</div><div class="line">            withSonarQubeEnv(&apos;sonar&apos;) &#123;</div><div class="line">            sh &quot;$&#123;sonarqubeScannerHome&#125;/bin/sonar-scanner&quot;</div><div class="line">         &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>注：<br>1、SonarQubeScanner为全局工具配置中的SonarQube Scanner的配置名称。<br>2、withSonarQubeEnv配置的sonar变量为全局——&gt;系统配置sonar-server的配置名称</p>
+<h4 id="Pipeline创建"><a href="#Pipeline创建" class="headerlink" title="Pipeline创建"></a>Pipeline创建</h4><p>创建个名称为spring-petclini的Pipeline<br>配置构建触发器<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-6.png" alt=""></p>
+<p>贴入以下Pipeline 代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div></pre></td><td class="code"><pre><div class="line">pipeline &#123;</div><div class="line">  agent &#123;</div><div class="line">    kubernetes &#123;</div><div class="line">      cloud &apos;kubernetes&apos;</div><div class="line">      namespace &apos;default&apos;</div><div class="line">      yaml &quot;&quot;&quot;</div><div class="line">apiVersion: v1</div><div class="line">kind: Pod</div><div class="line">spec:</div><div class="line">  containers:</div><div class="line">    - name: git</div><div class="line">      image: alpine/git:v2.26.2</div><div class="line">      command:</div><div class="line">        - cat</div><div class="line">      tty: true</div><div class="line">    - name: maven</div><div class="line">      image: maven:3.6.3-openjdk-8</div><div class="line">      command:</div><div class="line">        - cat</div><div class="line">      tty: true</div><div class="line">      volumeMounts:</div><div class="line">        - mountPath: /root/.m2/repository</div><div class="line">          name: jenkins-maven-m2-pvc</div><div class="line">    - name: docker</div><div class="line">      image: docker:19.03-dind</div><div class="line">      command:</div><div class="line">        - cat</div><div class="line">      tty: true</div><div class="line">      volumeMounts:</div><div class="line">        - mountPath: /var/run/docker.sock</div><div class="line">          name: docker-sock</div><div class="line">    - name: helm-kubectl</div><div class="line">      image: registry.cn-shenzhen.aliyuncs.com/yedward/helm-kubectl:3.3.1-1.18.8</div><div class="line">      command:</div><div class="line">        - cat</div><div class="line">      tty: true</div><div class="line">  volumes:</div><div class="line">    - name: jenkins-maven-m2-pvc</div><div class="line">      persistentVolumeClaim:</div><div class="line">        claimName: jenkins-maven-m2-pvc</div><div class="line">    - name: docker-sock</div><div class="line">      hostPath:</div><div class="line">        path: /var/run/docker.sock</div><div class="line">        type: &quot;&quot;</div><div class="line">&quot;&quot;&quot;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">  stages &#123;</div><div class="line">    stage(&apos;Clone&apos;) &#123;</div><div class="line">      steps &#123;</div><div class="line">        container(&apos;git&apos;) &#123;</div><div class="line">          git branch: &apos;main&apos;, credentialsId: &apos;gitlab&apos;, url: &apos;http://172.16.1.184/root/spring-petclinic.git&apos;        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    stage(&apos;Build&apos;) &#123;</div><div class="line">      steps &#123;</div><div class="line">        container(&apos;maven&apos;) &#123;</div><div class="line">          sh &apos;mvn clean package -DskipTests&apos;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    stage(&apos;SonarQube analysis&apos;) &#123;</div><div class="line">      steps &#123;</div><div class="line">        script &#123;</div><div class="line">        def sonarqubeScannerHome = tool name: &apos;SonarQubeScanner&apos;</div><div class="line">            withSonarQubeEnv(&apos;sonar&apos;) &#123;</div><div class="line">            sh &quot;$&#123;sonarqubeScannerHome&#125;/bin/sonar-scanner&quot;</div><div class="line">         &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    stage(&apos;Publish&apos;) &#123;</div><div class="line">      steps &#123;</div><div class="line">        container(&apos;docker&apos;) &#123;</div><div class="line">            withCredentials([usernamePassword(credentialsId: &apos;harbor_account&apos;, passwordVariable: &apos;USERPWD&apos;, usernameVariable: &apos;USERNAME&apos;)]) &#123;</div><div class="line">                sh &apos;echo &quot;$USERPWD&quot; | docker login --username=&quot;$USERNAME&quot; 172.16.1.31 --password-stdin&apos;</div><div class="line">                sh &apos;docker build -t 172.16.1.31/spring-petclinic/spring-petclinic:$BUILD_NUMBER .&apos;</div><div class="line">                sh &apos;docker push 172.16.1.31/spring-petclinic/spring-petclinic:$BUILD_NUMBER&apos;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    stage(&apos;Deploy&apos;) &#123;</div><div class="line">      steps &#123;</div><div class="line">        container(&apos;git&apos;) &#123;</div><div class="line">            withCredentials([usernamePassword(credentialsId: &apos;gitlab_account&apos;, passwordVariable: &apos;USERPWD&apos;, usernameVariable: &apos;USERNAME&apos;)]) &#123;</div><div class="line">                sh &apos;git config --global user.email &quot;root@example.com&quot;&apos;</div><div class="line">                sh &apos;git config --global user.name &quot;root&quot;&apos;</div><div class="line">                sh &apos;git remote set-url origin http://$USERNAME:$USERPWD@172.16.1.184/root/spring-petclinic.git&apos;</div><div class="line">                sh &apos;sed -i &quot;s/spring-petclinic:.*/spring-petclinic:$BUILD_NUMBER/g&quot; deployment.yaml&apos;</div><div class="line">                sh &apos;git add deployment.yaml&apos;</div><div class="line">                sh &apos;git commit -m &quot;update yaml&quot;&apos;</div><div class="line">                sh &apos;git push origin main&apos;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注意点：<br>1、clone阶段如果是私有代码仓库，需要配置凭证，可以通过流水线语法生成对应的执行命令。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-6.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-7.png" alt=""></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-8.png" alt=""></p>
+<p>输入对应的git地址和分支，选择gitlab密钥，生成对应的执行代码</p>
+<p>执行<br>修改spring-petclinic项目的代码注释掉主页的图片，提交代码，触发自动CICD查看效果。</p>
+<p>注释掉首页小狗图片<br><code>spring-petclinic/src/main/resources/templates/welcome.html</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;!--&lt;img class=&quot;img-responsive&quot; src=&quot;../static/resources/images/pets.png&quot; th:src=&quot;@&#123;/resources/images/pets.png&#125;&quot;/&gt;--&gt;</div></pre></td></tr></table></figure></p>
+<p>重新提交代码<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-9.png" alt=""></p>
+<p>查看已经没有对应logo<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/Jenkins3-10.png" alt=""></p>
+<p>参考链接：<br><a href="https://www.jenkins.io/doc/book/pipeline/syntax/" target="_blank" rel="external">https://www.jenkins.io/doc/book/pipeline/syntax/</a><br><a href="https://wiki.eryajf.net/pages/3298.html" target="_blank" rel="external">https://wiki.eryajf.net/pages/3298.html</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/10/14/jenkins_Docking_external_system/" title="Jenkins与外部系统集成"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/08/26/apm_1/" title="应用性能监控1-Skywalking">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
