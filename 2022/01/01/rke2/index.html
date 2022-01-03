@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>RKE2的简单使用 | 我爱西红柿</title>
+  <meta name="description" content="概述软件版本：rke2 version v1.22.5+rke2r1os：ubuntu18.04  
+RKE2是Rancher  Kubernetes新的发行版，结合和k3s和RKE1的一些特性。与RKE1相比主要特性在于安全性，符合美国联邦政府部门的安全性和合规性，完整通过CIS安全基线标准，符合FIPS-140-2 标准和定期的镜像安全扫描。比如结合k3s的一个单体二进制文件启动，底层runt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RKE2的简单使用">
+<meta property="og:url" content="http://yoursite.com/2022/01/01/rke2/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述软件版本：rke2 version v1.22.5+rke2r1os：ubuntu18.04  
+RKE2是Rancher  Kubernetes新的发行版，结合和k3s和RKE1的一些特性。与RKE1相比主要特性在于安全性，符合美国联邦政府部门的安全性和合规性，完整通过CIS安全基线标准，符合FIPS-140-2 标准和定期的镜像安全扫描。比如结合k3s的一个单体二进制文件启动，底层runt">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/RKE-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/RKE-2.png">
+<meta property="og:updated_time" content="2022-01-01T13:45:59.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RKE2的简单使用">
+<meta name="twitter:description" content="概述软件版本：rke2 version v1.22.5+rke2r1os：ubuntu18.04  
+RKE2是Rancher  Kubernetes新的发行版，结合和k3s和RKE1的一些特性。与RKE1相比主要特性在于安全性，符合美国联邦政府部门的安全性和合规性，完整通过CIS安全基线标准，符合FIPS-140-2 标准和定期的镜像安全扫描。比如结合k3s的一个单体二进制文件启动，底层runt">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/RKE-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/01/01/rke2/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+    
+    
+
+</head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">OpenStack engineer &amp;&amp; devops</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/K3S/">K3S</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Python/">Python</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ceph/">ceph</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">18</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">23</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/network/">network</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/neutron/">neutron</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/prometheus/">prometheus</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/分布式存储/">分布式存储</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/安全/">安全</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/应用上云/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/操作系统/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/数据库/">数据库</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/监控和日志/">监控和日志</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/">CI/CD</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/K3S/">K3S</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">10</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Longhorn/">Longhorn</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/">Network</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/">Python</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ceph/">ceph</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/">docker</a><span class="tag-list-count">18</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/">kubernetes</a><span class="tag-list-count">23</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/network/">network</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/neutron/">neutron</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/">openstack</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prometheus/">prometheus</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/安全/">安全</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/应用上云/">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/操作系统/">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/数据库/">数据库</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/监控和日志/">监控和日志</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/CI-CD/" style="font-size: 13.57px;">CI/CD</a> <a href="/tags/K3S/" style="font-size: 13px;">K3S</a> <a href="/tags/Linux/" style="font-size: 13.71px;">Linux</a> <a href="/tags/Longhorn/" style="font-size: 13px;">Longhorn</a> <a href="/tags/Network/" style="font-size: 13.29px;">Network</a> <a href="/tags/Python/" style="font-size: 13.14px;">Python</a> <a href="/tags/ServiceMesh/" style="font-size: 13.29px;">ServiceMesh</a> <a href="/tags/ceph/" style="font-size: 13.43px;">ceph</a> <a href="/tags/docker/" style="font-size: 13.86px;">docker</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/network/" style="font-size: 13px;">network</a> <a href="/tags/neutron/" style="font-size: 13px;">neutron</a> <a href="/tags/openstack/" style="font-size: 13.57px;">openstack</a> <a href="/tags/prometheus/" style="font-size: 13.14px;">prometheus</a> <a href="/tags/安全/" style="font-size: 13.29px;">安全</a> <a href="/tags/应用上云/" style="font-size: 13.14px;">应用上云</a> <a href="/tags/操作系统/" style="font-size: 13px;">操作系统</a> <a href="/tags/数据库/" style="font-size: 13.14px;">数据库</a> <a href="/tags/监控和日志/" style="font-size: 13px;">监控和日志</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/01/01/rke2/" class="title">RKE2的简单使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-01-01T13:45:59.000Z" itemprop="datePublished">2022-01-01</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/14/jenkins_pipeline/" class="title">Jenkins-pipeline讲解和使用</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-14T13:45:59.000Z" itemprop="datePublished">2021-10-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/CI-CD/">CI/CD</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/10/14/jenkins_Docking_external_system/" class="title">Jenkins与外部系统集成</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-10-14T13:45:59.000Z" itemprop="datePublished">2021-10-14</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/应用上云/">应用上云</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/08/26/apm_1/" class="title">应用性能监控1-Skywalking</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-26T13:45:59.000Z" itemprop="datePublished">2021-08-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/安全/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/07/09/opa_1/" class="title">OPA概述和介绍</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-07-09T11:50:22.000Z" itemprop="datePublished">2021-07-09</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#与其他Kubernetes部署工具对比"><span class="toc-number">1.1.</span> <span class="toc-text">与其他Kubernetes部署工具对比</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RKE2部署"><span class="toc-number">2.</span> <span class="toc-text">RKE2部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#部署前提："><span class="toc-number">2.1.</span> <span class="toc-text">部署前提：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过完整兼容性测试的操作系统："><span class="toc-number">2.2.</span> <span class="toc-text">通过完整兼容性测试的操作系统：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过RKE2单机方式快速部署Kubernetes"><span class="toc-number">2.3.</span> <span class="toc-text">通过RKE2单机方式快速部署Kubernetes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过RKE2高可用方式部署Kubernetes"><span class="toc-number">2.4.</span> <span class="toc-text">通过RKE2高可用方式部署Kubernetes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过RKE2离线部署kubernetes集群"><span class="toc-number">2.5.</span> <span class="toc-text">通过RKE2离线部署kubernetes集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Tarball模式"><span class="toc-number">2.5.1.</span> <span class="toc-text">Tarball模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Private-Registry"><span class="toc-number">2.5.2.</span> <span class="toc-text">Private Registry</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通过RKE2部署Kubernetes高可用实现原理"><span class="toc-number">2.6.</span> <span class="toc-text">通过RKE2部署Kubernetes高可用实现原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他使用技巧"><span class="toc-number">3.</span> <span class="toc-text">其他使用技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用RKE2部署Kubernetes使用其他网络插件"><span class="toc-number">3.1.</span> <span class="toc-text">使用RKE2部署Kubernetes使用其他网络插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#组件参数配置"><span class="toc-number">3.2.</span> <span class="toc-text">组件参数配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#集群备份和还原"><span class="toc-number">3.3.</span> <span class="toc-text">集群备份和还原</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常见操作"><span class="toc-number">3.4.</span> <span class="toc-text">常见操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查看本机运行的容器"><span class="toc-number">3.4.1.</span> <span class="toc-text">查看本机运行的容器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查看日志"><span class="toc-number">3.4.2.</span> <span class="toc-text">查看日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#etcd操作"><span class="toc-number">3.4.3.</span> <span class="toc-text">etcd操作</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-rke2" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RKE2的简单使用
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/01/01/rke2/" class="article-date">
+	  <time datetime="2022-01-01T13:45:59.000Z" itemprop="datePublished">2022-01-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/kubernetes/">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/01/01/rke2/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4,013(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 19(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>软件版本：rke2 version v1.22.5+rke2r1<br>os：ubuntu18.04  </p>
+<p>RKE2是Rancher  Kubernetes新的发行版，结合和k3s和RKE1的一些特性。与RKE1相比主要特性在于安全性，符合美国联邦政府部门的安全性和合规性，完整通过CIS安全基线标准，符合FIPS-140-2 标准和定期的镜像安全扫描。<br>比如结合k3s的一个单体二进制文件启动，底层runtime集成containerd。</p>
+<h3 id="与其他Kubernetes部署工具对比"><a href="#与其他Kubernetes部署工具对比" class="headerlink" title="与其他Kubernetes部署工具对比"></a>与其他Kubernetes部署工具对比</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>组件集成度</th>
+<th>安全性</th>
+<th>组件容器化</th>
+<th>部署简易性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kubeadm</td>
+<td>低，需要单独部署kubelet、runtime等组件，然后在通过static-pod启动其他组件。</td>
+<td>中，默认安全配置</td>
+<td>除kubelet外全部容器化</td>
+<td>低，组件HA需要用户自己完成。</td>
+</tr>
+<tr>
+<td>RKE-1</td>
+<td>低，单独部署runtime然后在通过rke部署集群。</td>
+<td>中，默认安全配置</td>
+<td>全部容器化</td>
+<td>高，一键部署，组件HA自动完成</td>
+</tr>
+<tr>
+<td>RKE-2</td>
+<td>高，单体二进制文件集成runtime和kubelet，一键启动。</td>
+<td>高,专为安全而生，符合各项安全测试规范</td>
+<td>除kubelet外全部容器化</td>
+<td>中，每台节点需要单独操作安装，组件HA自动完成</td>
+</tr>
+</tbody>
+</table>
+<h2 id="RKE2部署"><a href="#RKE2部署" class="headerlink" title="RKE2部署"></a>RKE2部署</h2><h3 id="部署前提："><a href="#部署前提：" class="headerlink" title="部署前提："></a>部署前提：</h3><p>Linux部署前提条件：</p>
+<ul>
+<li>关闭swap。</li>
+<li>关闭NetworkManager（若有），或配置NetworkManager忽略 calico/flannel 相关网络接口。</li>
+<li>关闭Selinux，或参考下述链接配置Selinux规则。</li>
+<li>节点主机名采用标准FQDN格式。  </li>
+</ul>
+<p>若需要开启NetworkManager和Selinux，策略配置NetworkManager和Selinux策略链接：<br><a href="https://rancher2.docs.rancher.cn/docs/rke2/known_issues/_index#networkmanager" target="_blank" rel="external">https://rancher2.docs.rancher.cn/docs/rke2/known_issues/_index#networkmanager</a></p>
+<h3 id="通过完整兼容性测试的操作系统："><a href="#通过完整兼容性测试的操作系统：" class="headerlink" title="通过完整兼容性测试的操作系统："></a>通过完整兼容性测试的操作系统：</h3><p>Ubuntu 18.04 (amd64)<br>Ubuntu 20.04 (amd64)<br>CentOS/RHEL 7.8 (amd64)<br>CentOS/RHEL 8.2 (amd64)<br>SLES 15 SP2 (amd64) (v1.18.16+rke2r1 和更新版本)  </p>
+<p>注：使用Cilium网络插件时，因为ebpf依赖内核技术，所以需要保证以下内核版本<br>1 、kernel版本 &gt;= 4.9.17</p>
+<h3 id="通过RKE2单机方式快速部署Kubernetes"><a href="#通过RKE2单机方式快速部署Kubernetes" class="headerlink" title="通过RKE2单机方式快速部署Kubernetes"></a>通过RKE2单机方式快速部署Kubernetes</h3><p>部署Server</p>
+<p>下载rke2二进制可执行文件，和自动配置rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL http://rancher-mirror.rancher.cn/rke2/install.sh | INSTALL_RKE2_MIRROR=cn sh -</div></pre></td></tr></table></figure></p>
+<p>设置rke2-server开机自启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>启动rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>此时，将会通过rke2自动拉起kubelet，然后以static-pod方式启动api-server、Controller-manager、etcd、scheduler</p>
+<p>日志查看：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">journalctl -u rke2-server -f</div></pre></td></tr></table></figure></p>
+<p>默认情况下rke2将创建以下目录:</p>
+<p>/var/lib/rancher/rke2/:存放额外部署的集群插件（core-dns、网络插件、Ingress-Controller）、etcd数据库存放路径、其他worker连接的token。<br>/etc/rancher/rke2/：连接集群的kubeconfig文件，以及集群组件参数配置信息。  </p>
+<p>将常用CLI配置软链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ln -s /var/lib/rancher/rke2/bin/kubectl  /usr/bin/kubectl</div><div class="line">ln -s /var/lib/rancher/rke2/bin/ctr /usr/bin/ctr</div><div class="line">ln -s /var/lib/rancher/rke2/bin/crictl /usr/bin/crictl</div></pre></td></tr></table></figure></p>
+<p>配置kubeconfig<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir -p ~/.kube/</div><div class="line">cp /etc/rancher/rke2/rke2.yaml ~/.kube/config</div></pre></td></tr></table></figure></p>
+<p>验证查看:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kubectl get node</div><div class="line">NAME        STATUS   ROLES                       AGE   VERSION</div><div class="line">rke-node6   Ready    control-plane,etcd,master   72m   v1.22.5+rke2r1</div></pre></td></tr></table></figure></p>
+<p>获取worker注册到server的token文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /var/lib/rancher/rke2/server/token</div></pre></td></tr></table></figure></p>
+<p>部署worker<br>下载rke2二进制可执行文件，和自动配置rke2-server</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL http://rancher-mirror.rancher.cn/rke2/install.sh | INSTALL_RKE2_MIRROR=cn INSTALL_RKE2_TYPE=&quot;agent&quot;  sh -</div></pre></td></tr></table></figure>
+<p>启动rke2-agent服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable rke2-agent.service</div></pre></td></tr></table></figure></p>
+<p>配置rke2-agent服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir -p /etc/rancher/rke2/</div><div class="line">vim /etc/rancher/rke2/config.yaml</div></pre></td></tr></table></figure></p>
+<p>配置文件内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">server: https://&lt;server&gt;:9345</div><div class="line">token: &lt;token from server node&gt;</div></pre></td></tr></table></figure></p>
+<p>注：<br>rke2 server 进程通过端口 9345 监听新节点的注册。Kubernetes API 仍然监听端口 6443。</p>
+<p>启动服务,等待服务启动注册成功。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start rke2-agent.service</div></pre></td></tr></table></figure>
+<p>日志查看<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">journalctl -u rke2-agent -f</div></pre></td></tr></table></figure></p>
+<p>查看最终部署<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">kubectl get node</div><div class="line">NAME        STATUS   ROLES                       AGE   VERSION</div><div class="line">rke-node6   Ready    control-plane,etcd,master   81m   v1.22.5+rke2r1</div><div class="line">rke-node7   Ready    &lt;none&gt;                      70m   v1.22.5+rke2r1</div></pre></td></tr></table></figure></p>
+<p>测试验证<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl create deployment test --image=busybox:1.28  --replicas=2   -- sleep 30000</div></pre></td></tr></table></figure></p>
+<h3 id="通过RKE2高可用方式部署Kubernetes"><a href="#通过RKE2高可用方式部署Kubernetes" class="headerlink" title="通过RKE2高可用方式部署Kubernetes"></a>通过RKE2高可用方式部署Kubernetes</h3><p>前提条件：</p>
+<ul>
+<li><p>Apiserver统一入口（可选），为了方便外部访问集群，需要在集群实现统一入口，可以通过L4负载均衡器或vip地址或智能轮询DNS。集群内部已经通过rke2-agent实现了worker访问api-server的多入口反向代理。</p>
+</li>
+<li><p>奇数个（推荐三个）的 server节点，运行 etcd、Kubernetes API 和其他控制节点服务。</p>
+</li>
+</ul>
+<p>部署顺序</p>
+<ul>
+<li>启动第一个 server 节点</li>
+<li>加入其他 server 节点</li>
+<li>加入 agent 节点</li>
+</ul>
+<p>部署负载均衡器（可选）<br>以nginx为例，配置转发到9345和后端6443端口<br>创建nginx.conf文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">events &#123;</div><div class="line">  worker_connections  1024;  ## Default: 1024</div><div class="line">&#125; </div><div class="line">stream &#123;</div><div class="line">    upstream kube-apiserver &#123;</div><div class="line">        server host1:6443     max_fails=3 fail_timeout=30s;</div><div class="line">        server host2:6443     max_fails=3 fail_timeout=30s;</div><div class="line">        server host3:6443     max_fails=3 fail_timeout=30s;</div><div class="line">    &#125;</div><div class="line">    upstream rke2 &#123;</div><div class="line">        server host1:9345     max_fails=3 fail_timeout=30s;</div><div class="line">        server host2:9345     max_fails=3 fail_timeout=30s;</div><div class="line">        server host3:9345     max_fails=3 fail_timeout=30s;</div><div class="line">    &#125;</div><div class="line">    server &#123;</div><div class="line">        listen 6443;</div><div class="line">        proxy_connect_timeout 2s;</div><div class="line">        proxy_timeout 900s;</div><div class="line">        proxy_pass kube-apiserver;</div><div class="line">    &#125;</div><div class="line">    server &#123;</div><div class="line">        listen 9345;</div><div class="line">        proxy_connect_timeout 2s;</div><div class="line">        proxy_timeout 900s;</div><div class="line">        proxy_pass rke2;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>将对应的3个ip地址修改为实际server节点ip地址</p>
+<p>启动nginx<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run -itd -p 9345:9345  -p 6443:6443 -v ~/nginx.conf:/etc/nginx/nginx.conf nginx</div></pre></td></tr></table></figure></p>
+<p>实际生产环境部署建议部署两个nginx，中间通过keepalived维持vip实现统一入口。</p>
+<p>部署第一个Server<br>下载rke2二进制可执行文件，和自动配置rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL http://rancher-mirror.rancher.cn/rke2/install.sh | INSTALL_RKE2_MIRROR=cn sh -</div></pre></td></tr></table></figure></p>
+<p>设置rke2-server开机自启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>配置config.yaml文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mkdir /etc/rancher/rke2/ -p</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">touch config.yaml</div></pre></td></tr></table></figure>
+<p>输入以内容<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">tls-san:</div><div class="line">  - xxx.xxx.xxx.xxx</div><div class="line">  - www.xxx.com</div></pre></td></tr></table></figure></p>
+<p>此处填写LB的统一入口ip地址或域名，如果有多个换行分组方式隔开。</p>
+<p>启动rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>将常用CLI配置软链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ln -s /var/lib/rancher/rke2/bin/kubectl  /usr/bin/kubectl</div><div class="line">ln -s /var/lib/rancher/rke2/bin/ctr /usr/bin/ctr</div><div class="line">ln -s /var/lib/rancher/rke2/bin/crictl /usr/bin/crictl</div></pre></td></tr></table></figure></p>
+<p>配置kubeconfig<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir -p ~/.kube/</div><div class="line">cp /etc/rancher/rke2/rke2.yaml ~/.kube/config</div></pre></td></tr></table></figure></p>
+<p>可以将kubeconfig文件中的中的ip地址由127.0.0.1替换为实际LB的IP地址。</p>
+<p>获取注册到server的token文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat /var/lib/rancher/rke2/server/token</div></pre></td></tr></table></figure></p>
+<p>配置其他Server<br>配置rke2-agent服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir -p /etc/rancher/rke2/</div><div class="line">vim /etc/rancher/rke2/config.yaml</div></pre></td></tr></table></figure></p>
+<p>配置文件内容如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">server: https://&lt;server&gt;:9345</div><div class="line">token: &lt;token from server node&gt;</div><div class="line">tls-san:</div><div class="line">  - xxx.xxx.xxx.xxx</div><div class="line">  - www.xxx.com</div></pre></td></tr></table></figure></p>
+<p>注：</p>
+<ul>
+<li>server地址可以填写第一台Server的地址，也可以填写外部统一入口的地址，最佳实践是填写统一入口地址，这样当第一个Server出现问题后，agent还可以通过统一入口地址通过其他Server获取集群信息。</li>
+<li>token填写第一台server的token</li>
+<li>tls-san跟第一台server一样，一般填写统一入口的ip地址或域名，用于TLS证书注册。  </li>
+</ul>
+<p>下载rke2二进制可执行文件，和自动配置rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL http://rancher-mirror.rancher.cn/rke2/install.sh | INSTALL_RKE2_MIRROR=cn sh -</div></pre></td></tr></table></figure></p>
+<p>设置rke2-server开机自启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>启动rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>等待注册和集群启动</p>
+<p>验证：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">kubectl get node</div><div class="line">NAME        STATUS   ROLES                       AGE    VERSION</div><div class="line">rke-node4   Ready    control-plane,etcd,master   140m   v1.22.5+rke2r1</div><div class="line">rke-node5   Ready    control-plane,etcd,master   138m   v1.22.5+rke2r1</div><div class="line">rke-node6   Ready    control-plane,etcd,master   19h    v1.22.5+rke2r1</div><div class="line">rke-node7   Ready    &lt;none&gt;                      19h    v1.22.5+rke2r1</div></pre></td></tr></table></figure></p>
+<p>进入etcd-pod，查看etcd集群状态。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">etcdctl --cert /var/lib/rancher/rke2/server/tls/etcd/server-client.crt --key /var/lib/rancher/rke2/server/tls/etcd/server-client.key --endpoints https://127.0.0.1:2379 --cacert /var/lib/rancher/rke2/server/tls/etcd/server-ca.crt member list</div><div class="line">e19d2834bb177be1, started, rke-node4-896165c9, https://192.168.0.25:2380, https://192.168.0.25:2379, false</div><div class="line">ec67af24a94fb07c, started, rke-node6-fed10843, https://192.168.0.32:2380, https://192.168.0.32:2379, false</div><div class="line">f7e9f28da0a6e5e6, started, rke-node5-4a4b6af5, https://192.168.0.29:2380, https://192.168.0.29:2379, false</div></pre></td></tr></table></figure>
+<p>按单机操作加入agent节点。  </p>
+<h3 id="通过RKE2离线部署kubernetes集群"><a href="#通过RKE2离线部署kubernetes集群" class="headerlink" title="通过RKE2离线部署kubernetes集群"></a>通过RKE2离线部署kubernetes集群</h3><h4 id="Tarball模式"><a href="#Tarball模式" class="headerlink" title="Tarball模式"></a>Tarball模式</h4><p>RKE2的离线部署方式与k3s比较相似，都是提前将对应的离线介质下载放置到对应的目录，启动二进制进程执行。</p>
+<p>在RKE2对应的Release页下载对应的离线安装介质<br><a href="https://github.com/rancher/rke2/releases" target="_blank" rel="external">https://github.com/rancher/rke2/releases</a><br>主要为以下离线安装介质</p>
+<ul>
+<li>rke2-images.linux-amd64.tar</li>
+<li>rke2.linux-amd64.tar.gz</li>
+<li>sha256sum-amd64.txt<br>根据所需要的不同网络插件，下载对应的镜像包</li>
+<li>rke2-images-canal.linux-amd64.tar.gz</li>
+<li>离线安装脚本</li>
+</ul>
+<p>将这些下载后的安装介质放置在节点的一个统一目录如/root/images</p>
+<p>下载离线安装脚本<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">curl -sfL https://get.rke2.io --output install.sh</div></pre></td></tr></table></figure></p>
+<p>部署安装<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">INSTALL_RKE2_ARTIFACT_PATH=/root/images sh install.sh</div></pre></td></tr></table></figure></p>
+<p>执行此脚本，将自动对离线介质进行解压到对应目录。<br>接下来就跟在线安装一样，启动RKE2的进程，进行部署server和agent<br>启动rke2</p>
+<p>设置rke2-server开机自启<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl enable rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>启动rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>等待注册和集群启动</p>
+<h4 id="Private-Registry"><a href="#Private-Registry" class="headerlink" title="Private Registry"></a>Private Registry</h4><p>将镜像上传到镜像仓库<br>可以使用rancher的rancher-load-images.sh脚本结合rke2-images-all.linux-amd64.txt文件进行镜像上传。</p>
+<p>下载rke2可执行文件rke2.linux-amd64.tar.gz<br>解压，将systemctl文件和rke2可执行文件复制到对应目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp lib/systemd/system/* /usr/local/lib/systemd/system/</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp bin/* /usr/local/bin/</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cp share/* /usr/local/share/ -rf</div></pre></td></tr></table></figure>
+<p>配置config.yaml，指定默认拉取镜像<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">system-default-registry: xxx.xxx.xxx.xxx</div></pre></td></tr></table></figure></p>
+<p>若私有镜像仓库为http或自签名https需要在<code>/etc/rancher/rke2 /registries.yaml</code>进行配置<br>但这里我配置的insecure-registry没有生效，具体issue查看：<a href="https://github.com/rancher/rke2/issues/2317" target="_blank" rel="external">https://github.com/rancher/rke2/issues/2317</a></p>
+<h3 id="通过RKE2部署Kubernetes高可用实现原理"><a href="#通过RKE2部署Kubernetes高可用实现原理" class="headerlink" title="通过RKE2部署Kubernetes高可用实现原理"></a>通过RKE2部署Kubernetes高可用实现原理</h3><p>RKE2部署的Kubernetes和其他Kubernetes的组件需要HA的方式是一致的.<br>Kubernetes 集群的高可用是针对：  </p>
+<ul>
+<li>etcd</li>
+<li>controller-manager</li>
+<li>scheduler</li>
+<li>apiserver</li>
+</ul>
+<p>etcd：通过本身的 Raft 算法 Leader 选主机制，组成ETCD集群，实现 etcd 高可用。  </p>
+<p>controller manager：leader election 选举竞争锁的机制来保证高可用。  </p>
+<p>scheduler：leader election 选举竞争锁的机制来保证高可用。  </p>
+<p>apiserver：无状态，通过前端负载均衡实现高可用。 </p>
+<p>另外一个在于在rke2集群中，containerd、kubelet组件集成到了rke2服务中，这点和k3s非常相式，同时在rke2服务中还集成了nginx服务，主要用于做为kubelet连接api-server的方向代理。 </p>
+<p>HA的主要区别在于API-server统一入口，因为RKE2会帮助其他组件自动做HA，</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/RKE-1.png" alt=""></p>
+<p>当有统一入口时，跟kubeadm和其他原生Kubernetes一样，所有请求都会通过统一负载均衡器连接到后端的rke2-server。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/RKE-2.png" alt=""></p>
+<p>如果api-server没有统一入口，kubelet和rke2-agent去连接rke2-server时，会用一个server地址去注册即可，然后agent会获取 所有rke2 server 的地址，然后存储到 /var/lib/rancher/rke2/agent/etc/rke2-api-server-agent-load-balancer.json中，生成nginx反向代理配置<br>比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">cat rke2-agent-load-balancer.json</div><div class="line">&#123;</div><div class="line">  &quot;ServerURL&quot;: &quot;https://192.168.3.10:9345&quot;,</div><div class="line">  &quot;ServerAddresses&quot;: [</div><div class="line">    &quot;192.168.3.11:9345&quot;,</div><div class="line">    &quot;192.168.3.12:9345&quot;</div><div class="line">  ],</div><div class="line">  &quot;Listener&quot;: null</div></pre></td></tr></table></figure></p>
+<p>当192.168.3.10 挂掉之后，会自动切换到另一个rke2 server 去连接。当192.168.3.10恢复后，回重新连接192.168.3.10。</p>
+<p>另外在前面也提到，rke2里面也集成了containerd，那么问题来了，如果rke2-agent进程出现问题down了，是否会影响平台上业务正常运行呢？<br>答案是，不会影响业务正常运行，因为containerd创建容器是通过containerd-shim-runc-v2调用runc创建，当containerd出现问题时containerd-shim-runc-v2会被init进程托管，不会导致退出影响现有业务POD。但需要注意的是rke2-agent退出后kubelet也退出了，对应的业务状态探测就没有了，在默认超时5分钟后，Controller-manager会将业务pod重建。</p>
+<h2 id="其他使用技巧"><a href="#其他使用技巧" class="headerlink" title="其他使用技巧"></a>其他使用技巧</h2><h3 id="使用RKE2部署Kubernetes使用其他网络插件"><a href="#使用RKE2部署Kubernetes使用其他网络插件" class="headerlink" title="使用RKE2部署Kubernetes使用其他网络插件"></a>使用RKE2部署Kubernetes使用其他网络插件</h3><p>默认情况下rke2部署使用的是canal做为网络插件，还支持calico和cilium网络插件，若想使用其他网络插件只需要进行配置即可。</p>
+<p>如cilium<br>cilium依赖内核bfp特性，在启用前需要先进行挂载。<br>检查是否有进行挂载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount | grep /sys/fs/bpf</div></pre></td></tr></table></figure></p>
+<p>进行挂载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">sudo mount bpffs -t bpf /sys/fs/bpf</div><div class="line">sudo bash -c &apos;cat &lt;&lt;EOF &gt;&gt; /etc/fstab</div><div class="line">none /sys/fs/bpf bpf rw,relatime 0 0</div><div class="line">EOF&apos;</div></pre></td></tr></table></figure></p>
+<p>在次检查<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mount | grep /sys/fs/bpf</div><div class="line">bpffs on /sys/fs/bpf type bpf (rw,relatime)</div><div class="line">bpffs on /sys/fs/bpf type bpf (rw,relatime)</div></pre></td></tr></table></figure></p>
+<p>在start rke2-server和agent服务前先配置config.yaml<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir -p /etc/rancher/rke2/</div><div class="line">vim /etc/rancher/rke2/config.yaml</div></pre></td></tr></table></figure></p>
+<p>添加以下参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cni: cilium</div></pre></td></tr></table></figure></p>
+<p>启动rke2-server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl start rke2-server.service</div></pre></td></tr></table></figure></p>
+<p>查看是否部署成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">kubectl get pod -A</div><div class="line">NAMESPACE     NAME                                                    READY   STATUS              RESTARTS   AGE</div><div class="line">kube-system   cilium-6rfzw                                            1/1     Running             0          52s</div><div class="line">kube-system   cilium-node-init-998vd                                  1/1     Running             0          52s</div><div class="line">kube-system   cilium-operator-85f67b5cb7-nw7n8                        1/1     Running             0          52s</div><div class="line">kube-system   cilium-operator-85f67b5cb7-qc2vh                        0/1     Pending             0          52s</div><div class="line">kube-system   cloud-controller-manager-rke-node4                      1/1     Running             0          65s</div><div class="line">kube-system   etcd-rke-node4                                          1/1     Running             0          73s</div></pre></td></tr></table></figure></p>
+<h3 id="组件参数配置"><a href="#组件参数配置" class="headerlink" title="组件参数配置"></a>组件参数配置</h3><p>在/etc/rancher/rke2/config.yaml 文件中，按照对应组件，添加对应的参数，如apiserver对应为kube-apiserver-arg，组件对应参数为etcd-arg。kube-controller-manager-arg、kube-scheduler-arg、kubelet-arg、kube-proxy-arg。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">etcd-arg:</div><div class="line">  - &quot;quota-backend-bytes=858993459&quot;</div><div class="line">  - &quot;max-request-bytes=33554432&quot;</div><div class="line">kube-apiserver-arg:</div><div class="line">  - &quot;watch-cache=true&quot;</div><div class="line">kubelet-arg:</div><div class="line">  - &quot;system-reserved=cpu=1,memory=2048Mi&quot;</div></pre></td></tr></table></figure></p>
+<p>配置完成后启动rke2-server。agent节点要同步时配置，否则kubelet和kube-proxy参数将不生效</p>
+<p>检查参数是否生效<br>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps aux|grep system-reserved</div></pre></td></tr></table></figure></p>
+<h3 id="集群备份和还原"><a href="#集群备份和还原" class="headerlink" title="集群备份和还原"></a>集群备份和还原</h3><p>rke2备份文件保存在每个拥有etcd角色的节点的/var/lib/rancher/rke2/server/db/snapshots目录内，拥有多副本保存。<br>默认每隔12小时备份一次，保留5份。</p>
+<p>注：目前版本只能通过定时备份，没有立刻备份的选型。<br>将</p>
+<p>指定备份文件恢复</p>
+<p>关闭rke2-server进程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">systemctl stop rke2-server</div></pre></td></tr></table></figure></p>
+<p>指定文件恢复<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">rke2 server \</div><div class="line">  --cluster-reset \</div><div class="line">  --cluster-reset-restore-path=&lt;PATH-TO-SNAPSHOT&gt;</div></pre></td></tr></table></figure></p>
+<p>若是HA集群，还原成功后在其他server节点将执行<code>rm -rf /var/lib/rancher/rke2/server/db</code>然后重新启动server，加入集群。</p>
+<p>rke2跟rke1一样也支持将备份文件在一个新集群进行还原。</p>
+<h3 id="常见操作"><a href="#常见操作" class="headerlink" title="常见操作"></a>常见操作</h3><p>参考链接：<br><a href="https://gist.github.com/superseb/3b78f47989e0dbc1295486c186e944bf" target="_blank" rel="external">https://gist.github.com/superseb/3b78f47989e0dbc1295486c186e944bf</a></p>
+<h4 id="查看本机运行的容器"><a href="#查看本机运行的容器" class="headerlink" title="查看本机运行的容器"></a>查看本机运行的容器</h4><p>ctr命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/var/lib/rancher/rke2/bin/ctr --address /run/k3s/containerd/containerd.sock --namespace k8s.io container ls</div></pre></td></tr></table></figure></p>
+<p>crictl命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml</div><div class="line">/var/lib/rancher/rke2/bin/crictl ps</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/var/lib/rancher/rke2/bin/crictl --config /var/lib/rancher/rke2/agent/etc/crictl.yaml ps</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/var/lib/rancher/rke2/bin/crictl --runtime-endpoint unix:///run/k3s/containerd/containerd.sock ps -a</div></pre></td></tr></table></figure>
+<p>最终都是连接到containerd的socket文件</p>
+<h4 id="查看日志"><a href="#查看日志" class="headerlink" title="查看日志"></a>查看日志</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">journalctl -f -u rke2-server</div><div class="line">/var/lib/rancher/rke2/agent/containerd/containerd.log</div><div class="line">/var/lib/rancher/rke2/agent/logs/kubelet.log</div></pre></td></tr></table></figure>
+<h4 id="etcd操作"><a href="#etcd操作" class="headerlink" title="etcd操作"></a>etcd操作</h4><p>etcdctl check perf<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">for etcdpod in $(kubectl -n kube-system get pod -l component=etcd --no-headers -o custom-columns=NAME:.metadata.name); do kubectl -n kube-system exec $etcdpod -- sh -c &quot;ETCDCTL_ENDPOINTS=&apos;https://127.0.0.1:2379&apos; ETCDCTL_CACERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt&apos; ETCDCTL_CERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.crt&apos; ETCDCTL_KEY=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.key&apos; ETCDCTL_API=3 etcdctl check perf&quot;; done</div></pre></td></tr></table></figure></p>
+<p>etcdctl endpoint status</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">for etcdpod in $(kubectl -n kube-system get pod -l component=etcd --no-headers -o custom-columns=NAME:.metadata.name); do kubectl -n kube-system exec $etcdpod -- sh -c &quot;ETCDCTL_ENDPOINTS=&apos;https://127.0.0.1:2379&apos; ETCDCTL_CACERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt&apos; ETCDCTL_CERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.crt&apos; ETCDCTL_KEY=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.key&apos; ETCDCTL_API=3 etcdctl endpoint status&quot;; done</div></pre></td></tr></table></figure>
+<p>etcdctl endpoint health</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">for etcdpod in $(kubectl -n kube-system get pod -l component=etcd --no-headers -o custom-columns=NAME:.metadata.name); do kubectl -n kube-system exec $etcdpod -- sh -c &quot;ETCDCTL_ENDPOINTS=&apos;https://127.0.0.1:2379&apos; ETCDCTL_CACERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt&apos; ETCDCTL_CERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.crt&apos; ETCDCTL_KEY=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.key&apos; ETCDCTL_API=3 etcdctl endpoint health&quot;; done</div></pre></td></tr></table></figure>
+<p>etcdctl compact<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rev=$(kubectl -n kube-system exec $(kubectl -n kube-system get pod -l component=etcd --no-headers -o custom-columns=NAME:.metadata.name | head -1) -- sh -c &quot;ETCDCTL_ENDPOINTS=&apos;https://127.0.0.1:2379&apos; ETCDCTL_CACERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt&apos; ETCDCTL_CERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.crt&apos; ETCDCTL_KEY=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.key&apos; ETCDCTL_API=3 etcdctl endpoint status --write-out fields | grep Revision | cut -d: -f2&quot;)</div><div class="line">kubectl -n kube-system exec $(kubectl -n kube-system get pod -l component=etcd --no-headers -o custom-columns=NAME:.metadata.name | head -1) -- sh -c &quot;ETCDCTL_ENDPOINTS=&apos;https://127.0.0.1:2379&apos; ETCDCTL_CACERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt&apos; ETCDCTL_CERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.crt&apos; ETCDCTL_KEY=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.key&apos; ETCDCTL_API=3 etcdctl compact \&quot;$(echo $rev)\&quot;&quot;</div></pre></td></tr></table></figure></p>
+<p>etcdctl defrag</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">kubectl -n kube-system exec $(kubectl -n kube-system get pod -l component=etcd --no-headers -o custom-columns=NAME:.metadata.name | head -1) -- sh -c &quot;ETCDCTL_ENDPOINTS=&apos;https://127.0.0.1:2379&apos; ETCDCTL_CACERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt&apos; ETCDCTL_CERT=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.crt&apos; ETCDCTL_KEY=&apos;/var/lib/rancher/rke2/server/tls/etcd/server-client.key&apos; ETCDCTL_API=3 etcdctl defrag --cluster&quot;</div></pre></td></tr></table></figure>
+<p>对应的，直接操作etcdctl<br>参考：<a href="https://gist.github.com/superseb/3b78f47989e0dbc1295486c186e944bf" target="_blank" rel="external">https://gist.github.com/superseb/3b78f47989e0dbc1295486c186e944bf</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2021/10/14/jenkins_pipeline/" title="Jenkins-pipeline讲解和使用">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script src="/js/plugin.js"></script>
+<script src="/js/application.js"></script>
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+<script src="/js/insight.js"></script>
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
