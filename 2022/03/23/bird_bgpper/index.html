@@ -380,7 +380,7 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拓扑架构图"><span class="toc-number">2.</span> <span class="toc-text">拓扑架构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bird部署配置"><span class="toc-number">3.</span> <span class="toc-text">Bird部署配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#节点配置"><span class="toc-number">3.1.</span> <span class="toc-text">节点配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bird配置"><span class="toc-number">3.2.</span> <span class="toc-text">Bird配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-BGP对接"><span class="toc-number">4.</span> <span class="toc-text">Calico BGP对接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#节点POD-CIDR路由统一走默认路由"><span class="toc-number">4.1.</span> <span class="toc-text">节点POD-CIDR路由统一走默认路由</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#节点POD-IP明细路由发布"><span class="toc-number">4.2.</span> <span class="toc-text">节点POD-IP明细路由发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Service-CIDR路由发布"><span class="toc-number">4.3.</span> <span class="toc-text">Service-CIDR路由发布</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概述-1"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拓扑架构图"><span class="toc-number">3.</span> <span class="toc-text">拓扑架构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bird部署配置"><span class="toc-number">4.</span> <span class="toc-text">Bird部署配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#节点配置"><span class="toc-number">4.1.</span> <span class="toc-text">节点配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bird配置"><span class="toc-number">4.2.</span> <span class="toc-text">Bird配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-BGP对接"><span class="toc-number">5.</span> <span class="toc-text">Calico BGP对接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#节点POD-CIDR路由统一走默认路由"><span class="toc-number">5.1.</span> <span class="toc-text">节点POD-CIDR路由统一走默认路由</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#节点POD-IP明细路由发布"><span class="toc-number">5.2.</span> <span class="toc-text">节点POD-IP明细路由发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Service-CIDR路由发布"><span class="toc-number">5.3.</span> <span class="toc-text">Service-CIDR路由发布</span></a></li></ol></li></ol>
     </nav>
   </div>
 </aside>
@@ -424,10 +424,10 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/03/23/bird_bgpper/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2,990(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3,208(字)</span>
 	
 	
-		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 16(分)</span>
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 17(分)</span>
 	
 
       </div>
@@ -461,6 +461,26 @@
 </tbody>
 </table>
 <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>calico网络插件最为知名的就是calico-bgp模式，在测试中需要验证calico-bgp跨子网路由同步，需要连接两个子网的路由器支持BGP协议，这给测试环境搭建带来很大复杂性。本次文档通过Bird软件将一个虚拟机模拟为软路由，并配置为Kubernetes节点BGP Peers，实现BGP路由同步。</p>
+<p>软件版本</p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kubernetes</td>
+<td>v1.20.15</td>
+</tr>
+<tr>
+<td>calico</td>
+<td>v3.17.2</td>
+</tr>
+</tbody>
+</table>
+<h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><p>calico网络插件最为知名的就是calico-bgp模式，在测试中需要验证calico-bgp跨子网路由同步，需要连接两个子网的路由器支持BGP协议，这给测试环境搭建带来很大复杂性。本次文档通过Bird软件将一个虚拟机模拟为软路由，并配置为Kubernetes节点BGP Peers，实现BGP路由同步。</p>
 <p>软件版本</p>
 <table>
 <thead>
@@ -535,7 +555,9 @@
 <p>创建configmap，替换calico原有的bird_aggr.cfg.template文件</p>
 <p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-2.png" alt=""></p>
 <p>主要修改以下参数：<br>注释掉本地黑洞路由，就不会生产本地聚合路由同步到BGP路由器了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># route &#123;&#123;$cidr&#125;&#125; blackhole;</div></pre></td></tr></table></figure></p>
-<p>允许明细路由同步<br>将<code>if ( net ~  ) then { accept; }</code>修改为accept<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">&#123;&#123;- $affinity := json (getv (printf &quot;%s/%s&quot; $block_key .))&#125;&#125;</div><div class="line">  &#123;&#123;- if $affinity.state&#125;&#125;</div><div class="line">      # Block &#123;&#123;$cidr&#125;&#125; is &#123;&#123;$affinity.state&#125;&#125;</div><div class="line">    &#123;&#123;- if eq $affinity.state &quot;confirmed&quot;&#125;&#125;</div><div class="line">      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">    &#123;&#123;- end&#125;&#125;</div><div class="line">  &#123;&#123;- else &#125;&#125;</div><div class="line">      # Block &#123;&#123;$cidr&#125;&#125; is implicitly confirmed.</div><div class="line">      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">  &#123;&#123;- end &#125;&#125;</div><div class="line">&#123;&#123;- end&#125;&#125;</div></pre></td></tr></table></figure></p>
+<p>允许明细路由同步<br>将<code>if ( net ~  ) then { reject; }</code>修改为accept</p>
+<p>完整配置如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"># Generated by confd</div><div class="line"></div><div class="line">&#123;&#123;- $block_key := printf &quot;/calico/ipam/v2/host/%s/ipv4/block&quot; (getenv &quot;NODENAME&quot;)&#125;&#125;</div><div class="line">&#123;&#123;- $static_key := &quot;/calico/staticroutes&quot;&#125;&#125;</div><div class="line">&#123;&#123;if or (ls $block_key) (ls $static_key)&#125;&#125;</div><div class="line">protocol static &#123;</div><div class="line">&#123;&#123;- if ls $block_key&#125;&#125;</div><div class="line">   # IP blocks for this host.</div><div class="line">&#123;&#123;- range ls $block_key&#125;&#125;</div><div class="line">&#123;&#123;- $parts := split . &quot;-&quot;&#125;&#125;</div><div class="line">&#123;&#123;- $cidr := join $parts &quot;/&quot;&#125;&#125;</div><div class="line"> #  route &#123;&#123;$cidr&#125;&#125; blackhole;</div><div class="line">&#123;&#123;- end&#125;&#125;</div><div class="line">&#123;&#123;- end&#125;&#125;</div><div class="line">&#123;&#123;- if ls $static_key&#125;&#125;</div><div class="line">   # Static routes.</div><div class="line">&#123;&#123;- range ls $static_key&#125;&#125;</div><div class="line">&#123;&#123;- $parts := split . &quot;-&quot;&#125;&#125;</div><div class="line">&#123;&#123;- $cidr := join $parts &quot;/&quot;&#125;&#125;</div><div class="line">   route &#123;&#123;$cidr&#125;&#125; blackhole;</div><div class="line">&#123;&#123;- end&#125;&#125;</div><div class="line">&#123;&#123;- end&#125;&#125;</div><div class="line">&#125;</div><div class="line">&#123;&#123;else&#125;&#125;# No IP blocks or static routes for this host.&#123;&#123;end&#125;&#125;</div><div class="line"></div><div class="line"># Aggregation of routes on this host; export the block, nothing beneath it.</div><div class="line">function calico_aggr ()</div><div class="line">&#123;</div><div class="line">&#123;&#123;- range ls $block_key&#125;&#125;</div><div class="line">&#123;&#123;- $parts := split . &quot;-&quot;&#125;&#125;</div><div class="line">&#123;&#123;- $cidr := join $parts &quot;/&quot;&#125;&#125;</div><div class="line">&#123;&#123;- $affinity := json (getv (printf &quot;%s/%s&quot; $block_key .))&#125;&#125;</div><div class="line">  &#123;&#123;- if $affinity.state&#125;&#125;</div><div class="line">      # Block &#123;&#123;$cidr&#125;&#125; is &#123;&#123;$affinity.state&#125;&#125;</div><div class="line">    &#123;&#123;- if eq $affinity.state &quot;confirmed&quot;&#125;&#125;</div><div class="line">      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">    &#123;&#123;- end&#125;&#125;</div><div class="line">  &#123;&#123;- else &#125;&#125;</div><div class="line">      # Block &#123;&#123;$cidr&#125;&#125; is implicitly confirmed.</div><div class="line">      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;</div><div class="line">  &#123;&#123;- end &#125;&#125;</div><div class="line">&#123;&#123;- end&#125;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>升级calico-node映射此configmap配置文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-3.png" alt=""></p>
 <p>重建calico-node</p>
 <p>查看Bird节点</p>
