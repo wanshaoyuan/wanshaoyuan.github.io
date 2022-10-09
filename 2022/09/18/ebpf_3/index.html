@@ -16,18 +16,24 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>归档 | 我爱西红柿</title>
-  <meta name="description" content="好好学习、天天向上">
-<meta property="og:type" content="website">
-<meta property="og:title" content="我爱西红柿">
-<meta property="og:url" content="http://yoursite.com/archives/page/9/index.html">
+  <title>eBPF学习摘要3-XDP学习和理解 | 我爱西红柿</title>
+  <meta name="description" content="概述Linux网络数据包接收数据包的链路为Nic——&amp;gt;rx_ring——&amp;gt;skbuff——&amp;gt;网络协议处理（如ip_recv)这样做的问题在于会产生大量内核态到用户态的切换过程，这会造成大量性能消耗，所以为了提升网络性能才诞生出Kernel bypass的技术如DPDK、SolarFlare技术，像DPDK就是直接饶过内核态，用户态应用直接访问网络硬件提高数据包处理效率，降低因为切">
+<meta property="og:type" content="article">
+<meta property="og:title" content="eBPF学习摘要3-XDP学习和理解">
+<meta property="og:url" content="http://yoursite.com/2022/09/18/ebpf_3/index.html">
 <meta property="og:site_name" content="我爱西红柿">
-<meta property="og:description" content="好好学习、天天向上">
+<meta property="og:description" content="概述Linux网络数据包接收数据包的链路为Nic——&amp;gt;rx_ring——&amp;gt;skbuff——&amp;gt;网络协议处理（如ip_recv)这样做的问题在于会产生大量内核态到用户态的切换过程，这会造成大量性能消耗，所以为了提升网络性能才诞生出Kernel bypass的技术如DPDK、SolarFlare技术，像DPDK就是直接饶过内核态，用户态应用直接访问网络硬件提高数据包处理效率，降低因为切">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_4.png">
+<meta property="og:updated_time" content="2022-09-18T07:19:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="我爱西红柿">
-<meta name="twitter:description" content="好好学习、天天向上">
+<meta name="twitter:title" content="eBPF学习摘要3-XDP学习和理解">
+<meta name="twitter:description" content="概述Linux网络数据包接收数据包的链路为Nic——&amp;gt;rx_ring——&amp;gt;skbuff——&amp;gt;网络协议处理（如ip_recv)这样做的问题在于会产生大量内核态到用户态的切换过程，这会造成大量性能消耗，所以为了提升网络性能才诞生出Kernel bypass的技术如DPDK、SolarFlare技术，像DPDK就是直接饶过内核态，用户态应用直接访问网络硬件提高数据包处理效率，降低因为切">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_1.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://yoursite.com/archives/page/9/index.html">
+  <link rel="canonical" href="http://yoursite.com/2022/09/18/ebpf_3/index.html">
   
     <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
   
@@ -326,165 +332,133 @@
 
   
   
-<main class="main" role="main">
-  	<article class="content article article-archives article-type-list" itemscope="">
-	    <header class="article-header">
-	      <h1 itemprop="title">归档</h1>
-	      <p class="text-muted">共 10 篇文章</p>
-	    </header>
-	    <div class="article-body">
-	      
-  
-  
-    
-    
-      
-      
-      <section class="panel panel-default b-no">
-        <div class="panel-heading" role="tab">
-          <h3 class="panel-title">
-            <a data-toggle="collapse" href="#collapse2017" aria-expanded="true">
-              <i class="fa fa-calendar-plus-o text-active"></i><i class="fa fa-calendar-minus-o text"></i>
-              2017
-            </a>
-            <!-- <a href="/archives/2017" class="archive-year">2017</a> -->
-          </h3>
-        </div>
-        <div id="collapse2017" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2017">
-        <div class="panel-body">
-          <div class="collection">
-    
-    
-<a href="/2017/10/03/monitor/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-03T15:27:44.000Z" itemprop="datePublished">2017-10-03</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> 从零开始构建云平台监控(写在前面)
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/03/Dockerfile/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-03T13:45:59.000Z" itemprop="datePublished">2017-10-03</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Dockerfile
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/10/01/python_socket/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-10-01T03:27:44.000Z" itemprop="datePublished">2017-10-01</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Python socket模块
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/27/python_logging/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-27T15:27:44.000Z" itemprop="datePublished">2017-09-27</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> Python logging模块
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/21/kdump/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-21T03:50:44.000Z" itemprop="datePublished">2017-09-21</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> kdump
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/17/neutron_vlan/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-17T03:50:44.000Z" itemprop="datePublished">2017-09-17</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> OpenStack vlan模式下网络流量走向
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/13/openstack_multi_private/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-13T03:50:44.000Z" itemprop="datePublished">2017-09-13</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> openstack添加多个不同物理出口的private网络
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/09/08/vmware&openstack/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-09-08T14:55:00.000Z" itemprop="datePublished">2017-09-08</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> OpenStack对接vmware
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/08/12/openstack_nova_server_group/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-08-12T05:15:26.000Z" itemprop="datePublished">2017-08-12</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> openstack nova server_group
-</a>
-
-
-  
-    
-    
-    
-<a href="/2017/08/05/ceph_clone/" class="collection-item" target="_blank" itemprop="url">
-  <time datetime="2017-08-05T07:19:59.000Z" itemprop="datePublished">2017-08-05</time>
-  <span>&nbsp;&nbsp;&nbsp;</span> openstack秒级创建云主级秒级创建快照原理
-</a>
-
-
-  
-  
-    </div></div></div></section>
-  
-
-	    </div>
-  	</article>
-  	
-    
-    <nav class="bar bar-footer clearfix" data-stick-bottom>
-        <div class="bar-inner">
-        <ul class="pager pull-left">
-            
-            <li class="prev">
-                <a href="/archives/page/8/">
-                    <i class="fa fa-angle-left"></i>
-                    上一页
-                </a>
-            </li>
-            
-            
-            <li class="next">
-                <a href="/archives/page/10/">
-                    下一页
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </li>
-            
-        </ul>
-        <div class="total-article bar-right">Page 9 of 11</div>
-        </div>
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现方式"><span class="toc-number">2.</span> <span class="toc-text">实现方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#应用场景"><span class="toc-number">3.</span> <span class="toc-text">应用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能测试"><span class="toc-number">4.</span> <span class="toc-text">性能测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结："><span class="toc-number">5.</span> <span class="toc-text">总结：</span></a></li></ol>
     </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ebpf_3" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
- 	
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      eBPF学习摘要3-XDP学习和理解
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/09/18/ebpf_3/" class="article-date">
+	  <time datetime="2022-09-18T07:19:59.000Z" itemprop="datePublished">2022-09-18</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link" href="/tags/Linux/">Linux</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/09/18/ebpf_3/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 903(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 3(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Linux网络数据包接收数据包的链路为Nic——&gt;rx_ring——&gt;skbuff——&gt;网络协议处理（如ip_recv)这样做的问题在于会产生大量内核态到用户态的切换过程，这会造成大量性能消耗，所以为了提升网络性能才诞生出Kernel bypass的技术如DPDK、SolarFlare技术，像DPDK就是直接饶过内核态，用户态应用直接访问网络硬件提高数据包处理效率，降低因为切换带来的损耗，但这种方式本身也存在一些缺点：1、绕开了内核态，很难与Linux操作系统中内核态本身存在的一些工具集成，一些功能需要重新开发。2、需要单独cpu核参与处理。<br>XDP（eXpress Data Path）是一个eBPF hook，可以在内核中执行eBPF程序实现对网络数据包处理，在Linux内核 4.8 版中引入。实现方式与Kernel bypass完全相反在sk_buffer之前数据包从driver出来以后就可以直接被XDP程序捕获执行，极大提升了网络数据包的处理效率。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_1.png" alt=""></p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>如下图所示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_2.png" alt=""><br>1、数据包通过网卡,触发XDP执行<br>2、xdp程序执行读取BPF mps配置的规则对数据包执行相应的操作，通常为<br>（1）XDP_DROP：直接丢弃，不占用CPU资源，有效防止DDOS<br>（2）XDP_Allow：正常转发到内核网络栈<br>（3）XDP_REDIRECT:重定向到其他网卡，或通过AF_XDP直接发送到用户空间。<br>（4）XDP_TX:将处理后的包发给相同的网卡。</p>
+<p>三种处理模式:</p>
+<p>XDP在网络栈中有三个处理点：<br>offloaded模式的XDP：对于支持可编程的网卡，直接在网卡上运行XDP程序。<br>Native模式的XDP：默认模式、对于支持的网卡驱动，可以在包到达内核后立刻进行处理。（目前大部分网卡已经支持）</p>
+<p>Offloaded和Native模式</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_3.png" alt=""></p>
+<p>Generic模式的XDP：网卡和驱动不支持上述两种情况的XDP时，可以在receive_skb函数此点进行处理。这个处理的位置相对靠后，在tc处理点之前，这种性能最差，一般用于测试调试模式。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp3_4.png" alt=""></p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li>负载均衡器：通过XDP_TX和XDP_TX实现数据包的快速转发，目前很多k8s网络插件取代kube-proxy实现Service负载均衡器就是如此。Facebook的全部流量都是经过基于XDP的四层负载均衡器（katran）处理转发（<a href="https://lpc.events/event/11/contributions/950/attachments/889/1704/lpc_from_xdp_to_socket_fb.pdf）" target="_blank" rel="external">https://lpc.events/event/11/contributions/950/attachments/889/1704/lpc_from_xdp_to_socket_fb.pdf）</a></li>
+<li>防火墙：Cloudflare在他们的DDoS防御L4Drop中使用用了XDP无需高CPU占用就可提供高性能丢包率（<a href="https://blog.cloudflare.com/how-to-drop-10-million-packets/）" target="_blank" rel="external">https://blog.cloudflare.com/how-to-drop-10-million-packets/）</a></li>
+<li>流量监控和采样：位于内核网络栈前端，通过自定义的eBPF程序即可实现对网络流量的采样，目前很多基于eBPF的APM就是这样实现的。</li>
+</ul>
+<h3 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h3><p><a href="https://people.netfilter.org/hawk/presentations/KernelRecipes2018/XDP_Kernel_Recipes_2018.pdf" target="_blank" rel="external">https://people.netfilter.org/hawk/presentations/KernelRecipes2018/XDP_Kernel_Recipes_2018.pdf</a><br><a href="http://vger.kernel.org/lpc_net2018_talks/lpc18-xdp-future.pdf" target="_blank" rel="external">http://vger.kernel.org/lpc_net2018_talks/lpc18-xdp-future.pdf</a><br><a href="https://blog.cloudflare.com/how-to-drop-10-million-packets/" target="_blank" rel="external">https://blog.cloudflare.com/how-to-drop-10-million-packets/</a><br><a href="https://blog.csdn.net/hbhgyu/article/details/109354273" target="_blank" rel="external">https://blog.csdn.net/hbhgyu/article/details/109354273</a><br>这里面包含了对丢包性能、转发性能、DDos防御能力的测试。</p>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>随着eBPF技术的持续发展，XDP能够实现DPDK相近的性能，但又更具有兼容性和灵活性，未来会得到越来越好的发展，围绕eBPF和XDP的生态软件也会越来越丰富。</p>
+<p>参考链接：<br><a href="https://zhuanlan.zhihu.com/p/453005342" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/453005342</a><br><a href="https://zhuanlan.zhihu.com/p/438158551" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/438158551</a><br><a href="https://mp.weixin.qq.com/s/H9imUbdJnfj1NKdK9jtxEw" target="_blank" rel="external">https://mp.weixin.qq.com/s/H9imUbdJnfj1NKdK9jtxEw</a><br><a href="https://zhuanlan.zhihu.com/p/321387418" target="_blank" rel="external">https://zhuanlan.zhihu.com/p/321387418</a><br><a href="https://mp.weixin.qq.com/s/lUvxUkFg4w1X0ioktxGiHA" target="_blank" rel="external">https://mp.weixin.qq.com/s/lUvxUkFg4w1X0ioktxGiHA</a><br><a href="https://www.seekret.io/blog/a-gentle-introduction-to-xdp/" target="_blank" rel="external">https://www.seekret.io/blog/a-gentle-introduction-to-xdp/</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/09/18/ebpf_2/" title="eBPF学习摘要2—工具使用(bpftrace）"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/08/23/ebpf_1/" title="eBPF学习摘要1(概述、理论)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
 </main>
 
   
@@ -522,6 +496,8 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
     
+    
+        
     
     
 
