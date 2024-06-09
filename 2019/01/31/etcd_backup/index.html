@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>ETCD集群的备份与还原 | 我爱西红柿</title>
+  <meta name="description" content="概述：etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)&#x2F;2个，比如你有3个节点做etcd-ha那么最多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ETCD集群的备份与还原">
+<meta property="og:url" content="http://yoursite.com/2019/01/31/etcd_backup/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述：etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)&#x2F;2个，比如你有3个节点做etcd-ha那么最多">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_4.png">
+<meta property="article:published_time" content="2019-01-31T13:45:59.000Z">
+<meta property="article:modified_time" content="2019-01-31T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2019/01/31/etcd_backup/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#etcd%E5%A4%87%E4%BB%BD"><span class="toc-number">2.</span> <span class="toc-text">etcd备份</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#etcd%E8%BF%98%E5%8E%9F"><span class="toc-number">3.</span> <span class="toc-text">etcd还原</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E8%BF%98%E5%8E%9F"><span class="toc-number">3.1.</span> <span class="toc-text">单节点还原</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HA%E7%8E%AF%E5%A2%83%E4%B8%8B%E8%BF%98%E5%8E%9F%EF%BC%88%E5%A4%9A%E4%B8%AAetcd%E8%8A%82%E7%82%B9"><span class="toc-number">3.2.</span> <span class="toc-text">HA环境下还原（多个etcd节点)</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-etcd_backup" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ETCD集群的备份与还原
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2019/01/31/etcd_backup/" class="article-date">
+	  <time datetime="2019-01-31T13:45:59.000Z" itemprop="datePublished">2019-01-31</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/01/31/etcd_backup/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.5k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)&#x2F;2个，比如你有3个节点做etcd-ha那么最多可以挂掉(3-1)&#x2F;2个节点，虽然有HA集群可以保证一定的高可用，但在实际生产环境中还是建议将etcd数据进行备份，方便在出现问题时进行还原。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png"></p>
+<p>环境信息：<br>OS：ubuntu16.04<br>docker：17.03-2<br>Kubernetes：v1.11.6<br>etcd：v3.2.18<br>Rancher：v2.1.5</p>
+<p>节点信息与角色：<br>172.31.164.58   control worker etcd<br>172.31.164.59   control worker etcd<br>172.31.164.139   control worker etcd</p>
+<p>操作：<br>以Rancher2.0部署的Kubernetes集群为例，其他部署工具部署的也是一样。</p>
+<h3 id="etcd备份"><a href="#etcd备份" class="headerlink" title="etcd备份"></a>etcd备份</h3><p>备份步骤<br>1、 如果是使用Rancher部署的Kubernetes集群可以直接使用rancher自动备份</p>
+<p>Rancherv2.1.5 在部署集群的高级选项内是可以配置etcd的自动备份的，按照配置的备份策略会进行自动备份，默认的备份策略是每12小时备份一次，备份文件的轮转周期是72小时，避免因备份文件过多占用磁盘空间.也可以根据自己实际需求进行调整。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_2.png"></p>
+<p>备份的文件放置在master节点宿主机的&#x2F;opt&#x2F;rke&#x2F;etcd-snapshots目录下以etcd结尾的就是etcd就是备份文件，pki.bundle.tar.gz文件是对应的集群证书的备份。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_3.png"></p>
+<p>Rancher部署的Kubernetes集群etcd是以容器化的方式运行要使用etcdctl命令有两种方式<br>1、etcd容器内执行etcdctl;docker exec -it etcd sh<br>2、或直接在宿主机上安装一个etcd不用启动，只是使用它的etcdctl命令,那可以通过<a href="https://github.com/etcd-io/etcd/releases%E4%B8%8B%E8%BD%BD%E5%AF%B9%E5%BA%94%E7%9A%84etcd%E7%89%88%E6%9C%AC%E3%80%82">https://github.com/etcd-io/etcd/releases下载对应的etcd版本。</a></p>
+<p>推荐使用方式二在宿主机上安装etcd使用etcdctl执行，因为在还原时需要将etcd关闭，还是需要准备etcdctl命令<br>执行以下命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl --endpoints=https://172.31.164.58:2379 --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem --cacert=/etc/kubernetes/ssl/kube-ca.pem snapshot save  /var/lib/rancher/etcd/etcd_2019_1_31.db</span><br></pre></td></tr></table></figure>
+
+<p>1、&#x2F;var&#x2F;lib&#x2F;rancher&#x2F;etcd这个目录是根宿主机的&#x2F;var&#x2F;lib&#x2F;etcd&#x2F;目录相映射的,所以备份在这个目录在对应的宿主机上也是能看见的。<br>2、这些证书对应文件可以直接在etcd容器内通过ps aux|more看见</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_4.png"></p>
+<p>其中–cert-file对应–cert，–key对应–key-file –cacert对应–trusted-ca-file</p>
+<p>集群方式备份根上述一样</p>
+<h3 id="etcd还原"><a href="#etcd还原" class="headerlink" title="etcd还原"></a>etcd还原</h3><h4 id="单节点还原"><a href="#单节点还原" class="headerlink" title="单节点还原"></a>单节点还原</h4><p>1、将kube-api-server关闭<br>2、将etcd关闭<br>在宿主机上执行<br>将现有的etcd目录移除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv /var/lib/etcd /var/lib/etcd.bak</span><br></pre></td></tr></table></figure>
+<p>执行还原</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</span><br><span class="line">    --endpoints=172.31.164.58:2379 \</span><br><span class="line">    --name=etcd-rke-node2 \</span><br><span class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</span><br><span class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</span><br><span class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</span><br><span class="line">    --initial-advertise-peer-urls=https://172.31.164.58:2380 \</span><br><span class="line">    --initial-cluster-token=etcd-cluster-1 \</span><br><span class="line">    --initial-cluster=etcd-rke-node2=https://172.31.164.58:2380 \</span><br><span class="line">    --data-dir=/var/lib/etcd</span><br></pre></td></tr></table></figure>
+<p>3、启动etcd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start etcd</span><br></pre></td></tr></table></figure>
+<p>4、启动kube-apiserver</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker start kube-apiserver</span><br></pre></td></tr></table></figure>
+<p>5、检查数据是否还原<br>使用kubectl查看资源对象是否已恢复或直接get all</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get all --all-namespace</span><br></pre></td></tr></table></figure>
+<h4 id="HA环境下还原（多个etcd节点"><a href="#HA环境下还原（多个etcd节点" class="headerlink" title="HA环境下还原（多个etcd节点)"></a>HA环境下还原（多个etcd节点)</h4><p>将一个节点上的备份数据可以拷贝到其他全部节点，所有节点可以使用同一份数据进行恢复。</p>
+<p>1、查看etcd集群信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl --endpoints=https://172.31.164.58:2379 --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem --cacert=/etc/kubernetes/ssl/kube-ca.pem member list</span><br><span class="line"></span><br><span class="line">2019-01-31 17:34:55.080375 I | warning: ignoring ServerName for user-provided CA for backwards compatibility is deprecated</span><br><span class="line">abfc00bfbb85856d, started, etcd-rke-node3, https://172.31.164.59:2380, https://172.31.164.59:2379,https://172.31.164.59:4001</span><br><span class="line">cb7997809d89fa30, started, etcd-rke-node2, https://172.31.164.58:2380, https://172.31.164.58:2379,https://172.31.164.58:4001</span><br><span class="line">d3f1ec5a741e4dd1, started, etcd-rke-node4, https://172.31.164.139:2380, https://172.31.164.139:2379,https://172.31.164.139:4001</span><br></pre></td></tr></table></figure>
+
+
+<p>2、关闭集群的全部api-server和etcd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop etcd &amp;&amp; docker stop kube-apiserver</span><br></pre></td></tr></table></figure>
+
+<p>3、将集群内宿主机现有的etcd目录移除</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv /var/lib/etcd /var/lib/etcd.bak</span><br></pre></td></tr></table></figure>
+
+<p>4、恢复数据<br>在172.31.164.58上执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</span><br><span class="line">    --endpoints=172.31.164.58:2379 \</span><br><span class="line">    --name=etcd-rke-node2 \</span><br><span class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</span><br><span class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</span><br><span class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</span><br><span class="line">    --initial-advertise-peer-urls=https://172.31.164.58:2380 \</span><br><span class="line">    --initial-cluster-token=etcd-cluster-1 \</span><br><span class="line">    --initial-cluster=etcd-rke-node4=https://172.31.164.139:2380,etcd-rke-node3=https://172.31.164.59:2380,etcd-rke-node2=https://172.31.164.58:2380 \</span><br><span class="line">    --data-dir=/var/lib/etcd</span><br></pre></td></tr></table></figure>
+
+<p>在172.31.164.59上执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</span><br><span class="line">    --endpoints=172.31.164.59:2379 \</span><br><span class="line">    --name=etcd-rke-node3 \</span><br><span class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</span><br><span class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</span><br><span class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</span><br><span class="line">    --initial-advertise-peer-urls=https://172.31.164.59:2380 \</span><br><span class="line">    --initial-cluster-token=etcd-cluster-1 \</span><br><span class="line">    --initial-cluster=etcd-rke-node4=https://172.31.164.139:2380,etcd-rke-node3=https://172.31.164.59:2380,etcd-rke-node2=https://172.31.164.58:2380 \</span><br><span class="line">    --data-dir=/var/lib/etcd</span><br></pre></td></tr></table></figure>
+
+<p>在172.31.164.139上执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl snapshot restore  etcd_2019_1_31.db \</span><br><span class="line">    --endpoints=172.31.164.139:2379 \</span><br><span class="line">    --name=etcd-rke-node4 \</span><br><span class="line">    --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem \</span><br><span class="line">    --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem \</span><br><span class="line">    --cacert=/etc/kubernetes/ssl/kube-ca.pem \</span><br><span class="line">    --initial-advertise-peer-urls=https://172.31.164.139:2380 \</span><br><span class="line">    --initial-cluster-token=etcd-cluster-1 \</span><br><span class="line">    --initial-cluster=etcd-rke-node4=https://172.31.164.139:2380,etcd-rke-node3=https://172.31.164.59:2380,etcd-rke-node2=https://172.31.164.58:2380 \</span><br><span class="line">    --data-dir=/var/lib/etcd</span><br></pre></td></tr></table></figure>
+
+<p>5、检查数据是否恢复</p>
+<p>使用kubectl查看资源对象是否已恢复或直接get all</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get all --all-namespace</span><br></pre></td></tr></table></figure>
+
+<p>以上操作也可以写成一个自动化备份的脚本，但若使用Rancher部署的集群有自动定时备份更方便。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/02/07/flexvolume/" title="flexvolume简介"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/12/29/k8s_cicd/" title="Kubernetes下CICD工具的选型">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

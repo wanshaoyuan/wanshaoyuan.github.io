@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Istio(二)通过Istio实现服务治理 | 我爱西红柿</title>
+  <meta name="description" content="环境信息：   组件 版本    Kubernetes 1.15.5   Istio 1.4.2   helm 2.16.1   服务治理sidecar的注入前面提到，通过ServiceMesh进行微服务治理和传统的SDK的区别在于，ServiceMesh主要是依靠在应用POD中附加透明代理方式实现。下面介绍下istio是如何实现透明代理注入的。   sidecar的注入方式有两种：1、手动方式注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Istio(二)通过Istio实现服务治理">
+<meta property="og:url" content="http://yoursite.com/2019/08/31/istio-2/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环境信息：   组件 版本    Kubernetes 1.15.5   Istio 1.4.2   helm 2.16.1   服务治理sidecar的注入前面提到，通过ServiceMesh进行微服务治理和传统的SDK的区别在于，ServiceMesh主要是依靠在应用POD中附加透明代理方式实现。下面介绍下istio是如何实现透明代理注入的。   sidecar的注入方式有两种：1、手动方式注">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_11.png">
+<meta property="article:published_time" content="2019-08-31T13:45:59.000Z">
+<meta property="article:modified_time" content="2019-08-31T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="ServiceMesh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2019/08/31/istio-2/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">环境信息：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">服务治理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#sidecar%E7%9A%84%E6%B3%A8%E5%85%A5"><span class="toc-number">2.1.</span> <span class="toc-text">sidecar的注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%E8%AE%B2%E8%A7%A3"><span class="toc-number">2.2.</span> <span class="toc-text">概念讲解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bookinfo%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2"><span class="toc-number">2.3.</span> <span class="toc-text">bookinfo应用部署</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87Istio%E5%AE%9E%E7%8E%B0bookinfo%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">通过Istio实现bookinfo服务治理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E8%BF%87istio-Gateway%E6%9A%B4%E9%9C%B2bookinfo"><span class="toc-number">3.1.</span> <span class="toc-text">通过istio-Gateway暴露bookinfo</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%AF%B7%E6%B1%82%E8%B7%AF%E7%94%B1"><span class="toc-number">3.2.</span> <span class="toc-text">动态请求路由</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%81%B0%E5%BA%A6%E5%8F%91%E5%B8%83"><span class="toc-number">3.3.</span> <span class="toc-text">实现灰度发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%86%94%E6%96%AD"><span class="toc-number">3.4.</span> <span class="toc-text">熔断</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%BB%91%E7%99%BD%E5%90%8D%E5%8D%95"><span class="toc-number">3.5.</span> <span class="toc-text">黑白名单</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-istio-2" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Istio(二)通过Istio实现服务治理
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2019/08/31/istio-2/" class="article-date">
+	  <time datetime="2019-08-31T13:45:59.000Z" itemprop="datePublished">2019-08-31</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/ServiceMesh/">ServiceMesh</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/08/31/istio-2/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.3k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 14(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="环境信息："><a href="#环境信息：" class="headerlink" title="环境信息："></a>环境信息：</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kubernetes</td>
+<td>1.15.5</td>
+</tr>
+<tr>
+<td>Istio</td>
+<td>1.4.2</td>
+</tr>
+<tr>
+<td>helm</td>
+<td>2.16.1</td>
+</tr>
+</tbody></table>
+<h3 id="服务治理"><a href="#服务治理" class="headerlink" title="服务治理"></a>服务治理</h3><h4 id="sidecar的注入"><a href="#sidecar的注入" class="headerlink" title="sidecar的注入"></a>sidecar的注入</h4><p>前面提到，通过ServiceMesh进行微服务治理和传统的SDK的区别在于，ServiceMesh主要是依靠在应用POD中附加透明代理方式实现。下面介绍下istio是如何实现透明代理注入的。  </p>
+<p>sidecar的注入方式有两种：<br>1、手动方式注入<br>手动注入其实就是修改deployment的pod  template添加另外一个sidecar容器  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">istioctl kube-inject -f samples/sleep/sleep.yaml | kubectl apply -f -</span><br></pre></td></tr></table></figure>
+
+<p>2、使用自动方式注入<br>原理：<br>Kubernetes 调用时，admissionregistration.k8s.io&#x2F;v1beta1会进行配置。会在带有 istio-injection&#x3D;enabled 标签的命名空间中选择 Pod进行sidercar注入<br>配置sidecar自动注入是使用了mutating webhook admission controller实现的，在Kubernetes1.9+的版本才实现此功能,需要对pod实现此功能需要给对应的namespace打上istio-injection&#x3D;enabled 的标签  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label namespace default istio-injection=enabled</span><br></pre></td></tr></table></figure>
+
+<p>查看是否生效  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl get namespace -L istio-injection</span><br><span class="line">NAME           STATUS   AGE   ISTIO-INJECTION</span><br><span class="line">default         Active   20h   enabled</span><br><span class="line">istio-system    Active   19h   </span><br><span class="line">kube-public     Active   20h   </span><br><span class="line">kube-system     Active   20h   </span><br></pre></td></tr></table></figure>
+
+
+<p>这样就会在 Pod 创建时触发 Sidecar 的注入过程了。<br>运行测试容器  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f samples/sleep/sleep.yaml</span><br></pre></td></tr></table></figure>
+<p>查看POD内是否有两个container</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod </span><br><span class="line">NAME                     READY   STATUS    RESTARTS   AGE</span><br><span class="line">sleep-86cf99dfd6-ffmct   2/2     Running   0          13m</span><br></pre></td></tr></table></figure>
+<p>查看POD的详细信息，发现多了个istio-proxy的container及其配置信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod/sleep-86cf99dfd6-ffmct</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>需要关闭自动注入功能，只需要将这个标签去掉即可  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label namespace default istio-injection-</span><br></pre></td></tr></table></figure>
+
+<p>然后新建的POD就不带sidercar容器了</p>
+<h4 id="概念讲解"><a href="#概念讲解" class="headerlink" title="概念讲解"></a>概念讲解</h4><p>Gateway：  服务入口流量控制，可与VirtualService绑定然后通过Istio规则来控制流量，早期使用kubernetes的ingress，后因为ingress的功能原因，又独立弄了套istio-Gateway，Istio Gateway 只配置四层到六层的功能，通常也会绑定VirtualServer实现七层转发规则。  </p>
+<p>VirtualService：  定义转发到后端应用的路由规则，比如流量拆分百分比。  </p>
+<p>DestinationRule：所定义了经过VirtualService处理之后的流量的访问策略。如定义负载均衡配置、连接池大小以及外部检测（用于在负载均衡池中对不健康主机进行识别和驱逐）配置。  </p>
+<h4 id="bookinfo应用部署"><a href="#bookinfo应用部署" class="headerlink" title="bookinfo应用部署"></a>bookinfo应用部署</h4><p>以官方微服务应用Bookinfo为例演示istio的应用治理能力<br>bookinfo 应用程序显示的有关书籍的信息，类似于在线书店的单个商品。应用页面上显示的是书籍的描述、书籍详细信息（ISBN，页数等）以及书评。</p>
+<p>bookinfo 应用一共包含四个微服务：Productpage、Details、Reviews、Ratings。</p>
+<p>Productpage： 使用 Python 开发，负责展示书籍的名称和书籍的简介。<br>Details： 使用 Ruby 开发，负责展示书籍的详细信息。<br>Reviews： 使用 Java开发，负责显示书评（Reviews分为3个版本分别对应V1、V2、V3对应的显示就是没有星星，黑星星、红星星。<br>Ratings： 使用 Node.js 开发,负责显示书籍的评星。  </p>
+<p>部署bookinfo  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployment</span><br><span class="line">NAME             READY   UP-TO-DATE   AVAILABLE   AGE</span><br><span class="line">details-v1       1/1     1            1           13m</span><br><span class="line">productpage-v1   1/1     1            1           13m</span><br><span class="line">ratings-v1       1/1     1            1           13m</span><br><span class="line">reviews-v1       1/1     1            1           13m</span><br><span class="line">reviews-v2       1/1     1            1           13m</span><br><span class="line">reviews-v3       1/1     1            1           13m</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="通过Istio实现bookinfo服务治理"><a href="#通过Istio实现bookinfo服务治理" class="headerlink" title="通过Istio实现bookinfo服务治理"></a>通过Istio实现bookinfo服务治理</h3><h4 id="通过istio-Gateway暴露bookinfo"><a href="#通过istio-Gateway暴露bookinfo" class="headerlink" title="通过istio-Gateway暴露bookinfo"></a>通过istio-Gateway暴露bookinfo</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl apply -f -</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: Gateway</span><br><span class="line">metadata:</span><br><span class="line">  name: bookinfo-gateway</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    istio: ingressgateway # 关联istio-system namespace下istio-ingressgateway</span><br><span class="line">  servers:</span><br><span class="line">  - port:</span><br><span class="line">      number: 80</span><br><span class="line">      name: http</span><br><span class="line">      protocol: HTTP</span><br><span class="line">    hosts:</span><br><span class="line">    - &quot;*&quot;</span><br><span class="line">---</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: VirtualService</span><br><span class="line">metadata:</span><br><span class="line">  name: bookinfo</span><br><span class="line">spec:</span><br><span class="line">  hosts:</span><br><span class="line">  - &quot;*&quot;</span><br><span class="line">  gateways:</span><br><span class="line">  - bookinfo-gateway #关联Gateway对象</span><br><span class="line">  http:</span><br><span class="line">  - match:</span><br><span class="line">    - uri:</span><br><span class="line">        exact: /productpage #精确匹配</span><br><span class="line">    - uri:</span><br><span class="line">        prefix: /static #前缀匹配  </span><br><span class="line">    - uri:</span><br><span class="line">        exact: /login</span><br><span class="line">    - uri:</span><br><span class="line">        exact: /logout</span><br><span class="line">    - uri:</span><br><span class="line">        prefix: /api/v1/products</span><br><span class="line">    route:</span><br><span class="line">    - destination:</span><br><span class="line">        host: productpage.default.svc.cluster.local #对应kubernetes的Service，注意使用服务的短名称时Istio会根据规则所在的命名空间来处理这一名称，而非服务所在的命名空间。</span><br><span class="line">        port:</span><br><span class="line">          number: 9080</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>访问istio-gateway对应的nodeport端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc/istio-ingressgateway  -n istio-system</span><br><span class="line">NAME                   TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                                                                                                                                      AGE</span><br><span class="line">istio-ingressgateway   NodePort   10.43.187.106   &lt;none&gt;        15020:30485/TCP,80:31380/TCP,443:31390/TCP,31400:31400/TCP,15029:31464/TCP,15030:31827/TCP,15031:30522/TCP,15032:31907/TCP,15443:32151/TCP   5h38m</span><br></pre></td></tr></table></figure>
+
+<p>如访问：<a href="http://172.16.1.6:31380/productpage%EF%BC%8C">http://172.16.1.6:31380/productpage，</a><br>出现bookinfo页</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_1.png"></p>
+<p>左侧评Reviews分为3个版本分别对应V1、V2、V3对应的显示就是没有星星，黑星星、红星星。可以通过刷新页面进行切换显示  </p>
+<p>V1 空星星显示页  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_3.png"></p>
+<p>V2 黑星星显示页  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_4.png"></p>
+<p>V3 红星星显示页</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_2.png">  </p>
+<p>通过kiali查看流量拓扑<br>创建kiali登录的帐号和密码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create secret generic kiali-secret -n istio-system --from-literal &quot;username=admin&quot; --from-literal &quot;passphrase=admin&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_6.png">  </p>
+<h4 id="动态请求路由"><a href="#动态请求路由" class="headerlink" title="动态请求路由"></a>动态请求路由</h4><p>配置路由请求策略将全部访问流量指向reviews v1版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl apply -f -</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: VirtualService</span><br><span class="line">metadata:</span><br><span class="line">  name: reviews</span><br><span class="line">spec:</span><br><span class="line">  hosts:</span><br><span class="line">  - reviews</span><br><span class="line">  http:</span><br><span class="line">  - route:</span><br><span class="line">    - destination:</span><br><span class="line">        host: reviews.default.svc.cluster.local</span><br><span class="line">        subset: v1</span><br><span class="line">        </span><br><span class="line">---</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: DestinationRule</span><br><span class="line">metadata:</span><br><span class="line">  name: reviews</span><br><span class="line">spec:</span><br><span class="line">  host: reviews.default.svc.cluster.local</span><br><span class="line">  subsets:</span><br><span class="line">  - name: v1</span><br><span class="line">    labels:</span><br><span class="line">      version: v1</span><br><span class="line">  - name: v2</span><br><span class="line">    labels:</span><br><span class="line">      version: v2</span><br><span class="line">  - name: v3</span><br><span class="line">    labels:</span><br><span class="line">      version: v3</span><br><span class="line">EOF</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>DestinationRule内定义与后端服务的关联，这里的v1、v2、v3对应的label实际上就是对应kubernetes的workload的label</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl get deployment --show-labels</span><br><span class="line"></span><br><span class="line">NAME             READY   UP-TO-DATE   AVAILABLE   AGE   LABELS</span><br><span class="line">ratings-v1       1/1     1            1           23h   app=ratings,version=v1</span><br><span class="line">reviews-v1       1/1     1            1           23h   app=reviews,version=v1</span><br><span class="line">reviews-v2       1/1     1            1           23h   app=reviews,version=v2</span><br><span class="line">reviews-v3       1/1     1            1           23h   app=reviews,version=v3</span><br></pre></td></tr></table></figure>
+
+<p>然后在去访问bookinfo页面发现Book Reviews处怎么刷新都还是空白<br>打开Kiali可以看见绿色代表流量走向的箭头已经指向reviews v1，对应的是<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_3.png"></p>
+<p>查看kiali查看流量拓扑，流量都指向V1</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_7.png">  </p>
+<h4 id="实现灰度发布"><a href="#实现灰度发布" class="headerlink" title="实现灰度发布"></a>实现灰度发布</h4><p>在这里实现两种灰度发布的方式 </p>
+<p>方式一：通过http的head将请求路由到不同的后端服务上<br>比如我们这里将用户标识进行请求路由，比如将用户名为jason的请求路由到Reviews service v2的版本上其他用户还是轮询访问  </p>
+<p>清空之前定义的规则  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete VirtualService/reviews</span><br></pre></td></tr></table></figure>
+
+<p>然后定义新规则  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl apply -f -</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: VirtualService</span><br><span class="line">metadata:</span><br><span class="line">  name: reviews</span><br><span class="line">spec:</span><br><span class="line">  hosts:</span><br><span class="line">    - reviews</span><br><span class="line">  http:</span><br><span class="line">  - match:</span><br><span class="line">    - headers:</span><br><span class="line">        end-user:</span><br><span class="line">          exact: jason</span><br><span class="line">    route:</span><br><span class="line">    - destination:</span><br><span class="line">        host: reviews</span><br><span class="line">        subset: v2</span><br><span class="line">  - route:</span><br><span class="line">    - destination:</span><br><span class="line">        host: reviews</span><br><span class="line">        subset: v1</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>规则定义在请求头的end-user字段为Jason时将请求转发到Reviews-server v2版本<br>在UI上通过sign in登录输入用户名jason，不用输入密码刷新页面可以看见<br>无论怎么刷新都还是黑星星<br>退出登录或用其他用户名登录访问都还是Reviews-server v1版本(没星星)   </p>
+<p>方式二：将访问流量分比例，比如百分之80流量访问Reviews-server v1版本，百分之20流量访问Reviews-server v2版本<br>先将刚才demo的规则清除 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete virtualservice/reviews</span><br></pre></td></tr></table></figure>
+<p>定义新的路由规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl apply -f -</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: VirtualService</span><br><span class="line">metadata:</span><br><span class="line">  name: reviews</span><br><span class="line">spec:</span><br><span class="line">  hosts:</span><br><span class="line">    - reviews</span><br><span class="line">  http:</span><br><span class="line">  - route:</span><br><span class="line">    - destination:</span><br><span class="line">        host: reviews</span><br><span class="line">        subset: v1</span><br><span class="line">      weight: 80</span><br><span class="line">    - destination:</span><br><span class="line">        host: reviews</span><br><span class="line">        subset: v2</span><br><span class="line">      weight: 20</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>不断刷新页面，你会发现Review只会显示没有星星和黑星星，并且黑星星的显示次数比没星星要少很多。<br>查看kiali看见流量走向Reviews-server v1和v2版本</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_8.png"></p>
+<h4 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h4><p>在微服务中，服务被拆成一个个服务模块，各个服务模块之间有大量的调用，为了保证不会因为某个服务访问流量过载而影响其他服务导致大规模集群故障，所以通过熔断机制来保证服务的可靠性。</p>
+<p>熔断的实现根我们日常生活中电路中的保险开关是一样的，通过熔断器对应用服务进行检测，当下游服务因访问压力过大而响应变慢或失败，上游服务为了保护系统整体的可用性，可以暂时切断对下游服务的调用。</p>
+<p>熔断器配置：在时间窗口内，接口调用超时比率达到一个阈值，会开启熔断。进入熔断状态后，后续对该服务接口的调用会被拒绝，直接进入服务降级模式。</p>
+<p>熔断恢复：当经过了对应的时间之后，服务将从熔断状态恢复过来，再次接受调用。</p>
+<p>通过istio实现熔断<br>启动httpbin测试应用<br>httpbin是一个web服务，我们将它是部署到kubernetes中然后通过fortio模拟请求访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl apply -f samples/httpbin/httpbin.yaml</span><br></pre></td></tr></table></figure>
+<p>创建断路器  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl create -f -</span><br><span class="line">apiVersion: networking.istio.io/v1alpha3</span><br><span class="line">kind: DestinationRule</span><br><span class="line">metadata:</span><br><span class="line">  name: httpbin</span><br><span class="line">spec:</span><br><span class="line">  host: httpbin</span><br><span class="line">  trafficPolicy:</span><br><span class="line">    connectionPool:</span><br><span class="line">      tcp:</span><br><span class="line">        maxConnections: 1</span><br><span class="line">      http:</span><br><span class="line">        http1MaxPendingRequests: 1</span><br><span class="line">        maxRequestsPerConnection: 1</span><br><span class="line">    outlierDetection:</span><br><span class="line">      consecutiveErrors: 1</span><br><span class="line">      interval: 1s</span><br><span class="line">      baseEjectionTime: 3m</span><br><span class="line">      maxEjectionPercent: 100</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>在本步骤中，我们可以理解为Istio的熔断功能主要是通过在链接池中加入上述三个参数：<br>·     MaxConnections定义了到目标主机的 HTTP1&#x2F;TCP 最大连接数；<br>·     http1MaxPendingRequests定义了针对一个目标的 HTTP 请求的最大排队数量；<br>·     maxRequestsPerConnection定义了对某一后端的请求中，一个连接内能够发出的最大请求数量。如果将这一参数设置为 1 则会禁止 keep alive 特性。</p>
+<p>接下来创建一个客户端，用来向后端服务发送请求，观察是否会触发熔断策略。这里要使用一个简单的负载测试客户端，名字叫 fortio。这个客户端可以控制连接数量、并发数以及发送 HTTP 请求的延迟。这里我们会把给客户端也进行 Sidecar 的注入，以此保证 Istio 对网络交互的控制：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f samples/httpbin/sample-client/fortio-deploy.yaml</span><br></pre></td></tr></table></figure>
+<p>接下来就可以登入客户端 Pod 并使用 Fortio 工具来调用 httpbin。-curl 参数表明只调用一次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FORTIO_POD=$(kubectl get pod | grep fortio | awk &#x27;&#123; print $1 &#125;&#x27;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it $FORTIO_POD  -c fortio /usr/bin/fortio -- load -curl  http://httpbin:8000/get</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">server: envoy</span><br><span class="line">date: Sun, 02 Feb 2020 08:49:27 GMT</span><br><span class="line">content-type: application/json</span><br><span class="line">content-length: 371</span><br><span class="line">access-control-allow-origin: *</span><br><span class="line">access-control-allow-credentials: true</span><br><span class="line">x-envoy-upstream-service-time: 3</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  &quot;args&quot;: &#123;&#125;, </span><br><span class="line">  &quot;headers&quot;: &#123;</span><br><span class="line">    &quot;Content-Length&quot;: &quot;0&quot;, </span><br><span class="line">    &quot;Host&quot;: &quot;httpbin:8000&quot;, </span><br><span class="line">    &quot;User-Agent&quot;: &quot;fortio.org/fortio-1.3.1&quot;, </span><br><span class="line">    &quot;X-B3-Parentspanid&quot;: &quot;ea1d6bd8e1ac8621&quot;, </span><br><span class="line">    &quot;X-B3-Sampled&quot;: &quot;0&quot;, </span><br><span class="line">    &quot;X-B3-Spanid&quot;: &quot;cef333d2e32ce6b4&quot;, </span><br><span class="line">    &quot;X-B3-Traceid&quot;: &quot;d89ae2b658f513b3ea1d6bd8e1ac8621&quot;</span><br><span class="line">  &#125;, </span><br><span class="line">  &quot;origin&quot;: &quot;127.0.0.1&quot;, </span><br><span class="line">  &quot;url&quot;: &quot;http://httpbin:8000/get&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这表明我们创建的客户端已经成功与服务端进行了一次通信。<br>在kiali上可以看见httpbin连接路由图。请求都是返回正常的状态码为200</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_9.png"></p>
+<p>验证熔断<br>在上面的熔断设置中指定了 maxConnections&#x3D;1 以及 http1MaxPendingRequests&#x3D;1。这意味着如果超过了一个连接同时发起请求，Istio 就会熔断，阻止后续的请求或连接。我们不妨尝试通过并发2个连接(-c 2)发送20个请求数(-n 20)来看一下结果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it $FORTIO_POD  -c fortio /usr/bin/fortio -- load -c 2 -qps 0 -n 20 -loglevel Warning http://httpbin:8000/get</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Sockets used: 17 (for perfect keepalive, would be 2)</span><br><span class="line">Code 200 : 3 (15.0 %)</span><br><span class="line">Code 503 : 17 (85.0 %)</span><br><span class="line">Response Header Sizes : count 20 avg 34.5 +/- 82.13 min 0 max 230 sum 690</span><br><span class="line">Response Body/Total Sizes : count 20 avg 226.3 +/- 159.6 min 153 max 601 sum 4526</span><br><span class="line">All done 20 calls (plus 0 warmup) 5.768 ms avg, 344.2 qps</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>基本上所有的请求都发送成功了。明明我们设置的最大连接数是1，而我们模拟了两个并发连接，理论上应该只有一半的请求能成功才对，难道熔断没有成功？这里别忘了我们还设置了http1MaxPendingRequests&#x3D;1，正如在前文中介绍的，这个参数的功能类似于为最大连接数提供了一级缓存，所以虽然我们的最大连接数是1，但是因为这个参数也为1，所以两个并发连接的请求都可以发送成功。</p>
+<p>接下来我们需要修改请求连接数，将连接数提高到3(-c 3)，请求数不变</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it $FORTIO_POD  -c fortio /usr/bin/fortio -- load -c 3 -qps 0 -n 20 -loglevel Warning http://httpbin:8000/get</span><br></pre></td></tr></table></figure>
+<p>­<br>这时候可以观察到熔断行为生效了  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">Code 200 : 13 (65.0 %)</span><br><span class="line">Code 503 : 7 (35.0 %)</span><br></pre></td></tr></table></figure>
+<p>有百分之65的请求通过了，百分之35的请求被拒绝了</p>
+<p>重复执行上述测试命令后，进入服务降级模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Sockets used: 20 (for perfect keepalive, would be 3)</span><br><span class="line">Code 503 : 20 (100.0 %)</span><br></pre></td></tr></table></figure>
+
+<h4 id="黑白名单"><a href="#黑白名单" class="headerlink" title="黑白名单"></a>黑白名单</h4><p>定义个黑名单，禁止Review-v3访问后端ratings服务，所以就不会显示红星星</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | kubectl apply -f -</span><br><span class="line">apiVersion: &quot;config.istio.io/v1alpha2&quot;</span><br><span class="line">kind: handler</span><br><span class="line">metadata:</span><br><span class="line">  name: denyreviewsv3handler</span><br><span class="line">spec:</span><br><span class="line">  compiledAdapter: denier</span><br><span class="line">  params:</span><br><span class="line">    status:</span><br><span class="line">      code: 7</span><br><span class="line">      message: Not allowed</span><br><span class="line">---</span><br><span class="line">apiVersion: &quot;config.istio.io/v1alpha2&quot;</span><br><span class="line">kind: instance</span><br><span class="line">metadata:</span><br><span class="line">  name: denyreviewsv3request</span><br><span class="line">spec:</span><br><span class="line">  compiledTemplate: checknothing</span><br><span class="line">---</span><br><span class="line">apiVersion: &quot;config.istio.io/v1alpha2&quot;</span><br><span class="line">kind: rule</span><br><span class="line">metadata:</span><br><span class="line">  name: denyreviewsv3</span><br><span class="line">spec:</span><br><span class="line">  match: destination.labels[&quot;app&quot;] == &quot;ratings&quot; &amp;&amp; source.labels[&quot;app&quot;]==&quot;reviews&quot; &amp;&amp; source.labels[&quot;version&quot;] == &quot;v3&quot;</span><br><span class="line">  actions:</span><br><span class="line">  - handler: denyreviewsv3handler</span><br><span class="line">    instances: [ denyreviewsv3request ]</span><br><span class="line">EOF</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>重点关注<code>match: destination.labels[&quot;app&quot;] == &quot;ratings&quot; &amp;&amp; source.labels[&quot;app&quot;]==&quot;reviews&quot; &amp;&amp; source.labels[&quot;version&quot;] == &quot;v3&quot;</code><br>这句配置，定义了源和目标，源为label为version&#x3D;&#x3D;v3的workload，目标为label为app&#x3D;&#x3D;reviews的workload。应用后去访问bookinfo发现,不断刷新，访问到v3时你会发现如下图显示。 </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_2_11.png"></p>
+<p><a href="https://jimmysong.io/istio-handbook/concepts/traffic-management-basic.html">https://jimmysong.io/istio-handbook/concepts/traffic-management-basic.html</a><br><a href="https://www.servicemesher.com/istio-handbook/best-practices/how-to-implement-ingress-gateway.html">https://www.servicemesher.com/istio-handbook/best-practices/how-to-implement-ingress-gateway.html</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/10/01/istio-3/" title="Istio(三)通过Rancher使用Istio"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/07/31/Istio-1/" title="Istio(一)部署安装体验">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

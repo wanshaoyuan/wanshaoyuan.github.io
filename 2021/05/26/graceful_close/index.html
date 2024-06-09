@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>容器应用优雅关闭 | 我爱西红柿</title>
+  <meta name="description" content="概述优雅关闭：  在关闭前，执行正常的关闭过程，释放连接和资源，如我们操作系统执行shutdown。   目前业务系统组件众多，互相之间调用关系也比较复杂，一个组件的下线、关闭会涉及到多个组件对于任何一个线上应用，如何保证服务更新部署过程中从应用停止到重启恢复服务这个过程中不影响正常的业务请求，这是应用开发运维团队必须要解决的问题。传统的解决方式是通过将应用更新流程划分为手工摘流量、停应用、更新重">
+<meta property="og:type" content="article">
+<meta property="og:title" content="容器应用优雅关闭">
+<meta property="og:url" content="http://yoursite.com/2021/05/26/graceful_close/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述优雅关闭：  在关闭前，执行正常的关闭过程，释放连接和资源，如我们操作系统执行shutdown。   目前业务系统组件众多，互相之间调用关系也比较复杂，一个组件的下线、关闭会涉及到多个组件对于任何一个线上应用，如何保证服务更新部署过程中从应用停止到重启恢复服务这个过程中不影响正常的业务请求，这是应用开发运维团队必须要解决的问题。传统的解决方式是通过将应用更新流程划分为手工摘流量、停应用、更新重">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-05-26T13:45:59.000Z">
+<meta property="article:modified_time" content="2021-05-26T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="应用上云">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2021/05/26/graceful_close/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E7%8A%B6%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">现状分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">案例分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SHELL%E6%A8%A1%E5%BC%8F%E5%92%8CCMD%E6%A8%A1%E5%BC%8F%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%B7%AE%E5%BC%82%E6%80%A7"><span class="toc-number">3.1.</span> <span class="toc-text">SHELL模式和CMD模式带来的差异性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%90%AF%E5%8A%A8%E5%BA%94%E7%94%A8%E5%92%8C%E9%80%9A%E8%BF%87%E8%84%9A%E6%9C%AC%E5%90%AF%E5%8A%A8%E5%8C%BA%E5%88%AB"><span class="toc-number">3.2.</span> <span class="toc-text">直接启动应用和通过脚本启动区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8%E4%BC%98%E9%9B%85%E5%85%B3%E9%97%AD%E6%96%B9%E6%A1%88%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.</span> <span class="toc-text">容器应用优雅关闭方案介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.1.</span> <span class="toc-text">方案介绍</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E9%AA%8C%E8%AF%81"><span class="toc-number">5.</span> <span class="toc-text">方案验证</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%B8%80%EF%BC%9A%E9%80%9A%E8%BF%87k8s-Prestop%E5%8F%82%E6%95%B0%E8%B0%83%E7%94%A8"><span class="toc-number">5.1.</span> <span class="toc-text">方案一：通过k8s Prestop参数调用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%BA%8C%EF%BC%9Ashell%E8%84%9A%E6%9C%AC%E4%BF%AE%E6%94%B9%E4%B8%BAexec%E6%89%A7%E8%A1%8C"><span class="toc-number">5.2.</span> <span class="toc-text">方案二：shell脚本修改为exec执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%88%E4%B8%89%EF%BC%9A%E9%80%9A%E8%BF%87%E7%AC%AC%E4%B8%89init%E5%B7%A5%E5%85%B7%E5%90%AF%E5%8A%A8"><span class="toc-number">5.3.</span> <span class="toc-text">方案三：通过第三init工具启动</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">6.</span> <span class="toc-text">总结：</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-graceful_close" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      容器应用优雅关闭
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2021/05/26/graceful_close/" class="article-date">
+	  <time datetime="2021-05-26T13:45:59.000Z" itemprop="datePublished">2021-05-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2021/05/26/graceful_close/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 12(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>优雅关闭：  在关闭前，执行正常的关闭过程，释放连接和资源，如我们操作系统执行shutdown。  </p>
+<p>目前业务系统组件众多，互相之间调用关系也比较复杂，一个组件的下线、关闭会涉及到多个组件<br>对于任何一个线上应用，如何保证服务更新部署过程中从应用停止到重启恢复服务这个过程中不影响正常的业务请求，这是应用开发运维团队必须要解决的问题。传统的解决方式是通过将应用更新流程划分为手工摘流量、停应用、更新重启三个步骤，由人工操作实现客户端不对更新感知。这种方式简单而有效，但是限制较多：不仅需要使用借助网关的支持来摘流量，还需要在停应用前人工判断来保证在途请求已经处理完毕。   </p>
+<p>同时，在应用层也有一些保障应用优雅停机的机制，目前Tomcat、Spring Boot、Dubbo等框架都有提供相关的内置实现，如SpringBoot 2.3内置graceful shutdown可以很方便的直接实现优雅停机时的资源处理，同时一个普通的Java应用也可以基于Runtime.getRuntime().addShutdownHook()来自定义实现，它们的实现原理都基本一致，通过等待操作系统发送的SIGTERM信号，然后针对监听到该信号做一些处理动作。优雅停机是指在停止应用时，执行的一系列保证应用正常关闭的操作。这些操作往往包括等待已有请求执行完成、关闭线程、关闭连接和释放资源等，优雅停机可以避免非正常关闭程序可能造成数据异常或丢失，应用异常等问题。优雅停机本质上是JVM即将关闭前执行的一些额外的处理代码。</p>
+<h3 id="现状分析"><a href="#现状分析" class="headerlink" title="现状分析"></a>现状分析</h3><p>现阶段，业务容器化后业务启动是通过shell脚本启动业务，对应的在容器内PID为1的进程为shell进程但shell 程序不转发signals，也不响应退出信号。所以在容器应用中如果应用容器中启动 shell，占据了 pid&#x3D;1  的位置，那么就无法接收k8s发送的SIGTERM信号，只能等超时后被强行杀死了。</p>
+<h3 id="案例分析"><a href="#案例分析" class="headerlink" title="案例分析"></a>案例分析</h3><p>go开发的一个Demo  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">    &quot;os&quot;</span><br><span class="line">    &quot;os/signal&quot;</span><br><span class="line">    &quot;syscall&quot;</span><br><span class="line">    &quot;time&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func main()  &#123;</span><br><span class="line">    c := make(chan os.Signal)</span><br><span class="line">    signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)</span><br><span class="line">    go func() &#123;</span><br><span class="line">        for s := range c &#123;</span><br><span class="line">            switch s &#123;</span><br><span class="line">            case syscall.SIGINT, syscall.SIGTERM:</span><br><span class="line">                fmt.Println(&quot;退出&quot;, s)</span><br><span class="line">                ExitFunc()</span><br><span class="line">            default:</span><br><span class="line">                fmt.Println(&quot;other&quot;, s)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    fmt.Println(&quot;进程启动...&quot;)</span><br><span class="line">    time.Sleep(time.Duration(200000)*time.Second)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func ExitFunc()  &#123;</span><br><span class="line">    fmt.Println(&quot;正在退出...&quot;)</span><br><span class="line">    fmt.Println(&quot;执行清理...&quot;)</span><br><span class="line">    fmt.Println(&quot;退出完成...&quot;)</span><br><span class="line">    os.Exit(0)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码参考：<a href="https://www.jianshu.com/p/ae72ad58ecb6">https://www.jianshu.com/p/ae72ad58ecb6</a></p>
+<p>1、Signal.Notify会监听括号内指定的信号，若没有指定，则监听所有信号。<br>2、通过switch对监听到信号进行判断，如果是SININT和SIGTERM则条用Exitfunc函数执行退出。  </p>
+<h4 id="SHELL模式和CMD模式带来的差异性"><a href="#SHELL模式和CMD模式带来的差异性" class="headerlink" title="SHELL模式和CMD模式带来的差异性"></a>SHELL模式和CMD模式带来的差异性</h4><p>编写应用Dockerfile文件</p>
+<p>概述<br>在Dockerfile中CMD和ENTRYPOINT用来启动应用，有shell模式和exec模式，对应的使用shell模式，PID为1的进程为shell，使用exec模式PID为1的进程为业务本身。<br>SHELL模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">FROM golang as builder</span><br><span class="line">WORKDIR /go/</span><br><span class="line">COPY app.go    .</span><br><span class="line">RUN go build app.go</span><br><span class="line">FROM ubuntu</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/app .</span><br><span class="line">CMD ./app</span><br></pre></td></tr></table></figure>
+<p>构建镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t app:v1.0-shell ./</span><br></pre></td></tr></table></figure>
+
+<p>运行查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it app-shell ps aux</span><br><span class="line">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root           1  0.7  0.0   2608   548 pts/0    Ss+  03:22   0:00 /bin/sh -c ./</span><br><span class="line">root           6  0.0  0.0 704368  1684 pts/0    Sl+  03:22   0:00 ./app</span><br><span class="line">root          24  0.0  0.0   5896  2868 pts/1    Rs+  03:23   0:00 ps aux</span><br></pre></td></tr></table></figure>
+<p>可以看见PID为1的进程是sh进程</p>
+<p>此时执行docker stop，业务进程是接收不到SIGTERM信号的，要等待一个超时时间后被KILL</p>
+<p>日志没有输出SIGTERM关闭指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker stop app-shell</span><br><span class="line">app-shell</span><br><span class="line"></span><br><span class="line">docker logs app-shell</span><br><span class="line">进程启动...</span><br></pre></td></tr></table></figure>
+
+
+
+<p>EXEC模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM golang as builder</span><br><span class="line">WORKDIR /go/</span><br><span class="line">COPY app.go    .</span><br><span class="line">RUN go build app.go</span><br><span class="line">FROM ubuntu</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/app .</span><br><span class="line">CMD [&quot;./app&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>构建镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t app:v1.0-exec ./</span><br></pre></td></tr></table></figure>
+
+<p>运行查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it app-exec ps aux</span><br><span class="line">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span><br><span class="line">root           1  2.0  0.0 703472  1772 pts/0    Ssl+ 03:33   0:00 ./app</span><br><span class="line">root          14  0.0  0.0   5896  2908 pts/1    Rs+  03:34   0:00 ps aux</span><br></pre></td></tr></table></figure>
+<p>可以看见PID为1的进程是应用进程</p>
+<p>此时执行docker stop，业务进程是可以接收SIGTERM信号的，会优雅退出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker stop app-exec</span><br><span class="line">app-exec</span><br><span class="line"></span><br><span class="line">docker logs app-exec</span><br><span class="line">进程启动...</span><br><span class="line">退出 terminated</span><br><span class="line">正在退出...</span><br><span class="line">执行清理...</span><br><span class="line">退出完成...</span><br></pre></td></tr></table></figure>
+
+
+
+<p>注意：<br>1、以下测试在ubuntu做为应用启动base镜像测试成功，在alpine做为应用启动base镜像时shell模式和exec模式都一样，都是应用进程为PID 1的进程。</p>
+<h4 id="直接启动应用和通过脚本启动区别"><a href="#直接启动应用和通过脚本启动区别" class="headerlink" title="直接启动应用和通过脚本启动区别"></a>直接启动应用和通过脚本启动区别</h4><p>在实际生产环境中，因为应用启动命令后会接很多启动参数，所以通常我们会使用一个启动脚本来启动应用，方便我们启动应用。对应的在容器内PID为1的进程为shell进程但shell 程序不转发signals，也不响应退出信号。所以在容器应用中如果应用容器中启动 shell，占据了 pid&#x3D;1  的位置，那么就无法接收k8s发送的SIGTERM信号，只能等超时后被强行杀死了。<br>启动脚本<br>start.sh</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; start.sh&lt;&lt; EOF </span><br><span class="line">#!/bin/sh</span><br><span class="line">sh -c /root/app</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">FROM golang as builder</span><br><span class="line">WORKDIR /go/</span><br><span class="line">COPY app.go    .</span><br><span class="line">RUN go build app.go</span><br><span class="line">FROM alpine</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/app .</span><br><span class="line">ADD start.sh /root/</span><br><span class="line">CMD [&quot;/bin/sh&quot;,&quot;/root/start.sh&quot;]</span><br></pre></td></tr></table></figure>
+
+
+<p>构建应用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t app:v1.0-script ./</span><br></pre></td></tr></table></figure>
+<p>查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it app-script ps aux</span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">1     root     0:00  /bin/sh /root/start.sh</span><br><span class="line">6     root     0:00  /root/app</span><br><span class="line">19    root     0:00  ps aux</span><br></pre></td></tr></table></figure>
+
+<p>docker stop关闭应用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker stop app-script</span><br></pre></td></tr></table></figure>
+
+<p>是登待超时后被强行KILL</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker logs app-script</span><br><span class="line">进程启动...</span><br></pre></td></tr></table></figure>
+
+<h3 id="容器应用优雅关闭方案介绍"><a href="#容器应用优雅关闭方案介绍" class="headerlink" title="容器应用优雅关闭方案介绍"></a>容器应用优雅关闭方案介绍</h3><h4 id="方案介绍"><a href="#方案介绍" class="headerlink" title="方案介绍"></a>方案介绍</h4><p>正常的优雅停机可以简单的认为包括两个部分：<br>-	应用：应用自身需要实现优雅停机的处理逻辑，确保处理中的请求可以继续完成，资源得到有效的关闭释放，等等。针对应用层，不管是Java应用还是其他语言编写的应用，其实现原理基本一致，都提供了类似的监听处理接口，根据规范要求实现即可。<br>-	平台：平台层要能够将应用从负载均衡中去掉，确保应用不会再接受到新的请求连接，并且能够通知到应用要进行优雅停机处理。在传统的部署模式下，这部分工作可能需要人工处理，但是在K8s容器平台中，K8s的Pod删除默认就会向容器中的主进程发送优雅停机命令，并提供了默认30s的等待时长，若优雅停机处理超出30s以后就会强制终止。同时，有些应用在容器中部署时，并不是通过容器主进程的形式进行部署，那么K8s也提供了PreStop的回调函数来在Pod停止前进行指定处理，可以是一段命令，也可以是一个HTTP的请求，从而具备了较强的灵活性。<br>通过以上分析，理论上应用容器化部署以后仍然可以很好的支持优雅停机，甚至相比于传统方式实现了更多的自动化操作，本文档后面会针对该方案进行详细的方案验证。</p>
+<ul>
+<li>容器应用中第三方Init：在构建应用中使用第三方init如tini或dumb-init</li>
+</ul>
+<p>方案一：<br>通过k8s的prestop参数调用容器内进程关闭脚本，实现优雅关闭。</p>
+<p>方案二：<br>通过第三方init进程传递SIGTERM到进程中。</p>
+<h3 id="方案验证"><a href="#方案验证" class="headerlink" title="方案验证"></a>方案验证</h3><h4 id="方案一：通过k8s-Prestop参数调用"><a href="#方案一：通过k8s-Prestop参数调用" class="headerlink" title="方案一：通过k8s Prestop参数调用"></a>方案一：通过k8s Prestop参数调用</h4><p>在前面脚本启动的dockerfile基础上，定义一个优雅关闭的脚本，通过k8s-prestop在关闭POD前调用优雅关闭脚本，实现pod优雅关闭。</p>
+<p>启动脚本<br>start.sh</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; start.sh&lt;&lt; EOF </span><br><span class="line">#!/bin/sh</span><br><span class="line">./app</span><br></pre></td></tr></table></figure>
+<p>stop.sh<br>优雅关闭脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">ps -ef|grep app|grep -v grep|awk &#x27;&#123;print $1&#125;&#x27;|xargs kill -15</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM golang as builder</span><br><span class="line">WORKDIR /go/</span><br><span class="line">COPY app.go    .</span><br><span class="line">RUN go build app.go</span><br><span class="line">FROM alpine</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/app .</span><br><span class="line">ADD start.sh /root/</span><br><span class="line">CMD [&quot;/bin/sh&quot;,&quot;/root/start.sh&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>构建镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t app:v1.0-prestop ./</span><br></pre></td></tr></table></figure>
+
+<p>通过yaml部署到k8s中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: app-prestop</span><br><span class="line">  labels:</span><br><span class="line">    app: prestop</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: prestop</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: prestop</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: prestop</span><br><span class="line">        image: 172.16.1.31/library/app:v1.0-prestop</span><br><span class="line">        lifecycle:</span><br><span class="line">          preStop:</span><br><span class="line">            exec:</span><br><span class="line">              command:</span><br><span class="line">              - sh</span><br><span class="line">              - /root/stop.sh</span><br></pre></td></tr></table></figure>
+
+
+<p>查看POD日志，然后删除pod副本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod </span><br><span class="line">NAME                            READY   STATUS    RESTARTS   AGE</span><br><span class="line">app-prestop-847f5c4db8-mrbqr    1/1     Running   0          73s</span><br></pre></td></tr></table></figure>
+
+<p>查看日志</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs app-prestop-847f5c4db8-mrbqr -f</span><br><span class="line">进程启动...</span><br></pre></td></tr></table></figure>
+
+<p>另外窗口删除POD</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs app-prestop-847f5c4db8-mrbqr -f</span><br><span class="line">进程启动...</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">退出 terminated</span><br><span class="line">正在退出...</span><br><span class="line">执行清理...</span><br><span class="line">退出完成...</span><br></pre></td></tr></table></figure>
+<p>可以看见执行了Prestop脚本进行优雅关闭。<br>同样的可以将yaml文件中的Prestop脚本取消进行对比测试可以发现就会进行强制删除。  </p>
+<h4 id="方案二：shell脚本修改为exec执行"><a href="#方案二：shell脚本修改为exec执行" class="headerlink" title="方案二：shell脚本修改为exec执行"></a>方案二：shell脚本修改为exec执行</h4><p>修改<code>start.sh</code>脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">exec ./app</span><br></pre></td></tr></table></figure>
+<p>shell中添加一个 exec 即可让应用进程替代当前shell进程,可将SIGTERM信号传递到业务层，让业务实现优雅关闭。  </p>
+<p>可使用上面例子，进行修改测试。</p>
+<h4 id="方案三：通过第三init工具启动"><a href="#方案三：通过第三init工具启动" class="headerlink" title="方案三：通过第三init工具启动"></a>方案三：通过第三init工具启动</h4><p>使用dump-init或tini做为容器的主进程，在收到退出信号的时候，会将退出信号转发给进程组所有进程。，主要适用应用本身无关闭信号处理的场景。docker –init本身也是集成的tini。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">FROM golang as builder</span><br><span class="line">WORKDIR /go/</span><br><span class="line">COPY app.go    .</span><br><span class="line">RUN go build app.go</span><br><span class="line">FROM alpine</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/app .</span><br><span class="line">ADD start.sh tini /root/</span><br><span class="line">RUN chmoad a+x start.sh &amp;&amp; apk add --no-cache tini</span><br><span class="line">ENTRYPOINT [&quot;/sbin/tini&quot;, &quot;--&quot;]</span><br><span class="line">CMD [&quot;/root/tini&quot;, &quot;--&quot;, /root/start.sh&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>构建镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t app:v1.0-tini ./</span><br></pre></td></tr></table></figure>
+<p>测试运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name app-tini app:v1.0-tini</span><br></pre></td></tr></table></figure>
+
+<p>查看日志</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker logs app-tini</span><br><span class="line"></span><br><span class="line">进程启动...</span><br></pre></td></tr></table></figure>
+
+<p>发现容器快速停止了，但没有输出应用关闭和清理的日志</p>
+<p>后面查阅相关资料发现</p>
+<p>使用tini或dump-init做为应用启动的主进程。<br>tini和dumb-init会将关闭信号向子进程传递，但不会等待子进程完全退出后自己在退出。而是传递完后直接就退出了。</p>
+<p>相关issue：<br><a href="https://github.com/krallin/tini/issues/180">https://github.com/krallin/tini/issues/180</a></p>
+<p>后面又查到另外一个第三方的组件smell-baron能实现等待子进程优雅关闭后在关闭本身功能。 但这个项目本身热度不是特别高，并且有很久没有维护了。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">FROM golang as builder</span><br><span class="line">WORKDIR /go/</span><br><span class="line">COPY app.go    .</span><br><span class="line">RUN go build app.go</span><br><span class="line">FROM ubuntu</span><br><span class="line">WORKDIR /root/</span><br><span class="line">COPY --from=builder /go/app .</span><br><span class="line">ADD start.sh /root/</span><br><span class="line">ADD smell-baron /bin/smell-baron</span><br><span class="line">RUN chmod a+x /bin/smell-baron  &amp;&amp; chmod a+x start.sh</span><br><span class="line">ENTRYPOINT [&quot;/bin/smell-baron&quot;]</span><br><span class="line">CMD [&quot;/root/start.sh&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>构建镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t app:v1.0-smell-baron ./</span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name app-smell-baron app:v1.0-smell-baron</span><br><span class="line"></span><br><span class="line">docker stop  app-smell-baron</span><br><span class="line"></span><br><span class="line">进程启动...</span><br><span class="line">退出 terminated</span><br><span class="line">正在退出...</span><br><span class="line">执行清理...</span><br><span class="line">退出完成...</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>1、对于容器化应用启动命令建议使用EXEC模式。<br>2、对于应用本身代码层面已经实现了优雅关闭的业务，但有shell启动脚本，容器化后部署到k8s上建议使方案一和方案二。<br>3、对于应用本身代码层面没有实现优雅关闭的业务，建议使用方案三。  </p>
+<p>项目地址：<br><a href="https://github.com/insidewhy/smell-baron">https://github.com/insidewhy/smell-baron</a><br><a href="https://github.com/Yelp/dumb-init">https://github.com/Yelp/dumb-init</a><br><a href="https://github.com/krallin/tini">https://github.com/krallin/tini</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/06/18/kubernetes_keda/" title="kubernetes pod的弹性伸缩(三)(基于事件驱动伸缩)"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/01/27/argo_cd_2/" title="ArgoCD二：一个完整的CICD流程例子">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

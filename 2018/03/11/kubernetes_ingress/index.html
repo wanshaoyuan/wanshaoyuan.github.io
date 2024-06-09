@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes ingress | 我爱西红柿</title>
+  <meta name="description" content="操作系统：centos7.3 软件版本:kubernetes 1.9nginx-ingress-controller:0.10.2defaultbackend:1.4haproxy-ingress:latestdefaultbackend:1.0目前kubernetes内置暴露访问的方案   介绍目前kubernetes内置暴露访问的方案1、nodeport指定Service的端口类型为nodep">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes ingress">
+<meta property="og:url" content="http://yoursite.com/2018/03/11/kubernetes_ingress/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="操作系统：centos7.3 软件版本:kubernetes 1.9nginx-ingress-controller:0.10.2defaultbackend:1.4haproxy-ingress:latestdefaultbackend:1.0目前kubernetes内置暴露访问的方案   介绍目前kubernetes内置暴露访问的方案1、nodeport指定Service的端口类型为nodep">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_24.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_25.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_26.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_27.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_28.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_29.png">
+<meta property="article:published_time" content="2018-03-11T13:45:59.000Z">
+<meta property="article:modified_time" content="2018-03-11T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/03/11/kubernetes_ingress/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81ingress%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">为什么需要ingress？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E4%B8%80%E4%B8%AAnginx%E7%9A%84ingress"><span class="toc-number">2.</span> <span class="toc-text">部署一个nginx的ingress</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E4%B8%80%E4%B8%AAhaproxy%E7%9A%84ingress"><span class="toc-number">3.</span> <span class="toc-text">部署一个haproxy的ingress</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E4%B8%80%E4%B8%AATraefik%E7%9A%84ingress"><span class="toc-number">4.</span> <span class="toc-text">部署一个Traefik的ingress</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_ingress" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes ingress
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/03/11/kubernetes_ingress/" class="article-date">
+	  <time datetime="2018-03-11T13:45:59.000Z" itemprop="datePublished">2018-03-11</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/03/11/kubernetes_ingress/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.8k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 12(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>操作系统：<br>centos7.3</p>
+<p>软件版本:<br>kubernetes 1.9<br>nginx-ingress-controller:0.10.2<br>defaultbackend:1.4<br>haproxy-ingress:latest<br>defaultbackend:1.0<br>目前kubernetes内置暴露访问的方案  </p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>目前kubernetes内置暴露访问的方案<br>1、nodeport<br>指定Service的端口类型为nodeport，它将在的host节点上面暴露出一个端口，kube-proxy同时也会监听这个端口，目前是通过kube-proxy调用iptables实现将流量负载均衡到不同的pod上去，外部访问pod是先到host-ip:port—-&gt;pod_ip:port.为了提高可用性，可以在集群前面在加个负载均衡器这样就变成      loadbalance_ip:port—-&gt;host_ip:port—-&gt;port_ip:port。  </p>
+<p>2、loadbalance<br>使用云平台本身提供的负载均衡器，分配访问pod的流量，这个目前只支持goole container engineand，目前也只支持tcp&#x2F;udp负载均衡。</p>
+<p>3、ingress<br>ingress就是可以暴露内部访问工作在7层的负载均衡器，根据域名或服务名对后端Service进行端口转发，并且能根据后端Service的变化，动态刷新配置。  </p>
+<h4 id="为什么需要ingress？"><a href="#为什么需要ingress？" class="headerlink" title="为什么需要ingress？"></a>为什么需要ingress？</h4><p>因为如果Service使用nodeport暴露host的端口方式去访问应用的话，当Service有多个时，会造成端口管理上的混乱，在企业内部中还涉及到开防火墙问题。  </p>
+<p>这里我们介绍3种ingress类型，用户可以自由选择使用哪种类型：  </p>
+<ul>
+<li>1、nginx-ingress</li>
+<li>2、haproxy-ingress</li>
+<li>3、Traefik-ingress</li>
+</ul>
+<p>ingress包含两大组件<br>ingress-controller<br>default-backend  </p>
+<p>ingress-controller本身是一个是一个pod，这个pod里面的容器安装了反向代理软件，通过读取添加的Service，动态生成负载均衡器的反向代理配置，你添加对应的ingress服务后,里面规则包含了对应的规则，里面有域名和对应的Service-backend</p>
+<p>ingress-controller怎么去读取我们添加的ingress服务的配置然后动态刷新呢？  </p>
+<p>ingress-controller通过与kube-apiserver交互，去读取ingress服务规则的变化，通过读取ingress服务的规则，生成一段新的负载均衡器的配置然后重新reload，生配置生效。</p>
+<p>default-backend<br>用来将未知请求全部负载到这个默认后端上，这个默认后端会返回 404 页面。</p>
+<p>ingress-control有nginx类型的还有haproxy类型的和traefik类型。  </p>
+<h3 id="部署一个nginx的ingress"><a href="#部署一个nginx的ingress" class="headerlink" title="部署一个nginx的ingress"></a>部署一个nginx的ingress</h3><p>需要这些yaml文件<br>namespace.yaml—————创建名为ingress-nginx命名空间<br>default-backend.yaml———–这是官方要求必须要给的默认后端，提供404页面的。它还提供了nginx-ingress-controll健康状态检查，通过每隔一定时间访问nginx-ingress-controll的&#x2F;healthz页面，如是没有响应就返回404之类的错误码。<br>configmap.yaml ——- 创建名为nginx-configuration的configmap<br>tcp-services-configmap.yaml——–创建名为 tcp-services的configmap<br>udp-services-configmap.yaml——-创建名为udp-services的configmap<br>rbac.yaml——创建对应的Serviceaccount并绑定对应的角色<br>with-rbac.yaml—–创建带rbac的ingress-control   </p>
+<p>创建文件夹<br>mkdir &#x2F;root&#x2F;ingress  </p>
+<p>下载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/namespace.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/default-backend.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/configmap.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/tcp-services-configmap.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/udp-services-configmap.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/rbac.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/with-rbac.yaml -P /root/ingress</span><br></pre></td></tr></table></figure>
+<p>安装  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f /root/ingress/</span><br></pre></td></tr></table></figure>
+<p>检查对应的pod是否创建好  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod --namespace=ingress-nginx</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_1.png"></p>
+<p>因为新版本取消host模式的网络模式，所以需要我们创建server将ingress的端口映射出来<br>下载  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml  -P /root/ingress</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f /root/ingress/service-nodeport.yaml</span><br></pre></td></tr></table></figure>
+<p>查看对应的enpoint和service  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get endpoints,service --namespace=ingress-nginx</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_2.png"></p>
+<p>80被映射到宿主机的31159端口了443被映射到31030端口了。<br>部署应用测试<br>部署两个httpd  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat httpd-app.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1beta2 # for versions before 1.8.0 use apps/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: http-app</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: http</span><br><span class="line">  replicas: 1 # tells deployment to run 2 pods matching the template</span><br><span class="line">  template: # create pods using pod definition in this template</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: http</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: httpd</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">        volumeMounts:</span><br><span class="line">          - name: httpd</span><br><span class="line">            mountPath: /usr/local/apache2/htdocs</span><br><span class="line">      volumes:</span><br><span class="line">       - name: httpd</span><br><span class="line">         hostPath:</span><br><span class="line">          path: /root/httpd</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: apps/v1beta2 # for versions before 1.8.0 use apps/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: http-app2</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: http2</span><br><span class="line">  replicas: 1 # tells deployment to run 2 pods matching the template</span><br><span class="line">  template: # create pods using pod definition in this template</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: http2</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx2</span><br><span class="line">        image: httpd</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">        volumeMounts:</span><br><span class="line">          - name: httpd</span><br><span class="line">            mountPath: /usr/local/apache2/htdocs</span><br><span class="line">      volumes:</span><br><span class="line">       - name: httpd</span><br><span class="line">         hostPath:</span><br><span class="line">          path: /root/httpd2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>创建两个目录替换httpd的网页目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /root/httpd</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /root/httpd2</span><br></pre></td></tr></table></figure>
+<p>简单写个测试页  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo This is test1!! &gt; /root/httpd/index.html</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo This is test2!! &gt; /root/httpd2/index.html</span><br></pre></td></tr></table></figure>
+<p>创建应用  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd-app.yaml</span><br></pre></td></tr></table></figure>
+<p>检查  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployment</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_3.png"></p>
+<p>创建对应的servic  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat httpd_service.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line"> name: httpd-deployment</span><br><span class="line">spec:</span><br><span class="line"> ports:</span><br><span class="line"> - protocol: TCP</span><br><span class="line">   port: 80</span><br><span class="line">   targetPort: 80</span><br><span class="line"> selector:</span><br><span class="line">   app: http</span><br><span class="line">---</span><br><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line"> name: httpd2-deployment</span><br><span class="line">spec:</span><br><span class="line"> ports:</span><br><span class="line"> - protocol: TCP</span><br><span class="line">   port: 80</span><br><span class="line">   targetPort: 80</span><br><span class="line"> selector:</span><br><span class="line">   app: http2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>创建service  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd_service.yaml</span><br></pre></td></tr></table></figure>
+<p>检查  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get service</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_4.png"></p>
+<p>创建ingress  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat httpd-ingress.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Ingress</span><br><span class="line">metadata:</span><br><span class="line">  name: httpd-ingress</span><br><span class="line">  namespace: default #服务在哪个空间内就写哪个空间</span><br><span class="line">spec:</span><br><span class="line">  rules:</span><br><span class="line">  - host: wanshaoyuan1.com  #此service的访问域名</span><br><span class="line">    http:</span><br><span class="line">      paths:</span><br><span class="line">      - backend:</span><br><span class="line">          serviceName: httpd-deployment  #servicname</span><br><span class="line">          servicePort: 80          #service暴露出来的port</span><br><span class="line">  - host: wanshaoyuan2.com  #此service的访问域名</span><br><span class="line">    http:</span><br><span class="line">      paths:</span><br><span class="line">      - backend:</span><br><span class="line">          serviceName: httpd2-deployment #servicname</span><br><span class="line">          servicePort: 80  #service暴露出来的port</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>应用  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd-ingress.yaml</span><br></pre></td></tr></table></figure>
+<p>检查  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get ingress --all-namespaces</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_5.png"></p>
+<p>测试服务<br>修改hosts<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_6.png"></p>
+<p>打开浏览器访问<br><a href="http://wanshaoyuan1.com:31159/">http://wanshaoyuan1.com:31159</a>  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_7.png"></p>
+<p><a href="http://wanshaoyuan2.com:31159/">http://wanshaoyuan2.com:31159</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_8.png"></p>
+<p>查看ingress-control生成的nginx.conf配置文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl --namespace=ingress-nginx exec -it nginx-ingress-controller-756ffbdb79-5tjs5 cat /etc/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p> 可以看见ingress-control添加了这两个upstream<br> <img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_9.png"></p>
+<p>如果需要ingress-control不使用service暴露端口，网络模式使用主机模式的话需要修改with-rbac.yaml<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_10.png"></p>
+<h3 id="部署一个haproxy的ingress"><a href="#部署一个haproxy的ingress" class="headerlink" title="部署一个haproxy的ingress"></a>部署一个haproxy的ingress</h3><p>default-backend.yaml ——-这是官方要求必须要给的默认后端，提供404页面的。它还提供了haproxy-ingress-controll健康状态检查，通过每隔一定时间访问haproxy-ingress-controll的&#x2F;healthz页面，如是没有响应就返回404之类的错误码。   </p>
+<p>haproxy-ingress.yaml—–部署haproxy-ingress-controller。    </p>
+<p>rbac.yaml—–创建rbac权限和Serviceaccount</p>
+<p>github<br><a href="https://github.com/jcmoraisjr/haproxy-ingress/tree/master/examples">https://github.com/jcmoraisjr/haproxy-ingress/tree/master/examples</a></p>
+<p>如果你kubernetes配置了RBAC的验证模式，你需要创建个servicaccount，然后绑定相对应的role和clusterrole，否则你的ingress-control将无法从kube-apiserver获取对应的数据。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat rbam.yaml  </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Namespace</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-controller</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-controller</span><br><span class="line">  namespace: ingress-controller</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-controller</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - configmaps</span><br><span class="line">      - endpoints</span><br><span class="line">      - nodes</span><br><span class="line">      - pods</span><br><span class="line">      - secrets</span><br><span class="line">    verbs:</span><br><span class="line">      - list</span><br><span class="line">      - watch</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - nodes</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - services</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">      - list</span><br><span class="line">      - watch</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;extensions&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - ingresses</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">      - list</span><br><span class="line">      - watch</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - events</span><br><span class="line">    verbs:</span><br><span class="line">      - create</span><br><span class="line">      - patch</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;extensions&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - ingresses/status</span><br><span class="line">    verbs:</span><br><span class="line">      - update</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">kind: Role</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-controller</span><br><span class="line">  namespace: ingress-controller</span><br><span class="line">rules:</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - configmaps</span><br><span class="line">      - pods</span><br><span class="line">      - secrets</span><br><span class="line">      - namespaces</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - configmaps</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">      - update</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - configmaps</span><br><span class="line">    verbs:</span><br><span class="line">      - create</span><br><span class="line">  - apiGroups:</span><br><span class="line">      - &quot;&quot;</span><br><span class="line">    resources:</span><br><span class="line">      - endpoints</span><br><span class="line">    verbs:</span><br><span class="line">      - get</span><br><span class="line">      - create</span><br><span class="line">      - update</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-controller</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: ingress-controller</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: ingress-controller</span><br><span class="line">    namespace: ingress-controller</span><br><span class="line">  - apiGroup: rbac.authorization.k8s.io</span><br><span class="line">    kind: User</span><br><span class="line">    name: ingress-controller</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">kind: RoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-controller</span><br><span class="line">  namespace: ingress-controller</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: Role</span><br><span class="line">  name: ingress-controller</span><br><span class="line">subjects:</span><br><span class="line">  - kind: ServiceAccount</span><br><span class="line">    name: ingress-controller</span><br><span class="line">    namespace: ingress-controller</span><br><span class="line">  - apiGroup: rbac.authorization.k8s.io</span><br><span class="line">    kind: User</span><br><span class="line">    name: ingress-controller</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat default-backend.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-default-backend</span><br><span class="line">  labels:</span><br><span class="line">    app: ingress-default-backend</span><br><span class="line">  namespace: ingress-controller</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: ingress-default-backend</span><br><span class="line">    spec:</span><br><span class="line">      terminationGracePeriodSeconds: 60</span><br><span class="line">      containers:</span><br><span class="line">      - name: ingress-default-backend</span><br><span class="line">        # Any image is permissable as long as:</span><br><span class="line">        # 1. It serves a 404 page at /</span><br><span class="line">        # 2. It serves 200 on a /healthz endpoint</span><br><span class="line">        image: gcr.io/google_containers/defaultbackend:1.0</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 8080</span><br><span class="line">        resources:</span><br><span class="line">          limits:</span><br><span class="line">            cpu: 10m</span><br><span class="line">            memory: 20Mi</span><br><span class="line">          requests:</span><br><span class="line">            cpu: 10m</span><br><span class="line">            memory: 20Mi</span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: ingress-default-backend</span><br><span class="line">  namespace: ingress-controller</span><br><span class="line">  labels:</span><br><span class="line">    app: ingress-default-backend</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - port: 8080</span><br><span class="line">    targetPort: 8080</span><br><span class="line">  selector:</span><br><span class="line">    app: ingress-default-backend</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat haproxy-ingress.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    run: haproxy-ingress</span><br><span class="line">  name: haproxy-ingress</span><br><span class="line">  namespace: ingress-controller</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      run: haproxy-ingress</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        run: haproxy-ingress</span><br><span class="line">    spec:</span><br><span class="line">      serviceAccountName: ingress-controller</span><br><span class="line">      hostNetwork: true  </span><br><span class="line">      containers:</span><br><span class="line">      - name: haproxy-ingress</span><br><span class="line">        image: quay.io/jcmoraisjr/haproxy-ingress</span><br><span class="line">        args:</span><br><span class="line">        - --default-backend-service=$(POD_NAMESPACE)/ingress-default-backend</span><br><span class="line">        - --default-ssl-certificate=$(POD_NAMESPACE)/tls-secret</span><br><span class="line">        - --configmap=$(POD_NAMESPACE)/haproxy-ingress</span><br><span class="line">        ports:</span><br><span class="line">        - name: http</span><br><span class="line">          containerPort: 80</span><br><span class="line">        - name: https</span><br><span class="line">          containerPort: 443</span><br><span class="line">        - name: stat</span><br><span class="line">          containerPort: 1936</span><br><span class="line">        env:</span><br><span class="line">        - name: POD_NAME</span><br><span class="line">          valueFrom:</span><br><span class="line">            fieldRef:</span><br><span class="line">              fieldPath: metadata.name</span><br><span class="line">        - name: POD_NAMESPACE</span><br><span class="line">          valueFrom:</span><br><span class="line">            fieldRef:</span><br><span class="line">              fieldPath: metadata.namespace</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>应用  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f rbac.yaml</span><br><span class="line">kubectl apply -f default-backend.yaml</span><br><span class="line">kubectl apply -f haproxy-ingress.yaml</span><br></pre></td></tr></table></figure>
+<p>查看对应的pod  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod --namespace=ingress-controller</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_11.png"></p>
+<p>创建应用测试，这里还是用上面的http-app  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd-app.yaml</span><br><span class="line">kubectl apply -f httpd_service.yaml</span><br><span class="line">kubectl apply -f httpd-ingress.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get ing</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_12.png"></p>
+<p>配置hosts访问<br>测试  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_13.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_14.png"></p>
+<p>查看ingress-control的haproxy配置文件   </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n ingress-controller exec -it haproxy-ingress-785cc87f6b-h7kxn cat /etc/haproxy/haproxy.cfg</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_15.png"></p>
+<p>我ingress-control-haproxy使用的是hostnetwork模式，当我不使用hostnetwork模式时，我将ingress-control-haproxy使用service暴露nodeport端口去连接时会出现下面情况。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_16.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_17.png"></p>
+<p>但使用curl指定http报文host字段头部<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_18.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_19.png"></p>
+<p>通过判断haproxy配置文件判断应该是haproxy.cfg里面的acl的配置<br>限制了报文头部host字段。  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_20.png"></p>
+<p>但这样使用的话还有个问题，因为ingress-control也是以pod的方式部署的，在实际应用中，pod会发生漂移，这样的话ip就会发生变化，但在企业中，允许通过的ip都需要在防火墙上放行。所以这里我们需要一个vip，使用haproxy+keepalive实现高可用，这里就不介绍具体操作方法了。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_21.png"></p>
+<h3 id="部署一个Traefik的ingress"><a href="#部署一个Traefik的ingress" class="headerlink" title="部署一个Traefik的ingress"></a>部署一个Traefik的ingress</h3><p>tracfik是一款开源的反向代理和负载均衡工具,traefik是为微服务而生的，它可以随时感知后端服务的变化，自动更改配置并热重新加载，在这期间服务是不会暂停和停止的。  </p>
+<p>为什么选择traefik(<a href="http://blog.csdn.net/aixiaoyang168/article/details/78557739">http://blog.csdn.net/aixiaoyang168/article/details/78557739</a>)</p>
+<ul>
+<li>速度快</li>
+<li>不需要安装其他依赖，使用 GO 语言编译可执行文件</li>
+<li>支持最小化官方 Docker 镜像<br>支持多种后台，如 Docker, Swarm mode, Kubernetes, Marathon, Consul, Etcd, Rancher, Amazon ECS 等等</li>
+<li>支持 REST API</li>
+<li>配置文件热重载，不需要重启进程</li>
+<li>支持自动熔断功能</li>
+<li>支持轮训、负载均衡</li>
+<li>提供简洁的 UI 界面</li>
+<li>支持 Websocket, HTTP&#x2F;2, GRPC</li>
+<li>自动更新 HTTPS 证书</li>
+<li>支持高可用集群模式</li>
+</ul>
+<p>根上面的nginx-ingress和haproxy-ingress相比有什么区别呢 ？<br>1、使用nginx-ingress和haproxy-ingress需要一个ingress-controller去根kube-apiserver进行交互去读取后端的service、pod等的变化，然后在动态刷新nginx的配置，来达到服务自动发现的目的，而traefik本身设计就能直接和kube-apiserver进行交互，感知后端service、pod的变化，自动更新并热重载。</p>
+<p>2、traefik快速和方便自带web页面和监控状态检查。  </p>
+<p>部署traefik<br>git clone <a href="https://github.com/containous/traefik.git">https://github.com/containous/traefik.git</a><br>traefik&#x2F;examples&#x2F;k8s&#x2F;目录存放的就是kubernetes集群所需要的yml文件<br>traefik-rbac.yaml对创建traefik对应的ClusterRole和绑定对应的servicaccount。<br>执行<br>kubectl apply -f traefik-rbac.yaml</p>
+<p>traefik-deployment.yaml 创建对应的serviceaccount，创建对应的pod和service<br>执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f traefik-deployment.yaml</span><br></pre></td></tr></table></figure>
+<p>查看</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_22.png"></p>
+<p>它同时启动了80和8080端口，80端口对应服务端口，8080对应ui端口  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_23.png"></p>
+<p>访问<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_24.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_25.png"></p>
+<p>部署ui<br>主要采用ingress的方式暴露服务<br>traefix很快发现我们刚刚添加的ingress<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_26.png"></p>
+<p>使用上面ingress-nginx和ingress-haproxy的测试用例进行测试<br>创建对应的deployment</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd-app.yaml</span><br></pre></td></tr></table></figure>
+<p>创建对应的service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd_service.yaml</span><br></pre></td></tr></table></figure>
+<p>创建对应的ingress</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f httpd-ingress.yaml</span><br></pre></td></tr></table></figure>
+<p>测试访问<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_27.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_28.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_ingress_29.png"></p>
+<p>参考链接：<br><a href="http://dockone.io/article/1418">http://dockone.io/article/1418</a><br><a href="http://blog.csdn.net/aixiaoyang168/article/details/78557739">http://blog.csdn.net/aixiaoyang168/article/details/78557739</a><br><a href="http://www.mamicode.com/info-detail-2109270.html">http://www.mamicode.com/info-detail-2109270.html</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/03/26/rke%E9%83%A8%E7%BD%B2kubernetes/" title="rke部署kubernetes"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/02/26/kubernetes_rbac/" title="kubernetes RBAC">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

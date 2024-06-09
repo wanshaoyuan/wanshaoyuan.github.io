@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>使用DockerFile构建Bare Metal镜像 | 我爱西红柿</title>
+  <meta name="description" content="Mutable和Immutable介绍云原生的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式API。容器技术的最大创造就是通过Dockerfile将应用打包为容器镜像，实现了不可变基础设施，标准化了应用模板。在容器之前叫Mutable（可变的基础设施）在OS上部署应用，重启生效，可以随时进行修改。容器技术就是Immutable的代表，引入容器镜像，通过Dockerfile将应用标准化打">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用DockerFile构建Bare Metal镜像">
+<meta property="og:url" content="http://yoursite.com/2022/12/26/elemental/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="Mutable和Immutable介绍云原生的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式API。容器技术的最大创造就是通过Dockerfile将应用打包为容器镜像，实现了不可变基础设施，标准化了应用模板。在容器之前叫Mutable（可变的基础设施）在OS上部署应用，重启生效，可以随时进行修改。容器技术就是Immutable的代表，引入容器镜像，通过Dockerfile将应用标准化打">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-8.png">
+<meta property="article:published_time" content="2022-12-26T13:45:59.000Z">
+<meta property="article:modified_time" content="2022-12-26T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/12/26/elemental/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Mutable%E5%92%8CImmutable%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">Mutable和Immutable介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Elemental%E6%A6%82%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">Elemental概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-elemental" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用DockerFile构建Bare Metal镜像
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/12/26/elemental/" class="article-date">
+	  <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/12/26/elemental/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 14(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="Mutable和Immutable介绍"><a href="#Mutable和Immutable介绍" class="headerlink" title="Mutable和Immutable介绍"></a>Mutable和Immutable介绍</h3><p>云原生的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式API。容器技术的最大创造就是通过Dockerfile将应用打包为容器镜像，实现了不可变基础设施，标准化了应用模板。<br>在容器之前叫Mutable（可变的基础设施）在OS上部署应用，重启生效，可以随时进行修改。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-1.png"><br>容器技术就是Immutable的代表，引入容器镜像，通过Dockerfile将应用标准化打包为容器镜像，通过容器镜像启动容器，无法在容器中进行永久性修改，需要修改只能通过更新Dockerfile方式进行。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-2.png"></p>
+<p>现如今Immutable理念也开始逐步从容器下沉到Bare Metal OS，通过Dockerfile构建Bare Metal镜像，实现Bare Metal OS  Immutable。</p>
+<p>典型的开源项目技术Elemental项目</p>
+<h3 id="Elemental概述"><a href="#Elemental概述" class="headerlink" title="Elemental概述"></a>Elemental概述</h3><p>Elemental 是一系列工具集合，主要是想通过 Kubernetes 实现集中式、完整的云原生操作系统构建和管理。</p>
+<p>集群节点操作系统是通过Elemental CLI通过容器映像构建和维护的，并使用Elemental CLI安装在新主机上。<br>Elemental Operator和Rancher System Agent使Rancher Manager 能够完全控制 Elemental 集群，从在节点上安装和管理操作系统到以集中方式配置新的 K3s 或 RKE2 集群。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-3.png"></p>
+<p>Elemental项目组成</p>
+<ul>
+<li><p>elemental-toolkit - 包括一组操作系统实用程序，可通过容器启用操作系统管理。包括 dracut 模块、引导加载程序配置、cloud-init 自定义配置服务等。</p>
+</li>
+<li><p>elemental-operator - 这连接到 Rancher Manager 并处理 machineRegistration 和 machineInventory CRD</p>
+</li>
+<li><p>elemental-register - 这通过 machineRegistrations 注册机器并通过 elemental-cli 安装</p>
+</li>
+<li><p>elemental-cli - 这会安装任何基于 elemental-toolkit 的衍生工具。实现OCI容器镜像构建为可在虚拟机、物理机、嵌入式设备运行的ISO镜像。</p>
+</li>
+<li><p>rancher-system-agent - 在已安装的系统上运行并从 Rancher Manager 获取命令在系统上安装和运行rancher-agent，注册到Rancher中。</p>
+</li>
+</ul>
+<p>项目地址：<a href="https://github.com/rancher/elemental-toolkit">https://github.com/rancher/elemental-toolkit</a></p>
+<h3 id="配置使用"><a href="#配置使用" class="headerlink" title="配置使用"></a>配置使用</h3><p>在一台装有Docker的主机上进行</p>
+<p>提前准备项：</p>
+<ul>
+<li>一台安装了Docker的主机</li>
+<li>Harbor镜像仓库</li>
+<li>EXSI或物理pc、服务器用于build后的ISO测试</li>
+</ul>
+<p>使用Elemental-toolkit构建ISO流程</p>
+<ul>
+<li><p>基础base镜像发行版：<br>teal: SLE Micro for Rancher based one, shipping packages from Sle Micro 5.3.<br>green: openSUSE based one, shipping packages from OpenSUSE Leap 15.4 repositories.<br>blue: Fedora based one, shipping packages from Fedora 33 repositories<br>orange: Ubuntu based one, shipping packages form Ubuntu 20.10 repositories</p>
+</li>
+<li><p>自定义镜像并制作OCI Image</p>
+</li>
+<li><p>在装有Docker的机器启动Elemental Build<br>UEFI Boot，选择合适的实例类型<br>Clout-init userdata 初始化<br>Default user&#x2F;pass: root&#x2F;cos</p>
+</li>
+<li><p>升级自定义镜像<br>elemental upgrade –no-verify –reboot -d niusmallnan&#x2F;containeros:dev</p>
+</li>
+</ul>
+<p>在安装了Docker的主机上创建&#x2F;root&#x2F;derivative目录。</p>
+<p>整体目录结构</p>
+<pre><code>/root/derivative/
+├── Dockerfile
+├── cloud-init.yaml
+├── install.sh
+├── installer.sh
+├── k3s
+├── k3s-airgap-images-amd64.tar.gz
+├── manifest.yaml
+├── nginx.yaml
+├── overlay
+│   └── iso
+│       └── boot
+│           └── grub2
+│               └── grub.cfg
+└── repositories.yaml
+</code></pre>
+<p>Demo架构</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-4.png"></p>
+<ul>
+<li>通过Elemental构建的OS中包含K3S</li>
+<li>将需要部署的应用yaml放置到 &#x2F;var&#x2F;lib&#x2F;rancher&#x2F;k3s&#x2F;server&#x2F;manifests目录，K3S启动成功后会自动部署yaml启动应用。</li>
+</ul>
+<p>下载K3S离线镜像包和CLI文件<br><a href="https://github.com/k3s-io/k3s/releases">https://github.com/k3s-io/k3s/releases</a></p>
+<p>nginx.yaml文件用于k3s启动后加载此yaml文件，模拟演示是个应用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx-deployment</span><br><span class="line">spec:</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: nginx</span><br><span class="line">  replicas: 1</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        image: wanshaoyuan/nginx:v1.0</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: my-service</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx</span><br><span class="line">  ports:</span><br><span class="line">    - port: 80</span><br><span class="line">      targetPort: 80</span><br><span class="line">      nodePort: 30007</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Dockerfile文件创建</p>
+<pre><code>ARG LUET_VERSION=0.32.0
+FROM quay.io/luet/base:$LUET_VERSION AS luet
+FROM registry.suse.com/suse/sle-micro-rancher/5.2
+ARG ARCH=amd64
+ENV ARCH=$&#123;ARCH&#125;
+
+
+# Copy the luet config file pointing to the upgrade repository
+COPY repositories.yaml /etc/luet/luet.yaml
+
+# Copy luet from the official images
+COPY --from=luet /usr/bin/luet /usr/bin/luet
+ENV LUET_NOLOCK=true
+RUN luet install -y \
+       toolchain/yip \
+       toolchain/luet \
+       utils/installer \
+       system/cos-setup \
+       system/immutable-rootfs \
+       system/grub2-config \
+       system/base-dracut-modules
+
+RUN  mkdir /var/lib/rancher/k3s/agent/images/ -p &amp;&amp;  mkdir /var/lib/rancher/k3s/server/manifests -p
+COPY install.sh /system/oem/
+COPY k3s /usr/local/bin
+COPY nginx.yaml /system/oem/
+COPY k3s-airgap-images-amd64.tar.gz /system/oem/
+RUN  chmod a+x /usr/local/bin/k3s &amp;&amp; chmod a+x /system/oem/install.sh
+WORKDIR /system/oem
+RUN  INSTALL_K3S_SKIP_START=&quot;true&quot; INSTALL_K3S_SKIP_ENABLE=&quot;true&quot; INSTALL_K3S_SKIP_DOWNLOAD=&quot;true&quot; sh install.sh
+## System layout
+
+# Required by k3s etc.
+RUN mkdir /usr/libexec &amp;&amp; mkdir /usr/local/bin -p &amp;&amp; touch /usr/libexec/.keep
+
+# Copy custom files
+# COPY files/ /
+
+# Copy cloud-init default configuration
+COPY cloud-init.yaml /system/oem/
+
+# Generate initrd
+RUN mkinitrd
+
+# OS level configuration
+RUN echo &quot;VERSION=999&quot; &gt; /etc/os-release
+RUN echo &quot;GRUB_ENTRY_NAME=derivative&quot; &gt;&gt; /etc/os-release
+RUN echo &quot;welcome to our derivative&quot; &gt;&gt; /etc/issue.d/01-derivative
+</code></pre>
+<p>cloud-init文件创建，主要用于磁盘分区配置和登录用户名和密码配置<br>cloud-init.yaml</p>
+<pre><code>name: &quot;Default settings&quot;
+stages:
+   initramfs:
+     # Setup default hostname
+     - name: &quot;Branding&quot;
+       hostname: &quot;derivative&quot;
+     # Setup an admin group with sudo access
+     - name: &quot;Setup groups&quot;
+       ensure_entities:
+       - entity: |
+            kind: &quot;group&quot;
+            group_name: &quot;admin&quot;
+            password: &quot;x&quot;
+            gid: 900            
+     # Setup network - openSUSE specific
+     - name: &quot;Network setup&quot;
+       files:
+       - path: /etc/sysconfig/network/ifcfg-eth0
+         content: |
+                  BOOTPROTO=&#39;dhcp&#39;
+                  STARTMODE=&#39;onboot&#39;                  
+         permissions: 0600
+         owner: 0
+         group: 0
+     # Setup a custom user
+     - name: &quot;Setup users&quot;
+       users:
+       # Replace the default user name here and settings
+        joe:
+          # Comment passwd for no password
+          passwd: &quot;joe&quot;
+          shell: /bin/bash
+          homedir: &quot;/home/joe&quot;
+          groups:
+          - &quot;admin&quot;
+       #authorized_keys:
+       # Replace here with your ssh keys
+       # joe: 
+       # - ssh-rsa ....
+     # Setup sudo
+     - name: &quot;Setup sudo&quot;
+       files:
+       - path: &quot;/etc/sudoers&quot;
+         owner: 0
+         group: 0
+         permsisions: 0600
+         content: |
+            Defaults always_set_home
+            Defaults secure_path=&quot;/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/bin:/usr/local/sbin&quot;
+            Defaults env_reset
+            Defaults env_keep = &quot;LANG LC_ADDRESS LC_CTYPE LC_COLLATE LC_IDENTIFICATION LC_MEASUREMENT LC_MESSAGES LC_MONETARY LC_NAME LC_NUMERIC LC_PAPER LC_TELEPHONE LC_ATIME LC_ALL LANGUAGE LINGUAS XDG_SESSION_COOKIE&quot;
+            Defaults !insults
+            root ALL=(ALL) ALL
+            %admin ALL=(ALL) NOPASSWD: ALL
+            @includedir /etc/sudoers.d            
+       commands:
+       - passwd -l root
+   # Setup persistency so k3s works properly
+   # See also: https://rancher.github.io/elemental-toolkit/docs/reference/immutable_rootfs/#configuration-with-an-environment-file
+   rootfs.after:
+    - name: &quot;Immutable Layout configuration&quot;
+      environment_file: /run/cos/cos-layout.env
+      environment:
+        VOLUMES: &quot;LABEL=COS_OEM:/oem LABEL=COS_PERSISTENT:/var&quot;
+        OVERLAY: &quot;tmpfs:25%&quot;
+        RW_PATHS: &quot;/usr/local /etc /srv&quot;
+        PERSISTENT_STATE_PATHS: &gt;-
+          /etc/systemd
+          /etc/rancher
+          /etc/ssh
+          /etc/iscsi 
+          /etc/cni
+          /home
+          /opt
+          /root
+          /usr/libexec
+          /var/log
+          /var/lib/wicked
+          /var/lib/longhorn
+          /var/lib/cni
+          /usr/local/bin
+        PERSISTENT_STATE_TARGET: &gt;-
+          /etc/systemd
+          /etc/rancher
+          /etc/ssh
+          /etc/iscsi
+          /etc/cni
+          /home
+          /opt
+          /root
+          /usr/libexec
+          /var/log
+          /var/lib/kubelet
+          /var/lib/wicked
+          /var/lib/longhorn
+          /var/lib/cni
+          /usr/local/bin
+        PERSISTENT_STATE_BIND: &quot;true&quot;
+   # Finally, let&#39;s start k3s when network is available, and download the SSH key from github for the joe user
+   network:
+     - name: &quot;Deploy cos-system&quot;
+       commands:
+         - elemental install /dev/sda 
+         - systemctl enable k3s &amp;&amp; systemctl start  k3s
+   after-install:
+     - name: &quot;install k3s&quot;
+       commands:
+         - mount /dev/sda5 /var
+         - mkdir -p  /var/lib/rancher/k3s/agent/images/  &amp;&amp; mkdir /var/lib/rancher/k3s/server/manifests -p
+         - cp /system/oem/k3s-airgap-images-amd64.tar.gz  /var/lib/rancher/k3s/agent/images/
+         - cp /system/oem/nginx.yaml /var/lib/rancher/k3s/server/manifests
+         - reboot
+</code></pre>
+<p>创建manifest.yaml文件定义OS启动引导所需要文件</p>
+<pre><code>iso:
+  rootfs:
+    - channel:system/cos
+  uefi:
+    - channel:live/grub2-efi-image
+  image:
+    - channel:live/grub2
+    - channel:live/grub2-efi-image
+  label: &quot;COS_LIVE&quot;
+
+name: &quot;cOS-0&quot;
+
+# Raw disk creation values start
+raw_disk:
+  x86_64:
+    # which packages to install and the target to install them at
+    packages:
+      - name: channel:system/grub2-efi-image
+        target: efi
+      - name: channel:system/grub2-config
+        target: root
+      - name: channel:system/grub2-artifacts
+        target: root/grub2
+      - name: channel:recovery/cos-img
+        target: root/cOS
+
+repositories:
+  - uri: quay.io/costoolkit/releases-teal
+    arch: &quot;x86_64&quot;
+</code></pre>
+<p>创建repositories.yaml文件</p>
+<pre><code>logging:
+  color: false
+  enable_emoji: false
+general:
+   debug: false
+   spinner_charset: 9
+repositories:
+- name: &quot;cos&quot;
+  description: &quot;cOS official&quot;
+  type: &quot;docker&quot;
+  enable: true
+  cached: true
+  priority: 1
+  verify: false
+  urls:
+  - &quot;quay.io/costoolkit/releases-green&quot;
+</code></pre>
+<p>创建grub文件配置内核引导<br>在&#x2F;root&#x2F;derivative&#x2F;overlay&#x2F;iso&#x2F;boot&#x2F;目录创建grub2grub.cfg文件</p>
+<pre><code>search --no-floppy --file --set=root /boot/kernel
+set default=0
+set timeout=10
+set timeout_style=menu
+set linux=linux
+set initrd=initrd
+if [ &quot;$&#123;grub_cpu&#125;&quot; = &quot;x86_64&quot; -o &quot;$&#123;grub_cpu&#125;&quot; = &quot;i386&quot; -o &quot;$&#123;grub_cpu&#125;&quot; = &quot;arm64&quot; ];then
+    if [ &quot;$&#123;grub_platform&#125;&quot; = &quot;efi&quot; ]; then
+        if [ &quot;$&#123;grub_cpu&#125;&quot; != &quot;arm64&quot; ]; then
+            set linux=linuxefi
+            set initrd=initrdefi
+        fi
+    fi
+fi
+if [ &quot;$&#123;grub_platform&#125;&quot; = &quot;efi&quot; ]; then
+    echo &quot;Please press &#39;t&#39; to show the boot menu on this console&quot;
+fi
+set font=($root)/boot/$&#123;grub_cpu&#125;/loader/grub2/fonts/unicode.pf2
+if [ -f $&#123;font&#125; ];then
+    loadfont $&#123;font&#125;
+fi
+menuentry &quot;cOS&quot; --class os --unrestricted &#123;
+    echo Loading kernel...
+    $linux ($root)/boot/kernel.xz cdroot root=live:CDLABEL=COS_LIVE rd.live.dir=/ rd.live.squashimg=rootfs.squashfs console=tty1 console=ttyS0 rd.cos.disable
+    echo Loading initrd...
+    $initrd ($root)/boot/rootfs.xz
+&#125;
+
+if [ &quot;$&#123;grub_platform&#125;&quot; = &quot;efi&quot; ]; then
+    hiddenentry &quot;Text mode&quot; --hotkey &quot;t&quot; &#123;
+        set textmode=true
+        terminal_output console
+    &#125;
+fi
+</code></pre>
+<p>先构建镜像</p>
+<pre><code>docker build -t 172.16.1.208/library/example:v4.0 .
+</code></pre>
+<p>镜像要上传到镜像仓库才能build iso</p>
+<pre><code>docker push 172.16.1.208/library/example:v4.0
+</code></pre>
+<p>构建ISO</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -ti -v $(pwd):/build quay.io/costoolkit/elemental-cli:v0.0.15-ae4f000	--config-dir /build --overlay-iso /build/overlay/iso --debug build-iso -o /build 172.16.1.208/library/example:v4.0</span><br></pre></td></tr></table></figure>
+<p>注：目前只支持公开的镜像仓库，不支持私有的镜像仓库<br><a href="https://github.com/rancher/elemental-cli/issues/389">https://github.com/rancher/elemental-cli/issues/389</a></p>
+<p>构建完成，生成此cOS-0.iso镜像文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">o250800372/iso / -chmod 0755 -- -boot_image grub bin_path=/boot/x86_64/loader/eltorito.img -boot_image grub grub2_mbr=/tmp/elemental-iso250800372/iso//boot/x86_64/loader/boot_hybrid.img -boot_image grub grub2_boot_info=on -boot_image any partition_offset=16 -boot_image any cat_path=/boot/x86_64/boot.catalog -boot_image any cat_hidden=on -boot_image any boot_info_table=on -boot_image any platform_id=0x00 -boot_image any emul_type=no_emulation -boot_image any load_size=2048 -append_partition 2 0xef /tmp/elemental-iso250800372/iso/boot/uefi.img -boot_image any next -boot_image any efi_path=--interval:appended_partition_2:all:: -boot_image any platform_id=0xef -boot_image any emul_type=no_emulation&#x27; </span><br><span class="line">DEBU[2023-03-12T11:54:38Z] Xorriso: xorriso 1.4.6 : RockRidge filesystem manipulator, libburnia project.</span><br><span class="line"></span><br><span class="line">Drive current: -outdev &#x27;/build/cOS-0.iso&#x27;</span><br><span class="line">Media current: stdio file, overwriteable</span><br><span class="line">Media status : is blank</span><br><span class="line">Media summary: 0 sessions, 0 data blocks, 0 data, 5851m free</span><br><span class="line">xorriso : UPDATE : 623 files added in 1 seconds</span><br><span class="line">Added to ISO image: directory &#x27;/&#x27;=&#x27;/tmp/elemental-iso250800372/iso&#x27;</span><br><span class="line">xorriso : NOTE : Copying to System Area: 512 bytes from file &#x27;/tmp/elemental-iso250800372/iso/boot/x86_64/loader/boot_hybrid.img&#x27;</span><br><span class="line">xorriso : UPDATE : Writing:      24576s    6.5%   fifo 100%  buf  50%</span><br><span class="line">xorriso : UPDATE : Writing:     221184s   58.1%   fifo 100%  buf  50%  415.0xD </span><br><span class="line">ISO image produced: 380645 sectors</span><br><span class="line">Written to medium : 380656 sectors at LBA 48</span><br><span class="line">Writing to &#x27;/build/cOS-0.iso&#x27; completed successfully.</span><br></pre></td></tr></table></figure>
+
+<p>将cOS-0.iso下载到ESXI或其他虚拟化平台也可以刻录U盘直接安装物理机。</p>
+<p>配置选4c4G 60G磁盘</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-5.png"><br>加载ISO后自动分区，自动进行初始化，安装系统，完成后自动重启进入系统。</p>
+<p>密码ssh账号密码joe&#x2F;joe</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-6.png"><br>在安装后的系统查看已经部署好的K3S。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-7.png"></p>
+<p>查看自动部署的应用</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-8.png"><br>访问应用</p>
+<p>因为整个系统都限制了修改，所以在操作系统任何目录执行修改命令都无法修改。如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rm -rf *</span><br><span class="line"></span><br><span class="line">evice or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/kubelet/pods/cbf59b3a-d29a-4129-a3c9-8b79b1235104/volumes/kubernetes.io~projected/kube-api-access-zf8c5&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/kubelet/pods/ea697a4c-8cb8-425f-8e50-6396f5669167/volumes/kubernetes.io~projected/kube-api-access-bq66h&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/kubelet/pods/f18cd482-4c6f-4dd0-80fa-5fc314d3cc5b/volumes/kubernetes.io~projected/kube-api-access-8fdq7&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/longhorn&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/wicked&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/log&#x27;: Device or resource busy</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">touch  1</span><br><span class="line">touch: cannot touch &#x27;1&#x27;: Read-only file system</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过Elemental实现了操作系统为不变基础设施，同时也可以将我们传统的OS带入云原生，通过Dockerfile去构建，通过CICD去统一发版维护，目前能想到的一个比较大的应用场景在于，一个是边缘场景，边缘设备操作系统批量部署安装。另外就是一些to b的客户将自己业务+容器编排和OS通过Elemental构建打包，直接到客户现场加载ISO就部署完了，开箱即用。另外OS也可以标准化，统一化管理。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2023/10/03/stablediffusion/" title="stable diffusion学习系列1（安装部署-Windows环境)"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/11/17/spiffe/" title="零信任与SPIFFE（一）">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

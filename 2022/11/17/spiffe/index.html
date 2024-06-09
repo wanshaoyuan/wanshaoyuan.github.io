@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>零信任与SPIFFE（一） | 我爱西红柿</title>
+  <meta name="description" content="概述传统的网络安全模型通过划分不同的网络分区，同一个网络分区是可信的，不同网络分区之间通过防火墙隔断。这种方式在云原生时代已经变得不可适用了。1、同一网络分区内流量无法进行管控，特别是是如今随着容器大规模落地，容器IP又不是二层可见和固定的无法进行安全管控。 2、传统网络边界防火墙采用静态方式配置规则，对于云原生这类动态变化的环境无法适应。零信任安全框架在此背景下提出。零信任是默认不信任使用，除非">
+<meta property="og:type" content="article">
+<meta property="og:title" content="零信任与SPIFFE（一）">
+<meta property="og:url" content="http://yoursite.com/2022/11/17/spiffe/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述传统的网络安全模型通过划分不同的网络分区，同一个网络分区是可信的，不同网络分区之间通过防火墙隔断。这种方式在云原生时代已经变得不可适用了。1、同一网络分区内流量无法进行管控，特别是是如今随着容器大规模落地，容器IP又不是二层可见和固定的无法进行安全管控。 2、传统网络边界防火墙采用静态方式配置规则，对于云原生这类动态变化的环境无法适应。零信任安全框架在此背景下提出。零信任是默认不信任使用，除非">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://spiffe.io/img/server_and_agent.png">
+<meta property="og:image" content="https://d2908q01vomqb2.cloudfront.net/fe2ef495a1152561572949784c16bf23abb28057/2021/07/21/envoy-spire.png">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-cb8de4befb4b9fa5a0dd46fbb649d16e_b.jpg">
+<meta property="og:image" content="https://spiffe.io/img/checkouts/spiffe/spire-tutorials/k8s/envoy-x509/images/SPIRE_Envoy_diagram.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-3.png">
+<meta property="article:published_time" content="2022-11-17T13:45:59.000Z">
+<meta property="article:modified_time" content="2022-11-17T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://spiffe.io/img/server_and_agent.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/11/17/spiffe/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E5%92%8C%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">架构和概念解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%94%E7%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">演示</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spire%E9%83%A8%E7%BD%B2"><span class="toc-number">3.1.</span> <span class="toc-text">Spire部署</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-spiffe" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      零信任与SPIFFE（一）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/11/17/spiffe/" class="article-date">
+	  <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/11/17/spiffe/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.1k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 10(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a><a href="#%E6%A6%82%E8%BF%B0" title="概述"></a>概述</h3><p>传统的网络安全模型通过划分不同的网络分区，同一个网络分区是可信的，不同网络分区之间通过防火墙隔断。这种方式在云原生时代已经变得不可适用了。<br>1、同一网络分区内流量无法进行管控，特别是是如今随着容器大规模落地，容器IP又不是二层可见和固定的无法进行安全管控。</p>
+<p>2、传统网络边界防火墙采用静态方式配置规则，对于云原生这类动态变化的环境无法适应。<br>零信任安全框架在此背景下提出。<br>零信任是默认不信任使用，除非通过验证。通过身份认证，访问策略控制，实现最小权限访问控制。零信任安全的本质是以身份为中心进行动态访问控制，SPIFFE项目（Secure Product Identity Framework For Everyone）通用安全身份框架 。通过X.509 证书的形式为生产环境中的每个工作负载提供安全身份分发，认证。</p>
+<p><a href="https://spiffe.io/">https://spiffe.io/</a><br>SPIFFE本身也是开源项目，目前托管在CNCF基金会，在2022年9月正式毕业。</p>
+<p>SPIFFE</p>
+<h3 id="架构和概念解析"><a href="#架构和概念解析" class="headerlink" title="架构和概念解析"></a><a href="#%E6%9E%B6%E6%9E%84%E5%92%8C%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90" title="架构和概念解析"></a>架构和概念解析</h3><p>SPIFFE ( Secure Production Identity Framework For Everyone )：通用安全身份认证框架。<br>SPIRE ( SPIFFE Runtime Environment )：是 SPIFFE 标准的一套生产就绪实现，它执行节点证明和工作负载证明，可以安全地向服务颁发身份凭证，并根据预定义的条件集合验证其他服务的身份。<br><a href="https://github.com/spiffe/spire">https://github.com/spiffe/spire</a></p>
+<p><img src="https://spiffe.io/img/server_and_agent.png"></p>
+<p>Spire由SPIRE-Server和一个或多个SPIRE-Agent组成。</p>
+<p>Server端充当签名机构（CA）通过Agent颁发给工作负载的证书。它还进行证书维护和验证。</p>
+<p>Agent运行在每个workload所在节点上，作用是从Server端接受证书，并将其存储在缓存中。另外是对workload暴露SPIFFE Workload API 充当 SDS（secret discovery service）角色处理整个mTLs流量进行证书交互和验证</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/fe2ef495a1152561572949784c16bf23abb28057/2021/07/21/envoy-spire.png"></p>
+<p>SPIFFE安全框架主要包含以下部分：</p>
+<p>SPIFFE ID：用于标识对应信任域的工作负载，类似URI格式的字符串包含以下<br><img src="https://pic3.zhimg.com/v2-cb8de4befb4b9fa5a0dd46fbb649d16e_b.jpg"><br>由spiffe:&#x2F;&#x2F;信任域的名字&#x2F;工作负载名字或对应的身份标识</p>
+<p>SVID（SPIFFE Veriﬁable Identity Document）：<br>svid可以是两种格式之一\:X.509证书或jwt。证书svid可用于建立端到端相互TLS<br>加密连接。jwt在端到端相互TLS加密不需要或不需要的情况下非常有用，例如当<br>使用负载均衡器。jwt对于已经支持基于jwt的身份验证的各种云服务的身份验证也很有用。无论是使用JWT SVIDs还是X.509 SVIDs, SPIFFE id、信任包格式和工作负载API都是相同的。</p>
+<p>Trust Bundle：用于验证svid的公钥集</p>
+<p>Workload API：工作负载通过此api获取对应的SPIFFE ID、SVID、Trust Bundle。</p>
+<p>SPIFFE 联邦：不同信任域共享SPIFFE信任包，比如数据中心A的Spire环境与数据中心B的Spire环境建立联邦关系就可以互相配置和检查</p>
+<p>注：这里写的workload（工作负载）并不等同于k8s里面的workload，主要指的是需要接入SPIFFE的对象可以是docker容器、VM、k8s-pod等等。</p>
+<h3 id="演示"><a href="#演示" class="headerlink" title="演示"></a><a href="#%E6%BC%94%E7%A4%BA" title="演示"></a>演示</h3><p>软件版本：<br>1、kubernetes v1.24.8<br>2、Spire：v1.5.3</p>
+<h4 id="Spire部署"><a href="#Spire部署" class="headerlink" title="Spire部署"></a><a href="#Spire%E9%83%A8%E7%BD%B2" title="Spire部署"></a>Spire部署</h4><p>部署local-path-provisioner<br>因为Spire-Server为有状态服务，依赖存储，所以这里部署local-path-provisioner<br>并设置为默认StorageClass</p>
+<p><a href="https://github.com/rancher/local-path-provisioner.git">https://github.com/rancher/local-path-provisioner.git</a></p>
+<p>完成后  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get sc</span><br><span class="line"></span><br><span class="line">NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE</span><br><span class="line"></span><br><span class="line">local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  2d7h</span><br></pre></td></tr></table></figure>
+<p>部署Spire-server和Spire-agent<br>clone此项目</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/spiffe/spire-tutorials</span><br></pre></td></tr></table></figure>
+<p>切换到spire-tutorials&#x2F;k8s&#x2F;quickstart目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f spire-namespace.yaml</span><br></pre></td></tr></table></figure>
+<p>配置spire-server权限  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply \</span><br><span class="line"></span><br><span class="line">    -f server-account.yaml \</span><br><span class="line"></span><br><span class="line">    -f spire-bundle-configmap.yaml \</span><br><span class="line"></span><br><span class="line">    -f server-cluster-role.yaml</span><br></pre></td></tr></table></figure>
+<p>部署Spire-server  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply \</span><br><span class="line"></span><br><span class="line">    -f server-configmap.yaml \</span><br><span class="line"></span><br><span class="line">    -f server-statefulset.yaml \</span><br><span class="line"></span><br><span class="line">    -f server-service.yaml</span><br></pre></td></tr></table></figure>
+<p>查看部署状态  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get statefulset --namespace spire</span><br><span class="line"></span><br><span class="line">NAME           READY   AGE</span><br><span class="line"></span><br><span class="line">spire-server   1/1     2d8h</span><br></pre></td></tr></table></figure>
+<p>部署spire-agent<br>1、配置权限  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply \</span><br><span class="line"></span><br><span class="line">    -f agent-account.yaml \</span><br><span class="line"></span><br><span class="line">    -f agent-cluster-role.yaml</span><br></pre></td></tr></table></figure>
+<p>2、部署spire-agent  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply \</span><br><span class="line"></span><br><span class="line">    -f agent-configmap.yaml \</span><br><span class="line"></span><br><span class="line">    -f agent-daemonset.yaml</span><br></pre></td></tr></table></figure>
+<p>3、检查  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get daemonset --namespace spire</span><br><span class="line"></span><br><span class="line">NAME          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span><br><span class="line"></span><br><span class="line">spire-agent   2         2         2       2            2           &lt;none&gt;          2d8h</span><br></pre></td></tr></table></figure>
+<p>4、注册spire-agent  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -n spire spire-server-0 -- \</span><br><span class="line"></span><br><span class="line">    /opt/spire/bin/spire-server entry create \</span><br><span class="line"></span><br><span class="line">    -spiffeID spiffe://example.org/ns/spire/sa/spire-agent \</span><br><span class="line"></span><br><span class="line">    -selector k8s_sat:cluster:demo-cluster \</span><br><span class="line"></span><br><span class="line">    -selector k8s_sat:agent_ns:spire \</span><br><span class="line"></span><br><span class="line">    -selector k8s_sat:agent_sa:spire-agent \</span><br><span class="line"></span><br><span class="line">    -node</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -n spire spire-server-0 -- \</span><br><span class="line"></span><br><span class="line">    /opt/spire/bin/spire-server entry create \</span><br><span class="line"></span><br><span class="line">    -spiffeID spiffe://example.org/ns/default/sa/default \</span><br><span class="line"></span><br><span class="line">    -parentID spiffe://example.org/ns/spire/sa/spire-agent \</span><br><span class="line"></span><br><span class="line">    -selector k8s:ns:default \</span><br><span class="line"></span><br><span class="line">    -selector k8s:sa:default</span><br></pre></td></tr></table></figure>
+<p>5、验证<br>Spire-agent默认会将socket文件映射到k8s集群主机的&#x2F;run&#x2F;spire&#x2F;sockets&#x2F;agent.sock，部署测试容器查看  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f client-deployment.yaml</span><br></pre></td></tr></table></figure>
+<p>验证容器是否可以访问socket  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it $(kubectl get pods -o=jsonpath=&#x27;&#123;.items[0].metadata.name&#125;&#x27; \</span><br><span class="line"></span><br><span class="line">   -l app=client)  -- /opt/spire/bin/spire-agent api fetch -socketPath /run/spire/sockets/agent.sock</span><br></pre></td></tr></table></figure>
+<p>如果agent正常运行，将看到一个 SVID 列表。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">SPIFFE ID:              spiffe://example.org/ns/default/sa/default</span><br><span class="line"></span><br><span class="line">SVID Valid After:       2022-12-25 11:41:16 +0000 UTC</span><br><span class="line"></span><br><span class="line">SVID Valid Until:       2022-12-25 12:41:26 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #1 Valid After:      2022-12-23 15:04:07 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #1 Valid Until:      2022-12-24 15:04:17 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #2 Valid After:      2022-12-24 03:04:07 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #2 Valid Until:      2022-12-25 03:04:17 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #3 Valid After:      2022-12-24 15:04:07 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #3 Valid Until:      2022-12-25 15:04:17 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #4 Valid After:      2022-12-25 03:04:07 +0000 UTC</span><br><span class="line"></span><br><span class="line">CA #4 Valid Until:      2022-12-26 03:04:17 +0000 UTC</span><br></pre></td></tr></table></figure>
+
+<p>Demo应用部署<br>本次演示<br>将Envoy与X.509-SVID结合使用保护微服务通信</p>
+<p><img src="https://spiffe.io/img/checkouts/spiffe/spire-tutorials/k8s/envoy-x509/images/SPIRE_Envoy_diagram.png"></p>
+<p>如图所示，前端服务通过sidecar Envoy执行X.509 SVID 身份验证与实例建立的起mTLS连接，连接到后端服务。</p>
+<p>SPIRE Agent原生支持做为Envoy的SDS服务。通过本地socket连接SDS服务。</p>
+<p>切换到spire-tutorials&#x2F;k8s&#x2F;envoy-x509目录</p>
+<p>部署应用  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -k k8s/.</span><br><span class="line"></span><br><span class="line">configmap/backend-balance-json-data created</span><br><span class="line"></span><br><span class="line">configmap/backend-envoy created</span><br><span class="line"></span><br><span class="line">configmap/backend-profile-json-data created</span><br><span class="line"></span><br><span class="line">configmap/backend-transactions-json-data created</span><br><span class="line"></span><br><span class="line">configmap/frontend-2-envoy created</span><br><span class="line"></span><br><span class="line">configmap/frontend-envoy created</span><br><span class="line"></span><br><span class="line">configmap/symbank-webapp-2-config created</span><br><span class="line"></span><br><span class="line">configmap/symbank-webapp-config created</span><br><span class="line"></span><br><span class="line">service/backend-envoy created</span><br><span class="line"></span><br><span class="line">service/frontend-2 created</span><br><span class="line"></span><br><span class="line">service/frontend created</span><br><span class="line"></span><br><span class="line">deployment.apps/backend created</span><br><span class="line"></span><br><span class="line">deployment.apps/frontend-2 created</span><br><span class="line"></span><br><span class="line">deployment.apps/frontend created</span><br></pre></td></tr></table></figure>
+<p>以backend模块为例<br>查看k8s&#x2F;backend&#x2F;config&#x2F;envoy.yaml文件，可以科技Envoy配置的与spire-agent的socket连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">clusters:</span><br><span class="line"></span><br><span class="line">- name: spire_agent</span><br><span class="line"></span><br><span class="line">  connect_timeout: 0.25s</span><br><span class="line"></span><br><span class="line">  http2_protocol_options: &#123;&#125;</span><br><span class="line"></span><br><span class="line">  hosts:</span><br><span class="line"></span><br><span class="line">    - pipe:</span><br><span class="line"></span><br><span class="line">        path: /run/spire/sockets/agent.sock</span><br></pre></td></tr></table></figure>
+<p>手动将backend、frontend、frontend-2注册到sprie-server，当然SPIFFE也有自动正常功能就是使用SPIRE Controller Manager 模块（<a href="https://github.com/spiffe/spire-controller-manager%EF%BC%89">https://github.com/spiffe/spire-controller-manager）</a>  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash create-registration-entries.sh</span><br></pre></td></tr></table></figure>
+
+<p>注册完成后可以查看注册的服务  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -n spire spire-server-0 -c spire-server -- /opt/spire/bin/spire-server  entry show -selector k8s:ns:default</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">Found 4 entries</span><br><span class="line"></span><br><span class="line">Entry ID         : 3478c441-3e25-40e7-96d9-ef74611f2205</span><br><span class="line"></span><br><span class="line">SPIFFE ID        : spiffe://example.org/ns/default/sa/default</span><br><span class="line"></span><br><span class="line">Parent ID        : spiffe://example.org/ns/spire/sa/spire-agent</span><br><span class="line"></span><br><span class="line">Revision         : 0</span><br><span class="line"></span><br><span class="line">X509-SVID TTL    : default</span><br><span class="line"></span><br><span class="line">JWT-SVID TTL     : default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:ns:default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:sa:default</span><br><span class="line"></span><br><span class="line">Entry ID         : c188d47c-e886-492e-bf67-6a6bf42c3667</span><br><span class="line"></span><br><span class="line">SPIFFE ID        : spiffe://example.org/ns/default/sa/default/backend</span><br><span class="line"></span><br><span class="line">Parent ID        : spiffe://example.org/ns/spire/sa/spire-agent</span><br><span class="line"></span><br><span class="line">Revision         : 0</span><br><span class="line"></span><br><span class="line">X509-SVID TTL    : default</span><br><span class="line"></span><br><span class="line">JWT-SVID TTL     : default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:container-name:envoy</span><br><span class="line"></span><br><span class="line">Selector         : k8s:ns:default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:pod-label:app:backend</span><br><span class="line"></span><br><span class="line">Selector         : k8s:sa:default</span><br><span class="line"></span><br><span class="line">Entry ID         : 6c376401-67d4-499a-a9d9-6ab71caf69c4</span><br><span class="line"></span><br><span class="line">SPIFFE ID        : spiffe://example.org/ns/default/sa/default/frontend</span><br><span class="line"></span><br><span class="line">Parent ID        : spiffe://example.org/ns/spire/sa/spire-agent</span><br><span class="line"></span><br><span class="line">Revision         : 0</span><br><span class="line"></span><br><span class="line">X509-SVID TTL    : default</span><br><span class="line"></span><br><span class="line">JWT-SVID TTL     : default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:container-name:envoy</span><br><span class="line"></span><br><span class="line">Selector         : k8s:ns:default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:pod-label:app:frontend</span><br><span class="line"></span><br><span class="line">Selector         : k8s:sa:default</span><br><span class="line"></span><br><span class="line">Entry ID         : 49f88c69-b4ee-4656-b740-6dbee5bb89a3</span><br><span class="line"></span><br><span class="line">SPIFFE ID        : spiffe://example.org/ns/default/sa/default/frontend-2</span><br><span class="line"></span><br><span class="line">Parent ID        : spiffe://example.org/ns/spire/sa/spire-agent</span><br><span class="line"></span><br><span class="line">Revision         : 0</span><br><span class="line"></span><br><span class="line">X509-SVID TTL    : default</span><br><span class="line"></span><br><span class="line">JWT-SVID TTL     : default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:container-name:envoy</span><br><span class="line"></span><br><span class="line">Selector         : k8s:ns:default</span><br><span class="line"></span><br><span class="line">Selector         : k8s:pod-label:app:frontend-2</span><br><span class="line"></span><br><span class="line">Selector         : k8s:sa:default</span><br></pre></td></tr></table></figure>
+<p>可以看见对应的SPIFFE ID</p>
+<p>访问服务  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line"></span><br><span class="line">NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line"></span><br><span class="line">backend-envoy   ClusterIP      None            &lt;none&gt;        9001/TCP         2d8h</span><br><span class="line"></span><br><span class="line">frontend        LoadBalancer   10.43.106.227   &lt;pending&gt;     3000:32082/TCP   2d8h</span><br><span class="line"></span><br><span class="line">frontend-2      LoadBalancer   10.43.203.167   &lt;pending&gt;     3002:30664/TCP   2d8h</span><br><span class="line"></span><br><span class="line">go-demo         NodePort       10.43.120.2     &lt;none&gt;        8080:30007/TCP   2d10h</span><br><span class="line"></span><br><span class="line">kubernetes      ClusterIP      10.43.0.1       &lt;none&gt;        443/TCP          2d10h</span><br></pre></td></tr></table></figure>
+<p>frontend对应的NodePort端口为32082</p>
+<p>frontend-2对应的NodePort端口为30664</p>
+<p>frontend显示Jacob Marley的账户情况<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-1.png"><br>frontend-2显示Alex Fergus的账户情况<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-2.png"></p>
+<p>更新策略只允许frontend服务访问backend访问</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f backend-envoy-configmap-update.yaml</span><br></pre></td></tr></table></figure>
+
+<p>实际上就是更新backend的Envoy配置对应的 k8s&#x2F;backend&#x2F;config&#x2F;envoy.yaml<br>删除了以下条目  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- exact: &quot;spiffe://example.org/ns/default/sa/default/frontend-2&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">match_subject_alt_names:</span><br><span class="line"></span><br><span class="line">                - exact: &quot;spiffe://example.org/ns/default/sa/default/frontend&quot;</span><br><span class="line"></span><br><span class="line">                - exact: &quot;spiffe://example.org/ns/default/sa/default/frontend-2&quot;</span><br></pre></td></tr></table></figure>
+<p>重启backend服务获取最新配置  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale deployment backend --replicas=0</span><br><span class="line"></span><br><span class="line">kubectl scale deployment backend --replicas=1</span><br></pre></td></tr></table></figure>
+<p>在次访问frontend正常显示，访问frontend-2<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-3.png"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a href="#%E6%80%BB%E7%BB%93" title="总结"></a>总结</h3><p>SPIFFE支持多种方式集成如和Istio的envoy-sidecar、OPA策略等方式，可以非常灵活细粒化控制应用访问权限。</p>
+<p>参考链接：<br><a href="https://jimmysong.io/blog/why-istio-need-spire/">https://jimmysong.io/blog/why-istio-need-spire/</a><br><a href="https://mp.weixin.qq.com/s/4eEEYb8RuOFOmLcdL3N6wA">https://mp.weixin.qq.com/s/4eEEYb8RuOFOmLcdL3N6wA</a><br><a href="https://atbug.com/what-is-spiffe-and-spire/">https://atbug.com/what-is-spiffe-and-spire/</a><br><a href="https://www.nginx-cn.net/blog/mtls-architecture-nginx-service-mesh/">https://www.nginx-cn.net/blog/mtls-architecture-nginx-service-mesh/</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/12/26/elemental/" title="使用DockerFile构建Bare Metal镜像"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/10/17/ebpf_3/" title="eBPF学习摘要3-XDP学习和理解">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

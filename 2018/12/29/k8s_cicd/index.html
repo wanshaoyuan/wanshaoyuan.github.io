@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Kubernetes下CICD工具的选型 | 我爱西红柿</title>
+  <meta name="description" content="什么是CI?持续集成(Continuous integration)频繁的将代码提交然后集成到主干。 什么CD?持续交付（Continuous Delivery)持续交付是在CI的基础上，将集成到主干的代码，产出的可部署软件版本，部署到类生产环境进行测试验证，没问题在手动部署到生产环境。 持续部署（Continuous Deployment)在持续交付基础上，部署到生产环境是自动操作的。 最终 为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes下CICD工具的选型">
+<meta property="og:url" content="http://yoursite.com/2018/12/29/k8s_cicd/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="什么是CI?持续集成(Continuous integration)频繁的将代码提交然后集成到主干。 什么CD?持续交付（Continuous Delivery)持续交付是在CI的基础上，将集成到主干的代码，产出的可部署软件版本，部署到类生产环境进行测试验证，没问题在手动部署到生产环境。 持续部署（Continuous Deployment)在持续交付基础上，部署到生产环境是自动操作的。 最终 为">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_24.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_25.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_26.png">
+<meta property="article:published_time" content="2018-12-29T13:45:59.000Z">
+<meta property="article:modified_time" content="2018-12-29T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/12/29/k8s_cicd/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCI"><span class="toc-number">1.</span> <span class="toc-text">什么是CI?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88CD"><span class="toc-number">2.</span> <span class="toc-text">什么CD?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%81%9ACI-CD"><span class="toc-number">3.</span> <span class="toc-text">为什么要做CI&#x2F;CD?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">4.</span> <span class="toc-text">需要什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%AE%B9%E5%99%A8%E5%AE%9E%E7%8E%B0CICD%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-number">5.</span> <span class="toc-text">基于容器实现CICD的优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CICD%E5%B7%A5%E5%85%B7"><span class="toc-number">6.</span> <span class="toc-text">CICD工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Drone"><span class="toc-number">6.1.</span> <span class="toc-text">Drone</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#GitlabCI"><span class="toc-number">6.2.</span> <span class="toc-text">GitlabCI</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jenkins"><span class="toc-number">6.3.</span> <span class="toc-text">Jenkins</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">7.</span> <span class="toc-text">总结：</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-k8s_cicd" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Kubernetes下CICD工具的选型
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/12/29/k8s_cicd/" class="article-date">
+	  <time datetime="2018-12-29T13:45:59.000Z" itemprop="datePublished">2018-12-29</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/CI-CD/">CI/CD</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/CI-CD/" rel="tag">CI/CD</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/12/29/k8s_cicd/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.6k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 10(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="什么是CI"><a href="#什么是CI" class="headerlink" title="什么是CI?"></a>什么是CI?</h3><p>持续集成(Continuous integration)频繁的将代码提交然后集成到主干。</p>
+<h3 id="什么CD"><a href="#什么CD" class="headerlink" title="什么CD?"></a>什么CD?</h3><p>持续交付（Continuous Delivery)<br>持续交付是在CI的基础上，将集成到主干的代码，产出的可部署软件版本，部署到类生产环境进行测试验证，没问题在手动部署到生产环境。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_1.png"><br>持续部署（Continuous Deployment)<br>在持续交付基础上，部署到生产环境是自动操作的。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_2.png"></p>
+<p>最终<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_3.png"></p>
+<h3 id="为什么要做CI-CD"><a href="#为什么要做CI-CD" class="headerlink" title="为什么要做CI&#x2F;CD?"></a>为什么要做CI&#x2F;CD?</h3><ul>
+<li>提高效率，减少人工操作。</li>
+<li>能够快速确定新代码和原有代码能否集成。</li>
+<li>降低风险，快速发现错误。</li>
+<li>加速软件发布周期。</li>
+</ul>
+<h3 id="需要什么？"><a href="#需要什么？" class="headerlink" title="需要什么？"></a>需要什么？</h3><p>1、具有版本管理功能的代码仓库管理系统（svn，gitlab，github)<br>2、CI工具（jenkins，gitlab-ci，drone)<br>3、自动化测试<br>4、自动化部署工具（ansible、puppet，saltstack）</p>
+<h3 id="基于容器实现CICD的优势"><a href="#基于容器实现CICD的优势" class="headerlink" title="基于容器实现CICD的优势"></a>基于容器实现CICD的优势</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_4.png"></p>
+<p>持续集成与持续交付的难点在于如何屏蔽不同语言、不同框架、不同系统之间的持续集成与持续交付流程的差异性。</p>
+<ul>
+<li>标准化打包方式，解决应用部署依赖问题。</li>
+<li>抹平环境差异</li>
+<li>提升软件交付和迭代效率，还能避免交付内容不同导致的人为错误。</li>
+</ul>
+<h3 id="CICD工具"><a href="#CICD工具" class="headerlink" title="CICD工具"></a>CICD工具</h3><p>常见：</p>
+<ul>
+<li>Drone</li>
+<li>GitlabCI</li>
+<li>Jenkins</li>
+</ul>
+<p>工具选型考虑点：</p>
+<ul>
+<li>支持的代码库</li>
+<li>易用性</li>
+<li>插件生态</li>
+</ul>
+<h4 id="Drone"><a href="#Drone" class="headerlink" title="Drone"></a>Drone</h4><p>版本：1.0.0-rc2</p>
+<p>GO语言开发的一个非常轻量级的开源CI工具，整个镜像大小只有60多M，原生支持docker并且完全基于docker的CI工具，甚至连插件都是容器形式，使用的CICD操作，编译，测试，构建全部是都在docker中进行。</p>
+<p>部署方式：</p>
+<ul>
+<li>docker</li>
+<li>Kubernetes</li>
+</ul>
+<p>项目地址<br><a href="https://github.com/drone/drone">https://github.com/drone/drone</a><br>插件地址<br><a href="http://plugins.drone.io/">http://plugins.drone.io/</a><br>文档地址<br><a href="https://docs.drone.io/user-guide/">https://docs.drone.io/user-guide/</a></p>
+<p>支持的代码仓库</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_5.png"></p>
+<p>易用性<br>Everything as docker，所有组件都是容器，包括你使用的插件</p>
+<p>CI的执行是通过在代码仓库内定义个.drone.yml的文件,里面编写好对应的pipeline然后drone会去读取这个文件并执行。<br>让CI工作所需的步骤可归纳为</p>
+<ul>
+<li>部署drone-server</li>
+<li>添加.drone.yml到代码仓库的根目录</li>
+</ul>
+<p>没有自己的用户系统及认证系统，通过OAuth2.0协议与对接的代码仓库进行用户登证及代码仓库同步。也就意味着你不需要在单独管理CI系统的用户。<br>UI整体简洁、美观。显示的是当前这个用户的项目信息，包括最新 commit信息及CICD</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_6.png"></p>
+<p>能清晰看见当前项目所有执行过的pipeline，以及这个pipeline是谁触发的。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_7.png"></p>
+<p>单个pipeline的完整执行流程，及每个流程完整日志及消耗时间<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_8.png"></p>
+<p>Pipeline as code<br>pipeline编写，Pipeline as code 所有的操作都是通过代码实现，包括drone1.0版本pipeline语法更贴近Kubernetes yaml语法，使用起来更加高效。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">kind: pipeline</span><br><span class="line">name: test</span><br><span class="line">steps:</span><br><span class="line">- name: build</span><br><span class="line">  image: golang</span><br><span class="line">  commands:</span><br><span class="line">    - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .</span><br><span class="line">    - ./app</span><br><span class="line">- name: publish</span><br><span class="line">  image: plugins/docker</span><br><span class="line">  settings:</span><br><span class="line">     repo: 172.31.164.66/library/test</span><br><span class="line">     registry: 172.31.164.66</span><br><span class="line">     insecure: true</span><br><span class="line">     tags: $&#123;DRONE_COMMIT_MESSAGE&#125;</span><br><span class="line">trigger:</span><br><span class="line">  branch:</span><br><span class="line">  - dev</span><br><span class="line">  event:</span><br><span class="line">  - push</span><br></pre></td></tr></table></figure>
+
+
+<p>插件生态<br><a href="http://plugins.drone.io/">http://plugins.drone.io/</a></p>
+<p>插件比较丰富，函盖了目前主要的一些应用场景</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_9.png"></p>
+<p>当需要自定义插件时也非常简单，因为drone Everything as docker，插件也是通过以容器方式运行，然后将pipeline中自定义的环境变量传到这个容器中去执行。</p>
+<p>如设计个slack插件<br>确定好需要传输的参数<br>确定好需要传输哪些参数比如Slack插件将需要webhook网址，频道和消息文本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kind: pipeline</span><br><span class="line">name: default</span><br><span class="line"></span><br><span class="line">steps:</span><br><span class="line">- name: webhook</span><br><span class="line">  image: janecitizen/slack</span><br><span class="line">  settings:</span><br><span class="line">    webhook: https://hooks.slack.com/services/...</span><br><span class="line">    channel: general</span><br><span class="line">    text: hello</span><br></pre></td></tr></table></figure>
+
+<p>输入参数作为环境变量传递给插件，前缀为PLUGIN_。上面示例中的输入参数将传递给插件，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PLUGIN_CHANNEL=general</span><br><span class="line">PLUGIN_WEBHOOK=https://hooks.slack.com/services/...</span><br><span class="line">PLUGIN_TEXT=hello</span><br></pre></td></tr></table></figure>
+<p>创建脚本<br>使用上一节中定义的输入参数替换</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">curl -X POST \</span><br><span class="line">  -H &#x27;Content-type: application/json&#x27; \</span><br><span class="line">  -d &#x27;&#123;&quot;text&quot;:&quot;$&#123;PLUGIN_TEXT&#125;&quot;,&quot;channel&quot;:&quot;$&#123;PLUGIN_CHANNEL&quot;&#125;&#x27; \</span><br><span class="line">  $&#123;PLUGIN_WEBHOOK&#125;</span><br></pre></td></tr></table></figure>
+<p>构建插件<br>插件作为Docker镜像打包。创建一个Dockerfile，将先前创建的shell脚本添加到镜像。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FROM alpine</span><br><span class="line">ADD script.sh /bin/</span><br><span class="line">RUN chmod +x /bin/script.sh</span><br><span class="line">RUN apk -Uuv add curl ca-certificates</span><br><span class="line">ENTRYPOINT /bin/script.sh</span><br></pre></td></tr></table></figure>
+
+<p>构建你的插件docker镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t rancher/slack .</span><br></pre></td></tr></table></figure>
+<p>总结：<br>优点:</p>
+<ul>
+<li>非常轻量级，部署简单。</li>
+<li>高效率（Pipeline as code）</li>
+<li>原生支持docker（ Everything as docker）</li>
+<li>自定义插件和社区插件使用比较简单</li>
+<li>难够针对pipeline的单个步骤多事件触发，或分支触发</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kind: pipeline</span><br><span class="line">name: default</span><br><span class="line">steps:</span><br><span class="line">- name: build</span><br><span class="line">  image: golang</span><br><span class="line">  commands:</span><br><span class="line">  - go build</span><br><span class="line">  - go test -short</span><br><span class="line"></span><br><span class="line">- name: integration</span><br><span class="line">  image: golang</span><br><span class="line">  commands:</span><br><span class="line">  - go test -v</span><br><span class="line">  when:</span><br><span class="line">    event:</span><br><span class="line">    - pull_request</span><br><span class="line">    branch:</span><br><span class="line">  - feature</span><br></pre></td></tr></table></figure>
+<p>通过使用插件能够触发其他CI服务<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_10.png"></p>
+<p>分布式<br>缺点：</p>
+<ul>
+<li>高度依赖社区，文档不完善</li>
+<li>插件质量参差不齐</li>
+<li>UI非常简陋</li>
+<li>只支持对接一个代码仓库管理系统</li>
+</ul>
+<h4 id="GitlabCI"><a href="#GitlabCI" class="headerlink" title="GitlabCI"></a>GitlabCI</h4><p>GitLab CI &#x2F; CD是GitLab的一部分,gitlab 8.0版本开始新增的功能，是用Ruby和Go语言编写的。根我们通常的CI系统不一样通常的是一个master-slave架构，即使没有slave，master一样可以做CI，slave只是做为一个压力分担功能，gitlab是gitlab-server本身是不执行的，是通过api与GitLab Runner交互让gitlab-runner去执行CI。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_11.png"></p>
+<p>GitLab Runner是一个go语言编写程序，它可以运行在任何可以运行go环境的平台上(二进制包、docker、k8s)<br>支持的代码仓库<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_12.png"><br>易用性<br>同样也是Everything as docker<br>Gitlab CI 整个流程和 Drone 以及流行的 Travis CI 都是比较类似的，通过在项目中添加一个 .gitlab-ci.yml 的配置文件，配置文件中描述构建流水线来执行任务，对不同编程语言的编译通过不同的docker image实现。<br>CI的执行是通过在代码仓库内定义个.drone.yml的文件,里面编写好对应的pipeline然后drone会去读取这个文件并执行。<br>让CI工作所需的步骤可归纳为</p>
+<ul>
+<li>添加.gitlab-ci.yml到存储库的根目录</li>
+<li>配置一个Runner</li>
+</ul>
+<p>Runner分两种类型，<br>Specific Runners：单个项目独享<br>Shared Runners：整个gitlab共享</p>
+<p>Runner也可以选择CI方式：docker, parallels, shell, kubernetes, docker-ssh, ssh, virtualbox, docker+machine, docker-ssh+machine。如果是容器，代码编译的容器镜像需要提前在runner配置文件里面定义好。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">concurrent = 1</span><br><span class="line">check_interval = 0</span><br><span class="line">[session_server]</span><br><span class="line">  session_timeout = 1800</span><br><span class="line">[[runners]]</span><br><span class="line">  name = &quot;49faa2f8e25b&quot;</span><br><span class="line">  url = &quot;http://47.104.182.1:1080/&quot;</span><br><span class="line">  token = &quot;6ca2241a2924bd8763137d3bebf1c4&quot;</span><br><span class="line">  executor = &quot;docker&quot;</span><br><span class="line">  [runners.docker]</span><br><span class="line">    tls_verify = false</span><br><span class="line">    image = &quot;golang:1.10&quot;</span><br><span class="line">    privileged = false</span><br><span class="line">    disable_entrypoint_overwrite = false</span><br><span class="line">    oom_kill_disable = false</span><br><span class="line">    disable_cache = false</span><br><span class="line">    volumes = [&quot;/var/run/docker.sock:/var/run/docker.sock&quot;, &quot;/cache&quot;]</span><br><span class="line">    shm_size = 0</span><br><span class="line">  [runners.cache]</span><br><span class="line">     Insecure = false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>.gitlab-ci.yaml默认build， test和deploy三个stage<br>.gitlab-ci.yaml pipeline as code</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_13.png"></p>
+<p>当前项目下CI的执行记录。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_14.png"></p>
+<p>整个pipeline的流程。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_15.png"></p>
+<p>pipeline中的单个job执行过程详细信息输出，同时可以针对但个job进行重复执行。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_16.png"></p>
+<p>项目CICD信息统计，按年、月、周汇总，报表展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_17.png"></p>
+<p>能直接对接现有Kubernetes集群，runner部署及pipeline CD流程。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_18.png"></p>
+<p>插件生态<br>优点：</p>
+<ul>
+<li>根gitlab集成度非常高</li>
+<li>不需要部署有gitlab&gt;&#x3D;8.0 就能直接使用</li>
+<li>runner支持Autoscale</li>
+<li>UI可视化，可操作性强，可针对但个流程进行重复执行及报表展示</li>
+<li>CI完全属于你这个代码库</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>没有插件，对接第三方系统需要自己实现</li>
+<li>只能支持gitlab代码仓库</li>
+</ul>
+<h4 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h4><p><a href="https://jenkins.io/">https://jenkins.io/</a><br>Jenkins是一款java开发的功能强大的CI工具,其前身为oracle的Hudson (软件)项目，2011年正式独立出来，Jenkins也是目前非常老牌和主流的CI工具，最早只能支持java语言，后续通过各类语言插件实现多种编程语言支持，Jenkins也是目前插件种类最丰富的CI工具。</p>
+<p>易用性：<br>万物基于插件<br>提供功能强大的UI，大部分操作都可以通过UI完成，但UI样式不符合当前审美于是Jenkins又开发一个Blueocean皮肤插件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_19.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_20.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_21.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_22.png"></p>
+<p>对不同编程语言、docker、k8s、代码仓库对接都是通过插件方式去实现支持，当然也可以直接在Jenkins宿主机上安装好，直接通过shell方式调用。<br>对代码仓库对Jenkins的对接，需要手动配置token，触发需要手动配置webhook和对应的触发事件。<br>支持master-slave的架构方式，同时也能通过对接Kubernetes实现一个slave的动态创建过程，当然此时你可以封装不同编程语言的编译环境镜像，或在一个镜像内实现全部的编程语言。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_23.png"></p>
+<p>这样可以大节省资源和多语言环境下部署slave的难度。<br>Jenkins根drone和gitlab CI不一样，它拥有自己的用户认证系统，当然也可以去对接LDAP或AD。这样带来的问题是，权限管理很麻烦。<br>Jenkins可以通过UI去配置CI，也可以通过Jenkinsfile是Groovy语言语法<br>以下为例<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_24.png"></p>
+<p>代码仓库支持<br>支持常见代码仓库</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_25.png"></p>
+<p>插件生态<br>非常丰富的插件，覆盖面非常全<br><a href="https://plugins.jenkins.io/">https://plugins.jenkins.io/</a></p>
+<p>自定义插件学习成本较大，需要掌握JAVA语言<br>总结：<br>优点：</p>
+<ul>
+<li>既有功能完善的UI，也支持pipeline as code</li>
+<li>老牌CI工具文档很全面</li>
+<li>插件生态丰富，基本上想要对接的工具都能找到对应插件</li>
+<li>支持同时对接多个不同代码仓库</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对容器、k8s，代码仓库对接配置比较烦索</li>
+<li>自定义插件难度大</li>
+<li>独立的用户权限管理系统，多个开发团队共享一个master，会导致权限配置很困难，但若每个团队用各自Jenkins，又容易导致很多重复性工作</li>
+</ul>
+<h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_cicd_26.png"></p>
+<p>没有最好的工具，只有最合适的应用场景。</p>
+<p>小团队，用的代码管理软件是gitlab，容器编排工具是Kubernetes建议用Gitlab-CI或Drone，开箱即用，可以减少很多工作量。</p>
+<p>对插件有强烈需求，并且喜欢UI操作流水线的建议用Jenkins。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://mp.weixin.qq.com/s?__biz=MzIzNjUxMzk2NQ==&amp;mid=2247489519&amp;idx=1&amp;sn=4b42ec3c14b7ba8e21c741413d7bd6e4&amp;chksm=e8d7e82ddfa0613b85cf828443311af52890571052c6b6dce911c1cfe4e814dde28f8f98e086&amp;scene=27#wechat_redirect</span><br><span class="line">https://www.itread01.com/content/1531239621.html</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/01/31/etcd_backup/" title="ETCD集群的备份与还原"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/12/10/Kubernetes_service_mode/" title="kubernetes service模式分析">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

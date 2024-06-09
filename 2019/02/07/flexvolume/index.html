@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>flexvolume简介 | 我爱西红柿</title>
+  <meta name="description" content="概述：在实际使用中，我们的Kubernetes集群需要与外部存储进行对接，这时需要使用使用存储驱动，通过存储驱动去对接存储，Kubernetes有内置一些驱动能对接常见存储如nfs、ceph-rbd、ceph-fs、iscsi等，当我们需要对接的存储内置不支持时，这时我们就需要使用扩展存储驱动的方式去对接，在Kubernetes中自定义扩展存储驱动方式有两种一种是通过flexvolume另外一种是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flexvolume简介">
+<meta property="og:url" content="http://yoursite.com/2019/02/07/flexvolume/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述：在实际使用中，我们的Kubernetes集群需要与外部存储进行对接，这时需要使用使用存储驱动，通过存储驱动去对接存储，Kubernetes有内置一些驱动能对接常见存储如nfs、ceph-rbd、ceph-fs、iscsi等，当我们需要对接的存储内置不支持时，这时我们就需要使用扩展存储驱动的方式去对接，在Kubernetes中自定义扩展存储驱动方式有两种一种是通过flexvolume另外一种是">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-02-07T13:45:59.000Z">
+<meta property="article:modified_time" content="2019-02-07T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernete">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2019/02/07/flexvolume/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flexvolume%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E7%9A%84%E5%87%A0%E4%B8%AA%E5%85%B3%E9%94%AE%E7%82%B9"><span class="toc-number">2.</span> <span class="toc-text">flexvolume驱动开发的几个关键点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RKE%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F"><span class="toc-number">3.</span> <span class="toc-text">RKE部署集群方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAlvm"><span class="toc-number">3.1.</span> <span class="toc-text">创建lvm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9rke%E9%83%A8%E7%BD%B2Kubernetes%E9%9B%86%E7%BE%A4yaml%E6%96%87%E4%BB%B6"><span class="toc-number">3.2.</span> <span class="toc-text">修改rke部署Kubernetes集群yaml文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86flexvolume%E9%A9%B1%E5%8A%A8%E4%BB%8Egithub%E4%B8%8Aclone%E4%B8%8B%E6%9D%A5%E5%B9%B6%E4%BF%AE%E6%94%B9"><span class="toc-number">3.3.</span> <span class="toc-text">将flexvolume驱动从github上clone下来并修改</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kubeadm%E9%83%A8%E7%BD%B2%E9%9B%86%E7%BE%A4%E6%96%B9%E5%BC%8F"><span class="toc-number">4.</span> <span class="toc-text">kubeadm部署集群方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9flexvolumeq%E9%A9%B1%E5%8A%A8"><span class="toc-number">4.1.</span> <span class="toc-text">修改flexvolumeq驱动</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-flexvolume" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      flexvolume简介
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2019/02/07/flexvolume/" class="article-date">
+	  <time datetime="2019-02-07T13:45:59.000Z" itemprop="datePublished">2019-02-07</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernete/" rel="tag">kubernete</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2019/02/07/flexvolume/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 9(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>在实际使用中，我们的Kubernetes集群需要与外部存储进行对接，这时需要使用使用存储驱动，通过存储驱动去对接存储，Kubernetes有内置一些驱动能对接常见存储如nfs、ceph-rbd、ceph-fs、iscsi等，当我们需要对接的存储内置不支持时，这时我们就需要使用扩展存储驱动的方式去对接，在Kubernetes中自定义扩展存储驱动方式有两种一种是通过flexvolume另外一种是CSI。  </p>
+<p>flexvolume是在Kubernetes1.2版本中存在于Kubernetes集群Kubernetes1.8版本正式GA的，用户将编写好的插件的二进制可执行文件放置到宿主机的指定目录即可正常调用使用。二进制可执行文件可以使用任意开发语言开发，但需要定义好几个指定接口<br>接口如下：<br>init：kubelet&#x2F;kube-controller-manager 初始化存储插件时调用，插件需要返回是否需要要 attach 和 detach 操作<br>attach：将存储卷挂载到 Node 上<br>detach：将存储卷从 Node 上卸载<br>waitforattach： 等待 attach 操作成功（超时时间为 10 分钟）<br>isattached：检查存储卷是否已经挂载<br>mountdevice：将设备挂载到指定目录中以便后续 bind mount 使用<br>unmountdevice：将设备取消挂载<br>mount：将存储卷挂载到指定目录中<br>umount：将存储卷取消挂载  </p>
+<p>Flexvolume从v1.8开始支持动态检测驱动程序的能力，初始化和更新驱动生效只需要重启kubelet即可生效。  </p>
+<h3 id="flexvolume驱动开发的几个关键点"><a href="#flexvolume驱动开发的几个关键点" class="headerlink" title="flexvolume驱动开发的几个关键点"></a>flexvolume驱动开发的几个关键点</h3><p>flexvolume的开发主要注意几点：<br>1、flexvolume插件的详细日志在kubelet的日志中，kubectl看的只是pod运行的状态。<br>2、插件脚本中任何echo到前台的语句都要注释掉，返回给kubelet的只能是标准的json格式。<br>3、如果需要调试可以通过echo将输出的调试信息&gt;&gt;重定向到外部文本。  </p>
+<p>这里以官方的LVM例子和两种常见的Kubernetes集群部署方式为例两种讲解一下flexvolume驱动的使用<br>将下例驱动从github中clone下来。<br><a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/flexvolume">https://github.com/kubernetes/examples/tree/master/staging/volumes/flexvolume</a></p>
+<p>在进行验证前请保证测试机器有一块空闲的磁盘。<br>在使用flexvolume时需要配置kubelet参数–enable-controller-attach-detach&#x3D;false   </p>
+<h3 id="RKE部署集群方式"><a href="#RKE部署集群方式" class="headerlink" title="RKE部署集群方式"></a>RKE部署集群方式</h3><p>这里以LVM为例，其他插件类式</p>
+<h4 id="创建lvm"><a href="#创建lvm" class="headerlink" title="创建lvm"></a>创建lvm</h4><p>创建pv  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pvcreate /dev/sdx</span><br></pre></td></tr></table></figure>
+<p>创建vg  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vgcreate /dev/sdx vg0</span><br></pre></td></tr></table></figure>
+<p>创建LV  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvcreate -L 19G vg0 //根据实际情况修改命令</span><br></pre></td></tr></table></figure>
+<h4 id="修改rke部署Kubernetes集群yaml文件"><a href="#修改rke部署Kubernetes集群yaml文件" class="headerlink" title="修改rke部署Kubernetes集群yaml文件"></a>修改rke部署Kubernetes集群yaml文件</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubernetes_version: v1.11.3-rancher1-1</span><br><span class="line">services:</span><br><span class="line">    kubelet:</span><br><span class="line">       extra_args:</span><br><span class="line">        enable-controller-attach-detach: false</span><br><span class="line">       extra_binds:</span><br><span class="line">        - &quot;/usr/libexec/kubernetes/kubelet-plugins:/var/lib/kubelet/volumeplugins&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>主要有两点：  </p>
+<ul>
+<li><p>配置enable-controller-attach-detach: false 这样是直接让kubelet去attache设备到pod不然会报错Volume has not been added to the list of VolumesInUse in the node’s volume status for volume.表示该节点的附加&#x2F;分离操作仅委派给controller-manager</p>
+</li>
+<li><p>因为rke部署的Kubernetes集群kubelet是容器化的所以需要将存储插件目录映射到宿主机上。</p>
+</li>
+</ul>
+<h4 id="将flexvolume驱动从github上clone下来并修改"><a href="#将flexvolume驱动从github上clone下来并修改" class="headerlink" title="将flexvolume驱动从github上clone下来并修改"></a>将flexvolume驱动从github上clone下来并修改</h4><p><a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/flexvolume">https://github.com/kubernetes/examples/tree/master/staging/volumes/flexvolume</a>  </p>
+<p>在deploy目录创建drivers文件夹，将父目录的lvm驱动复制到drivers文件夹，整体目录结构如下  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">|-- deploy</span><br><span class="line">|   |-- deploy.sh</span><br><span class="line">|   |-- Dockerfile</span><br><span class="line">|   |-- drivers</span><br><span class="line">|   |    -- lvm</span><br><span class="line">|   |-- ds.yaml</span><br><span class="line">|   `-- README.md</span><br><span class="line">|-- dummy</span><br><span class="line">|-- dummy-attachable</span><br><span class="line">|-- nfs</span><br><span class="line">|-- lvm</span><br><span class="line">|-- nginx-dummy-attachable.yaml</span><br><span class="line">|-- nginx-dummy.yaml</span><br><span class="line">|-- nginx-lvm.yaml</span><br><span class="line">|-- nginx-nfs.yaml</span><br><span class="line">|-- nginx.yaml</span><br><span class="line">`-- README.md</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>修改deploy.sh（主要为了生成的文件夹名为k8s~lvm，pod调用驱动时更加清晰）<br>改成如下<br>VENDOR&#x3D;${VENDOR:-k8s}<br>DRIVER&#x3D;${DRIVER:-lvm}  </p>
+<p>生成驱动镜像<br>切换到deploy目录生成驱动部署镜像  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t image_name:tag .</span><br></pre></td></tr></table></figure>
+<p>修改ds.yaml文件<br>Image修改为我们刚刚生成镜像名和tag<br>Hostpath修改为  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hostPath:</span><br><span class="line">            # TODO Change to the Flexvolume plugin directory of your cluster.</span><br><span class="line">            path: /usr/libexec/kubernetes/kubelet-plugins/</span><br></pre></td></tr></table></figure>
+<p> 这个的作用主要是部署这个daemonset后会自动将驱动放到这个目录，这样就不用我们一台一台主要去复制了，另外修改启动也直接改这个yaml那全部节点也都会自动修改。这个目录是根我们刚刚在rke目录根kubelet映射那个目录是一样的，因为kubelet是容器化的要将这个目录映射到kubelet容器内。</p>
+<p>部署这个daemonset</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f ds.yaml</span><br></pre></td></tr></table></figure>
+<p>检查驱动  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get ds</span><br><span class="line">NAME      DESIRED   CURRENT   READY     UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE</span><br><span class="line">flex-ds         1                    1              1                   1                        1                      &lt;none&gt;          9d</span><br></pre></td></tr></table></figure>
+
+<p>在宿主机上<br>检查是否生成k8s~lvm驱动文件夹  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ls /usr/libexec/kubernetes/kubelet-plugins/</span><br><span class="line">k8s~lvm</span><br></pre></td></tr></table></figure>
+<p>测试<br>使用如下测试案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: nginx</span><br><span class="line">    image: nginx</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: test</span><br><span class="line">      mountPath: /data</span><br><span class="line">    ports:</span><br><span class="line">    - containerPort: 80</span><br><span class="line">  volumes:</span><br><span class="line">  - name: test</span><br><span class="line">    flexVolume:</span><br><span class="line">      driver: &quot;k8s/lvm&quot;</span><br><span class="line">      fsType: &quot;ext4&quot;</span><br><span class="line">      options:</span><br><span class="line">        volumeID: &quot;lvol0&quot;</span><br><span class="line">        size: &quot;19.00g&quot;</span><br><span class="line">        volumegroup: &quot;vg0&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>driver就是我们刚刚那个插件目录的k8s<del>lvm这里将</del>换成&#x2F;.</li>
+<li>格式化文件系统，这里推荐ext4，xfs在大环境下驱动有问题，需要改驱动代码，参考：<a href="https://www.jianshu.com/p/3ecc7f72cf9f">https://www.jianshu.com/p/3ecc7f72cf9f</a></li>
+<li>VolumeId：就是我们刚刚创建的lv的名字，若不记得lvs则显示</li>
+<li>Volumegroup：就是vg的名字，vgs可以看见</li>
+</ul>
+<p>创建测试应用  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod</span><br><span class="line">NAME            READY     STATUS    RESTARTS   AGE</span><br><span class="line">flex-ds-5qnwj   1/1       Running   0          4m</span><br></pre></td></tr></table></figure>
+<p>成功运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">df -h查看挂载</span><br><span class="line">/dev/mapper/vg0-lvol0   19G   45M   18G   1% /var/lib/kubelet/plugins/kubernetes.io/flexvolume/k8s/lvm/mounts/test</span><br></pre></td></tr></table></figure>
+<h3 id="kubeadm部署集群方式"><a href="#kubeadm部署集群方式" class="headerlink" title="kubeadm部署集群方式"></a>kubeadm部署集群方式</h3><p>1、创建lvm方式同上。  </p>
+<p>2、配置kubelet的–enable-controller-attach-detach&#x3D; false参数<br>编辑vim &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;kubelet.service.d&#x2F;10-kubeadm.conf<br>在Environment选项后面加上–enable-controller-attach-detach&#x3D;false参数<br>重启kubelet使kubelet生效  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+
+<p>剩下部署方式根rke一样  </p>
+<h4 id="修改flexvolumeq驱动"><a href="#修改flexvolumeq驱动" class="headerlink" title="修改flexvolumeq驱动"></a>修改flexvolumeq驱动</h4><p>官方lvm驱动案例，功能太弱了，需要提前将pv、vg、lv这些创建好，我们可以做一些修改，比如增加自动创建LV卷的功能，这样我们就不需要将LV卷一个个提前创建好，可以更省事。<br>通过对驱动程序分析<br>attach函数主要负责块设备检测，如果在yaml中定义的块不存在则直接退出  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">attach() &#123;</span><br><span class="line">	JSON_PARAMS=$1</span><br><span class="line">	SIZE=$(echo $1 | jq -r &#x27;.size&#x27;)</span><br><span class="line"></span><br><span class="line">	DMDEV=$(getdevice)</span><br><span class="line">	if [ ! -b &quot;$&#123;DMDEV&#125;&quot; ]; then</span><br><span class="line">		err &quot;&#123;\&quot;status\&quot;: \&quot;Failure\&quot;, \&quot;message\&quot;: \&quot;Volume $&#123;VOLUMEID&#125; does not exist\&quot;&#125;&quot;</span><br><span class="line">		exit 1</span><br><span class="line">	fi</span><br><span class="line">	log &quot;&#123;\&quot;status\&quot;: \&quot;Success\&quot;, \&quot;device\&quot;:\&quot;$&#123;DMDEV&#125;\&quot;&#125;&quot;</span><br><span class="line">	exit 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>domountdevice函数主要负责进行格式化块设备，和mount操作  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">domountdevice() &#123;</span><br><span class="line">	MNTPATH=$1</span><br><span class="line">	DMDEV=$2</span><br><span class="line">	FSTYPE=$(echo $3|jq -r &#x27;.[&quot;kubernetes.io/fsType&quot;]&#x27;)</span><br><span class="line"></span><br><span class="line">	if [ ! -b &quot;$&#123;DMDEV&#125;&quot; ]; then</span><br><span class="line">		err &quot;&#123;\&quot;status\&quot;: \&quot;Failure\&quot;, \&quot;message\&quot;: \&quot;$&#123;DMDEV&#125; does not exist\&quot;&#125;&quot;</span><br><span class="line">		exit 1</span><br><span class="line">	fi</span><br><span class="line"></span><br><span class="line">	if [ $(ismounted) -eq 1 ] ; then</span><br><span class="line">		log &quot;&#123;\&quot;status\&quot;: \&quot;Success\&quot;&#125;&quot;</span><br><span class="line">		exit 0</span><br><span class="line">	fi</span><br><span class="line"></span><br><span class="line">	VOLFSTYPE=`blkid -o udev $&#123;DMDEV&#125; 2&gt;/dev/null|grep &quot;ID_FS_TYPE&quot;|cut -d&quot;=&quot; -f2`</span><br><span class="line">	if [ &quot;$&#123;VOLFSTYPE&#125;&quot; == &quot;&quot; ]; then</span><br><span class="line">		mkfs -t $&#123;FSTYPE&#125; $&#123;DMDEV&#125; &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">		if [ $? -ne 0 ]; then</span><br><span class="line">			err &quot;&#123; \&quot;status\&quot;: \&quot;Failure\&quot;, \&quot;message\&quot;: \&quot;Failed to create fs $&#123;FSTYPE&#125; on device $&#123;DMDEV&#125;\&quot;&#125;&quot;</span><br><span class="line">			exit 1</span><br><span class="line">		fi</span><br><span class="line">	fi</span><br><span class="line"></span><br><span class="line">	mkdir -p $&#123;MNTPATH&#125; &amp;&gt; /dev/null</span><br><span class="line"></span><br><span class="line">	mount $&#123;DMDEV&#125; $&#123;MNTPATH&#125; &amp;&gt; /dev/null</span><br><span class="line">	if [ $? -ne 0 ]; then</span><br><span class="line">		err &quot;&#123; \&quot;status\&quot;: \&quot;Failure\&quot;, \&quot;message\&quot;: \&quot;Failed to mount device $&#123;DMDEV&#125; at $&#123;MNTPATH&#125;\&quot;&#125;&quot;</span><br><span class="line">		exit 1</span><br><span class="line">	fi</span><br><span class="line">	log &quot;&#123;\&quot;status\&quot;: \&quot;Success\&quot;&#125;&quot;</span><br><span class="line">	exit 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如果要实现自动基于VG创建LV卷，在自动挂载，那需要在格式化和mount前完成，所以需要我们把这个功能在attach函数中实现  </p>
+<pre><code>attach() &#123;
+    JSON_PARAMS=$1
+    VOLUMEID=$(echo $&#123;JSON_PARAMS&#125; | jq -r &#39;.volumeID&#39;)
+    VG=$(echo $&#123;JSON_PARAMS&#125; | jq -r &#39;.volumegroup&#39;)
+    THINPOOL=$(echo $&#123;JSON_PARAMS&#125; | jq -r &#39;.thinpool | select(type == &quot;string&quot;)&#39;)
+    SIZE=$(echo $&#123;JSON_PARAMS&#125; | jq -r &#39;.size&#39;)
+    DMDEV=$(getdevice)
+    if [ ! -b &quot;$&#123;DMDEV&#125;&quot; ]; then
+        LVCREATE_OPTS=&quot;-n $&#123;VOLUMEID&#125; -L $&#123;SIZE&#125; $&#123;VG&#125;&quot;
+        lvcreate $&#123;LVCREATE_OPTS&#125; 2&gt;&amp;1 &gt; /dev/null
+        if [ &quot;$?&quot; != &quot;0&quot; ]; then
+            err &quot;&#123;\&quot;status\&quot;: \&quot;Failure\&quot;, \&quot;message\&quot;: \&quot;Could not attach $&#123;VG&#125;/$&#123;VOLUMEID&#125;\&quot;&#125;&quot;
+            exit 1
+        fi
+    fi
+    log &quot;&#123;\&quot;status\&quot;: \&quot;Success\&quot;, \&quot;device\&quot;:\&quot;$&#123;DMDEV&#125;\&quot;&#125;&quot;
+    exit 0
+&#125;
+</code></pre>
+<p>最终实现如上。  </p>
+<p>参考链接  </p>
+<p><a href="https://kubernetes.feisky.xyz/cha-jian-kuo-zhan/volume/flex-volume">https://kubernetes.feisky.xyz/cha-jian-kuo-zhan/volume/flex-volume</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2019/03/31/ServiceMesh/" title="ServiceMesh简介"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2019/01/31/etcd_backup/" title="ETCD集群的备份与还原">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

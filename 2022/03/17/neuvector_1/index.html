@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Neuvector介绍和部署 | 我爱西红柿</title>
+  <meta name="description" content="Neuvector介绍NeuVector 是最早开发 Docker&#x2F;Kubernetes 安全产品的公司，是 Kubernetes 网络安全的领导者，NeuVector 致力于保障企业级容器平台安全，产品适用于各种云环境、跨云或者本地部署等容器生产环境。NeuVector 提供实时深入的容器网络可视化、东西向容器网络监控、主动隔离和保护、容器主机安全以及容器内部安全。和容器管理平台无缝集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neuvector介绍和部署">
+<meta property="og:url" content="http://yoursite.com/2022/03/17/neuvector_1/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="Neuvector介绍NeuVector 是最早开发 Docker&#x2F;Kubernetes 安全产品的公司，是 Kubernetes 网络安全的领导者，NeuVector 致力于保障企业级容器平台安全，产品适用于各种云环境、跨云或者本地部署等容器生产环境。NeuVector 提供实时深入的容器网络可视化、东西向容器网络监控、主动隔离和保护、容器主机安全以及容器内部安全。和容器管理平台无缝集">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://open-docs.neuvector.com/user/pages/01.basics/01.overview/architecture.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-3.png">
+<meta property="og:image" content="https://open-docs.neuvector.com/user/pages/01.basics/01.overview/architecture.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-13.png">
+<meta property="article:published_time" content="2022-03-17T13:45:59.000Z">
+<meta property="article:modified_time" content="2022-03-17T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="安全">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://open-docs.neuvector.com/user/pages/01.basics/01.overview/architecture.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/03/17/neuvector_1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Neuvector%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">Neuvector介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E8%A7%A3%E6%9E%90"><span class="toc-number">1.1.</span> <span class="toc-text">架构解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.2.</span> <span class="toc-text">功能介绍</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NeuVector%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">NeuVector安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E9%83%A8%E7%BD%B2"><span class="toc-number">2.1.</span> <span class="toc-text">快速部署</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Helm%E9%83%A8%E7%BD%B2"><span class="toc-number">2.2.</span> <span class="toc-text">Helm部署</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E5%8F%AF%E7%94%A8%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="toc-number">3.</span> <span class="toc-text">高可用架构设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2%E7%AD%96%E7%95%A5"><span class="toc-number">3.1.</span> <span class="toc-text">部署策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">3.2.</span> <span class="toc-text">数据持久化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%BA%91%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">多云安全管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">其他配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%87%E7%BA%A7"><span class="toc-number">5.1.</span> <span class="toc-text">升级</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD"><span class="toc-number">5.2.</span> <span class="toc-text">卸载</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-neuvector_1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Neuvector介绍和部署
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/03/17/neuvector_1/" class="article-date">
+	  <time datetime="2022-03-17T13:45:59.000Z" itemprop="datePublished">2022-03-17</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/03/17/neuvector_1/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.5k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 12(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="Neuvector介绍"><a href="#Neuvector介绍" class="headerlink" title="Neuvector介绍"></a>Neuvector介绍</h3><p>NeuVector 是最早开发 Docker&#x2F;Kubernetes 安全产品的公司，是 Kubernetes 网络安全的领导<br>者，NeuVector 致力于保障企业级容器平台安全，产品适用于各种云环境、跨云或者本地部署等容器生产环境。NeuVector 提供实时深入的容器网络可视化、东西向容器网络监控、主动隔离和保护、容器主机安全以及容器内部安全。和容器管理平台无缝集成并且实现应用级容器安全的自动化。<br>2021年SUSE收购Neuvector，并将其开源。</p>
+<p>项目地址：<br><a href="https://github.com/neuvector/neuvector">https://github.com/neuvector/neuvector</a></p>
+<h4 id="架构解析"><a href="#架构解析" class="headerlink" title="架构解析"></a>架构解析</h4><p><img src="https://open-docs.neuvector.com/user/pages/01.basics/01.overview/architecture.png"></p>
+<p>NeuVector本身包含Controller、Enforcer、Manager、Scanner、Updater模块。</p>
+<p>Controller：整个Neuvector的控制模块，API入口，包括配置下发，高可用主要考虑Controller的HA，通常建议部署3个Controller模块组成集群。</p>
+<p>Enforcer：主要用于安全策略部署下发和执行，DaemonSet类型会在每个节点部署。<br>Manager：提供web-UI(仅HTTPS)和CLI控制台，供用户管理NeuVector。<br>Scanner:对节点、容器、Kubernetes、镜像进行CVE漏洞扫描<br>Updater:cronjob，用于定期更新CVE漏洞库</p>
+<h4 id="功能介绍"><a href="#功能介绍" class="headerlink" title="功能介绍"></a>功能介绍</h4><ul>
+<li>安全漏洞扫描</li>
+<li>容器网络流量可视化</li>
+<li>网络安全策略定义</li>
+<li>L7防火墙</li>
+<li>CICD安全扫描</li>
+<li>合规分析<br>本篇文档更多侧重安装部署，实际功能介绍在后续文章进行深入介绍</li>
+</ul>
+<h3 id="NeuVector安装"><a href="#NeuVector安装" class="headerlink" title="NeuVector安装"></a>NeuVector安装</h3><p>安装环境<br>软件版本：<br>OS：Ubuntu18.04<br>Kubernetes：1.20.14<br>Rancher：2.5.12<br>Docker：19.03.15<br>NeuVector：5.0.0-b1</p>
+<h4 id="快速部署"><a href="#快速部署" class="headerlink" title="快速部署"></a>快速部署</h4><p>创建namespace</p>
+<pre><code>kubectl create namespace neuvector
+</code></pre>
+<p>部署CRD(Kubernetes 1.19+版本)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/crd-k8s-1.19.yaml</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/waf-crd-k8s-1.19.yaml</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/dlp-crd-k8s-1.19.yaml</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/admission-crd-k8s-1.19.yaml</span><br></pre></td></tr></table></figure>
+
+<p>部署CRD(Kubernetes 1.18或更低版本)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/crd-k8s-1.16.yaml</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/waf-crd-k8s-1.16.yaml</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/dlp-crd-k8s-1.16.yaml</span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/admission-crd-k8s-1.16.yaml</span><br></pre></td></tr></table></figure>
+
+<p>配置RBAC</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">kubectl create clusterrole neuvector-binding-app --verb=get,list,watch,update --resource=nodes,pods,services,namespaces</span><br><span class="line">kubectl create clusterrole neuvector-binding-rbac --verb=get,list,watch --resource=rolebindings.rbac.authorization.k8s.io,roles.rbac.authorization.k8s.io,clusterrolebindings.rbac.authorization.k8s.io,clusterroles.rbac.authorization.k8s.io</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-app --clusterrole=neuvector-binding-app --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-rbac --clusterrole=neuvector-binding-rbac --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrole neuvector-binding-admission --verb=get,list,watch,create,update,delete --resource=validatingwebhookconfigurations,mutatingwebhookconfigurations</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-admission --clusterrole=neuvector-binding-admission --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrole neuvector-binding-customresourcedefinition --verb=watch,create,get,update --resource=customresourcedefinitions</span><br><span class="line">kubectl create clusterrolebinding  neuvector-binding-customresourcedefinition --clusterrole=neuvector-binding-customresourcedefinition --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrole neuvector-binding-nvsecurityrules --verb=list,delete --resource=nvsecurityrules,nvclustersecurityrules</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-nvsecurityrules --clusterrole=neuvector-binding-nvsecurityrules --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-view --clusterrole=view --serviceaccount=neuvector:default</span><br><span class="line">kubectl create rolebinding neuvector-admin --clusterrole=admin --serviceaccount=neuvector:default -n neuvector</span><br><span class="line">kubectl create clusterrole neuvector-binding-nvwafsecurityrules --verb=list,delete --resource=nvwafsecurityrules</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-nvwafsecurityrules --clusterrole=neuvector-binding-nvwafsecurityrules --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrole neuvector-binding-nvadmissioncontrolsecurityrules --verb=list,delete --resource=nvadmissioncontrolsecurityrules</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-nvadmissioncontrolsecurityrules --clusterrole=neuvector-binding-nvadmissioncontrolsecurityrules --serviceaccount=neuvector:default</span><br><span class="line">kubectl create clusterrole neuvector-binding-nvdlpsecurityrules --verb=list,delete --resource=nvdlpsecurityrules</span><br><span class="line">kubectl create clusterrolebinding neuvector-binding-nvdlpsecurityrules --clusterrole=neuvector-binding-nvdlpsecurityrules --serviceaccount=neuvector:default</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>检查是否有以下RBAC对象</p>
+<pre><code>kubectl get clusterrolebinding  | grep neuvector
+kubectl get rolebinding -n neuvector | grep neuvector
+
+
+
+kubectl get clusterrolebinding  | grep neuvector
+
+neuvector-binding-admission                            ClusterRole/neuvector-binding-admission                            44h
+neuvector-binding-app                                  ClusterRole/neuvector-binding-app                                  44h
+neuvector-binding-customresourcedefinition             ClusterRole/neuvector-binding-customresourcedefinition             44h
+neuvector-binding-nvadmissioncontrolsecurityrules      ClusterRole/neuvector-binding-nvadmissioncontrolsecurityrules      44h
+neuvector-binding-nvsecurityrules                      ClusterRole/neuvector-binding-nvsecurityrules                      44h
+neuvector-binding-nvwafsecurityrules                   ClusterRole/neuvector-binding-nvwafsecurityrules                   44h
+neuvector-binding-rbac                                 ClusterRole/neuvector-binding-rbac                                 44h
+neuvector-binding-view                                 ClusterRole/view                                                   44h
+
+
+
+kubectl get rolebinding -n neuvector | grep neuvector
+neuvector-admin         ClusterRole/admin            44h
+</code></pre>
+<p>部署NeuVector<br>底层runtime为Docker</p>
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/neuvector-docker-k8s.yaml
+</code></pre>
+<p>底层runtime为containerd（对于k3s和rke2可以使用此yaml文件）</p>
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/neuvector-containerd-k8s.yaml
+</code></pre>
+<p>1.21以下的Kubernetes版本会提示以下错误，将yaml文件下载将batch&#x2F;v1修改为batch&#x2F;v1beta1</p>
+<pre><code>error: unable to recognize &quot;https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/neuvector-docker-k8s.yaml&quot;: no matches for kind &quot;CronJob&quot; in version &quot;batch/v1&quot;
+</code></pre>
+<p>1.20.x cronjob还处于beta阶段没有正式GA,1.21版本开始cronjob才进入正式版。</p>
+<p>默认部署web-ui使用的是loadblance类型的Service，为了方便访问修改为NodePort，也可以通过Ingress对外提供服务</p>
+<pre><code>kubectl patch  svc neuvector-service-webui  -n neuvector --type=&#39;json&#39; -p &#39;[&#123;&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/spec/type&quot;,&quot;value&quot;:&quot;NodePort&quot;&#125;,&#123;&quot;op&quot;:&quot;add&quot;,&quot;path&quot;:&quot;/spec/ports/0/nodePort&quot;,&quot;value&quot;:30888&#125;]&#39;
+</code></pre>
+<p>访问https:&#x2F;&#x2F;node_ip:30888</p>
+<p>默认密码为admin&#x2F;admin</p>
+<p>点击头像旁的My profile页面进入设置页面，设置密码和语言<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-1.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-2.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-3.png"></p>
+<h4 id="Helm部署"><a href="#Helm部署" class="headerlink" title="Helm部署"></a>Helm部署</h4><p>添加repo</p>
+<pre><code>helm repo add neuvector https://neuvector.github.io/neuvector-helm/
+
+
+
+helm search repo neuvector/core
+</code></pre>
+<p>创建namespace</p>
+<pre><code>kubectl create namespace neuvector
+</code></pre>
+<p>创建ServiceAccount</p>
+<pre><code>kubectl create serviceaccount neuvector -n neuvector
+</code></pre>
+<p>helm安装</p>
+<pre><code>helm install neuvector --namespace neuvector neuvector/core  --set registry=docker.io  --set tag=5.0.0-preview.1 --set=controller.image.repository=neuvector/controller.preview --set=enforcer.image.repository=neuvector/enforcer.preview --set manager.image.repository=neuvector/manager.preview --set cve.scanner.image.repository=neuvector/scanner.preview --set cve.updater.image.repository=neuvector/updater.preview 
+</code></pre>
+<p>Helm-chart参数查看<br><a href="https://github.com/neuvector/neuvector-helm/tree/master/charts/core">https://github.com/neuvector/neuvector-helm/tree/master/charts/core</a></p>
+<h3 id="高可用架构设计"><a href="#高可用架构设计" class="headerlink" title="高可用架构设计"></a>高可用架构设计</h3><p><img src="https://open-docs.neuvector.com/user/pages/01.basics/01.overview/architecture.png"></p>
+<p>NeuVector-HA主要需要考虑Controller模块的HA，只要有一个Controller处于打开状态，所有数据都将在3个副本之间之间同步。<br>Controller数据主要存储在 &#x2F;var&#x2F;neuvector&#x2F; 目录中，但出现POD重建或集群重新部署时，会自动从此目录加载备份文件，进行集群恢复。</p>
+<h4 id="部署策略"><a href="#部署策略" class="headerlink" title="部署策略"></a>部署策略</h4><p>NeuVector官方提供四种HA部署模式<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-14.png"></p>
+<p>方式一：不进行任何调度限制，由Kubernetes进行自由调度管理管理。</p>
+<p>方式二：NeuVector control组件(manager,controller）+enforce、scanner组件配置调度label限制和污点容忍，与Kubernetes master节点部署一起。</p>
+<p>方式三：给Kubernetes集群中通过Taint方式建立专属的NeuVector节点，只允许NeuVector control组件部署。</p>
+<p>方式四：NeuVector control组件(manager,controller）配置调度label限制和污点容忍，与Kubernetes master节点部署一起。k8s-master不部署enforce和scanner组件，意味着master节点不在接受扫描和策略下发。</p>
+<p>以方式二为例，进行部署<br>给master节点打上特定标签</p>
+<pre><code>kubectl label nodes nodename nvcontroller=true
+</code></pre>
+<p>获取节点Taint</p>
+<pre><code>kubectl get node nodename -o yaml|grep -A 5 taint
+</code></pre>
+<p>以rancher部署的节点master节点为例</p>
+<pre><code> taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/controlplane
+    value: &quot;true&quot;
+  - effect: NoExecute
+    key: node-role.kubernetes.io/etcd
+</code></pre>
+<p>编辑部署的yaml给NeuVector-control组件（manager,controller）添加nodeSelector和tolerations给enforce、scanner组件只添加tolerations。</p>
+<p>例如以manager组件为例：</p>
+<pre><code>kind: Deployment
+metadata:
+  name: neuvector-manager-pod
+  namespace: neuvector
+spec:
+  selector:
+    matchLabels:
+      app: neuvector-manager-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: neuvector-manager-pod
+    spec:
+      nodeSelector:
+        nvcontroller: &quot;true&quot;
+      containers:
+        - name: neuvector-manager-pod
+          image: neuvector/manager.preview:5.0.0-preview.1
+          env:
+            - name: CTRL_SERVER_IP
+              value: neuvector-svc-controller.neuvector
+      restartPolicy: Always
+      tolerations:
+      - effect: NoSchedule
+        key: &quot;node-role.kubernetes.io/controlplane&quot;
+        operator: Equal
+        value: &quot;true&quot;
+      - effect: NoExecute
+        operator: &quot;Equal&quot;
+        key: &quot;node-role.kubernetes.io/etcd&quot;
+        value: &quot;true&quot;
+</code></pre>
+<h4 id="数据持久化"><a href="#数据持久化" class="headerlink" title="数据持久化"></a>数据持久化</h4><p>配置环境变量启用配置数据持久化</p>
+<pre><code>- env:
+  - name: CTRL_PERSIST_CONFIG
+</code></pre>
+<p>配置此环境变量后，默认情况下Neuvector-Controller会将数据存储在&#x2F;var&#x2F;neuvector目录内，默认此目录是hostpath映射在POD所在宿主机的&#x2F;var&#x2F;neuvector目录内。</p>
+<p>若需要更高级别数据可靠性也可以通过PV对接nfs或其他支出多读写的存储中。<br>这样当出现Neuvector-Controller三个POD副本同时都销毁，宿主机都完全不可恢复时，也不会有数据配置数据丢失。<br>以下以NFS为例。<br>部署nfs</p>
+<p>创建pv和pvc</p>
+<pre><code>cat &lt;&lt;EOF | kubectl apply -f -
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: neuvector-data
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteMany 
+  nfs:
+    path: /nfsdata
+    server: 172.16.0.195 
+
+EOF
+
+
+
+cat &lt;&lt;EOF | kubectl apply -f -
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: neuvector-data
+  namespace: neuvector
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+EOF
+</code></pre>
+<p>修改NeuVector-Controller部署yaml，添加pvc信息，将&#x2F;var&#x2F;neuvector目录映射到nfs中（默认是hostpath映射到本地)</p>
+<pre><code>spec:
+  template:
+    spec:
+      volumes:
+        - name: nv-share
+#         hostPath:                        // replaced by persistentVolumeClaim
+#           path: /var/neuvector        // replaced by persistentVolumeClaim
+          persistentVolumeClaim:
+            claimName: neuvector-data
+</code></pre>
+<p>或直接在NeuVector部署yaml中挂载nfs目录</p>
+<pre><code>      volumes:
+      - name: nv-share
+        nfs:
+          path: /opt/nfs-deployment
+          server: 172.26.204.144
+</code></pre>
+<h3 id="多云安全管理"><a href="#多云安全管理" class="headerlink" title="多云安全管理"></a>多云安全管理</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-5.png"><br>在实际生产应用中，会存在对多个集群进行安全进行管理，NeuVector支持集群联邦功能。<br>需要在一个集群上暴露Federation Master服务，在每个远端集群上部署Federation Worker服务。为了更好的灵活性，可以在每个集群同时启用Federation Master和Federation Worker服务。<br>在每个集群部署此yaml</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: neuvector-service-controller-fed-master
+  namespace: neuvector
+spec:
+  ports:
+  - port: 11443
+    name: fed
+    nodePort: 30627
+    protocol: TCP
+  type: NodePort
+  selector:
+    app: neuvector-controller-pod
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: neuvector-service-controller-fed-worker
+  namespace: neuvector
+spec:
+  ports:
+  - port: 10443
+    name: fed
+    nodePort: 31783
+    protocol: TCP
+  type: NodePort
+  selector:
+    app: neuvector-controller-pod
+</code></pre>
+<p>将其中一个集群升级为主集群<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-6.png"><br>将其中一个集群升级为主集群，配置连接远程暴露ip和对remot cluster可达的端口。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-7.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-8.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-9.png"><br>在主集群中，生成token，用于其他remote cluster连接。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-10.png"><br>在remote cluster中配置加入主集群，配置token和连接端子<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-11.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-12.png"></p>
+<p>在界面可以对多个Neuvector集群进行管理<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector-13.png"></p>
+<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><h4 id="升级"><a href="#升级" class="headerlink" title="升级"></a>升级</h4><p>若是采用yaml文件方式部署的NeuVector直接更新对应的组件镜像tag即可完成升级。如</p>
+<pre><code>kubectl set image deployment/neuvector-controller-pod neuvector-controller-pod=neuvector/controller:2.4.1 -n neuvector
+
+
+
+kubectl set image -n neuvector ds/neuvector-enforcer-pod neuvector-enforcer-pod=neuvector/enforcer:2.4.1
+</code></pre>
+<p>若是采用Helm部署的NeuVector，则直接执行helm update配置对应参数即可即可。</p>
+<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>删除部署的组件</p>
+<pre><code>kubectl delete -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/neuvector-docker-k8s.yaml
+</code></pre>
+<p>删除配置的RBAC</p>
+<pre><code>kubectl get clusterrolebinding  | grep neuvector|awk &#39;&#123;print $1&#125;&#39;|xargs kubectl delete clusterrolebinding
+
+
+
+kubectl get rolebinding -n neuvector | grep neuvector|awk &#39;&#123;print $1&#125;&#39;|xargs kubectl delete rolebinding -n neuvector
+</code></pre>
+<p>删除对应的CRD</p>
+<pre><code>kubectl delete -f  https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/crd-k8s-1.19.yaml
+
+
+
+kubectl delete -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/waf-crd-k8s-1.19.yaml
+
+
+
+kubectl delete -f https://raw.githubusercontent.com/neuvector/manifests/main/kubernetes/5.0.0/admission-crd-k8s-1.19.yaml
+</code></pre>
+<p>总结：<br>SUSE此次开源的NeuVector是一个成熟稳定的容器安全管理平台，未来NeuVector会和Rancher产品更好的融合。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/03/23/bird_bgpper/" title="使用Bird模拟BGP Peers"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/01/01/rke2/" title="RKE2的简单使用">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

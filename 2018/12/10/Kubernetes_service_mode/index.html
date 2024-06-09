@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes service模式分析 | 我爱西红柿</title>
+  <meta name="description" content="概述：Kubernetes service是为POD提供统一访问入口的，实现主要依靠kube-proxy实现，kube-proxy有三种模式userspace、iptables，ipvs，同时我们也知道service有三种类型cluster_ip、nodeport，loadblance和三种端口类型port，targetport，nodeport。 环境信息：OS：Ubuntu16.04Kuber">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes service模式分析">
+<meta property="og:url" content="http://yoursite.com/2018/12/10/Kubernetes_service_mode/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述：Kubernetes service是为POD提供统一访问入口的，实现主要依靠kube-proxy实现，kube-proxy有三种模式userspace、iptables，ipvs，同时我们也知道service有三种类型cluster_ip、nodeport，loadblance和三种端口类型port，targetport，nodeport。 环境信息：OS：Ubuntu16.04Kuber">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_7.png">
+<meta property="article:published_time" content="2018-12-10T13:45:59.000Z">
+<meta property="article:modified_time" content="2018-12-10T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_2.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/12/10/Kubernetes_service_mode/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E4%BF%A1%E6%81%AF%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">环境信息：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#kube-proxy%E6%A8%A1%E5%BC%8F%E5%88%86%E6%9E%90"><span class="toc-number">3.</span> <span class="toc-text">kube-proxy模式分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#userspace"><span class="toc-number">3.1.</span> <span class="toc-text">userspace</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#ClusterIP%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.1.1.</span> <span class="toc-text">ClusterIP类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#NodePort%E7%B1%BB%E5%9E%8B"><span class="toc-number">3.1.2.</span> <span class="toc-text">NodePort类型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#sessionaffinity"><span class="toc-number">3.1.3.</span> <span class="toc-text">sessionaffinity</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPVS"><span class="toc-number">4.</span> <span class="toc-text">IPVS</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%BD%AC%E5%8F%91%E5%8E%9F%E7%90%86"><span class="toc-number">4.0.1.</span> <span class="toc-text">转发原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ClusterIP"><span class="toc-number">4.0.2.</span> <span class="toc-text">ClusterIP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#NodePort"><span class="toc-number">4.0.3.</span> <span class="toc-text">NodePort</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#SessionAffinity"><span class="toc-number">4.0.4.</span> <span class="toc-text">SessionAffinity</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ipvs%E4%BE%9D%E8%B5%96iptables"><span class="toc-number">4.0.5.</span> <span class="toc-text">ipvs依赖iptables</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Kubernetes_service_mode" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes service模式分析
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/12/10/Kubernetes_service_mode/" class="article-date">
+	  <time datetime="2018-12-10T13:45:59.000Z" itemprop="datePublished">2018-12-10</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/12/10/Kubernetes_service_mode/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4.2k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 18(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>Kubernetes service是为POD提供统一访问入口的，实现主要依靠kube-proxy实现，kube-proxy有三种模式userspace、iptables，ipvs，同时我们也知道service有三种类型cluster_ip、nodeport，loadblance和三种端口类型port，targetport，nodeport。</p>
+<h3 id="环境信息："><a href="#环境信息：" class="headerlink" title="环境信息："></a>环境信息：</h3><p>OS：Ubuntu16.04<br>Kubernetes：v1.11.0<br>kubeadm：v1.11.0<br>docker：17.03<br>network：flannel</p>
+<h3 id="kube-proxy模式分析"><a href="#kube-proxy模式分析" class="headerlink" title="kube-proxy模式分析"></a>kube-proxy模式分析</h3><h4 id="userspace"><a href="#userspace" class="headerlink" title="userspace"></a>userspace</h4><p>userspace为kube-proxy为早期的模式，Kubernetes1.2版本之前主要使用这个模式，转发原理参考</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/services-networking/service/```</span><br><span class="line"></span><br><span class="line">这个模式最大缺点就是，所以端口请求都需要先经过kube-proxy然后在通过iptables转发，这样带来一个问题就是需要在用户态和内核态不断进行切换，效率低。</span><br><span class="line"></span><br><span class="line">#### iptables</span><br><span class="line">Kubernetes在1.2版本开始将iptables做为kube-proxy的默认模式，iptables根之前userspace相比，完全工作在内核态而且不用在经过kube-proxy中转一次性能更强，下面介绍Kubernetes中iptables转发流程</span><br><span class="line"></span><br><span class="line">iptables有链和表的概念，链就相当于一道道关卡，表就是这个关卡上对应的规则总共有四个表和五条链，kube-proxy在这里就使用了两个表分别是filter和nat表，也自定义了五个链KUBE-SERVICES，KUBE-NODE-PORTS，KUBE-POSTROUTING，KUBE-MARK-MASQ和KUBE-MARK-DROP五个链</span><br><span class="line">目前kubernetes提供了两种负载分发策略：RoundRobin和SessionAffinity</span><br><span class="line"></span><br><span class="line">RoundRobin：轮询模式，即轮询将请求转发到后端的各个Pod上。</span><br><span class="line">SessionAffinity：基于客户端IP地址进行会话保持的模式，第一次客户端访问后端某个Pod，之后的请求都转发到这个Pod上</span><br><span class="line">默认是RoundRobin模式。</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_1.png)</span><br><span class="line">iptables数据包转发流程</span><br><span class="line">1、首先一个数据包经过网卡进来，先经过PREROUTING链</span><br><span class="line">2、判定目的地址是否为主机，为本机就通过INPUT链转发</span><br><span class="line">3、若不为本机通过FORWARDl链转发到POSTROUTING出去</span><br><span class="line"></span><br><span class="line">以下展示一个实例展示kube-proxy是如何根据service不同类型生成对应规则</span><br><span class="line"></span><br><span class="line">我们创建名为test的deployment，镜像为nginx:latest，replicas为3个</span><br></pre></td></tr></table></figure>
+<p>kubectl run test –image&#x3D;nginx –replicas&#x3D;3</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line">kubectl get pod -o wide</span><br><span class="line"></span><br><span class="line">NAME                                READY     STATUS    RESTARTS   AGE               IP</span><br><span class="line">test-679b667858-9h9hr   1/1          Running            0          17h           10.244.0.16</span><br><span class="line">test-679b667858-g827r   1/1          Running            0          17h           10.244.0.15</span><br><span class="line">test-679b667858-nnr28   1/1          Running            0          6m            10.244.0.18</span><br></pre></td></tr></table></figure>
+<p>在给这个deployment创建一个ClusterIP类型的service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl expose deployment/test --type=ClusterIP --port=80</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line">NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">test       ClusterIP    10.98.243.51           &lt;none&gt;          80/TCP    43s</span><br></pre></td></tr></table></figure>
+<p>接下来我们将iptables规则导出来观察，用iptables-save将iptables规则重定向到一个文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables-save &gt; /tmp/1</span><br></pre></td></tr></table></figure>
+<h5 id="ClusterIP类型"><a href="#ClusterIP类型" class="headerlink" title="ClusterIP类型"></a>ClusterIP类型</h5><p>查看规则<br>首先Kubernetes会指对每个service在创建一些名为KUBE-SEP-xxx，KUBE-SVC-xxx的链</p>
+<p>以刚刚创建的类型为Cluster-ip名为test这个service为例，创建了以下规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">1、-A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.98.243.51/32 -p tcp -m comment --comment &quot;default/test: cluster IP&quot; -m tcp --dport 80 -j KUBE-MARK-MASQ</span><br><span class="line"></span><br><span class="line">2、-A KUBE-SERVICES -d 10.98.243.51/32 -p tcp -m comment --comment &quot;default/test: cluster IP&quot; -m tcp --dport 80 -j KUBE-SVC-IOIC7CRUMQYLZ32S</span><br><span class="line"></span><br><span class="line">3、-A KUBE-SVC-IOIC7CRUMQYLZ32S -m comment --comment &quot;default/test:&quot; -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-DZSN6N54CDU2RTAQ</span><br><span class="line"></span><br><span class="line">4、-A KUBE-SEP-DZSN6N54CDU2RTAQ -s 10.244.0.15/32 -m comment --comment &quot;default/test:&quot; -j KUBE-MARK-MASQ</span><br><span class="line"></span><br><span class="line">5、-A KUBE-SEP-DZSN6N54CDU2RTAQ -p tcp -m comment --comment &quot;default/test:&quot; -m tcp -j DNAT --to-destination 10.244.0.15:80</span><br><span class="line"></span><br><span class="line">6、-A KUBE-SVC-IOIC7CRUMQYLZ32S -m comment --comment &quot;default/test:&quot; -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-XY6DO3BIJML2V7B5</span><br><span class="line"></span><br><span class="line">7、-A KUBE-SEP-XY6DO3BIJML2V7B5 -s 10.244.0.16/32 -m comment --comment &quot;default/test:&quot; -j KUBE-MARK-MASQ</span><br><span class="line"></span><br><span class="line">8、-A KUBE-SEP-XY6DO3BIJML2V7B5 -p tcp -m comment --comment &quot;default/test:&quot; -m tcp -j DNAT --to-destination 10.244.0.16:80</span><br><span class="line"></span><br><span class="line">9、-A KUBE-SVC-IOIC7CRUMQYLZ32S -m comment --comment &quot;default/test:&quot; -j KUBE-SEP-SWCXAUIAGJXMWYFS</span><br><span class="line"></span><br><span class="line">10、-A KUBE-SEP-SWCXAUIAGJXMWYFS -s 10.244.0.18/32 -m comment --comment &quot;default/test:&quot; -j KUBE-MARK-MASQ</span><br><span class="line"></span><br><span class="line">11、-A KUBE-SEP-SWCXAUIAGJXMWYFS -p tcp -m comment --comment &quot;default/test:&quot; -m tcp -j DNAT --to-destination 10.244.0.18:80</span><br></pre></td></tr></table></figure>
+
+<p>1、对源IP非10.244.0.0&#x2F;16访问目的地址10.98.243.51的80端口，执行KUBE-MARK-MASQ ，KUBE-MARK-MASQ会给这个包打上0x4000标签，后续KUBE-POSTROUTING链会根据这个标签做SNAT出去。<br>2、对于目的IP为10.98.243.51，目的端口为80，然后将请求丢给KUBE-SVC-IOIC7CRUMQYLZ32S链处理。<br>3、规则链KUBE-SVC-IOIC7CRUMQYLZ32S实现了将报文按33%的比例匹配，转给KUBE-SEP-DZSN6N54CDU2RTAQ链。<br>4、对源IP为10.244.0.24的包 丢给KUBE-MARK-MASQ链，就如我们上面说的这个链会给包打上tag然后做SNAT，让这个地址能访问外网。<br>5、KUBE-SEP-DZSN6N54CDU2RTAQ链直接进行DNAT操作将cluster-ip的80端口映射到pod的80。<br>6、规则链KUBE-SVC-IOIC7CRUMQYLZ32S实现了将报文按50%的比例匹配，转给KUBE-SEP-XY6DO3BIJML2V7B5链。<br>7、对源IP为10.244.0.25的包丢给KUBE-MARK-MASQ链，就如我们上面说的这个链会给包打上tag然后做SNAT，让这个地址能访问外网。<br>8、 KUBE-SEP-XY6DO3BIJML2V7B5链直接进行DNAT操作进行DNAT到10.244.0.16 80端口。<br>9、将KUBE-SVC-IOIC7CRUMQYLZ32S链剩余请求转发给KUBE-SEP-SWCXAUIAGJXMWYFS链。<br>10、对源ip为10.244.0.18的包镜像SNAT。<br>11、KUBE-SEP-SWCXAUIAGJXMWYFS 链直接进行DNAT操作进行DNAT到10.244.0.18 80端口。</p>
+<h5 id="NodePort类型"><a href="#NodePort类型" class="headerlink" title="NodePort类型"></a>NodePort类型</h5><p>我们将service类型改为NodePort</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit service/test</span><br></pre></td></tr></table></figure>
+<p>将type改为NodePort</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line">NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">test           NodePort    10.98.243.51     &lt;none&gt;        80:32734/TCP   21m</span><br></pre></td></tr></table></figure>
+<p>重新保存iptables规则查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables-save &gt;/tmp/1</span><br></pre></td></tr></table></figure>
+<p>NodePort类型根ClusterIP 相比就多了两条规则，其他都一致。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、-A KUBE-NODEPORTS -p tcp -m comment --comment &quot;default/test:&quot; -m tcp --dport 32734 -j KUBE-MARK-MASQ</span><br><span class="line">2、-A KUBE-NODEPORTS -p tcp -m comment --comment &quot;default/test:&quot; -m tcp --dport 32734 -j KUBE-SVC-IOIC7CRUMQYLZ32S</span><br></pre></td></tr></table></figure>
+
+<p>两条规则，主要是允许数据包转发和对目的端口为32734的端口进行DNAT映射</p>
+<h5 id="sessionaffinity"><a href="#sessionaffinity" class="headerlink" title="sessionaffinity"></a>sessionaffinity</h5><p>对于一些特殊应用，我们需要做会话保持，让会话连接始终连接到上一次接收会话的POD上<br>编辑我们刚刚创建的service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit service/test</span><br></pre></td></tr></table></figure>
+<p>将sessionaffinity参数改为  sessionAffinity: ClientIP，保存<br>再次保存iptables规则查看</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-A KUBE-SEP-DZSN6N54CDU2RTAQ -p tcp -m comment --comment &quot;default/test:&quot; -m recent --set --name KUBE-SEP-DZSN6N54CDU2RTAQ --mask 255.255.255.255 --rsource -m tcp -j DNAT --to-destination 10.244.0.15:80</span><br><span class="line"></span><br><span class="line">-A KUBE-SEP-SWCXAUIAGJXMWYFS -p tcp -m comment --comment &quot;default/test:&quot; -m recent --set --name KUBE-SEP-SWCXAUIAGJXMWYFS --mask 255.255.255.255 --rsource -m tcp -j DNAT --to-destination 10.244.0.18:80</span><br><span class="line"></span><br><span class="line">-A KUBE-SEP-XY6DO3BIJML2V7B5 -p tcp -m comment --comment &quot;default/test:&quot; -m recent --set --name KUBE-SEP-XY6DO3BIJML2V7B5 --mask 255.255.255.255 --rsource -m tcp -j DNAT --to-destination 10.244.0.16:80</span><br></pre></td></tr></table></figure>
+<p>会多三条规则，用的iptables recent模块进行会话保持<br>总结一下<br>使用iptables模式后，所有的如端口转发，会话保持，负载均衡都是通过iptables对应的模块和对应的规则去实现的比如端口转发用的DNAT规则，会话保持用的recent模块，负载均衡用的statistic 模块。虽然iptables模式弥补了userspace模式的一些缺陷，但iptables模式本身也存在一些缺陷，主要是在存在大量service的场景下。问题如下</p>
+<p>在大规模集群下，随着service的数量越来越多时iptables规则会成倍的增长，大量的规则同时也会产生一些问题：</p>
+<ul>
+<li>iptables规则匹配延时：因为iptables采用的是线性匹配即一个数据包过来以线性的方式遍历整个规则集，直到找到匹配的否则退出，这种带来的问题，就是当iptables规则量很大时，性能会急剧下降，因为对应的匹配延时会增加</li>
+<li>iptables规则更新延时：在实际使用过程中需要不断创建service，修改service，删除service，这其实也转换成了对iptables的不断修改，因为iptables是非增量式更新的，也就意味着，你上述所有操作它都是把全部归则拷贝出来，然后在修改，修改完在拷贝回去而且这个修改过程还会锁表。附上网易云的iptables测试的更新延时性能测试表<br><a href="https://zhuanlan.zhihu.com/p/39909011">https://zhuanlan.zhihu.com/p/39909011</a></li>
+</ul>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_2.png"></p>
+<ul>
+<li><p>负载均衡性能问题：前面我们也提过iptables并不是专业的负载均衡器，目前使用RoundRobin和sessionaffinity都是通过iptables内部模块statistic和recent实现的，性能根真正的负载均衡器相比肯定有差距。</p>
+</li>
+<li><p>QPS抖动问题：kube-proxy会周期性的更新iptables规则，大量iptables规则更新会花费很长时间，期间又会锁表所以会造成QPS抖动。</p>
+</li>
+</ul>
+<h3 id="IPVS"><a href="#IPVS" class="headerlink" title="IPVS"></a>IPVS</h3><p>Kubernetes社区为了解决上述iptables问题，在1.8版本引入了ipvs模式，并在Kubernetes 1.11版本正式GA。<br>熟悉LVS的知道，LVS是一个工作在传输层的四层负载均衡器,是章文嵩博士开源贡献给社区的，后被并入linux内核，IPVS正是LVS的一部分。LVS根iptables一样也是工作在Netfilter之上。</p>
+<p>IPVS主要有三种模式</p>
+<p>DR模式：调度器LB直接修改报文的目的MAC地址为后端真实服务器地址，服务器响应处理后的报文无需经过调度器LB，直接返回给客户端。这种模式也是性能最好的。<br>TUN模式：LB接收到客户请求包，进行IP Tunnel封装。即在原有的包头加上IP Tunnel的包头。然后发给后端真实服务器，真实的服务器将响应处理后的数据直接返回给客户端。<br>NAT模式：LB将客户端发过来的请求报文修改目的IP地址为后端真实服务器IP另外也修改后端真实服务器发过来的响应的报文的源IP为LB上的IP。</p>
+<p>kube-proxy的IPVS模式用的上NAT模式，因为DR,TUN模式都不支持端口映射。</p>
+<p>ipvs也支持多种算法<br>rr：轮询<br>lc：最少连接<br>dh：目的地址哈希<br>sh：源地址哈希<br>sed：最少期望延迟<br>nq：永远不排队</p>
+<p>通过kube-proxy的–ipvs-scheduler进行配置，目前这个配置是一个全局性的，无法针对单个service做单独配置，后续会支持单个service转发算法配置。<br>启用方法<br>以kubeadm为例<br>因为ipvs是需要使用ipvs内核模块，先保证有这些内核模块ip_vs_sh,ip_vs_wrr,ip_vs_rr,ip_vs,nf_conntrack<br>没有的话手动加载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for i in &#123;ip_vs_sh,ip_vs_wrr,ip_vs_rr,ip_vs,nf_conntrack&#125;;do modprobe $i;done</span><br></pre></td></tr></table></figure>
+
+<p>记得设置开机自动加载。<br>安装ipset和ipvsadm管理工具</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install ipset ipvsadm</span><br></pre></td></tr></table></figure>
+<p>创建kubeadm部署配置文件,文件内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: kubeadm.k8s.io/v1alpha2</span><br><span class="line">kind: MasterConfiguration</span><br><span class="line">kubernetesVersion: v1.11.0</span><br><span class="line">networking:</span><br><span class="line">  podSubnet: 10.244.0.0/16</span><br><span class="line">kubeProxy:</span><br><span class="line">  config:</span><br><span class="line">    mode: ipvs</span><br></pre></td></tr></table></figure>
+
+<p>执行kubeadm init –config xxxx 部署Kubernetes集群，然后就像之前方法一样通过kubeadm join加节点。<br>部署完执行ipvsadm可以看见创建的一些ipvs规则</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_3.png"><br>kube-proxy也会在集群每个节点创建一个kube-ipvs0的网卡，将集群的cluster-ip挂在上面。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_4.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_5.png"></p>
+<h5 id="转发原理"><a href="#转发原理" class="headerlink" title="转发原理"></a>转发原理</h5><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_6.png"></p>
+<h5 id="ClusterIP"><a href="#ClusterIP" class="headerlink" title="ClusterIP"></a>ClusterIP</h5><p>创建应用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run test --image=nginx --replicas=3</span><br></pre></td></tr></table></figure>
+<p>创建一个clusterip类型的service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl expose deployment/test --port=80 --type=ClusterIP</span><br></pre></td></tr></table></figure>
+<p>查看service的cluster-ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line">NAME             TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes      ClusterIP   10.96.0.1             &lt;none&gt;            443/TCP   13h</span><br><span class="line">test            ClusterIP   10.105.170.66    &lt;none&gt;             80/TCP    12m</span><br></pre></td></tr></table></figure>
+<p>查看pod的ip</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -o wide</span><br><span class="line">NAME                    READY     STATUS    RESTARTS   AGE       IP            NODE</span><br><span class="line">test-679b667858-kz4wd   1/1       Running    0          18m   10.244.1.8    wan-node2</span><br><span class="line">test-679b667858-npdlp   1/1       Running    0          18m   10.244.1.7    wan-node2</span><br><span class="line">test-679b667858-qgwnj   1/1       Running    0          18m   10.244.0.21   wan-node1</span><br></pre></td></tr></table></figure>
+
+<p>可以看见kube-proxy将刚刚创建的testservice的cluster-ip 10.105.170.66挂载到kube-ipvs0虚拟网卡上了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@wan-node1:~# ip a</span><br><span class="line">kube-ipvs0: &lt;BROADCAST,NOARP&gt; mtu 1500 qdisc noop state DOWN group default</span><br><span class="line">    link/ether 4a:ec:28:5d:a0:24 brd ff:ff:ff:ff:ff:ff</span><br><span class="line">    inet 10.96.0.10/32 brd 10.96.0.10 scope global kube-ipvs0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 10.96.0.1/32 brd 10.96.0.1 scope global kube-ipvs0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet 10.105.170.66/32 brd 10.105.170.66 scope global kube-ipvs0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+<p>查看ipvs规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ipvsadm -ln</span><br><span class="line">IP Virtual Server version 1.2.1 (size=4096)</span><br><span class="line">Prot LocalAddress:Port Scheduler Flags</span><br><span class="line"> -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn</span><br><span class="line">TCP  10.105.170.66:80 rr</span><br><span class="line">  -&gt; 10.244.0.21:80              Masq      1    0          0</span><br><span class="line">  -&gt; 10.244.1.7:80               Masq      1    0          0</span><br><span class="line">  -&gt; 10.244.1.8:80               Masq      1    0          0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看见ipvs生成了对应的规则，VIP为10.105.170.66端口为80端口转发模式为rr，后端服务器IP为10.244.0.21，10.244.1.7，10.244.1.8正是我们的POD的IP.</p>
+<h5 id="NodePort"><a href="#NodePort" class="headerlink" title="NodePort"></a>NodePort</h5><p>修改service类型为NodePort<br>kubectl edit svc&#x2F;test将type修改为NodePort</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line">NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">test         NodePort    10.105.170.66   &lt;none&gt;        80:31389/TCP   21m</span><br></pre></td></tr></table></figure>
+<p>在次查看ipvs规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">ipvsadm -ln</span><br><span class="line">IP Virtual Server version 1.2.1 (size=4096)</span><br><span class="line">Prot LocalAddress:Port Scheduler Flags</span><br><span class="line">  -&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn</span><br><span class="line">TCP  192.168.250.200:31389 rr</span><br><span class="line">  -&gt; 10.244.0.21:80                       Masq       1       0                   0</span><br><span class="line">  -&gt; 10.244.1.7:80                         Masq       1       0                   0</span><br><span class="line">  -&gt; 10.244.1.8:80                         Masq       1       0                   0</span><br><span class="line">TCP  10.244.0.0:31389 rr</span><br><span class="line">  -&gt; 10.244.0.21:80                       Masq       1       0                   0</span><br><span class="line">  -&gt; 10.244.1.7:80                         Masq       1       0                   0</span><br><span class="line">  -&gt; 10.244.1.8:80                         Masq       1       0                   0</span><br><span class="line">TCP  172.17.0.1:31389 rr</span><br><span class="line">  -&gt; 10.244.0.21:80                       Masq       1       0                   0</span><br><span class="line">  -&gt; 10.244.1.7:80                         Masq       1       0                   0</span><br><span class="line">  -&gt; 10.244.1.8:80                         Masq       1       0                   0</span><br><span class="line">TCP  10.244.0.1:31389 rr</span><br><span class="line">  -&gt; 10.244.0.21:80                      Masq        1       0                   0</span><br><span class="line">  -&gt; 10.244.1.7:80                        Masq         1      0                   0</span><br><span class="line">  -&gt; 10.244.1.8:80                        Masq         1      0                   0</span><br><span class="line">TCP  127.0.0.1:31389 rr</span><br><span class="line">  -&gt; 10.244.0.21:80                     Masq          1      0                  0</span><br><span class="line">  -&gt; 10.244.1.7:80                       Masq          1      0                  0</span><br><span class="line">  -&gt; 10.244.1.8:80                       Masq          1      0                  0</span><br></pre></td></tr></table></figure>
+<p>当service为NodePort，ipvs会以宿主机上所有网卡的ip为vip生成对应的转发规则，端口为nodeport端口</p>
+<h5 id="SessionAffinity"><a href="#SessionAffinity" class="headerlink" title="SessionAffinity"></a>SessionAffinity</h5><p>编辑我们刚刚创建的service</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit service/test</span><br></pre></td></tr></table></figure>
+<p>将sessionaffinity参数改为  sessionAffinity: ClientIP，保存<br>在此查看ipvs规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root@wan-node1:~# ipvsadm -ln</span><br><span class="line">-&gt; RemoteAddress:Port           Forward Weight ActiveConn InActConn</span><br><span class="line">TCP  192.168.250.200:31389 rr persistent 10800</span><br><span class="line">  -&gt; 10.244.0.21:80             Masq    1      0          0</span><br><span class="line">  -&gt; 10.244.1.7:80              Masq    1      0          0</span><br><span class="line">  -&gt; 10.244.1.8:80              Masq    1      0          0</span><br></pre></td></tr></table></figure>
+<p>ipvs在虚拟服务器中设置了会话超时时间，默认为10800秒(180分钟)</p>
+<p>总结：可以看见ipvs模式根之前iptables有很大区别，之前iptables都是通过生成对应的iptables规则来实现端口映射，负载均衡，会话保持，但ipvs模式是通过将cluster-ip绑在kube-ipvs0虚拟网卡上，然后通过创建对应的ipvs规则来实现端口映射，负载均衡，会话保持。</p>
+<h5 id="ipvs依赖iptables"><a href="#ipvs依赖iptables" class="headerlink" title="ipvs依赖iptables"></a>ipvs依赖iptables</h5><p>因为ipvs只能实现端口映射，负载均衡，会话保存，但像包过滤、SNAT、hairpin-masquerade tricks（地址伪装）这些还是需要通过iptables实现，但也并不是直接调用iptables生成规则实现的而是通过ipset。<br>ipset是什么？<br>ipset是iptables的扩展，它可以创建一个集合，这个集合内容可以是ip地址，ip网段，端口等，然后iptables可以直接添加规则对这个集合进行操作。这样的好处在于不用针对每个ip或每个端口添加单独的规则，可以减少大量iptables规则添加，减少性能损耗。比如我们要禁止上万个IP访问我们的服务器，用iptables的话，你需要添加一条条规则，这样会在iptables中生成大量规则造成性能损耗，但通过ipset，可以将地址直接加入到ipset集合中，然后iptables可以添加规则对这个ipset进行操作。<br>为什么用ipset？<br>因为单独操作iptables就回到iptables模式的问题了，一但Kubernetes集群中service过多，会产生大量iptables规则，造成性能损耗，但用ipset可以配置集合将对象添加进去，这样可以保证即使我有在多的service和pod，但iptables规则是固定不变的。</p>
+<p>查看ipset集合</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipset list</span><br></pre></td></tr></table></figure>
+<p>保存集合</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipset save 集合名 -f /tmp/1</span><br></pre></td></tr></table></figure>
+<p>kube-proxy使用的ipset集合</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_7.png"></p>
+<p>Kubernetes哪些场景会用到ipset<br>kube-proxy配置–masquerade-all &#x3D; true参数<br>在kube-proxy启动中指定集群CIDR<br>使用Loadbalancer类型的service<br>使用NodePort类型的service</p>
+<p>注意点：<br>在用户环境中使用发现一些需要长连接的应用使用ipvs模式经常出现”Connection reset by peer”的错误,后经过抓包分析发现链接是被IPVS清理掉了，随后通过以下命令发现IPVS默认tcp连接超时时间为900s(15分钟)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ipvsadm -l --timeout</span><br><span class="line">Timeout (tcp tcpfin udp): 900 120 300</span><br></pre></td></tr></table></figure>
+<p>而操作系统默认是7200s(2小时),这就产生了一个问题如果client的tcp链接空闲时间超过900s后会首先被IPVS强制断开，但操作系统认为该链接还没有超时会继续保活，所以就产生了上述问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sysctl -a|grep net.ipv4.tcp_keepalive_time</span><br><span class="line">net.ipv4.tcp_keepalive_time = 7200</span><br></pre></td></tr></table></figure>
+<p>解决办法<br>将net.ipv4.tcp_keepalive_time &#x3D; 7200设置为小于ipvs的900s即可，比如设置为600s</p>
+<p><a href="https://berlinsaint.github.io/blog/2018/11/01/Mysql_On_Kubernetes%E5%BC%95%E5%8F%91%E7%9A%84TCP%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D/">https://berlinsaint.github.io/blog/2018/11/01/Mysql_On_Kubernetes%E5%BC%95%E5%8F%91%E7%9A%84TCP%E8%B6%85%E6%97%B6%E9%97%AE%E9%A2%98%E5%AE%9A%E4%BD%8D/</a><br><a href="https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/">https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/</a><br><a href="https://github.com/projectcalico/calico/issues/2165">https://github.com/projectcalico/calico/issues/2165</a><br><a href="https://fixatom.com/block-ip-with-ipset/">https://fixatom.com/block-ip-with-ipset/</a><br><a href="https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/ipvs/README.md">https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/ipvs/README.md</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/12/29/k8s_cicd/" title="Kubernetes下CICD工具的选型"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/11/18/cgroup/" title="cgroup的简单使用">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

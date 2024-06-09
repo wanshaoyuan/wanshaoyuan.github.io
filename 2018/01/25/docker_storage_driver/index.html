@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>docker storage-driver | 我爱西红柿</title>
+  <meta name="description" content="作用： 容器镜像的存储和管理。   容器启动时的文件系统的准备。  概念：写时复制（copy-on-write)只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。用时分配（allocate-on-daemand)thin-pool用的就是此技术当分配一个100G的空间时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker storage-driver">
+<meta property="og:url" content="http://yoursite.com/2018/01/25/docker_storage_driver/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="作用： 容器镜像的存储和管理。   容器启动时的文件系统的准备。  概念：写时复制（copy-on-write)只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。用时分配（allocate-on-daemand)thin-pool用的就是此技术当分配一个100G的空间时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_15.png">
+<meta property="article:published_time" content="2018-01-25T13:45:59.000Z">
+<meta property="article:modified_time" content="2018-01-25T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/01/25/docker_storage_driver/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">作用：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">概念：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84storage-driver"><span class="toc-number">3.</span> <span class="toc-text">常见的storage-driver</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#aufs%EF%BC%9A"><span class="toc-number">3.1.</span> <span class="toc-text">aufs：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#overlay"><span class="toc-number">3.2.</span> <span class="toc-text">overlay:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#overlay2%EF%BC%9A"><span class="toc-number">3.3.</span> <span class="toc-text">overlay2：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#devicemapper%EF%BC%9A"><span class="toc-number">3.4.</span> <span class="toc-text">devicemapper：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">适用场景：</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker_storage_driver" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      docker storage-driver
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/01/25/docker_storage_driver/" class="article-date">
+	  <time datetime="2018-01-25T13:45:59.000Z" itemprop="datePublished">2018-01-25</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/docker/" rel="tag">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/01/25/docker_storage_driver/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.5k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 10(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="作用："><a href="#作用：" class="headerlink" title="作用："></a>作用：</h3><ul>
+<li>容器镜像的存储和管理。  </li>
+<li>容器启动时的文件系统的准备。</li>
+</ul>
+<h3 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h3><p>写时复制（copy-on-write)<br>只有当快照出来的对象，它需要进行写操作时，它会从父镜像中将需要修改的块拷贝到自己的文件系统，然后在进行修改。<br>所以通过cow，容器启动拷贝只是拷贝一些元数据，所以容器启动速度特别快。<br>用时分配（allocate-on-daemand)<br>thin-pool用的就是此技术<br>当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。  </p>
+<h3 id="常见的storage-driver"><a href="#常见的storage-driver" class="headerlink" title="常见的storage-driver"></a>常见的storage-driver</h3><h4 id="aufs："><a href="#aufs：" class="headerlink" title="aufs："></a>aufs：</h4><p>linux上较老牌的storage_driver,基于文件级的存储driver，将多层合并成文件系统的单层表示。底层都是只读层，只有最上层文件系统可写,当写和修改文件时也是使用cow技术。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_1.png"></p>
+<p>优点：拥有较长的历史，在大量生产环境中验证过，稳定性、可靠性较高<br>缺点：aufs对文件第一次进行修改操作时需要将整个文件复制到读写层，哪怕你只是修改文件的一小部分，这样会造成很大的性能开销。  </p>
+<h4 id="overlay"><a href="#overlay" class="headerlink" title="overlay:"></a>overlay:</h4><p>与aufs设计非常类似，也是基于文件级的存储driver同时 也是 一个union filesystem，overlay主要分两层upperdir和lowerdir,其中lowerdir对应的docker中的镜像层，upperdir对应的 是容器层，merged对应的是有效的容器挂载点。  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_2.png"><br>优点：overlay的速度比aufsh和devicemapper快，因为aufs有很多层，而overlay只有两层。<br>overlay支持页缓存共享，多个容器访问同一个文件，可以共享一个或多个页缓存选项。  </p>
+<p>缺点：1、overlay是个新生儿，还不具备在生产中使用的条件，但overlay2在centos的3.10.0-514及以上内核版本可以使用。<br>2、因为overlay也是基于文件级的存储，所以根aufs 一样对文件进行第一次修改操作时需要将整个文件拷贝到读写层但比aufs好，因为overlay只有两层，而aufs有多层。<br>3、overlay只有两层，镜像中的每一层并不对应overlay中的层，对应的是&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay&#x2F;中一个文件夹，然后用硬连接的方式将下面层文件引用到上层。<br>overlayfs的详细原理<a href="https://blog.csdn.net/luckyapple1028/article/details/78075358">https://blog.csdn.net/luckyapple1028/article/details/78075358</a>  </p>
+<h4 id="overlay2："><a href="#overlay2：" class="headerlink" title="overlay2："></a>overlay2：</h4><p>overlay2：overlay的改进版，只支持4.0以上内核因为在4.0的内核上添加了Multiple lower layers in overlayfs的特性，所以overlay2可以直接造成muitiple lower layers不用像overlay一样要通过硬链接的方式(最大128层) centos的话支持3.10.0-514及以上内核版本也有此特性，所以消耗更少的inode。  </p>
+<p>docker官方overlay2的PR:<br><a href="https://github.com/moby/moby/pull/22126">https://github.com/moby/moby/pull/22126</a>  </p>
+<p>LINUX KERNERL 4.0 release说明：<br><a href="https://kernelnewbies.org/Linux_4.0">https://kernelnewbies.org/Linux_4.0</a>  </p>
+<p>为什么overlay相比overlay2要更加占用inode？  </p>
+<p>1、overlay只支持两层lowerdir和upperdir，并且只支持一个lowerdir，所以如果你的容器镜像有多层的话，层与层之前的数据共享是通过硬链接来实现的，我们也知道硬链接本身是同一个inode但不同的文件名而已，但为什么还是会大量消耗inode这里简单做的实验<br>我们在一台配置了storage-driver的机器上PULL ubuntu:18.04镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@master dir]# docker pull ubuntu:18.04</span><br><span class="line">18.04: Pulling from library/ubuntu</span><br><span class="line">32802c0cfa4d: Pull complete</span><br><span class="line">da1315cffa03: Pull complete</span><br><span class="line">fa83472a3562: Pull complete</span><br><span class="line">f85999a86bef: Pull complete</span><br><span class="line">Digest: sha256:48eb09a5c832172357f172593ce5e98e027814f758f6aeaef59a7fd658e50d49</span><br><span class="line">Status: Downloaded newer image for ubuntu:18.04  </span><br></pre></td></tr></table></figure>
+<p>整个镜像是一个四层镜像层组成的镜像，在&#x2F;var&#x2F;lib&#x2F;docker&#x2F;overlay&#x2F;下每层对应一个目录，通过tree命令可以看见每个目录内只包含一个root文件夹  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">tree -L 2 /var/lib/docker/overlay/</span><br><span class="line">/var/lib/docker/overlay/</span><br><span class="line">|-- 0a9cd41c44a802a325bfc5bfdda757bced8eaf69a8d6004e5d6fcb730591ab31</span><br><span class="line">|   `-- root</span><br><span class="line">|-- 1f9c95c6642a98930a14d914ac9bcfe9535b5a604dc27851cd76266326c76ed7</span><br><span class="line">|   `-- root</span><br><span class="line">|-- 2d79f688e1bf505ef20100f7450ad7e5ea550500bd07a17b7b9b08513fc96988</span><br><span class="line">|   `-- root</span><br><span class="line">`-- e8b1fcddec600628a75964619da3d0de7310fcbd6350b0c07ddf038d71c25d8b</span><br><span class="line">    `-- root</span><br><span class="line"></span><br><span class="line">8 directories, 0 files</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个root目录内包含的是该层独有的文件和根lowdir共享的数据硬链接，这里看见共享的数据他们本身都是通过硬链接方式连接起来的。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[root@master overlay]# ls  -i /var/lib/docker/overlay/0a9cd41c44a802a325bfc5bfdda757bced8eaf69a8d6004e5d6fcb730591ab31/root/bin/ls</span><br><span class="line">70832997 /var/lib/docker/overlay/0a9cd41c44a802a325bfc5bfdda757bced8eaf69a8d6004e5d6fcb730591ab31/root/bin/ls</span><br><span class="line"></span><br><span class="line">[root@master overlay]# ls  -i /var/lib/docker/overlay/1f9c95c6642a98930a14d914ac9bcfe9535b5a604dc27851cd76266326c76ed7/root/bin/ls</span><br><span class="line">70832997 /var/lib/docker/overlay/1f9c95c6642a98930a14d914ac9bcfe9535b5a604dc27851cd76266326c76ed7/root/bin/ls</span><br><span class="line"></span><br><span class="line">[root@master overlay]# ls  -i /var/lib/docker/overlay/2d79f688e1bf505ef20100f7450ad7e5ea550500bd07a17b7b9b08513fc96988/root/bin/ls</span><br><span class="line">70832997 /var/lib/docker/overlay/2d79f688e1bf505ef20100f7450ad7e5ea550500bd07a17b7b9b08513fc96988/root/bin/ls</span><br><span class="line"></span><br><span class="line">[root@master overlay]# ls  -i /var/lib/docker/overlay/e8b1fcddec600628a75964619da3d0de7310fcbd6350b0c07ddf038d71c25d8b/root/bin/ls</span><br><span class="line">70832997 /var/lib/docker/overlay/e8b1fcddec600628a75964619da3d0de7310fcbd6350b0c07ddf038d71c25d8b/root/bin/ls</span><br></pre></td></tr></table></figure>
+
+<p>但为什么overlay还是会占用大量inode呢？根本原因在于那些文件夹，每层的root目录内存放的都是完整的rootfs文件夹，但它们都是新建出来<br>的，它们inode都不一样，所以在overlay下一个容器镜像层数越多，占用的inode就越多  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_16.png">  </p>
+<p>我们看看overlay2的方式<br>因为overlay2是支持linux kernel的Multiple lower layers in overlayfs的特性所以原生就支持多个lower所以不需要在通过硬链接方式<br>同样拉取个ubuntu:18.04的镜像  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">/var/lib/docker/overlay2/</span><br><span class="line">|-- 6e599f35a3366d95287390fc00183a80bfc9a34492aaf9694836ec7b5722d0b6</span><br><span class="line">|   |-- diff</span><br><span class="line">|   |-- link</span><br><span class="line">|   |-- lower</span><br><span class="line">|   |-- merged</span><br><span class="line">|   `-- work</span><br><span class="line">|-- 6f66846fe6a29834193bf36380eb1664947f21435edd8ce8fbc9b79dea92c51b</span><br><span class="line">|   |-- diff</span><br><span class="line">|   |-- link</span><br><span class="line">|   |-- lower</span><br><span class="line">|   |-- merged</span><br><span class="line">|   `-- work</span><br><span class="line">|-- a1869d02b056d66742372c4b6d31d64f98b477590cdd76a842a653424f46710b</span><br><span class="line">|   |-- diff</span><br><span class="line">|   |-- link</span><br><span class="line">|   |-- lower</span><br><span class="line">|   |-- merged</span><br><span class="line">|   `-- work</span><br><span class="line">|-- backingFsBlockDev</span><br><span class="line">|-- da05539957d703ae81cf279c76059c947c96bd1f91fd24691b9e7630dcb13ff7</span><br><span class="line">|   |-- diff</span><br><span class="line">|   `-- link</span><br><span class="line">`-- l</span><br><span class="line">    |-- 2LYVTSJQWPVOB46BCA74GFHJ7T -&gt; ../da05539957d703ae81cf279c76059c947c96bd1f91fd24691b9e7630dcb13ff7/diff</span><br><span class="line">    |-- HEXAQW5O23XL6HHRVOMKWGAI4Z -&gt; ../6f66846fe6a29834193bf36380eb1664947f21435edd8ce8fbc9b79dea92c51b/diff</span><br><span class="line">    |-- KXIOHK4OI6PPPFZ56I3ZORNHS7 -&gt; ../6e599f35a3366d95287390fc00183a80bfc9a34492aaf9694836ec7b5722d0b6/diff</span><br><span class="line">    `-- PHQQ6RCEXR6BLZJGKBP6GYS55Q -&gt; ../a1869d02b056d66742372c4b6d31d64f98b477590cdd76a842a653424f46710b/diff</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在overlay2每层的内容都是不一样的，diff是文件系统的统一挂载点,link文件描述的是该层的标识符，lower文件描述了层与层之间的组织关系，overlay2是将底层多个lowerdir和upperdir和workdir联合挂载，形成最终的merged挂载点。  </p>
+<h4 id="devicemapper："><a href="#devicemapper：" class="headerlink" title="devicemapper："></a>devicemapper：</h4><p>在linux2.6内核版本中并入内核，devicemapper将所有的镜像和容器存储在自己的虚拟块设备上，devicemapper根上面aufs和overlay不一样的是devicemapper工作在块层次上而不是文件层次上。devicemapper驱动会从配置好的thin-pool中创建一个带一个带有文件系统的块设备，所有镜像都是创建的块设备的快照，容器层是镜像层的快照，都是采用copy-on-write策略。<br>优点：<br>1、devicemapper的copy-on-write策略以64KB为最小单元，相比aufs和overlay整个文件的复制，这个效率很高了。<br>缺点：<br>2、启动n个容器就复制n分文件在内存中，对内存影响大，不合适单台host容器密度高的业务场景。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_3.png"></p>
+<p>从上图可以看出，镜像的每一层都是它下面一层的快照，镜像是thin-pool里面创建的块设备的快照。<br>devicemapper分两种模式loop-lvm，direct-lvm，这两种模式的主要区别就是创建thin-pool的方式不一样。<br>loop-lvm是在&#x2F;var&#x2F;lib&#x2F;docker&#x2F;devicemapper&#x2F;创建data和metada两个稀疏文件通过losetup将这两个文件映射成块设备，然后通过devicemapper映射成thin-pool。  </p>
+<p>direct-lvm是直接通过lvm的方式将设备创建成pv，组成两个vg分别为data和metadata，将这两个vg组成lvm的thin-pool。<br>需要注意的docker官方推荐centos和rhel生产中使用devicmapper的direct-lvm模式，不推荐loop-lvm因为loop-lvm在挂载多个容器后性能会急剧下降。</p>
+<h3 id="适用场景："><a href="#适用场景：" class="headerlink" title="适用场景："></a>适用场景：</h3><p>没有好坏分只有合适分，在不同业务场景下使用不同的storage-driver。<br>这是docker官方给出的一个不同linux发行版的推荐表<br><a href="https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#docker-ce">https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#docker-ce</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_4.png"></p>
+<p>不同storage-driver所支持的文件系统<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_5.png">  </p>
+<p>不同的存储驱动在不同的应用场景下性能不同。例如，AUFS、Overlay、Overlay2 操作在文件级别，内存使用相对更高效，但大文件读写时，容器层会变得很大；DeviceMapper、Btrfs、ZFS 操作在块级别，适合工作在io负载高的场景；容器层数多，且写小文件频繁时，devicemapper 效率比 Overlay 更高；Btrfs、ZFS 更耗内存。<br>此图片来源七牛布道师 陈爱珍在docker.io的分享<a href="http://dockone.io/article/1513">http://dockone.io/article/1513</a>  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_6.png"></p>
+<p>性能对比<br><a href="http://dockone.io/article/1513">http://dockone.io/article/1513</a>  </p>
+<p>docker默认是使用操作系统本身默认的storage-driver，比如说你在ubuntu上安装docker那么默认就是aufs，在centos7或rhel7上部署docker默认就是overlay。<br>将centos7默认的overlay改成生产可用的devicemapper的direct-lvm模式。<br>安装device-mapper-persistent-data, lvm2包  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install device-mapper-persistent-data, lvm2 -y    </span><br></pre></td></tr></table></figure>
+
+<p>创建pv  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pvcreate /dev/sdb</span><br></pre></td></tr></table></figure>
+<p>创建vg  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vgcreate  docker /dev/sdb</span><br></pre></td></tr></table></figure>
+<p>创建lv，这里需要注意，我们分两个lv，一个是data，一个是metadata，最后要将这个两个lv组成一个thin-pool</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lvcreate --wipesignatures y -n thinpool docker -l 95%VG #使用95% VG剩余空间</span><br><span class="line">lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG</span><br></pre></td></tr></table></figure>
+<p>将lv docker&#x2F;thinpool做为thinpool ，docker&#x2F;thinpoolmeta做为pool的metadata</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvconvert -y --zero n -c 512K --thinpool docker/thinpool  --poolmetadata docker/thinpoolmeta</span><br></pre></td></tr></table></figure>
+<p>配置lvm thinpool的自动扩容  </p>
+<p>vi &#x2F;etc&#x2F;lvm&#x2F;profile&#x2F;docker-thinpool.profile  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">activation &#123;</span><br><span class="line">  thin_pool_autoextend_threshold=80</span><br><span class="line">  thin_pool_autoextend_percent=20</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>thin_pool_autoextend_threshold:已用空间百分比 ，100为关闭<br>thin_pool_autoextend_percent&#x3D;20：每次扩容thinpool的容量比例，0为关闭    </p>
+<p>当磁盘使用达到80%时，再扩展当前容量的20%。更新&#x2F;etc&#x2F;lvm&#x2F;profile&#x2F;docker-thinpool.profile  </p>
+<p>激活此规则  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvchange --metadataprofile docker-thinpool docker/thinpool</span><br></pre></td></tr></table></figure>
+
+<p>对逻辑卷启用监视  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvs -o+seg_monitor</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_7.png"></p>
+<p>如果之前&#x2F;var&#x2F;lib&#x2F;docker有数据，建议进行备份，没有的可以直接运行。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">编辑daemon.json文件</span><br><span class="line">/etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line">    &quot;storage-driver&quot;: &quot;devicemapper&quot;,</span><br><span class="line">    &quot;storage-opts&quot;: [</span><br><span class="line">    &quot;dm.thinpooldev=/dev/mapper/docker-thinpool&quot;,</span><br><span class="line">    &quot;dm.use_deferred_removal=true&quot;,</span><br><span class="line">    &quot;dm.use_deferred_deletion=true&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>重启docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+<p>验证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_8.png"></p>
+<p>我们可以直接pull一个镜像看看逻辑卷使用会不会改变。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_9.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull centos  </span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_10.png"><br>在次查看发现使用率提高了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_11.png"></p>
+<p>扩容<br>按照传统的lvm扩容的方式扩容就可以了，假设我添加一个100G的sdc设备<br>先创建pv  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pvcreate /dev/sdc</span><br></pre></td></tr></table></figure>
+<p>扩容vg  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vgextend docker /dev/sdc</span><br></pre></td></tr></table></figure>
+<p>扩容thin-pool  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvextend -l+100%FREE -n docker/thinpool</span><br></pre></td></tr></table></figure>
+
+<p>检查<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_12.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_13.png"></p>
+<p>当启动一个容器时  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd centos</span><br></pre></td></tr></table></figure>
+<p>就生成了对应的块设备<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_14.png"></p>
+<p>进入对应目录可以看见运行的容器对应的rootfs<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_storagedriver_15.png"></p>
+<p>参考链接：<br><a href="http://blog.csdn.net/M2l0ZgSsVc7r69eFdTj/article/details/78153724">http://blog.csdn.net/M2l0ZgSsVc7r69eFdTj/article/details/78153724</a><br><a href="http://blog.csdn.net/vchy_zhao/article/details/70238690">http://blog.csdn.net/vchy_zhao/article/details/70238690</a><br><a href="http://blog.csdn.net/a85880819/article/details/52448654">http://blog.csdn.net/a85880819/article/details/52448654</a><br><a href="https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#related-information">https://docs.docker.com/engine/userguide/storagedriver/selectadriver/#related-information</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/01/26/kubernetes_base/" title="kubernetes入门"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/01/23/docker_default_storage/" title="修改docker容器默认空间大小">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

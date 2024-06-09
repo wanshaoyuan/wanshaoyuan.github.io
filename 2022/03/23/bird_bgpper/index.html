@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>使用Bird模拟BGP Peers | 我爱西红柿</title>
+  <meta name="description" content="概述calico网络插件最为知名的就是calico-bgp模式，在测试中需要验证calico-bgp跨子网路由同步，需要连接两个子网的路由器支持BGP协议，这给测试环境搭建带来很大复杂性。本次文档通过Bird软件将一个虚拟机模拟为软路由，并配置为Kubernetes节点BGP Peers，实现BGP路由同步。 软件版本    软件 版本    Kubernetes v1.20.15   calic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Bird模拟BGP Peers">
+<meta property="og:url" content="http://yoursite.com/2022/03/23/bird_bgpper/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述calico网络插件最为知名的就是calico-bgp模式，在测试中需要验证calico-bgp跨子网路由同步，需要连接两个子网的路由器支持BGP协议，这给测试环境搭建带来很大复杂性。本次文档通过Bird软件将一个虚拟机模拟为软路由，并配置为Kubernetes节点BGP Peers，实现BGP路由同步。 软件版本    软件 版本    Kubernetes v1.20.15   calic">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-3.png">
+<meta property="article:published_time" content="2022-03-23T13:45:59.000Z">
+<meta property="article:modified_time" content="2022-03-23T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="Network">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/03/23/bird_bgpper/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%93%E6%89%91%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="toc-number">2.</span> <span class="toc-text">拓扑架构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bird%E9%83%A8%E7%BD%B2%E9%85%8D%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">Bird部署配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="toc-number">3.1.</span> <span class="toc-text">节点配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Bird%E9%85%8D%E7%BD%AE"><span class="toc-number">3.2.</span> <span class="toc-text">Bird配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-BGP%E5%AF%B9%E6%8E%A5"><span class="toc-number">4.</span> <span class="toc-text">Calico BGP对接</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B9POD-CIDR%E8%B7%AF%E7%94%B1%E7%BB%9F%E4%B8%80%E8%B5%B0%E9%BB%98%E8%AE%A4%E8%B7%AF%E7%94%B1"><span class="toc-number">4.1.</span> <span class="toc-text">节点POD-CIDR路由统一走默认路由</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B9POD-IP%E6%98%8E%E7%BB%86%E8%B7%AF%E7%94%B1%E5%8F%91%E5%B8%83"><span class="toc-number">4.2.</span> <span class="toc-text">节点POD-IP明细路由发布</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Service-CIDR%E8%B7%AF%E7%94%B1%E5%8F%91%E5%B8%83"><span class="toc-number">4.3.</span> <span class="toc-text">Service-CIDR路由发布</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-bird_bgpper" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      使用Bird模拟BGP Peers
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/03/23/bird_bgpper/" class="article-date">
+	  <time datetime="2022-03-23T13:45:59.000Z" itemprop="datePublished">2022-03-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/Network/">Network</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/Network/" rel="tag">Network</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/03/23/bird_bgpper/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4.2k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 22(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>calico网络插件最为知名的就是calico-bgp模式，在测试中需要验证calico-bgp跨子网路由同步，需要连接两个子网的路由器支持BGP协议，这给测试环境搭建带来很大复杂性。本次文档通过Bird软件将一个虚拟机模拟为软路由，并配置为Kubernetes节点BGP Peers，实现BGP路由同步。</p>
+<p>软件版本</p>
+<table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Kubernetes</td>
+<td>v1.20.15</td>
+</tr>
+<tr>
+<td>calico</td>
+<td>v3.17.2</td>
+</tr>
+</tbody></table>
+<h3 id="拓扑架构图"><a href="#拓扑架构图" class="headerlink" title="拓扑架构图"></a>拓扑架构图</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-1.png"></p>
+<p>Hostname：rke-node3<br>host-ip：192.168.0.7<br>pod-cidr：10.41.113.192&#x2F;26</p>
+<p>Hostname：rke-node4<br>host-ip：192.168.0.25<br>pod-cidr：10.41.57.192&#x2F;26</p>
+<p>Hostname：rke-node6<br>host-ip：192.168.2.14<br>pod-cidr：10.41.210.128&#x2F;26</p>
+<p>Hostname：rke-node7<br>host-ip：192.168.2.15<br>pod-cidr：10.41.210.0&#x2F;26</p>
+<p>kubernetes 节点分布在两个子网，中间通过一台vm连接了两个子网，在vm上部署bird软路由进行两个子网通信，同属一个AS自治域。</p>
+<p>注意：如果底层是OpenStack环境需要关闭网卡安全组。</p>
+<h3 id="Bird部署配置"><a href="#Bird部署配置" class="headerlink" title="Bird部署配置"></a>Bird部署配置</h3><h4 id="节点配置"><a href="#节点配置" class="headerlink" title="节点配置"></a>节点配置</h4><p>Bird节点采用一台VM部署，操作系统采用Centos7.6，将此节点作为软路由需要确保以下功能开启。</p>
+<p>内核forward转发</p>
+<pre><code>sysctl -a|grep &quot;net.ipv4.ip_forward = 1&quot;
+net.ipv4.ip_forward = 1
+</code></pre>
+<p>iptables数据包转发</p>
+<pre><code>iptables -P FORWARD ACCEPT
+</code></pre>
+<p>需要互相联通的节点上需要配置互访的静态路由</p>
+<p>如在192.168.0.0&#x2F;24的节点上配置</p>
+<pre><code>ip route add 192.168.2.0/24 via 192.168.0.40 dev ens3
+</code></pre>
+<p>如在192.168.2.0&#x2F;24的节点上配置</p>
+<pre><code>ip route add 192.168.0.0/24 via 192.168.2.16 dev ens3
+</code></pre>
+<p>验证互访，在192.168.0.0&#x2F;24主机ping 192.168.2.0&#x2F;24主机</p>
+<h4 id="Bird配置"><a href="#Bird配置" class="headerlink" title="Bird配置"></a>Bird配置</h4><p>Bird配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir /bird/</span><br><span class="line">vim /bird/bird.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<pre><code>router id 192.168.0.40;
+
+filter calico_export_to_bgp_peers &#123;
+
+  if ( net ~ 10.41.0.0/16 ) then &#123;
+    accept;
+  &#125;
+  if ( net ~ 10.42.0.0/16 ) then &#123;
+    accept;
+  &#125;
+  reject;
+&#125;
+
+
+filter calico_kernel_programming &#123;
+
+  if ( net ~ 10.41.0.0/16 ) then &#123;
+    accept;
+  &#125;
+
+  if ( net ~ 10.42.0.0/16 ) then &#123;
+    accept;
+  &#125;
+
+  accept;
+&#125;
+
+# Configure synchronization between routing tables and kernel.
+protocol kernel &#123;
+  learn;             # Learn all alien routes from the kernel
+  persist;           # Don&#39;t remove routes on bird shutdown
+  scan time 2;       # Scan kernel routing table every 2 seconds
+  import all;
+  export filter calico_kernel_programming; # Default is export none
+  graceful restart;  # Turn on graceful restart to reduce potential flaps in
+                     # routes when reloading BIRD configuration.  With a full
+                     # automatic mesh, there is no way to prevent BGP from
+                     # flapping since multiple nodes update their BGP
+                     # configuration at the same time, GR is not guaranteed to
+                     # work correctly in this scenario.
+  merge paths on;    # Allow export multipath routes (ECMP)
+&#125;
+
+protocol device &#123;
+  debug &#123; states &#125;;
+  scan time 2;    # Scan interfaces every 2 seconds
+&#125;
+
+protocol direct &#123;
+  debug &#123; states &#125;;
+  interface -&quot;cali*&quot;, -&quot;kube-ipvs*&quot;, &quot;*&quot;; # Exclude cali* and kube-ipvs* but
+                                          # include everything else.  In
+                                          # IPVS-mode, kube-proxy creates a
+                                          # kube-ipvs0 interface. We exclude
+                                          # kube-ipvs0 because this interface
+                                          # gets an address for every in use
+                                          # cluster IP. We use static routes
+                                          # for when we legitimately want to
+                                          # export cluster IPs.
+&#125;
+
+
+
+# Template for all BGP clients
+template bgp bgp_template &#123;
+  debug &#123; states &#125;;
+  description &quot;Connection to BGP peer&quot;;
+  local as 63400;
+  multihop;
+  gateway recursive; # This should be the default, but just in case.
+  import all;        # Import all routes, since we don&#39;t know what the upstream
+                     # topology is and therefore have to trust the ToR/RR.
+  export filter calico_export_to_bgp_peers;  # Only want to export routes for workloads.
+  source address 192.168.0.40;  # The local address we use for the TCP connection
+  add paths on;
+  graceful restart;  # See comment in kernel section about graceful restart.
+  connect delay time 2;
+  connect retry time 5;
+  error wait time 5,30;
+&#125;
+
+
+protocol bgp Node_192_168_0_25 from bgp_template &#123;
+  rr client;
+  neighbor 192.168.0.25 as 63400;
+&#125;
+protocol bgp Node_192_168_0_7 from bgp_template &#123;
+  rr client;
+  neighbor 192.168.0.7 as 63400;
+&#125;
+protocol bgp Node_192_168_2_14 from bgp_template &#123;
+  rr client;
+  neighbor 192.168.2.14 as 63400;
+&#125;
+
+protocol bgp Node_192_168_2_15 from bgp_template &#123;
+  rr client;
+
+  neighbor 192.168.2.15 as 63400;
+&#125;
+</code></pre>
+<p>将配置文件中的route-id、pod-cidr、neighbor-ip、as_number修改为实际需要建立bgp邻居的节点ip。</p>
+<p>为了方便部署，本次bird使用Docker启动，启动命令如下：</p>
+<pre><code>docker run  -itd  --net=host --uts=host --cap-add=NET_ADMIN --cap-add=NET_BROADCAST --cap-add=NET_RAW -v /bird/:/etc/bird:ro ibhde/bird4
+</code></pre>
+<p>检查启动状态是否为up</p>
+<pre><code>docker ps -a
+</code></pre>
+<h3 id="Calico-BGP对接"><a href="#Calico-BGP对接" class="headerlink" title="Calico BGP对接"></a>Calico BGP对接</h3><p>全部节点上安装calicoctl</p>
+<pre><code>wget https://github.com/projectcalico/calicoctl/releases/download/v3.17.4/calicoctl-linux-amd64
+
+mv calicoctl-linux-amd64 /usr/bin/calicoctl
+
+chmod a+x /usr/bin/calicoctl
+</code></pre>
+<p>关闭全局full-mesh</p>
+<pre><code>cat &lt;&lt;EOF | calicoctl apply -f -
+
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+ name: default
+spec:
+  logSeverityScreen: Info
+  nodeToNodeMeshEnabled: false
+  asNumber: 63400
+EOF
+</code></pre>
+<p>配置节点label</p>
+<p>这里将两组节点打上不同标签，将192.168.2.0&#x2F;24节点打上rack&#x3D;rack-1标签，连接192.168.2.16 bpg-peers，将192.168.0.0&#x2F;24打上rack-rack-2标签，连接192.168.0.40 bgp-peers</p>
+<pre><code>kubectl label nodes rke-node3 rack=rack-2
+kubectl label nodes rke-node4 rack=rack-2
+kubectl label nodes rke-node5 rack=rack-1
+kubectl label nodes rke-node5 rack=rack-1
+</code></pre>
+<p>使用caliclctl配置BGP Peers</p>
+<pre><code>cat &lt;&lt;EOF | calicoctl apply -f -
+
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: rack1-tor
+spec:
+  peerIP: 192.168.2.16
+  asNumber: 63400
+  nodeSelector: rack == &#39;rack-1&#39;
+EOF
+</code></pre>
+<!---->
+
+<pre><code>apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: rack2-tor
+spec:
+  peerIP: 192.168.0.40
+  asNumber: 63400
+  nodeSelector: rack == &#39;rack-2&#39;
+</code></pre>
+<p>检查与BGP Peers连接情况</p>
+<p>在rack&#x3D;rack-2标签节点执行，应显示已经与192.168.0.40 bgp-peers建立连接</p>
+<pre><code> calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+------------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |   SINCE    |    INFO     |
++--------------+---------------+-------+------------+-------------+
+| 192.168.0.40 | node specific | up    | 2022-03-18 | Established |
++--------------+---------------+-------+------------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
+</code></pre>
+<p>在rack&#x3D;rack-1标签节点执行，应显示已经与192.168.2.16 bgp-peers建立连接</p>
+<pre><code>calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+---------------+-------+------------+-------------+
+| PEER ADDRESS |   PEER TYPE   | STATE |   SINCE    |    INFO     |
++--------------+---------------+-------+------------+-------------+
+| 192.168.2.16 | node specific | up    | 2022-03-18 | Established |
++--------------+---------------+-------+------------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
+</code></pre>
+<p>创建pod，验证路由同步</p>
+<pre><code>kubectl create deployment test --image=nginx --replicas=5
+</code></pre>
+<p>在5副本中，互相进行ping操作。验证跨节点网络是否正常。</p>
+<p>在bird节点查看路由学习</p>
+<pre><code>ip route
+default via 192.168.2.1 dev eth0
+10.41.210.0/26 via 192.168.2.15 dev eth0 proto bird
+10.42.57.192/26 via 192.168.0.25 dev eth1 proto bird
+10.42.113.192/26 via 192.168.0.7 dev eth1 proto bird
+10.42.210.128/26 via 192.168.2.14 dev eth0 proto bird
+192.168.0.0/24 dev eth1 proto kernel scope link src 192.168.0.40
+192.168.2.0/24 dev eth0 proto kernel scope link src 192.168.2.16
+</code></pre>
+<p>可以看见bird将集群内每个节点的pod-cidr都学习过来了。</p>
+<p>在任意一个node节点上查看路由，以192.168.0.3节点为例，可以看见节点上也拥有集群全部pod-cidr路由信息。</p>
+<pre><code>ip route
+default via 192.168.0.1 dev ens3 proto dhcp src 192.168.0.7 metric 100
+10.41.57.192/26 via 192.168.0.25 dev ens3 proto bird
+blackhole 10.41.113.192/26 proto bird
+10.41.210.0/26 via 192.168.0.40 dev ens3 proto bird
+10.41.210.128/26 via 192.168.0.40 dev ens3 proto bird
+10.42.57.192/26 via 192.168.0.25 dev ens3 proto bird
+192.168.0.0/24 dev ens3 proto kernel scope link src 192.168.0.7
+192.168.2.0/24 via 192.168.0.40 dev ens3
+</code></pre>
+<h4 id="节点POD-CIDR路由统一走默认路由"><a href="#节点POD-CIDR路由统一走默认路由" class="headerlink" title="节点POD-CIDR路由统一走默认路由"></a>节点POD-CIDR路由统一走默认路由</h4><p>当前路由同步会将每个节点pod-cidr同步到集群中的节点上，对于Kubernetes集群规模大情况下会造成路由条目增多。可以通过下发默认路由方式，将节点全部流量请求都都指向bird 软路由节点。这样还有一个好处就是，在一些硬件SDN设备中可以实现流量监控。但需要注意的是路由器本身能承载的流量。</p>
+<p>以bird配置为例</p>
+<pre><code>router id 192.168.0.40;
+protocol static &#123;
+ route 10.41.0.0/16 via 192.168.0.40;
+ route 10.42.0.0/16 via 192.168.0.40;
+&#125;
+filter calico_export_to_bgp_peers &#123;
+
+  if ( net ~ 10.41.0.0/16 ) then &#123;
+    accept;
+  &#125;
+  if ( net ~ 10.42.0.0/16 ) then &#123;
+    accept;
+  &#125;
+  reject;
+&#125;
+
+
+filter calico_kernel_programming &#123;
+
+  if ( net ~ 10.41.0.0/16 ) then &#123;
+    accept;
+  &#125;
+
+  if ( net ~ 10.42.0.0/16 ) then &#123;
+    accept;
+  &#125;
+
+  accept;
+&#125;
+
+# Configure synchronization between routing tables and kernel.
+protocol kernel &#123;
+  learn;             # Learn all alien routes from the kernel
+  persist;           # Don&#39;t remove routes on bird shutdown
+  scan time 2;       # Scan kernel routing table every 2 seconds
+  import all;
+  export filter calico_kernel_programming; # Default is export none
+  graceful restart;  # Turn on graceful restart to reduce potential flaps in
+                     # routes when reloading BIRD configuration.  With a full
+                     # automatic mesh, there is no way to prevent BGP from
+                     # flapping since multiple nodes update their BGP
+                     # configuration at the same time, GR is not guaranteed to
+                     # work correctly in this scenario.
+  merge paths on;    # Allow export multipath routes (ECMP)
+&#125;
+
+protocol device &#123;
+  debug &#123; states &#125;;
+  scan time 2;    # Scan interfaces every 2 seconds
+&#125;
+
+protocol direct &#123;
+  debug &#123; states &#125;;
+  interface -&quot;cali*&quot;, -&quot;kube-ipvs*&quot;, &quot;*&quot;; # Exclude cali* and kube-ipvs* but
+                                          # include everything else.  In
+                                          # IPVS-mode, kube-proxy creates a
+                                          # kube-ipvs0 interface. We exclude
+                                          # kube-ipvs0 because this interface
+                                          # gets an address for every in use
+                                          # cluster IP. We use static routes
+                                          # for when we legitimately want to
+                                          # export cluster IPs.
+&#125;
+
+
+
+# Template for all BGP clients
+template bgp bgp_template &#123;
+  debug &#123; states &#125;;
+  description &quot;Connection to BGP peer&quot;;
+  local as 63400;
+  multihop;
+  gateway recursive; # This should be the default, but just in case.
+  import all;        # Import all routes, since we don&#39;t know what the upstream
+                     # topology is and therefore have to trust the ToR/RR.
+  export filter calico_export_to_bgp_peers;  # Only want to export routes for workloads.
+  source address 192.168.0.40;  # The local address we use for the TCP connection
+  add paths on;
+  graceful restart;  # See comment in kernel section about graceful restart.
+  connect delay time 2;
+  connect retry time 5;
+  error wait time 5,30;
+&#125;
+
+
+protocol bgp Node_192_168_0_25 from bgp_template &#123;
+  neighbor 192.168.0.25 as 63400;
+&#125;
+protocol bgp Node_192_168_0_7 from bgp_template &#123;
+  neighbor 192.168.0.7 as 63400;
+&#125;
+protocol bgp Node_192_168_2_14 from bgp_template &#123;
+  neighbor 192.168.2.14 as 63400;
+&#125;
+
+protocol bgp Node_192_168_2_15 from bgp_template &#123;
+
+  neighbor 192.168.2.15 as 63400;
+&#125;
+</code></pre>
+<p>将neighbor配置中的  rr client删除，同时添加静态路由下发配置</p>
+<pre><code>protocol static &#123;
+ route 10.41.0.0/16 via 192.168.0.40;
+ route 10.42.0.0/16 via 192.168.0.40;
+&#125;
+</code></pre>
+<p>在192.168.0.0&#x2F;24的主机上看见路由情况如下：</p>
+<pre><code>ip route
+
+default via 192.168.0.1 dev ens3 proto dhcp src 192.168.0.7 metric 100
+10.41.0.0/16 via 192.168.0.40 dev ens3 proto bird
+blackhole 10.41.113.192/26 proto bird
+10.42.0.0/16 via 192.168.0.40 dev ens3 proto bird
+</code></pre>
+<p>可以看见pod-cidr的流量都被发送到Bird虚拟路由器192.168.0.40接口<br>在192.168.2.0&#x2F;24的主机上看见路由情况如下：</p>
+<pre><code>ip route
+default via 192.168.2.1 dev ens7
+10.41.0.0/16 via 192.168.2.16 dev ens7 proto bird
+blackhole 10.41.210.128/26 proto bird
+10.42.0.0/16 via 192.168.2.16 dev ens7 proto bird
+</code></pre>
+<p>可以看见pod-cidr的流量都被发送到Bird虚拟路由器192.168.2.16接口</p>
+<h4 id="节点POD-IP明细路由发布"><a href="#节点POD-IP明细路由发布" class="headerlink" title="节点POD-IP明细路由发布"></a>节点POD-IP明细路由发布</h4><p>在实际使用中若期望将calico-pod明细路由发布到BGP路由器中，则需要修改每个节点的calico配置文件<br>修改方法如下</p>
+<p>创建configmap，替换calico原有的bird_aggr.cfg.template文件</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-2.png"></p>
+<p>主要修改以下参数：<br>注释掉本地黑洞路由，就不会生产本地聚合路由同步到BGP路由器了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># route &#123;&#123;$cidr&#125;&#125; blackhole;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>允许明细路由同步<br>将<code>if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; reject; &#125; </code>修改为accept</p>
+<p>完整配置如下：</p>
+<pre><code># Generated by confd
+
+&#123;&#123;- $block_key := printf "/calico/ipam/v2/host/%s/ipv4/block" (getenv "NODENAME")&#125;&#125;
+&#123;&#123;- $static_key := "/calico/staticroutes"&#125;&#125;
+&#123;&#123;if or (ls $block_key) (ls $static_key)&#125;&#125;
+protocol static &#123;
+&#123;&#123;- if ls $block_key&#125;&#125;
+   # IP blocks for this host.
+&#123;&#123;- range ls $block_key&#125;&#125;
+&#123;&#123;- $parts := split . "-"&#125;&#125;
+&#123;&#123;- $cidr := join $parts "/"&#125;&#125;
+ #  route &#123;&#123;$cidr&#125;&#125; blackhole;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- if ls $static_key&#125;&#125;
+   # Static routes.
+&#123;&#123;- range ls $static_key&#125;&#125;
+&#123;&#123;- $parts := split . "-"&#125;&#125;
+&#123;&#123;- $cidr := join $parts "/"&#125;&#125;
+ #  route &#123;&#123;$cidr&#125;&#125; blackhole;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- end&#125;&#125;
+&#125;
+&#123;&#123;else&#125;&#125;# No IP blocks or static routes for this host.&#123;&#123;end&#125;&#125;
+
+# Aggregation of routes on this host; export the block, nothing beneath it.
+function calico_aggr ()
+&#123;
+&#123;&#123;- range ls $block_key&#125;&#125;
+&#123;&#123;- $parts := split . "-"&#125;&#125;
+&#123;&#123;- $cidr := join $parts "/"&#125;&#125;
+&#123;&#123;- $affinity := json (getv (printf "%s/%s" $block_key .))&#125;&#125;
+  &#123;&#123;- if $affinity.state&#125;&#125;
+      # Block &#123;&#123;$cidr&#125;&#125; is &#123;&#123;$affinity.state&#125;&#125;
+    &#123;&#123;- if eq $affinity.state "confirmed"&#125;&#125;
+      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+    &#123;&#123;- end&#125;&#125;
+  &#123;&#123;- else &#125;&#125;
+      # Block &#123;&#123;$cidr&#125;&#125; is implicitly confirmed.
+      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+  &#123;&#123;- end &#125;&#125;
+&#123;&#123;- end&#125;&#125;
+&#125;
+</code></pre>
+<p>升级calico-node映射此configmap配置文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-3.png"></p>
+<p>重建calico-node</p>
+<p>查看Bird节点</p>
+<pre><code>ip route
+default via 192.168.2.1 dev eth0 
+10.41.0.0/16 via 192.168.0.40 dev eth1 proto bird 
+10.41.57.199 via 192.168.0.25 dev eth1 proto bird 
+10.41.57.203 via 192.168.0.25 dev eth1 proto bird 
+10.41.57.204 via 192.168.0.25 dev eth1 proto bird 
+10.41.113.193 via 192.168.0.7 dev eth1 proto bird 
+10.41.113.194 via 192.168.0.7 dev eth1 proto bird 
+10.41.113.195 via 192.168.0.7 dev eth1 proto bird 
+10.41.113.196 via 192.168.0.7 dev eth1 proto bird 
+10.41.113.198 via 192.168.0.7 dev eth1 proto bird 
+10.41.113.201 via 192.168.0.7 dev eth1 proto bird 
+10.41.113.202 via 192.168.0.7 dev eth1 proto bird 
+10.41.210.6 via 192.168.2.15 dev eth0 proto bird 
+10.41.210.7 via 192.168.2.15 dev eth0 proto bird 
+10.41.210.8 via 192.168.2.15 dev eth0 proto bird 
+10.41.210.9 via 192.168.2.15 dev eth0 proto bird 
+10.41.210.137 via 192.168.2.14 dev eth0 proto bird 
+10.41.210.138 via 192.168.2.14 dev eth0 proto bird 
+10.42.0.0/16 via 192.168.0.40 dev eth1 proto bird 
+</code></pre>
+<p>已经学习到了每个pod的明细路由，这种方式会导致路由设备压力巨大，因为需要维护大量的路由条目，并且pod的每次删除和创建都会引发的路由条目更新。在实际生产中请谨慎评估后使用。</p>
+<p>而实际业务在使用的过程中，会针对一个服务或者一个deployment分配一个IP Pool，这种使用模式会导致Calico的IP Pool没有办法按照Node聚合，出现一些零散的无法聚合的IP地址，最差的情况，会导致每个Pod产生一条路由，会导致路由的条目变为Pod级别。<br>在默认情况下，交换机设备为了防止路由震荡，会对BGP路由进行收敛保护。但是Kubernetes集群中，Pod生命周期短，变化频繁，需要关闭网络设备的路由变更保护机制才能满足Kubernetes的要求；对于不同的网络设备，路由收敛速度也是不同的，在大规模Pod扩容和迁移的场景，或者进行双数据中心切换，除了考虑Pod的调度时间、启动时间，还需要对网络设备的路由收敛速度进行性能评估和压测。</p>
+<p><a href="https://blog.51cto.com/u_14992974/2549877">https://blog.51cto.com/u_14992974/2549877</a></p>
+<h4 id="Service-CIDR路由发布"><a href="#Service-CIDR路由发布" class="headerlink" title="Service-CIDR路由发布"></a>Service-CIDR路由发布</h4><p>为了使集群外部也可以通过Service的Cluster-ip访问到集群内部服务，可以将Service-cidr通过Calico-bgp进行发布。</p>
+<pre><code>calicoctl patch BGPConfig default --patch &#39;&#123;&quot;spec&quot;: &#123;&quot;serviceClusterIPs&quot;: [&#123;&quot;cidr&quot;: &quot;10.43.0.0/16&quot;&#125;]&#125;&#125;&#39;
+</code></pre>
+<p>发布后在bird节点上可以看见多条10.43.0.0&#x2F;16地址，因为采用ECMP(等价多路径)方式实现路由负载均衡。</p>
+<pre><code>ip route
+
+10.43.0.0/16 proto bird 
+        nexthop via 192.168.0.7 dev eth1 weight 1 
+        nexthop via 192.168.0.25 dev eth1 weight 1 
+        nexthop via 192.168.2.14 dev eth0 weight 1 
+        nexthop via 192.168.2.15 dev eth0 weight 1 
+</code></pre>
+<p>配置明细路由后发布后，Service-CIDR在BGP路由器中无法看见，可以通过修改bird_aggr.cfg.template文件</p>
+<p>添加以下配置，$servicesubnet_split网段根据集群实际Service-CIDR进行修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;&#123;- $servicesubnet_split := split &quot;10.43.0.0/16&quot; &quot; &quot; &#125;&#125;</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">  # Service IP block</span><br><span class="line">&#123;&#123;- if $servicesubnet_split&#125;&#125;</span><br><span class="line">&#123;&#123;- range $servicesubnet_split&#125;&#125;</span><br><span class="line">   route &#123;&#123;.&#125;&#125; blackhole;</span><br><span class="line">&#123;&#123;- end&#125;&#125;</span><br><span class="line">&#123;&#123;- end&#125;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">function accept_servicesubnet () </span><br><span class="line">&#123;</span><br><span class="line">&#123;&#123;- range $servicesubnet_split&#125;&#125;</span><br><span class="line">  if ( net = &#123;&#123;.&#125;&#125; ) then &#123; accept; &#125;</span><br><span class="line">  if ( net ~ &#123;&#123;.&#125;&#125; ) then &#123; reject; &#125;</span><br><span class="line">&#123;&#123;- end&#125;&#125;</span><br><span class="line">&#125;</span><br><span class="line">function deny_servicesubnet ()</span><br><span class="line">&#123;</span><br><span class="line">&#123;&#123;- range $servicesubnet_split&#125;&#125;</span><br><span class="line">  if ( net = &#123;&#123;.&#125;&#125; ) then &#123; reject; &#125;</span><br><span class="line">  if ( net ~ &#123;&#123;.&#125;&#125; ) then &#123; reject; &#125;</span><br><span class="line">&#123;&#123;- end&#125;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整bird_aggr.cfg.template配置文件如下：</p>
+<pre><code># Generated by confd
+&#123;&#123;- $block_key := printf "/calico/ipam/v2/host/%s/ipv4/block" (getenv "NODENAME")&#125;&#125;
+&#123;&#123;- $static_key := "/calico/staticroutes"&#125;&#125;
+&#123;&#123;- $servicesubnet_split := split "10.43.0.0/16" " " &#125;&#125;
+
+&#123;&#123;if or (ls $block_key) (ls $static_key)&#125;&#125;
+protocol static &#123;
+&#123;&#123;- if ls $block_key&#125;&#125;
+   # IP blocks for this host.
+&#123;&#123;- range ls $block_key&#125;&#125;
+&#123;&#123;- $parts := split . "-"&#125;&#125;
+&#123;&#123;- $cidr := join $parts "/"&#125;&#125;
+ #  route &#123;&#123;$cidr&#125;&#125; blackhole;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- if ls $static_key&#125;&#125;
+   # Static routes.
+&#123;&#123;- range ls $static_key&#125;&#125;
+&#123;&#123;- $parts := split . "-"&#125;&#125;
+&#123;&#123;- $cidr := join $parts "/"&#125;&#125;
+ #   route &#123;&#123;$cidr&#125;&#125; blackhole;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- end&#125;&#125;
+  # Service IP block
+&#123;&#123;- if $servicesubnet_split&#125;&#125;
+&#123;&#123;- range $servicesubnet_split&#125;&#125;
+   route &#123;&#123;.&#125;&#125; blackhole;
+&#123;&#123;- end&#125;&#125;
+&#123;&#123;- end&#125;&#125;
+&#125;
+&#123;&#123;else&#125;&#125;# No IP blocks or static routes for this host.&#123;&#123;end&#125;&#125;
+# Aggregation of routes on this host; export the block, nothing beneath it.
+# Export the service block.
+
+function accept_servicesubnet () 
+&#123;
+&#123;&#123;- range $servicesubnet_split&#125;&#125;
+  if ( net = &#123;&#123;.&#125;&#125; ) then &#123; accept; &#125;
+  if ( net ~ &#123;&#123;.&#125;&#125; ) then &#123; reject; &#125;
+&#123;&#123;- end&#125;&#125;
+&#125;
+function deny_servicesubnet ()
+&#123;
+&#123;&#123;- range $servicesubnet_split&#125;&#125;
+  if ( net = &#123;&#123;.&#125;&#125; ) then &#123; reject; &#125;
+  if ( net ~ &#123;&#123;.&#125;&#125; ) then &#123; reject; &#125;
+&#123;&#123;- end&#125;&#125;
+&#125;
+
+function calico_aggr ()
+&#123;
+&#123;&#123;- range ls $block_key&#125;&#125;
+&#123;&#123;- $parts := split . "-"&#125;&#125;
+&#123;&#123;- $cidr := join $parts "/"&#125;&#125;
+&#123;&#123;- $affinity := json (getv (printf "%s/%s" $block_key .))&#125;&#125;
+  &#123;&#123;- if $affinity.state&#125;&#125;
+      # Block &#123;&#123;$cidr&#125;&#125; is &#123;&#123;$affinity.state&#125;&#125;
+    &#123;&#123;- if eq $affinity.state "confirmed"&#125;&#125;
+      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+    &#123;&#123;- end&#125;&#125;
+  &#123;&#123;- else &#125;&#125;
+      # Block &#123;&#123;$cidr&#125;&#125; is implicitly confirmed.
+      if ( net = &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+      if ( net ~ &#123;&#123;$cidr&#125;&#125; ) then &#123; accept; &#125;
+  &#123;&#123;- end &#125;&#125;
+&#123;&#123;- end&#125;&#125;
+&#125;
+</code></pre>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/04/17/neuvector_2/" title="云原生安全平台NeuVector基础使用"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/03/17/neuvector_1/" title="Neuvector介绍和部署">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

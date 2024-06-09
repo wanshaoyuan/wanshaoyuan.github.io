@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>CICD_DEMO完整版示例e | 我爱西红柿</title>
+  <meta name="description" content="环境准备部署gitlab1docker run --detach --hostname 10.8.242.28 --publish 443:443 --publish 80:80 --publish 1022:22 --name gitlab --restart always --volume &#x2F;srv&#x2F;gitlab&#x2F;config:&#x2F;etc&#x2F;gitlab --volume &#x2F;srv&#x2F;gitlab&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CICD_DEMO完整版示例e">
+<meta property="og:url" content="http://yoursite.com/2020/09/17/cicd_demo/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环境准备部署gitlab1docker run --detach --hostname 10.8.242.28 --publish 443:443 --publish 80:80 --publish 1022:22 --name gitlab --restart always --volume &#x2F;srv&#x2F;gitlab&#x2F;config:&#x2F;etc&#x2F;gitlab --volume &#x2F;srv&#x2F;gitlab&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_1.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe49f2c2a9a83be58fb862.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe4a22c2a9a83be58fe142.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe4ac2c2a9a83be5905f4d.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe4aecc2a9a83be590804d.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec0e602c2a9a83be519525a.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebfef95c2a9a83be53599b8.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec01120c2a9a83be5601e4a.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebdf195c2a9a83be535cd43.jpg">
+<meta property="og:image" content="https://training-1251900790.cos.ap-guangzhou.myqcloud.com/image/cicd3_1.png?ynotemdtimestamp=1588945845253">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3414c2a9a83be572e22a.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3678c2a9a83be574dcb6.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd382ac2a9a83be5766ac4.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ci_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ci_11.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3952c2a9a83be57762d6.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd39b2c2a9a83be577b003.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ci_14.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3b2dc2a9a83be5792b5e.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3ddac2a9a83be57c2e59.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3f39c2a9a83be57dc753.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3efcc2a9a83be57d86c1.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3f92c2a9a83be57e211a.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd3fc1c2a9a83be57e4fc9.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd4056c2a9a83be57ef2b2.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd407fc2a9a83be57f28ba.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd40b3c2a9a83be57f6f31.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd460fc2a9a83be5858b37.jpg">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_3.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd53dac2a9a83be5957d6a.jpg">
+<meta property="og:image" content="https://training-1251900790.cos.ap-guangzhou.myqcloud.com/image/cicd3_4.png">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd553cc2a9a83be59712e6.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd81b1c2a9a83be5d084ca.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd862bc2a9a83be5d6a61e.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebd8664c2a9a83be5d6ebaa.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe3398c2a9a83be577e1a8.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe1622c2a9a83be5581534.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe2347c2a9a83be566ad44.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe25c1c2a9a83be5696389.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe27abc2a9a83be56b739b.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ebe2786c2a9a83be56b2b66.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB11fEoXCf2gK0jSZFPq6xsopXaf.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec01f9bc2a9a83be56f8070.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1LggqXAL0gK0jSZFAq6AA9pXa2.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec2b159c2a9a83be57c0908.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec020f1c2a9a83be570d736.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec0212ec2a9a83be57117f9.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1_YZqXxz1gK0jSZSgq6yvwpXaT.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec021e8c2a9a83be571e75e.jpg">
+<meta property="og:image" content="https://ae01.alicdn.com/kf/HTB1bbwyXpP7gK0jSZFjq6A5aXXaj.jpg">
+<meta property="og:image" content="https://pic.downk.cc/item/5ec02b94c2a9a83be57bd38d.jpg">
+<meta property="article:published_time" content="2020-09-17T13:45:59.000Z">
+<meta property="article:modified_time" content="2020-09-17T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/09/17/cicd_demo/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2gitlab"><span class="toc-number">1.1.</span> <span class="toc-text">部署gitlab</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2Harbor"><span class="toc-number">1.2.</span> <span class="toc-text">部署Harbor</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Drone%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">Drone配置使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Jenkins%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">Jenkins配置使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E6%A6%82%E8%BF%B0"><span class="toc-number">3.1.</span> <span class="toc-text">应用概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B4%E4%BD%93CICD%E6%B5%81%E7%A8%8B"><span class="toc-number">3.2.</span> <span class="toc-text">整体CICD流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6"><span class="toc-number">3.3.</span> <span class="toc-text">先决条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jenkins%E5%AF%B9%E6%8E%A5Gitlab"><span class="toc-number">3.4.</span> <span class="toc-text">Jenkins对接Gitlab</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jenkins%E5%AF%B9%E6%8E%A5Kubernetes"><span class="toc-number">3.5.</span> <span class="toc-text">Jenkins对接Kubernetes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Jenkins-CI%E5%AF%B9%E6%8E%A5Kubernetes"><span class="toc-number">3.6.</span> <span class="toc-text">Jenkins-CI对接Kubernetes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BAcicd-Pipeline"><span class="toc-number">3.7.</span> <span class="toc-text">创建cicd Pipeline</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Rancher-Pipeline%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">Rancher-Pipeline配置使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">4.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%88%E5%86%B3%E6%9D%A1%E4%BB%B6-1"><span class="toc-number">4.2.</span> <span class="toc-text">先决条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CICD%E5%88%B0%E5%BA%94%E7%94%A8%E5%95%86%E5%BA%97%E6%B5%81%E7%A8%8B"><span class="toc-number">4.3.</span> <span class="toc-text">CICD到应用商店流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BA%94%E7%94%A8chart%E5%88%B6%E4%BD%9C"><span class="toc-number">4.4.</span> <span class="toc-text">应用chart制作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Pipeline%E9%85%8D%E7%BD%AE"><span class="toc-number">4.5.</span> <span class="toc-text">Pipeline配置</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-cicd_demo" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      CICD_DEMO完整版示例e
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/09/17/cicd_demo/" class="article-date">
+	  <time datetime="2020-09-17T13:45:59.000Z" itemprop="datePublished">2020-09-17</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/CI-CD/">CI/CD</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/CI-CD/" rel="tag">CI/CD</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/09/17/cicd_demo/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.4k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 16(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h3><h4 id="部署gitlab"><a href="#部署gitlab" class="headerlink" title="部署gitlab"></a>部署gitlab</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --detach --hostname 10.8.242.28 --publish 443:443 --publish 80:80 --publish 1022:22 --name gitlab --restart always --volume /srv/gitlab/config:/etc/gitlab --volume /srv/gitlab/logs:/var/log/gitlab --volume /srv/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce:12.10.3-ce.0</span><br></pre></td></tr></table></figure>
+
+<p>替换hostname为实际节点外网IP</p>
+<h4 id="部署Harbor"><a href="#部署Harbor" class="headerlink" title="部署Harbor"></a>部署Harbor</h4><p>Harbor部署与管理<br>部署前先修改docker<br>编辑docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/docker/daemon.json</span><br><span class="line">&#123;</span><br><span class="line"> &quot;insecure-registries&quot; : [&quot;0.0.0.0/0&quot;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重启docker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker </span><br></pre></td></tr></table></figure>
+
+<p>安装docker-compose</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -L https://github.com/docker/compose/releases/download/1.24.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose</span><br><span class="line">chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+<p>下载harbor  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/goharbor/harbor/releases/download/v1.10.2/harbor-online-installer-v1.10.2.tgz</span><br></pre></td></tr></table></figure>
+
+
+<p>配置harbo.yaml  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname: 172.31.48.86 //修改为实际节点IP</span><br></pre></td></tr></table></figure>
+
+<p>屏蔽https配置  </p>
+<p>安装harbor </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./install.sh --with-clair</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">docker-compose  ps</span><br><span class="line">      Name                     Command                  State                 Ports          </span><br><span class="line">---------------------------------------------------------------------------------------------</span><br><span class="line">clair               /docker-entrypoint.sh            Up (healthy)   6060/tcp, 6061/tcp       </span><br><span class="line">harbor-core         /harbor/start.sh                 Up (healthy)                            </span><br><span class="line">harbor-db           /entrypoint.sh postgres          Up (healthy)   5432/tcp                 </span><br><span class="line">harbor-jobservice   /harbor/start.sh                 Up                                      </span><br><span class="line">harbor-log          /bin/sh -c /usr/local/bin/ ...   Up (healthy)   127.0.0.1:1514-&gt;10514/tcp</span><br><span class="line">harbor-portal       nginx -g daemon off;             Up (healthy)   80/tcp                   </span><br><span class="line">nginx               nginx -g daemon off;             Up (healthy)   0.0.0.0:80-&gt;80/tcp       </span><br><span class="line">redis               docker-entrypoint.sh redis ...   Up             6379/tcp                 </span><br><span class="line">registry            /entrypoint.sh /etc/regist ...   Up (healthy)   5000/tcp                 </span><br><span class="line">registryctl         /harbor/start.sh                 Up (healthy)        </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>访问<a href="http://node_ip/">http://node_ip</a></p>
+<p>admin&#x2F;Harbor12345<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_1.png"></p>
+<h3 id="Drone配置使用"><a href="#Drone配置使用" class="headerlink" title="Drone配置使用"></a>Drone配置使用</h3><p>Rancher应用商店已经提供了Drone的部署安装及配置，通过Rancher应用商店即可将Drone部署并配置对接</p>
+<p>在gitlab上创建一个项目名为go-server，编写个应用<br>server.go       </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">    &quot;log&quot;</span><br><span class="line">    &quot;net/http&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func hello(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    fmt.Fprintf(w, &quot;Hello World&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    http.HandleFunc(&quot;/&quot;, hello)</span><br><span class="line">    if err := http.ListenAndServe(&quot;:8080&quot;, nil); err != nil &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建Dockerfile<br>Dockerfile</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM golang</span><br><span class="line">WORKDIR /go</span><br><span class="line">ADD server /go</span><br><span class="line">CMD [&quot;./server&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>1、配置gitlab外部认证</p>
+<p><img src="https://pic.downk.cc/item/5ebe49f2c2a9a83be58fb862.jpg"></p>
+<p>回调接口填写其中一个节点的<a href="http://ip/login">http://ip/login</a><br><img src="https://pic.downk.cc/item/5ebe4a22c2a9a83be58fe142.jpg"><br>如下</p>
+<p><img src="https://pic.downk.cc/item/5ebe4ac2c2a9a83be5905f4d.jpg"></p>
+<p>保存好对应的ApplicationID和secret</p>
+<p><img src="https://pic.downk.cc/item/5ebe4aecc2a9a83be590804d.jpg"></p>
+<p>部署Drone  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">docker run \</span><br><span class="line">  --volume=/var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  --volume=/var/lib/drone:/data \</span><br><span class="line">  --env=DRONE_LOGS_DEBUG=true \</span><br><span class="line">  --env=DRONE_GIT_ALWAYS_AUTH=false \</span><br><span class="line">  --env=DRONE_GITLAB_SERVER=http://114.215.25.58 \</span><br><span class="line">  --env=DRONE_GITLAB_CLIENT_ID=d6272993ac02c3bb4069d73bf0ff8dabeaff47c0739ae27d1a23e8b80e33faa5 \</span><br><span class="line">  --env=DRONE_GITLAB_CLIENT_SECRET=01f454fe0a55256a974d420b8ca023df6efc80b33d8a917dd16138b152b73253 \</span><br><span class="line">  --env=DRONE_RPC_SECRET=12345678\</span><br><span class="line">  --env=DRONE_RUNNER_CAPACITY=3 \</span><br><span class="line">  --env=DRONE_SERVER_HOST=114.215.130.36\</span><br><span class="line">  --env=DRONE_SERVER_PROTO=http \</span><br><span class="line">  --env=DRONE_TLS_AUTOCERT=false \</span><br><span class="line">  --publish=80:80 \</span><br><span class="line">  --publish=443:443 \</span><br><span class="line">  --restart=always \</span><br><span class="line">  --detach=true \</span><br><span class="line">  --name=drone  \</span><br><span class="line">  drone/drone:1</span><br></pre></td></tr></table></figure>
+
+<p>参数说明：  </p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DRONE_RPC_SECRET</td>
+<td>runner连接server的凭证</td>
+</tr>
+<tr>
+<td>DRONE_RUNNER_CAPACITY</td>
+<td>server调用runner的并发数</td>
+</tr>
+<tr>
+<td>DRONE_SERVER_HOST</td>
+<td>server的ip</td>
+</tr>
+<tr>
+<td>DRONE_SERVER_PROTO</td>
+<td>server对外提供的协议可选http和https</td>
+</tr>
+</tbody></table>
+<p>部署Drone-runner<br>采用Docker的方式  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  -v /var/run/docker.sock:/var/run/docker.sock \</span><br><span class="line">  -e DRONE_RPC_PROTO=http \</span><br><span class="line">  -e DRONE_RPC_HOST=172.31.227.147 \</span><br><span class="line">  -e DRONE_RPC_SECRET=12345678 \</span><br><span class="line">  -e DRONE_RUNNER_CAPACITY=3 \</span><br><span class="line">  -e DRONE_RUNNER_NAME=$&#123;HOSTNAME&#125; \</span><br><span class="line">  -p 3000:3000 \</span><br><span class="line">  --restart always \</span><br><span class="line">  --name runner \</span><br><span class="line">  drone/drone-runner-docker:1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>检查日志查看是否部署成功</p>
+<p><img src="https://pic.downk.cc/item/5ec0e602c2a9a83be519525a.jpg"></p>
+<p>在gitlab go-server项目创建名为.drone文件填入以下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">kind: pipeline</span><br><span class="line">type: docker</span><br><span class="line">name: build</span><br><span class="line">steps:</span><br><span class="line">- name: build-code</span><br><span class="line">  image: golang:alpine</span><br><span class="line">  pull: if-not-exists # always never</span><br><span class="line">  commands:</span><br><span class="line">    - pwd</span><br><span class="line">    - ls</span><br><span class="line">    - go build server.go</span><br><span class="line">    - ls</span><br><span class="line">- name: build-image</span><br><span class="line">  image: plugins/docker</span><br><span class="line">  settings:</span><br><span class="line">    repo: 172.31.227.151/go-server/go-server</span><br><span class="line">    registry: 172.31.227.151</span><br><span class="line">    use_cache: true</span><br><span class="line">    username:</span><br><span class="line">      from_secret: registry_username</span><br><span class="line">    password:</span><br><span class="line">      from_secret: registry_password</span><br><span class="line">    tags: $&#123;DRONE_BUILD_NUMBER&#125;</span><br><span class="line">    insecure: true</span><br><span class="line">    mirror: https://yefnfc9c.mirror.aliyuncs.com/</span><br><span class="line">trigger:</span><br><span class="line">  branch:</span><br><span class="line">  - master</span><br><span class="line">  event:</span><br><span class="line">  - push</span><br></pre></td></tr></table></figure>
+
+<p>连接镜像仓库的凭证环境变量可在Drone对应的项目中定义好<br><img src="https://pic.downk.cc/item/5ebfef95c2a9a83be53599b8.jpg"></p>
+<p>参数说明：  </p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DRONE_RPC_PROTO</td>
+<td>runner连接server协议</td>
+</tr>
+<tr>
+<td>DRONE_RPC_HOST</td>
+<td>server的地址</td>
+</tr>
+<tr>
+<td>DRONE_RPC_SECRET</td>
+<td>连接server的凭证</td>
+</tr>
+</tbody></table>
+<p>commit代码后会自动运行CI<br><img src="https://pic.downk.cc/item/5ec01120c2a9a83be5601e4a.jpg"></p>
+<h3 id="Jenkins配置使用"><a href="#Jenkins配置使用" class="headerlink" title="Jenkins配置使用"></a>Jenkins配置使用</h3><h4 id="应用概述"><a href="#应用概述" class="headerlink" title="应用概述"></a>应用概述</h4><p><img src="https://pic.downk.cc/item/5ebdf195c2a9a83be535cd43.jpg"></p>
+<h4 id="整体CICD流程"><a href="#整体CICD流程" class="headerlink" title="整体CICD流程"></a>整体CICD流程</h4><p><img src="https://training-1251900790.cos.ap-guangzhou.myqcloud.com/image/cicd3_1.png?ynotemdtimestamp=1588945845253">  </p>
+<ul>
+<li>push code to trigger Gitlab webhook</li>
+<li>compiling the code and build image</li>
+<li>test</li>
+<li>upload image to harbor</li>
+<li>Generate a new YML file</li>
+<li>deploy&#x2F;upgrade</li>
+</ul>
+<h4 id="先决条件"><a href="#先决条件" class="headerlink" title="先决条件"></a>先决条件</h4><p>1、clone front-end项目  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://gitee.com/wanshaoyuan/front-end.git</span><br></pre></td></tr></table></figure>
+<p>2、并上传到内部gitlab上</p>
+<p>3、在harbor中创建front-ent项目  </p>
+<p>4、在jenkins中安装好gitlab、docker、Kubernetes插件</p>
+<p>5、部署sock-shap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://gitee.com/wanshaoyuan/microservices-demo.git</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace  sock-shop</span><br><span class="line">kubectl apply -f microservices-demo/deploy/kubernetes/manifests/.</span><br></pre></td></tr></table></figure>
+
+<p>访问  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://node_ip:30001</span><br></pre></td></tr></table></figure>
+
+<p>Jenkins安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name jenkins -u root -p 50000:50000  -p 8080:8080 -v /var/jenkins_home:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock  jenkins/jenkins:lts</span><br></pre></td></tr></table></figure>
+
+<p>节点安装git</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install git</span><br></pre></td></tr></table></figure>
+<p>获取jenkins密码  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs jenkins |grep password</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pic.downk.cc/item/5ebd3414c2a9a83be572e22a.jpg"></p>
+<p>安装推荐的Jenkins插件</p>
+<p><img src="https://pic.downk.cc/item/5ebd3678c2a9a83be574dcb6.jpg"></p>
+<h4 id="Jenkins对接Gitlab"><a href="#Jenkins对接Gitlab" class="headerlink" title="Jenkins对接Gitlab"></a>Jenkins对接Gitlab</h4><p>安装gitlab插件<br><img src="https://pic.downk.cc/item/5ebd382ac2a9a83be5766ac4.jpg"></p>
+<p>Gitlab中申请AccessToken</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ci_10.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ci_11.png"></p>
+<p><img src="https://pic.downk.cc/item/5ebd3952c2a9a83be57762d6.jpg"></p>
+<p>将申请成功的token保存好  </p>
+<p>配置Jenkins对接gitlab  </p>
+<p><img src="https://pic.downk.cc/item/5ebd39b2c2a9a83be577b003.jpg"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ci_14.png"><br>测试连接</p>
+<p><img src="https://pic.downk.cc/item/5ebd3b2dc2a9a83be5792b5e.jpg"></p>
+<p>测试  </p>
+<p>在gitlab中创建项目<br>上传个test.txt文件通过Jenkins读取</p>
+<p><img src="https://pic.downk.cc/item/5ebd3ddac2a9a83be57c2e59.jpg"></p>
+<p><img src="https://pic.downk.cc/item/5ebd3f39c2a9a83be57dc753.jpg"></p>
+<p>配置连接gitlab私有项目的密钥可以用ssh密钥也可以使用账号密码<br><img src="https://pic.downk.cc/item/5ebd3efcc2a9a83be57d86c1.jpg"></p>
+<p><img src="https://pic.downk.cc/item/5ebd3f92c2a9a83be57e211a.jpg"></p>
+<p>构建<br><img src="https://pic.downk.cc/item/5ebd3fc1c2a9a83be57e4fc9.jpg"></p>
+<p>去cat这个文件输出内容<br><img src="https://pic.downk.cc/item/5ebd4056c2a9a83be57ef2b2.jpg"></p>
+<p>执行立即构建<br><img src="https://pic.downk.cc/item/5ebd407fc2a9a83be57f28ba.jpg"></p>
+<p>输出结果  </p>
+<p><img src="https://pic.downk.cc/item/5ebd40b3c2a9a83be57f6f31.jpg"></p>
+<h4 id="Jenkins对接Kubernetes"><a href="#Jenkins对接Kubernetes" class="headerlink" title="Jenkins对接Kubernetes"></a>Jenkins对接Kubernetes</h4><p>安装Kubernetes插件<br><img src="https://pic.downk.cc/item/5ebd460fc2a9a83be5858b37.jpg"></p>
+<h4 id="Jenkins-CI对接Kubernetes"><a href="#Jenkins-CI对接Kubernetes" class="headerlink" title="Jenkins-CI对接Kubernetes"></a>Jenkins-CI对接Kubernetes</h4><p>配置<br>系统管理—&gt;系统设置—&gt;新增一个云<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_3.png"></p>
+<p>配置Jenkins URL，这里我们没有配置api-server地址和证书key，连接kubernetes，所以默认会去读取放在JENKINS_HOME的.kube&#x2F;目录的kubeconfig文件，用于连接集群。我这里是通过安装包的方式安装的Jenkins HOME在&#x2F;var&#x2F;lib&#x2F;jenkins&#x2F;目录，如果是通过容器方式启动，将kubeconfig文件直接放~&#x2F;.kube&#x2F;目录。</p>
+<p>从RancherUI上复制配置文件</p>
+<p><img src="https://pic.downk.cc/item/5ebd53dac2a9a83be5957d6a.jpg"></p>
+<p>保存到Jenkins主机的config文件中<br>复制粘贴到Jenkins容器内的~&#x2F;.kube&#x2F;config文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it jenkins mkdir /root/.kube/</span><br><span class="line">docker cp config  jenkins:/root/.kube/config</span><br></pre></td></tr></table></figure>
+
+
+<p>在编译集群对应项目下创建secret  </p>
+<p><img src="https://training-1251900790.cos.ap-guangzhou.myqcloud.com/image/cicd3_4.png">  </p>
+<p>在jenkins系统设置中创建一个Kubernetes云  </p>
+<p><img src="https://pic.downk.cc/item/5ebd553cc2a9a83be59712e6.jpg"></p>
+<p>演示效果  </p>
+<p>修改前，先展示前端。(<a href="https://github.com/microservices-demo/front-end)%E8%BF%99%E9%87%8C%E6%88%91%E4%BB%AC%E6%BC%94%E7%A4%BA%E4%BF%AE%E6%94%B9%E5%89%8D%E7%AB%AFlogo%EF%BC%8C%E7%84%B6%E5%90%8Egit">https://github.com/microservices-demo/front-end)这里我们演示修改前端logo，然后git</a> push到代码仓库，触发Jenkins进行cicd操作，修改front-end&#x2F;public&#x2F;navbar.html的&lt;img src&#x3D;”img&#x2F;logo.png”为新的图片地址，然后将代码提交触发cicd重新打开前端看见logo变了。</p>
+<h4 id="创建cicd-Pipeline"><a href="#创建cicd-Pipeline" class="headerlink" title="创建cicd Pipeline"></a>创建cicd Pipeline</h4><p>生成连接gitlab的凭证Grove语句<br><img src="https://pic.downk.cc/item/5ebd81b1c2a9a83be5d084ca.jpg"></p>
+<p>添加Harbor凭证<br><img src="https://pic.downk.cc/item/5ebd862bc2a9a83be5d6a61e.jpg"></p>
+<p><img src="https://pic.downk.cc/item/5ebd8664c2a9a83be5d6ebaa.jpg"></p>
+<p>创建流水线任务  </p>
+<p><img src="https://pic.downk.cc/item/5ebe3398c2a9a83be577e1a8.jpg"></p>
+<p>添加以下Pipeline任务  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">pipeline &#123;</span><br><span class="line">  environment &#123;</span><br><span class="line">    registry = &quot;172.31.227.151&quot;</span><br><span class="line">    project_name = &quot;/front-end&quot;</span><br><span class="line">    app_name = &quot;/front-end&quot;</span><br><span class="line">    registryCredential = &#x27;harbor&#x27;</span><br><span class="line">  &#125;</span><br><span class="line">  agent &#123;</span><br><span class="line">    kubernetes &#123;</span><br><span class="line">      defaultContainer &#x27;wanshaoyuan/jnlp-slave:3.27-1-alpine&#x27;</span><br><span class="line">      yaml &quot;&quot;&quot;</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    some-label: some-label-value</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - name: jnlp</span><br><span class="line">    image: &#x27;wanshaoyuan/jnlp-slave:3.27-1-alpine&#x27;</span><br><span class="line">    args: [&#x27;\$(JENKINS_SECRET)&#x27;, &#x27;\$(JENKINS_NAME)&#x27;]</span><br><span class="line"></span><br><span class="line">  - name : docker</span><br><span class="line">    image: wanshaoyuan/docker:19.03.2</span><br><span class="line">    tty: true</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: repo-docker-sock</span><br><span class="line">      mountPath: /var/run/docker.sock</span><br><span class="line">  - name: kubectl</span><br><span class="line">    image: wanshaoyuan/jenkins-tools:v1.0</span><br><span class="line">    tty: true</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - mountPath: &quot;/root/.kube&quot;</span><br><span class="line">      name: &quot;volume-0&quot;</span><br><span class="line">      readOnly: false</span><br><span class="line">  volumes:</span><br><span class="line">  - name: &quot;volume-0&quot;</span><br><span class="line">    secret:</span><br><span class="line">      secretName: &quot;kubeconfig&quot;</span><br><span class="line">  - name: repo-docker-sock</span><br><span class="line">    hostPath:</span><br><span class="line">     path: /var/run/docker.sock</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  stages &#123;</span><br><span class="line">    stage(&#x27;clone code&#x27;) &#123;</span><br><span class="line">     steps &#123;</span><br><span class="line">            git credentialsId: &#x27;9371d980-6bc2-47aa-a47f-04cf78871e7a&#x27;, url: &#x27;http://114.215.25.58/root/front-end.git&#x27;</span><br><span class="line">    &#125;</span><br><span class="line">   &#125;</span><br><span class="line">    stage(&#x27;image build &#x27;) &#123;</span><br><span class="line">      steps &#123;</span><br><span class="line">        container(&#x27;docker&#x27;) &#123;</span><br><span class="line">         script &#123;</span><br><span class="line">          docker.withRegistry( &#x27;http://172.31.227.151&#x27;, registryCredential ) &#123;</span><br><span class="line">             def dockerImage=docker.build registry + project_name + app_name  +&quot;:$BUILD_NUMBER&quot;</span><br><span class="line">             dockerImage.push()</span><br><span class="line">         &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">   stage(&#x27;deploy app &#x27;) &#123;</span><br><span class="line">      steps &#123;</span><br><span class="line">         container(&#x27;kubectl&#x27;) &#123;</span><br><span class="line">          sh &#x27;sed  -i &quot;s/image: .*front-end:.*/image: 172.31.227.151\\/front-end\\/front-end:$BUILD_ID/g&quot; front-end-dep.yaml&#x27;</span><br><span class="line">          sh &#x27;kubectl apply -f front-end-dep.yaml&#x27;</span><br><span class="line">     &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>定义环境变量：镜像仓库地址、项目名称、应用名称、连接镜像仓库的认证信息。</li>
+<li>定义jnlp-agent POD所启动的container，包括jnlp容器，用于根jenkins进行通信，maven容器用于代码编译、docker 容器，用于容器镜像编译，kubectl容器用于连接对应的kubernetes集群用于应用创建和更新。</li>
+<li>定义四个阶段，每个阶段定义对应的步骤，调用对应的容器实现功能（clone代码阶段、代码编译阶段、容器镜像构建阶段、应用部署阶段）</li>
+<li>每个阶段调用对应的容器实现，如代码编译阶段调用编译容器进行、容器镜像构建阶段调用docker镜像映射宿主机socket进行。</li>
+</ul>
+<p>配置gitlab自动触发Jenkins CICD</p>
+<p>编辑jenkins项目<br><img src="https://pic.downk.cc/item/5ebe1622c2a9a83be5581534.jpg"><br>配置使用<code>Build when a change is pushed to GitLab. GitLab CI Service URL: http://191.8.2.112:12000/project/test-go-dev</code> 当代码有更新的时候触发，通过GitLab CI</p>
+<p>打开gitlab，配置webhook回掉地址，填入jenkins对应项目地址<br>gitlab对应的项目设置页</p>
+<p><img src="https://pic.downk.cc/item/5ebe2347c2a9a83be566ad44.jpg"></p>
+<p>默认触发器是push事件时，触发webhook，需要注意的是因为我们这里的Jenkins配置了用户名和密码所以<br>url需要在原来基础上添加用户名和密码其他不变<br>格式为<br><a href="http://username:password@192.168.1.4:1080/project/dashboard-build">http://username:password@192.168.1.4:1080/project/dashboard-build</a></p>
+<p>默认测试webhook调用<br><img src="https://pic.downk.cc/item/5ebe25c1c2a9a83be5696389.jpg"></p>
+<p>默认一个代码commit的请求<br>下载logo放置 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://rancher.com/img/brand-guidelines/assets/logos/png/cow/rancher-logo-cow-blue.png</span><br></pre></td></tr></table></figure>
+<p>修改前端logo，然后git push到代码仓库，触发Jenkins进行cicd操作，修改front-end&#x2F;public&#x2F;navbar.html的&lt;img src&#x3D;”img&#x2F;logo.png”为新的图片地址，然后将代码提交触发cicd重新打开前端看见logo变了。</p>
+<p><img src="https://pic.downk.cc/item/5ebe27abc2a9a83be56b739b.jpg"></p>
+<p><img src="https://pic.downk.cc/item/5ebe2786c2a9a83be56b2b66.jpg"></p>
+<h3 id="Rancher-Pipeline配置使用"><a href="#Rancher-Pipeline配置使用" class="headerlink" title="Rancher-Pipeline配置使用"></a>Rancher-Pipeline配置使用</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><p>Rancher2.x Pipeline支持在发布阶段直接将应用发布到应用商店，部署阶段直接从应用商店部署应用，以下为操作步骤</p>
+<h4 id="先决条件-1"><a href="#先决条件-1" class="headerlink" title="先决条件"></a>先决条件</h4><ul>
+<li>提前创建好存放统一chart的目录目录结构如下：<br>.&#x2F;charts&#x2F;app_name&#x2F;version</li>
+</ul>
+<p>将app_name和Version替换为实际应用名和版本号  </p>
+<h4 id="CICD到应用商店流程"><a href="#CICD到应用商店流程" class="headerlink" title="CICD到应用商店流程"></a>CICD到应用商店流程</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">A[源码库]-- &quot;Jenkins clone源码完成其他CI环节&quot; --&gt; B[clone catalog 模板并通过Jenkins修改模板]</span><br><span class="line"></span><br><span class="line">B -- &quot;git push&quot; --&gt; C[push到统一存放catalog目录]</span><br><span class="line"></span><br><span class="line">C-- &quot;Rancher-server自动同步更新&quot; --&gt; c[UI显示新版本可更新]</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="应用chart制作"><a href="#应用chart制作" class="headerlink" title="应用chart制作"></a>应用chart制作</h4><p>继续使用go-server项目的例子</p>
+<p>创建应用源码目录创建专属chart目录</p>
+<p>目录结构如下</p>
+<p>创建目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /go-server/go-server-chart</span><br></pre></td></tr></table></figure>
+<p>在目录go-server-chartt内创建以下文件和文件夹</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">go-server-chart</span><br><span class="line">│   ├── 0</span><br><span class="line">│   │   ├── Chart.yaml</span><br><span class="line">│   │   ├── questions.yml</span><br><span class="line">│   │   ├── templates</span><br><span class="line">│   │   │   ├── _helpers.tpl</span><br><span class="line">│   │   │   ├── go-server-dep.yaml</span><br><span class="line">│   │   │   └── go-server-svc.yaml</span><br><span class="line">│   │   └── values.yaml</span><br><span class="line">│   └── README.md</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>0表示版本文件夹，如果要发布新版本只需要创建个1或者另外文件夹，然后修改Chart.yaml文件里面的版本号。  </p>
+<p>README.md   内定义对应用的说明<br>Chart.yaml </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">description: go-server</span><br><span class="line">name: go-server</span><br><span class="line">version: $&#123;CICD_EXECUTION_SEQUENCE&#125;</span><br><span class="line">icon: http://ohx02qrb8.bkt.clouddn.com/micheling.png</span><br></pre></td></tr></table></figure>
+<p>详细环境变量参考</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://rancher.com/docs/rancher/v2.x/en/k8s-in-rancher/pipelines/</span><br></pre></td></tr></table></figure>
+
+<p>定义软件的描述、名字、版本、图标地址</p>
+<p>questions.yml</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">questions:</span><br><span class="line">- variable: replicaCount</span><br><span class="line">  default: &quot;1&quot;</span><br><span class="line">  description: &quot;Replica count&quot;</span><br><span class="line">  type: string</span><br><span class="line">  required: true</span><br><span class="line">  label: Replicas</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- variable: imageName</span><br><span class="line">  default: &quot;172.31.227.151/go-server/go-server&quot;</span><br><span class="line">  description: &quot;image name&quot;</span><br><span class="line">  type: string</span><br><span class="line">  required: true</span><br><span class="line">  label: image_name</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">- variable: imageTage</span><br><span class="line">  default: &quot;latest&quot;</span><br><span class="line">  description: &quot;image version&quot;</span><br><span class="line">  type: string</span><br><span class="line">  required: true</span><br><span class="line">  label: image_version</span><br><span class="line"></span><br><span class="line">- variable: nodeport</span><br><span class="line">  default: &quot;30000&quot;</span><br><span class="line">  description: &quot;NodePort port number(to set explicitly, choose port between 30000-32767)&quot;</span><br><span class="line">  type: string</span><br><span class="line">  required: true</span><br><span class="line">  label: nginx Service NodePort number</span><br></pre></td></tr></table></figure>
+<p>定义变量，主要与ui上对应<br>variable： 对应template里面的.Values.xxx值<br>default：当用户没有设置自定义值时的默认值<br>description： ui上用户自定义值的描述<br>type: 自定义值的数据类型<br>required： 是否必填<br>label：标签  </p>
+<p>values.yaml:  values.yaml 则提供了这些配置参数的默认值。</p>
+<p>templates :放置实际要执行的应用的yaml文件</p>
+<p>go-server-dep.yaml  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    cattle.io/creator: norman</span><br><span class="line">    workload.user.cattle.io/workloadselector: deployment-default-test</span><br><span class="line">  name: test</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  replicas: &#123;&#123; .Values.replicaCount &#125;&#125;</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      workload.user.cattle.io/workloadselector: deployment-default-test</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        workload.user.cattle.io/workloadselector: deployment-default-test</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - image: &#123;&#123; .Values.imageName &#125;&#125;:&#123;&#123; .Values.imageTage &#125;&#125;</span><br><span class="line">        imagePullPolicy: Always</span><br><span class="line">        name: test</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 8080</span><br><span class="line">          name: 8080tcp01</span><br><span class="line">          protocol: TCP</span><br><span class="line">        stdin: true</span><br><span class="line">        tty: true</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>go-server-svc.yaml</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    cattle.io/creator: norman</span><br><span class="line">  name: test-nodeport</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - name: 8080tcp01</span><br><span class="line">    nodePort: &#123;&#123; .Values.nodeport &#125;&#125;</span><br><span class="line">    port: 8080</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 8080</span><br><span class="line">  selector:</span><br><span class="line">    workload.user.cattle.io/workloadselector: deployment-default-test</span><br><span class="line">  type: NodePort</span><br></pre></td></tr></table></figure>
+
+<p> _helpers.tpl  定义一些系统通用的继承变量一般不需要，直接用默认就好。<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;/* vim: set filetype=mustache: */&#125;&#125;</span><br><span class="line">&#123;&#123;/*</span><br><span class="line">Expand the name of the chart.</span><br><span class="line">*/&#125;&#125;</span><br><span class="line">&#123;&#123;- define &quot;name&quot; -&#125;&#125;</span><br><span class="line">&#123;&#123;- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix &quot;-&quot; -&#125;&#125;</span><br><span class="line">&#123;&#123;- end -&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123;/*</span><br><span class="line">Create a default fully qualified app name.</span><br><span class="line">We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).</span><br><span class="line">*/&#125;&#125;</span><br><span class="line">&#123;&#123;- define &quot;fullname&quot; -&#125;&#125;</span><br><span class="line">&#123;&#123;- $name := default .Chart.Name .Values.nameOverride -&#125;&#125;</span><br><span class="line">&#123;&#123;- printf &quot;%s-%s&quot; .Release.Name $name | trunc 63 | trimSuffix &quot;-&quot; -&#125;&#125;</span><br><span class="line">&#123;&#123;- end -&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p> 同时创建实际的catalog目录<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir test-chart</span><br></pre></td></tr></table></figure><br> 继续按上面方式创建一个go-server的chart应用，需要修改Chart.yaml文件这里就不能在用变量了，因为使用添加私有应用商店时是读取不出变量的，在源码库内的chart.yaml用变量是因为需要动态更新。</p>
+<p> Chart.yaml </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">description: go-server</span><br><span class="line">name: go-server</span><br><span class="line">version: v1.0 </span><br><span class="line">icon: http://ohx02qrb8.bkt.clouddn.com/micheling.png</span><br></pre></td></tr></table></figure>
+
+<p>然后push到代码仓库的chart项目</p>
+<h4 id="Pipeline配置"><a href="#Pipeline配置" class="headerlink" title="Pipeline配置"></a>Pipeline配置</h4><p>创建secret用于push时的代码仓库的帐号密码<br><img src="https://ae01.alicdn.com/kf/HTB11fEoXCf2gK0jSZFPq6xsopXaf.jpg"></p>
+<p>如果push是ssh方式这里的secret就放置公钥  </p>
+<p>USERNAME和PASSWORD两个key</p>
+<p>创建镜像仓库凭证用于上传镜像</p>
+<p><img src="https://pic.downk.cc/item/5ec01f9bc2a9a83be56f8070.jpg"></p>
+<p>选择代码库创建Pipeline<br><img src="https://ae01.alicdn.com/kf/HTB1LggqXAL0gK0jSZFAq6AA9pXa2.jpg"></p>
+<p>创建代码编译步骤<br><img src="https://pic.downk.cc/item/5ec2b159c2a9a83be57c0908.jpg"></p>
+<p>创建编译上传镜像步骤 </p>
+<p><img src="https://pic.downk.cc/item/5ec020f1c2a9a83be570d736.jpg"></p>
+<p>创建发布应用模板步骤<br><img src="https://pic.downk.cc/item/5ec0212ec2a9a83be57117f9.jpg"></p>
+<p>类型选择Publish Catalog Template</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1_YZqXxz1gK0jSZSgq6yvwpXaT.jpg"></p>
+<p><img src="https://pic.downk.cc/item/5ec021e8c2a9a83be571e75e.jpg"></p>
+<ul>
+<li>Chart Folder：填写源码库内的chart的相对路径</li>
+<li>Catalog Template Version：这里填写Rancher Pipeline环境变量根在代码库内chart目录Chart.yaml Version一致</li>
+<li>Catalog Template Name：为你的catalog应用的名称，如果你是生成一个新的catalog。统一存放catalog目录没有这个应用则可以根据实际需求取名字，如果是在原有基础上更新则有已有的catalog，则用原目录名</li>
+<li></li>
+</ul>
+<p>运行Pipeline</p>
+<p><img src="https://ae01.alicdn.com/kf/HTB1bbwyXpP7gK0jSZFjq6A5aXXaj.jpg"></p>
+<p>catalog自动更新<br><img src="https://pic.downk.cc/item/5ec02b94c2a9a83be57bd38d.jpg"></p>
+<p>对应代码目录下 <code>.rancher-pipeline.yml</code>文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">stages:</span><br><span class="line">- name: cod_build</span><br><span class="line">  steps:</span><br><span class="line">  - runScriptConfig:</span><br><span class="line">      image: golang:latest</span><br><span class="line">      shellScript: go build server.go</span><br><span class="line">- name: image_build</span><br><span class="line">  steps:</span><br><span class="line">  - publishImageConfig:</span><br><span class="line">      dockerfilePath: ./Dockerfile</span><br><span class="line">      buildContext: .</span><br><span class="line">      tag: go-server/go-server:$&#123;CICD_GIT_COMMIT&#125;</span><br><span class="line">      pushRemote: true</span><br><span class="line">      registry: 172.31.227.151</span><br><span class="line">    env:</span><br><span class="line">      PLUGIN_INSECURE: &quot;true&quot;</span><br><span class="line">      PLUGIN_MIRROR: https://yefnfc9c.mirror.aliyuncs.com</span><br><span class="line">- name: update_catalog</span><br><span class="line">  steps:</span><br><span class="line">  - publishCatalogConfig:</span><br><span class="line">      path: ./go-server-chart/0</span><br><span class="line">      catalogTemplate: go-server</span><br><span class="line">      version: $&#123;CICD_EXECUTION_SEQUENCE&#125;</span><br><span class="line">      gitUrl: http://114.215.25.58/root/chart.git</span><br><span class="line">      gitBranch: master</span><br><span class="line">      gitAuthor: root</span><br><span class="line">      gitEmail: shaoyua@rancher.com</span><br><span class="line">    envFrom:</span><br><span class="line">    - sourceName: gitlab</span><br><span class="line">      sourceKey: USERNAME</span><br><span class="line">      targetKey: USERNAME</span><br><span class="line">    - sourceName: gitlab</span><br><span class="line">      sourceKey: PASSWORD</span><br><span class="line">      targetKey: PASSWORD</span><br><span class="line">timeout: 60</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/09/25/logging_1/" title="使用ECK部署ElasticSearch到Kubernetes中"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/08/24/kubernetes_request_limit/" title="Kubernetes资源模型概述">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

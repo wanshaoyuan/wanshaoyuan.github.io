@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Kubernetes安全机制(一) | 我爱西红柿</title>
+  <meta name="description" content="常见安全攻击面描述安全攻击面图片来源网络  外部访问攻击：核心组件非安全端口对外暴露，以及连接集群关键凭证泄漏。 平台组件攻击：  利用平台组件docker、kube-apiserver、etcd、kubelet 非安全端口对外暴露，以及集群组件间连接安全，以及组件的安全漏洞进行攻击。 POD层面攻击：利用运行在集群内的恶意POD进行攻击。 安全矩阵图片来源网络 安全问题案例图片来源网络 2018">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes安全机制(一)">
+<meta property="og:url" content="http://yoursite.com/2020/07/09/kubernetes_security_1/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="常见安全攻击面描述安全攻击面图片来源网络  外部访问攻击：核心组件非安全端口对外暴露，以及连接集群关键凭证泄漏。 平台组件攻击：  利用平台组件docker、kube-apiserver、etcd、kubelet 非安全端口对外暴露，以及集群组件间连接安全，以及组件的安全漏洞进行攻击。 POD层面攻击：利用运行在集群内的恶意POD进行攻击。 安全矩阵图片来源网络 安全问题案例图片来源网络 2018">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_24.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_25.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_26.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_27.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_28.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_29.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_30.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_31.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_32.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_33.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_34.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_35.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_36.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_37.png">
+<meta property="article:published_time" content="2020-07-09T13:45:59.000Z">
+<meta property="article:modified_time" content="2020-07-09T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2020/07/09/kubernetes_security_1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E9%9D%A2%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">常见安全攻击面描述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E9%9D%A2"><span class="toc-number">1.1.</span> <span class="toc-text">安全攻击面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E7%9F%A9%E9%98%B5"><span class="toc-number">1.2.</span> <span class="toc-text">安全矩阵</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E6%A1%88%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">安全问题案例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94DockerDaemon%E5%85%AC%E7%BD%91%E6%9A%B4%E9%9C%B2"><span class="toc-number">1.4.</span> <span class="toc-text">安全攻击点—DockerDaemon公网暴露</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E5%8C%85%E5%90%AB%E6%81%B6%E6%84%8F%E7%A8%8B%E5%BA%8F%E7%9A%84%E9%95%9C%E5%83%8F"><span class="toc-number">1.5.</span> <span class="toc-text">安全攻击点—包含恶意程序的镜像</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8%E9%A3%8E%E9%99%A9"><span class="toc-number">1.6.</span> <span class="toc-text">安全攻击点—组件安全漏洞利用风险</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E5%AE%B9%E5%99%A8%E7%89%B9%E6%9D%83%E6%A8%A1%E5%BC%8F%E9%80%83%E9%80%B8"><span class="toc-number">1.7.</span> <span class="toc-text">安全攻击点—容器特权模式逃逸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E5%88%A9%E7%94%A8%E6%8C%82%E8%BD%BD%E7%9B%AE%E5%BD%95%E9%80%83%E9%80%B8"><span class="toc-number">1.8.</span> <span class="toc-text">安全攻击点—利用挂载目录逃逸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E5%88%A9%E7%94%A8Linux-Capabilities%E9%80%83%E9%80%B8"><span class="toc-number">1.9.</span> <span class="toc-text">安全攻击点—利用Linux Capabilities逃逸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E5%88%A9%E7%94%A8Linux-Capabilities%E9%80%83%E9%80%B8-1"><span class="toc-number">1.10.</span> <span class="toc-text">安全攻击点—利用Linux Capabilities逃逸</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E6%94%BB%E5%87%BB%E7%82%B9%E2%80%94%E5%87%AD%E8%AF%81%E6%B3%84%E6%BC%8F"><span class="toc-number">1.11.</span> <span class="toc-text">安全攻击点—凭证泄漏</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%B2%E8%8C%83%E6%9C%BA%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">防范机制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B3%E5%8F%B0%E5%AE%89%E5%85%A8%E6%A1%86%E6%9E%B6"><span class="toc-number">2.1.</span> <span class="toc-text">平台安全框架</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Kubernetes%E7%BB%84%E4%BB%B6%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6"><span class="toc-number">2.2.</span> <span class="toc-text">Kubernetes组件安全机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text">认证机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#X509-Client-Certs"><span class="toc-number">2.4.</span> <span class="toc-text">X509 Client Certs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Service-Account-Tokens"><span class="toc-number">2.5.</span> <span class="toc-text">Service Account Tokens</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%88%E6%9D%83%E6%9C%BA%E5%88%B6"><span class="toc-number">2.6.</span> <span class="toc-text">授权机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%86%E5%85%A5%E6%8E%A7%E5%88%B6%E6%9C%BA%E5%88%B6%E2%80%94Admission-Control"><span class="toc-number">2.7.</span> <span class="toc-text">准入控制机制—Admission Control</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#POD%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5"><span class="toc-number">2.8.</span> <span class="toc-text">POD安全策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5"><span class="toc-number">2.9.</span> <span class="toc-text">网络安全策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E5%AE%89%E5%85%A8%E6%89%AB%E6%8F%8F"><span class="toc-number">2.10.</span> <span class="toc-text">镜像安全扫描</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%95%9C%E5%83%8F%E7%AD%BE%E5%90%8D"><span class="toc-number">2.11.</span> <span class="toc-text">镜像签名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E9%95%9C%E5%83%8F%E5%8E%9F%E5%88%99%EF%BC%8C%E9%99%8D%E4%BD%8E%E6%94%BB%E5%87%BB%E9%9D%A2"><span class="toc-number">2.12.</span> <span class="toc-text">最小镜像原则，降低攻击面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4CIS%E5%AE%89%E5%85%A8%E6%89%AB%E6%8F%8F"><span class="toc-number">2.13.</span> <span class="toc-text">集群CIS安全扫描</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Rootless-Container%E6%8F%90%E5%8D%87%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7"><span class="toc-number">2.14.</span> <span class="toc-text">使用Rootless Container提升容器的安全性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E5%8F%8A%E8%BF%90%E8%A1%8C%E5%AE%89%E5%85%A8-%E2%80%93-%E5%AE%9E%E8%B7%B5"><span class="toc-number">2.15.</span> <span class="toc-text">集群及运行安全 – 实践</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E5%92%8C%E5%BA%94%E7%94%A8%E5%AE%89%E5%85%A8-%E2%80%93-%E5%AE%9E%E8%B7%B5"><span class="toc-number">2.16.</span> <span class="toc-text">容器和应用安全 – 实践</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_security_1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Kubernetes安全机制(一)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2020/07/09/kubernetes_security_1/" class="article-date">
+	  <time datetime="2020-07-09T13:45:59.000Z" itemprop="datePublished">2020-07-09</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2020/07/09/kubernetes_security_1/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 4.4k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 15(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="常见安全攻击面描述"><a href="#常见安全攻击面描述" class="headerlink" title="常见安全攻击面描述"></a>常见安全攻击面描述</h3><h4 id="安全攻击面"><a href="#安全攻击面" class="headerlink" title="安全攻击面"></a>安全攻击面</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_1.png" alt="image"></p>
+<p>外部访问攻击：核心组件非安全端口对外暴露，以及连接集群关键凭证泄漏。</p>
+<p>平台组件攻击：  利用平台组件docker、kube-apiserver、etcd、kubelet 非安全端口对外暴露，以及集群组件间连接安全，以及组件的安全漏洞进行攻击。</p>
+<p>POD层面攻击：利用运行在集群内的恶意POD进行攻击。</p>
+<h4 id="安全矩阵"><a href="#安全矩阵" class="headerlink" title="安全矩阵"></a>安全矩阵</h4><p>图片来源网络<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_2.png" alt="image"></p>
+<h4 id="安全问题案例"><a href="#安全问题案例" class="headerlink" title="安全问题案例"></a>安全问题案例</h4><p>图片来源网络<img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_3.png" alt="image"></p>
+<p>2018年黑客入侵了特斯拉在亚马逊上的Kubernetes容器集群。由于该集群控制台未设置密码保护，黑客便得以在一个Kubernetes pod中获取到访问凭证，然后据此访问其网络存储桶S3，通过S3获取到了一些敏感数据，比如遥测技术，并且还在特斯拉的Kubernetes pod中进行挖矿。</p>
+<h4 id="安全攻击点—DockerDaemon公网暴露"><a href="#安全攻击点—DockerDaemon公网暴露" class="headerlink" title="安全攻击点—DockerDaemon公网暴露"></a>安全攻击点—DockerDaemon公网暴露</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_4.png" alt="image"></p>
+<p>Docker本身是C&#x2F;S架构，Docker-client连接Docker-Daemon对docker进行操作。</p>
+<p>Client连接Daemon有以下常见方式：<br>1、tcp:&#x2F;&#x2F;host:port<br>2、unix:&#x2F;&#x2F;path_to_socket<br>3、fd:&#x2F;&#x2F;socketfd。</p>
+<p>若通过TCP方式将dockerDaemon对外暴露，攻击者可以通过Api接口接管本地Docker服务。</p>
+<h4 id="安全攻击点—包含恶意程序的镜像"><a href="#安全攻击点—包含恶意程序的镜像" class="headerlink" title="安全攻击点—包含恶意程序的镜像"></a>安全攻击点—包含恶意程序的镜像</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_5.png" alt="image"></p>
+<p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_6.png" alt="image"></p>
+<h4 id="安全攻击点—组件安全漏洞利用风险"><a href="#安全攻击点—组件安全漏洞利用风险" class="headerlink" title="安全攻击点—组件安全漏洞利用风险"></a>安全攻击点—组件安全漏洞利用风险</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_7.png" alt="image"></p>
+<p>利用平台docker、k8s组件漏洞进行攻击如：<br>Docker Runc逃逸漏洞<br>此漏洞允许以root身份运行的容器以特权用户身份在主机上执行任意代码。这意味着容器可能会破坏Docker主机（覆盖Runc CLI），而所需要的只是能够使用root来运行容器。攻击者可以使用受感染的Docker镜像或对未受感染的正在运行的容器运行exec命令。</p>
+<p>漏洞影响:<br>运行那些从不受信任的来源处获取到的镜像，那么其主机很有可能被攻击者所全面接收。</p>
+<h4 id="安全攻击点—容器特权模式逃逸"><a href="#安全攻击点—容器特权模式逃逸" class="headerlink" title="安全攻击点—容器特权模式逃逸"></a>安全攻击点—容器特权模式逃逸</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_8.png" alt="image"></p>
+<p>特权模式容器允许允许容器内的root拥有外部物理机的root权限， ，可以直接获取宿主机设备文件访问权限。</p>
+<p>可以通过mount命令将宿主机磁盘设备挂载进容器内部，获取对整个宿主机的文件读写权限。</p>
+<h4 id="安全攻击点—利用挂载目录逃逸"><a href="#安全攻击点—利用挂载目录逃逸" class="headerlink" title="安全攻击点—利用挂载目录逃逸"></a>安全攻击点—利用挂载目录逃逸</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_9.png" alt="image"></p>
+<p>将宿主机部分核心目录以写权限挂载进容器内，攻击者进入容器内可以对这些目录进行修改，如利用crontab定义一些执行脚本，来达到破坏目的。</p>
+<h4 id="安全攻击点—利用Linux-Capabilities逃逸"><a href="#安全攻击点—利用Linux-Capabilities逃逸" class="headerlink" title="安全攻击点—利用Linux Capabilities逃逸"></a>安全攻击点—利用Linux Capabilities逃逸</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_10.png" alt="image"></p>
+<p>Linux Capabilities将root用户关联的特权拆分为一个个单元，每个单元可以独立启用和禁用，来达到细粒化权限控制。</p>
+<p>容器通过cgroup和Namespace实现资源隔离同时也支持通过Capabilities进行细粒化权限管理，docker和k8s都是通过白名单方式添加Capabilities。如添加CAP_SYS_PTRACE特性在配合pid&#x3D;host参数可以实现在容器内使用strance进行宿主机的进程追踪。</p>
+<h4 id="安全攻击点—利用Linux-Capabilities逃逸-1"><a href="#安全攻击点—利用Linux-Capabilities逃逸-1" class="headerlink" title="安全攻击点—利用Linux Capabilities逃逸"></a>安全攻击点—利用Linux Capabilities逃逸</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_11.png" alt="image"><br>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_12.png" alt="image"></p>
+<h4 id="安全攻击点—凭证泄漏"><a href="#安全攻击点—凭证泄漏" class="headerlink" title="安全攻击点—凭证泄漏"></a>安全攻击点—凭证泄漏</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_13.png" alt="image"></p>
+<p>公有云上平台凭证泄漏，导致可以直接获取访问Kubernetes平台的连接信息，对Kubernetes进行控制和操作。</p>
+<h3 id="防范机制"><a href="#防范机制" class="headerlink" title="防范机制"></a>防范机制</h3><h4 id="平台安全框架"><a href="#平台安全框架" class="headerlink" title="平台安全框架"></a>平台安全框架</h4><p>认证(Authenticating)是服务端对客户端请求的合法性鉴别。</p>
+<p>授权(Authorization)是对访问资源的授权，当一个请求经过认证后，需要访问某一个资源（比如创建一个pod），授权检查都会通过访问策略比较该请求上下文的属性，（比如用户，资源和Namespace），根据授权规则判定该资源（比如某namespace下的pod）是否是该客户可访问的。</p>
+<p>准入(Admission Control)机制是一种请求拦截机制，用于对请求的资源对象进行校验，修改。如Istio中的自动在对应namespace的POD中自动注入sidecar。</p>
+<h4 id="Kubernetes组件安全机制"><a href="#Kubernetes组件安全机制" class="headerlink" title="Kubernetes组件安全机制"></a>Kubernetes组件安全机制</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_14.png" alt="image"></p>
+<p>1、全部组件都需要连接Api-server，默认情况下使用 TLS 对集群中其他组件到 Api-server 通信进行加密。</p>
+<p>2、组件通过对应的ServiceAccount运行，通过RBAC进行授权限制。</p>
+<p>3、限制etcd访问，集群中只有api-server能够访问ETCD，并且对于etcd的访问采用TLS客户端证书相互认证。</p>
+<p>4、kubelet做为apiserver获取节点pod信息的入口，启用身份验证和授权。</p>
+<h4 id="认证机制"><a href="#认证机制" class="headerlink" title="认证机制"></a>认证机制</h4><ul>
+<li><p>X509 Client Certs</p>
+</li>
+<li><p>Static Token File</p>
+</li>
+<li><p>Bootstrap Tokens</p>
+</li>
+<li><p>Static Password File</p>
+</li>
+<li><p>Service Account Tokens</p>
+</li>
+<li><p>OpenID Connect Tokens</p>
+</li>
+</ul>
+<h4 id="X509-Client-Certs"><a href="#X509-Client-Certs" class="headerlink" title="X509 Client Certs"></a>X509 Client Certs</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_15.png" alt="image"></p>
+<p>双向数字证书认证，HTTPS证书认证，是基于CA根证书签名的双向数字证书认证方式，是所有认证方式中最严格的认证。也是Kubernetes默认认证方式，组件之间以及外部客户端认证方式。</p>
+<p>Api-Server相关的三个启动参数：</p>
+<ul>
+<li>client-ca-file: 指定CA根证书文件为&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;ca.pem</li>
+<li>tls-private-key-file: 指定ApiServer私钥文件为&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;apiserver-key.pem</li>
+<li>tls-cert-file：指定ApiServer证书文件为&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;apiserver.pem</li>
+</ul>
+<h4 id="Service-Account-Tokens"><a href="#Service-Account-Tokens" class="headerlink" title="Service Account Tokens"></a>Service Account Tokens</h4><p>图片来源网络</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_16.png" alt="image"></p>
+<p>用于控制集群内部POD对象访问API-server.</p>
+<p>Kubernetes会为每个namespace自动创建一个默认的service account资源，并命名为”default”。</p>
+<p>创建POD时没有明确指定ServiceAccount，将会以default的ServiceAccount挂载到POD中。
+</p>
+<h4 id="授权机制"><a href="#授权机制" class="headerlink" title="授权机制"></a>授权机制</h4><p>ABAC: ABAC(基于属性的访问控制)：ABAC控制权限的粒度非常细，非常灵活；属性通常来说分为四类：用户属性、环境属性、操作属性、对象属性；ABAC通过动态的控制一组属性是否满足条件来进行授权判断。优点：权限控制的粒度非常细，非常灵活。缺点：太过于复杂。例如规则：“禁止所有学生在上课时间进出校门”这条规则，其中，“学生”是用户的角色属性，“上课时间”是环境属性，“进出”是操作属性，而“校门”就是对象属性了。</p>
+<p>RBAC:引入角色概念，通过将权限和角色关联，来实现用户根权限的解耦，角色可以看做是权限的一个集合。通过权限与角色关联，角色与用户的关联可以实现用户和角色多对多的对应关系。</p>
+<p>RBAC的模型<br>Who是否可以对What进行How的访问操作<br>kubernetes之前的版本都是使用ABAC做为权限管理控制，在kubernetes1.3发布alpha版本RBAC,在kubernetes1.6版本RBAC提升为Beta版，kubernetes1.8版本正式提升为GA版，为什么用RBAC取代ABAC是因为在kubernetes中ABAC过于复杂，不好管理，难以理解，RBAC相对功能和可管理性来说更加合适kubernetes。所以说没有更好，只有更合适。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_17.png" alt="image"></p>
+<p>RBAC（Role base access control)：k8s上发展过程：<br>1.3 Alpha，1.6 Beta 1.8 GA</p>
+<p>概念：<br>引入角色概念，通过将权限和角色关联，来实现用户根权限的解耦，角色可以看做是权限的一个集合。通过权限与角色关联，角色与用户的关联可以实现用户和角色多对多的对应关系。</p>
+<p>优点 :<br>将权限与角色关联，用户关联角色，根传统用户关联权限相比这样权限控制更加灵活 。</p>
+<p>控制粒度更细，可以对单个资源对象的做权限的分配。<br>缺点：<br>复杂度较高，有一定学习成本。</p>
+<p>角色：<br>Kubernetes中的RBAC定义了两类角色</p>
+<p>Role：<br>role是一组权限的集合， 例如一个角色可以包含读取 Pod 的权限和列出 Pod 的权限。Role 只能用来给某个特定 namespace 中的资源作鉴权 。</p>
+<p>ClusterRole：<br>clusterrole根role一样也是一组权限的集合，cluster范围的Role，但clusterrole的有效范围是整个集群的权限和一些集群级别的资源如：集群的node节点、非资源类型endpoint、跨所有命名空间的命名空间范围资源（例如pod，需要运行命令kubectl get pods –all-namespaces来查询集群中所有的pod）。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_18.png" alt="image"></p>
+<p>Role：<br>Resource：表示控制的资源对象，可以是pod，当然也可以是namespace级别的其他资源如：Service，secrets，pvc，configmap等。</p>
+<p>Verbs：表示控制的权限操作，因为安全认证是通过api-server来完成的，api-server支持的10种权限操作为”get”, “ list “, “watch “,”create”,”update”, “patch”, “delete”,”deletecollection”,”redirect”,”proxy”]</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_19.png" alt="image"></p>
+<p>ClusterRole：</p>
+<p>Resource：ClusterRole定义的资源对象是集群层面的或需要进行跨多个namespace的资源控制</p>
+<p>Verbs：根role一样</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_20.png" alt="image"></p>
+<p>有了角色后，需要将这些角色根对应对象绑定起来，这样才能完成一次权限的分配，根Role和ClusterRole是对应的角色的棒定也分两种RoleBinding和ClusterRoleBinding 。</p>
+<p>RoleBinding &amp; ClusterRoleBinding ：</p>
+<p>Subjects：关联的对象类型，在k8s主要分为三种user，group，ServiceAccount</p>
+<p>roleRef：为bind的对象，如果你是role，kind就写role是Clusterrolekind就写ClusterRole，name为对象的名字。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_21.png" alt="image"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_22.png" alt="image"></p>
+<p>默认的Role和ClusterRole</p>
+<p>api-service会默认创建一些role和rolebinding 和clusterrole和clusterrolebind，他们默认都是以system开头的，以system开头的都是为kubernetes系统使用而保留。</p>
+<p>clusterrole里面cluster-admin、admin、edit、view这几个clusterrole，直接参考<a href="https://v1-8.docs.kubernetes.io/docs/admin/authorization/rbac/%0Bcluster-admin%E3%80%81admin%E3%80%81edit%E3%80%81view%E8%BF%99%E5%87%A0%E4%B8%AA%E8%A7%92%E8%89%B2%E6%98%AF%E4%B8%8D%E5%8C%85%E5%90%ABsystem%E5%89%8D%E7%BC%80%E7%9A%84%EF%BC%8C%E4%BB%96%E4%BB%AC%E6%98%AF%E9%9D%A2%E5%90%91%E7%94%A8%E6%88%B7%E7%9A%84%E8%A7%92%E8%89%B2%EF%BC%8C%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8rolebind%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8%E3%80%82">https://v1-8.docs.kubernetes.io/docs/admin/authorization/rbac/cluster-admin、admin、edit、view这几个角色是不包含system前缀的，他们是面向用户的角色，可以直接使用rolebind直接使用。</a></p>
+<p>User和ServiceAccount</p>
+<p>Kubernetes 集群中包含两类用户：一类是由 Kubernetes 管理的 service account，另一类是普通用户。<br>普通用户<br>假定为由外部独立服务管理。管理员分发私钥，用户存储（如 Keystone 或 Google 帐户），甚至包含用户名和密码列表的文件。在这方面，Kubernetes 没有代表普通用户帐户的对象。无法通过 API 调用的方式向集群中添加普通用户。</p>
+<p>Service Account<br>是由 Kubernetes API 管理的帐户。是用于POD中的进程访问API-Service的，为POD中的进程提供一个身份标识。</p>
+<p>为什么用ServiceAccount？<br>通过ServiceAccount可以更精确控制POD内应用访问集群权限。</p>
+<p>User和ServiceAccount</p>
+<p>kubernetes在每个namespace内都有一个默认的service account,当在创建pod或其他资源时，没有手工指定Service account时会默认使用namespace里面这个default这个Service account<br><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_23.png" alt="image"></p>
+<p>一般来说为了安全起见，建议一个应用使用一个独立的Service account运行，这样RoleBindings就不会无意中授予其他应用程序的权限，如果需要这样使用的话在部署yaml文件中添加
+</p>
+<h4 id="准入控制机制—Admission-Control"><a href="#准入控制机制—Admission-Control" class="headerlink" title="准入控制机制—Admission Control"></a>准入控制机制—Admission Control</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_24.png" alt="image"></p>
+<p>准入(Admission Control)机制是一种请求拦截机制，用于对请求的资源对象进行校验。</p>
+<p>包含两个控制器：<br>变更（Mutating）准入控制：修改请求的对象<br>验证（Validating）准入控制：验证请求的对象</p>
+<p>当请求到达 API Server 的时候首先执行变更准入控制，然后再执行验证准入控制。</p>
+<p>默认的控制策略</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_25.png" alt="image"></p>
+<p>OPA介绍<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_26.png" alt="image"></p>
+<p>开源的通用策略引擎，可以统一进行请求策略控制。OPA通过一种高级声明性语言（Rego）来定义策略配置规则，实现对请求的控制。</p>
+<p>在Kubernetes中，admission在创建，更新和删除操作期间强制执行对象的语义验证，需要重新编译或重新配置Kubernetes API服务器。但使用OPA，直接可以在Kubernetes对象上实施自定义策略</p>
+<p>配合强大的声明式策略语言Rego，直接通过K8S对象配置规则。</p>
+<p>Service可以是以下任意：</p>
+<ul>
+<li>Kubernetes API server</li>
+<li>API gateway</li>
+<li>Custom service</li>
+<li>CI&#x2F;CD pipeline</li>
+</ul>
+<p><br>OPA介绍—Gatekeeper<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_27.png" alt="image"></p>
+<p>Gatekeeper的创建是为了让用户能够通过配置（而不是代码）定制许可控制。</p>
+<ul>
+<li>通过CRD和模板定义，</li>
+<li>可分享，可重复使用，</li>
+<li>参数化配置</li>
+</ul>
+<p>集群当前状态的可知和反馈，并非仅仅操作或下发策略的人员知晓<br>更方便与其他系统集成，如CI&#x2F;CD</p>
+<h4 id="POD安全策略"><a href="#POD安全策略" class="headerlink" title="POD安全策略"></a>POD安全策略</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_28.png" alt="image"></p>
+<p>POD直接运行在宿主机上可以映射宿主机的端口和使用宿主机网络，共享宿主机的内核，这样情况下会一定的安全风险，可以通过配置POD安全策略限制并约束POD的一些行为。PodSecurityPolicy对象定义了一组条件，指示 Pod 必须按系统所能接受的设定运行。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_29.png" alt="image"></p>
+<h4 id="网络安全策略"><a href="#网络安全策略" class="headerlink" title="网络安全策略"></a>网络安全策略</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_30.png" alt="image"></p>
+<p>概述：</p>
+<p>Kubernetes的一个重要特性就是要把不同node节点的pod（container）连接起来，无视物理节点的限制。但是在某些应用环境中，比如公有云，不同租户的pod不应该互通，这个时候就需要网络隔离。Kubernetes提供了NetworkPolicy，支持按Namespace级别的网络隔离。Network Policy提供了基于策略的网络控制，用于隔离应用并减少攻击面。它使用标签选择器模拟传统的分段网络，并通过策略控制它们之间的流量以及来自外部的流量</p>
+<p>先决条件<br>kubernetes NetworkPolicy是通过调用对应的网络组件的policy功能来实现的，像weave和calico、cilium自带policy组件来实现功能，但flannel本身是没有这个的，但flannel可以通过直接使用calico的calico-controler组件来实现这个功能</p>
+<p>网络策略是用来约束pod组与彼此和其他网络端点通信的规范<br>通过标签来筛选pods<br>定义Ingress与Egress流量与规则<br>应用场景：<br>1、多租户网络隔离、不同级别业务系统策略控制<br>2、内外部业务系统请求细粒化控制限制</p>
+<h4 id="镜像安全扫描"><a href="#镜像安全扫描" class="headerlink" title="镜像安全扫描"></a>镜像安全扫描</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_31.png" alt="image"></p>
+<ul>
+<li><p>镜像仓库集成镜像漏洞扫描，镜像仓库内镜像进行CVE漏洞扫描</p>
+</li>
+<li><p>配置扫描策略，上传后立刻扫描，超过定义的高风险漏洞就禁止pull镜像。</p>
+</li>
+<li><p>定期同步外网漏洞仓库</p>
+</li>
+</ul>
+<h4 id="镜像签名"><a href="#镜像签名" class="headerlink" title="镜像签名"></a>镜像签名</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_32.png" alt="image"></p>
+<p>通过在容器镜像中可以对镜像进行加密签名用来保证镜像件来源和镜像内容防篡改。</p>
+<p>ca证书进行镜像的签发密钥和验证。</p>
+<h4 id="最小镜像原则，降低攻击面"><a href="#最小镜像原则，降低攻击面" class="headerlink" title="最小镜像原则，降低攻击面"></a>最小镜像原则，降低攻击面</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_33.png" alt="image"></p>
+<p>最小镜像原则，使用体积小的base镜像降低攻击面<br>Google发布的Distroless镜像仅包含应用程序及其运行时依赖项。不包含程序包管理器，shell和在标准Linux发行版中找到的任何其他程序。</p>
+<p>Distroless提供java、python、Nodejs、dotnet等开发语言的基础镜像</p>
+<p>优点：<br>1、降低镜像体积、减少磁盘空间占用。<br>2、只安装应用所依赖的组件，无其他组件降低攻击面。</p>
+<p>缺点：<br>1、没有shell和一些调试工具，出故障时无法方便调试，但可以通过临时容器进行调试</p>
+<h4 id="集群CIS安全扫描"><a href="#集群CIS安全扫描" class="headerlink" title="集群CIS安全扫描"></a>集群CIS安全扫描</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_34.png" alt="image"></p>
+<p>互联网安全中心（CIS）发布的全面的Kubernetes Benchmark 建立Kubernetes 的安全配置规范</p>
+<p>1、集群组件配置检查（Api-server、controller-manager、scheduler、etcd）是否符合安全配置参数。</p>
+<p>2、集群组件配置文件权限检查。</p>
+<p>3、策略检查（pod安全策略、网络安全策略检查）。</p>
+<h4 id="使用Rootless-Container提升容器的安全性"><a href="#使用Rootless-Container提升容器的安全性" class="headerlink" title="使用Rootless Container提升容器的安全性"></a>使用Rootless Container提升容器的安全性</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_35.png" alt="image"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_36.png" alt="image"></p>
+<p>Docker Daemon因为需要创建Namespace和挂载分层文件系统等所以一直以来是以root用户来运行的。这也导致了有Docker访问权限的用户可以通过连接Docker Engine获取root权限，而且可以绕开系统的审计能力对系统进行攻击。</p>
+<p>Rootless Container实现使用非特权用户运行docker engine。</p>
+<p>Docker 19.03中发布了“Rootless Container”特性</p>
+<p>实现原理：<br>1、通过user Namespace实现docker demon运行的用户重映射</p>
+<p>2、利用用户态的网络SLiRP通过一个TAP设备连接到非特权用户名空间，为容器提供外网连接能力</p>
+<h4 id="集群及运行安全-–-实践"><a href="#集群及运行安全-–-实践" class="headerlink" title="集群及运行安全 – 实践"></a>集群及运行安全 – 实践</h4><p><a href="https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/">https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_security_37.png" alt="image"></p>
+<h4 id="容器和应用安全-–-实践"><a href="#容器和应用安全-–-实践" class="headerlink" title="容器和应用安全 – 实践"></a>容器和应用安全 – 实践</h4><p>限制对Kubernetes API的访问</p>
+<ul>
+<li>对所有API通讯使用TLS加密</li>
+<li>API认证</li>
+<li>API授权<br>限制对Kubelet的访问</li>
+<li>关闭匿名访问</li>
+<li>限制运行时Workload和用户具备的能力</li>
+<li>限制资源使用</li>
+<li>限制特权容器</li>
+<li>限制容器加载特定内核模块</li>
+<li>限制容器网络访问</li>
+<li>限制云元数据API访问</li>
+<li>限制Pod能够使用的node<br>保护集群组件不受侵害</li>
+<li>限制对etcd的访问</li>
+<li>启用审计日志</li>
+<li>限制对无关特性或alpha&#x2F;beta特性的使用</li>
+<li>定期更新基础设施credential</li>
+<li>评估第三方集成安全性</li>
+<li>加密Secrets资源</li>
+<li>接收安全更新和漏洞报告</li>
+</ul>
+<p>限制资源使用</p>
+<ul>
+<li>配置Namespace配额</li>
+<li>配置容器默认资源限制<br>镜像安全</li>
+<li>最小镜像原则，减少攻击面</li>
+<li>基础镜像规划化避免乱使用</li>
+<li>镜像内使用非特权用户</li>
+<li>镜像漏洞扫描，定义风险阈值</li>
+<li>代码安全</li>
+<li>通过TLS访问，对传输内容加密</li>
+<li>限制通信端口范围</li>
+<li>确保第三方依赖安全性</li>
+<li>静态代码分析</li>
+<li>动态探测攻击</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/08/16/k3s_install_cilium/" title="k3s集群部署和使用cilium网络插件"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/06/26/pod_network/" title="POD间网络不通的排查思路">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

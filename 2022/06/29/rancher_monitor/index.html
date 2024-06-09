@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Rancher2.6 Monitoring使用 | 我爱西红柿</title>
+  <meta name="description" content="软件 版本    Rancher .9   Kubernetes 1.23.7+rke2r2   概述Rancher 2.6监控启用方式与之前版本存在较大差异，属于原生的Prometheus-Operator，通过抽象化一些Kubernetes CRD资源，可以更好的把监控告警功能整合起来，提高易用性。Prometheus-operator包括以下CRD资源对象： PrometheusRul">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rancher2.6 Monitoring使用">
+<meta property="og:url" content="http://yoursite.com/2022/06/29/rancher_monitor/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="软件 版本    Rancher .9   Kubernetes 1.23.7+rke2r2   概述Rancher 2.6监控启用方式与之前版本存在较大差异，属于原生的Prometheus-Operator，通过抽象化一些Kubernetes CRD资源，可以更好的把监控告警功能整合起来，提高易用性。Prometheus-operator包括以下CRD资源对象： PrometheusRul">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/prometheus-operator/prometheus-operator/raw/main/Documentation/user-guides/images/architecture.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-35.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-24.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-25.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-26.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-12.png">
+<meta property="article:published_time" content="2022-06-29T13:45:59.000Z">
+<meta property="article:modified_time" content="2022-06-29T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/prometheus-operator/prometheus-operator/raw/main/Documentation/user-guides/images/architecture.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/06/29/rancher_monitor/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">配置使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E7%94%A8%E7%9B%91%E6%8E%A7"><span class="toc-number">2.1.</span> <span class="toc-text">启用监控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87"><span class="toc-number">2.2.</span> <span class="toc-text">配置自定义监控指标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%91%8A%E8%AD%A6"><span class="toc-number">2.3.</span> <span class="toc-text">配置告警</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%91%8A%E8%AD%A6"><span class="toc-number">2.4.</span> <span class="toc-text">自定义告警</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">常见问题</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-rancher_monitor" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Rancher2.6 Monitoring使用
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/06/29/rancher_monitor/" class="article-date">
+	  <time datetime="2022-06-29T13:45:59.000Z" itemprop="datePublished">2022-06-29</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/06/29/rancher_monitor/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 7(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <table>
+<thead>
+<tr>
+<th>软件</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Rancher</td>
+<td>.9</td>
+</tr>
+<tr>
+<td>Kubernetes</td>
+<td>1.23.7+rke2r2</td>
+</tr>
+</tbody></table>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>Rancher 2.6监控启用方式与之前版本存在较大差异，属于原生的Prometheus-Operator，通过抽象化一些Kubernetes CRD资源，可以更好的把监控告警功能整合起来，提高易用性。Prometheus-operator包括以下CRD资源对象：</p>
+<p>PrometheusRules ：定义告警规则</p>
+<p>Alert Managers ：Altermanager启动CRD，用于Altermanager启动副本。</p>
+<p>Receivers：配置告警接收媒介CRD</p>
+<p>Routers： 将告警规则和告警媒介进行匹配。</p>
+<p>ServiceMonitor：定义Prometheus采集的监控指标地址</p>
+<p>Pod Monitor：更细粒化的对POD进行监控。</p>
+<p><img src="https://github.com/prometheus-operator/prometheus-operator/raw/main/Documentation/user-guides/images/architecture.png"></p>
+<h3 id="配置使用"><a href="#配置使用" class="headerlink" title="配置使用"></a>配置使用</h3><h4 id="启用监控"><a href="#启用监控" class="headerlink" title="启用监控"></a>启用监控</h4><p>具体方法如下</p>
+<p>切换到对应集群，选择左下角clusterTools启用Prometheus</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-16.png"></p>
+<p>部署到System项目中，勾选自定义helm参数</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-17.png"></p>
+<p>根据实际需求修改部署要求</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-18.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-19.png"></p>
+<p>如果需要对接远端存储如infuxdb需要修改yaml，修改配置指向influxdb。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">remoteRead:</span><br><span class="line">  - url: http://192.168.0.7:8086/api/v1/prom/read?db=prometheus</span><br><span class="line">remoteWrite:</span><br><span class="line">  - url: http://192.168.0.7:8086/api/v1/prom/write?db=prometheus</span><br></pre></td></tr></table></figure>
+<p>默认node-Exporter资源limit配置较低，长时间运行后容易被OOMKILL掉，需要修改默认的内存限制为150Mi。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">podLabels:</span><br><span class="line">   jobLabel: node-exporter</span><br><span class="line"> resources:</span><br><span class="line">   limits:</span><br><span class="line">     cpu: 200m</span><br><span class="line">     memory: 150Mi</span><br><span class="line">   requests:</span><br><span class="line">     cpu: 100m</span><br><span class="line">     memory: 30Mi</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-1.png"></p>
+<p>在此页面可以点击进入对应的组件配置页面。<br>如：</p>
+<ul>
+<li>Altermanager：进入的是告警信息查看页。</li>
+<li>Grafana：查看监控数据图标</li>
+<li>Prometheus Graph：Prometheus表达式执行页</li>
+<li>Prometheus Rules：查看Prometheus配置的告警表达式页</li>
+<li>Prometheus Targets：监控采集数据采集点</li>
+</ul>
+<h4 id="配置自定义监控指标"><a href="#配置自定义监控指标" class="headerlink" title="配置自定义监控指标"></a>配置自定义监控指标</h4><p>默认启用监控会会自动添加一些ServiceMonitor监控规则和Prometheus Rules 告警规则，主要是针对平台组件监控和集群内节点状态监控和告警</p>
+<p>如针对java应用的jmx监控</p>
+<p>Jmx有官方的prometheus-export，我们只需要将其jar包下载让java应用程序加载jar包和加载其配置即可。<br>以一个应用为例，整体流程如下：<br>利用JMX exporter，在Java进程内启动一个小型的Http server<br>配置Prometheus抓取那个Http server提供的metrics。<br>配置Grafana连接Prometheus，配置Dashboard。<br>创建文件夹：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir  -p /Dockerfile/jmx-exporter/</span><br></pre></td></tr></table></figure>
+<p>下载jmx-export.jar包放到此目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/prometheus/jmx_exporter</span><br><span class="line">https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.12.0/jmx_prometheus_javaagent-0.12.0.jar</span><br></pre></td></tr></table></figure>
+<p>编写jvm-export配置文件放置&#x2F;root&#x2F;jmx-exporter&#x2F;目录<br>创建simple-config.yml内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line">rules:</span><br><span class="line">- pattern: &quot;.*&quot;</span><br></pre></td></tr></table></figure>
+<p>这里意思表示将全部监控信息抓取出来。<br>将jvm-export集成到tomcat中，重新编写Dockerfile</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FROM tomcat</span><br><span class="line">COPY ./jmx_prometheus_javaagent-0.12.0.jar /jmx_prometheus_javaagent-0.12.0.jar</span><br><span class="line">ENV CATALINA_OPTS=&quot;-Xms64m -Xmx128m -javaagent:/jmx-exporter/jmx_prometheus_javaagent-0.12.0.jar=6060:/jmx-exporter/simple-config.yml&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>重新docker build，build后执行以下docker run命令可以查看收集的监控指标，这里6060端口就是我们的jmx-export端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t tomcat:v1.0 .</span><br><span class="line">docker run -itd -p 8080:8080 -p 6060:6060 tomcat:v1.0</span><br></pre></td></tr></table></figure>
+
+<p>访问查看：<br><a href="http://host_ip:6060/">http://host_ip:6060</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-2.png"></p>
+<p>部署到Rancher平台</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-3.png"></p>
+<p>给Service打上label，用于ServiceMonitor关联</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label  svc tomcat app=tomcat</span><br></pre></td></tr></table></figure>
+
+<p>创建ServiceMonitor</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: monitoring.coreos.com/v1</span><br><span class="line">kind: ServiceMonitor</span><br><span class="line">metadata:</span><br><span class="line">  name: tomcat-app</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  endpoints:</span><br><span class="line">  - port: exporter</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: tomcat</span><br></pre></td></tr></table></figure>
+
+<p>创建成功后通过Prometheus可以查看到对应的Target<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-4.png"></p>
+<p>对应的监控指标也已经抓取</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-5.png"></p>
+<p>进入grafana页面添加dashboard，默认账号密码为admin&#x2F;prom-operator<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-6.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-7.png"></p>
+<p>添加dashboard</p>
+<p>输入dashboard-id，8878，离线环境需要提前将Dashboard下载好，通过json方式导入。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-8.png"></p>
+<h4 id="配置告警"><a href="#配置告警" class="headerlink" title="配置告警"></a>配置告警</h4><p>PrometheusRule用于定义告警规则，默认已经包含针对平台组件和节点的一些告警策略。可以通过配置Router和Receivers配置告警媒介将对应告警通知到相应的人员。采用Routing Tree的告警结构能够快速的将告警进行分类，然后发送到指定的人员进行处理。通过配置AlertmanagerConfig统一实现Rooter和Recivers配置<br>创建AlertmanagerConfig<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-21.png"></p>
+<p>选择Email告警<br>Receivers配置告警媒介<br>填写SMTP地址和配置的账号&#x2F;密码，默认接收的邮箱。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-35.png"></p>
+<p>邮箱密码创建Opaque类型的secret</p>
+<p>Routes配置用于告警媒介和告警规则进行匹配，默认创建的root规则，用于匹配全部的告警规则，配置上对应创建的告警媒介。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-22.png"><br>此时全部的告警规则都会发送给配置的告警媒介</p>
+<p>若要细分告警规则创建新的Routes通过Label与Prometheus Rules内对应的Alter name对接</p>
+<p>如匹配alert:etcdNoLeader这条告警规则</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-23.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-24.png"></p>
+<p>也可以使用正则表达式匹配多个规则如</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-25.png"></p>
+<p>Grouping配置主要用于告警规则分类、抑制避免大量无用告警的干扰</p>
+<p>group_by：用于配置告警分组，达到告警抑制效果，同一个group的告警只会聚合到一起发送一次，例如host01上运行了数据库，那么对应的告警包含了host down、mysql down。他们配置在一个group内，那么如果host down了对应的mysql肯定也是down了，那么因为他们配置在一个group中，所以host down和mysql down的告警会聚合到一起发送出。</p>
+<p>group_wait：新建的AlterGroup等待多久后触发第一次告警。</p>
+<p>group_interval：AlterGroup内产生的不同告警触发间隔时间。</p>
+<p>repeat_interval：AlterGroup内如果一直是同样的告警，Altermanager为了避免长时间的干扰，进行告警去重的等待时间。 </p>
+<p>匹配后，告警触发，可以收到对应的告警邮件</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-26.png"></p>
+<h4 id="自定义告警"><a href="#自定义告警" class="headerlink" title="自定义告警"></a>自定义告警</h4><p>当默认的告警规则不能满足需求时，可以根据实际情况添加自定义告警，实际就是添加对应的PrometheusRule。如以下例子，添加pod非running状态的告警。</p>
+<p>UI配置</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-9.png"></p>
+<p>对应yaml配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: monitoring.coreos.com/v1</span><br><span class="line">kind: PrometheusRule</span><br><span class="line">metadata:</span><br><span class="line">  name: podmonitor</span><br><span class="line">  namespace: cattle-monitoring-system</span><br><span class="line">spec:</span><br><span class="line">  groups:</span><br><span class="line">  - name: pod_node_ready</span><br><span class="line">    rules:</span><br><span class="line">    - alert: pod_not_ready</span><br><span class="line">      annotations:</span><br><span class="line">        message: &#x27;&#123;&#123; $labels.namespace &#125;&#125;/&#123;&#123; $labels.pod &#125;&#125; is not ready.&#x27;</span><br><span class="line">      expr: &#x27;sum by (namespace, pod) (kube_pod_status_phase&#123;phase!~&quot;Running|Succeeded&quot;&#125;)</span><br><span class="line">        &gt; 0 &#x27;</span><br><span class="line">      for: 180s</span><br><span class="line">      labels:</span><br><span class="line">        severity: 严重</span><br></pre></td></tr></table></figure>
+
+<p>for：表示持续时间<br>message：表示告警通知内的信息。<br>label.severity：表示告警级别<br>expr：指标获取表达式</p>
+<p>配置告警接收者</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-10.png"></p>
+<p>根据标签匹配到这个PrometheusRule<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-11.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-12.png"></p>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><p>1、触发告警后，邮箱收不到告警邮件<br>使用163邮箱SMTP的465端口<br>altermanager报错<br><code>msg=&quot;Notify for alerts failed&quot; num_alerts=1 err=&quot;cattle-monitoring-system-test-test/email[0]: notify retry canceled after 16 attempts: send STARTTLS command: 454 Command not permitted when TLS active&quot;</code></p>
+<p>修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">spec:</span><br><span class="line">  receivers:</span><br><span class="line">  - emailConfigs:</span><br><span class="line">    - authPassword:</span><br><span class="line">        key: password</span><br><span class="line">        name: altermanager</span><br><span class="line">      authUsername: xx@163.com</span><br><span class="line">      from: xx@163.com</span><br><span class="line">      requireTLS: false</span><br><span class="line">      sendResolved: false</span><br><span class="line">      smarthost: smtp.163.com:465</span><br><span class="line">      tlsConfig: &#123;&#125;</span><br><span class="line">      to: xx@qq.com</span><br></pre></td></tr></table></figure>
+<p>添加<code>requireTLS: false</code></p>
+<p>2、内部邮件服务器使用非权威证书</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">email_configs:</span><br><span class="line">  - to: &#x27;xxx&#x27;</span><br><span class="line">    insecure_skip_verify: true</span><br></pre></td></tr></table></figure>
+<p>添加insecure_skip_verify: true<br>参考链接：</p>
+<p><a href="https://mp.weixin.qq.com/s/fT-AXnPP8rrWxTposbi-9A">https://mp.weixin.qq.com/s/fT-AXnPP8rrWxTposbi-9A</a></p>
+<p><a href="https://github.com/prometheus-operator/prometheus-operator">https://github.com/prometheus-operator/prometheus-operator</a></p>
+<p><a href="https://rancher.com/docs/rancher/v2.6/en/monitoring-alerting/guides/enable-monitoring/">https://rancher.com/docs/rancher/v2.6/en/monitoring-alerting/guides/enable-monitoring/</a><br><a href="https://mp.weixin.qq.com/s/c9QGlwQrhLgptNsnQ1m6-w">https://mp.weixin.qq.com/s/c9QGlwQrhLgptNsnQ1m6-w</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/07/27/fio_etcd/" title="ETCD集群读写慢问题分析"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/04/17/neuvector_2/" title="云原生安全平台NeuVector基础使用">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

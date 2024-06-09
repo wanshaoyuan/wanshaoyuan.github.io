@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>kubernetes 持久化存储 | 我爱西红柿</title>
+  <meta name="description" content="操作系统：ubuntu 16.04kubernetes版本：1.10.0ceph：10.2.10 kubernetes常见的三种应用1、无状态应用容器内的应用状态无需保持，kubernetes通过replicaset保证pod的数量，一旦pod挂掉或崩溃，会基于image重建pod，此时pod内数据丢失。2、有状态应用和无状态应用相比，有状态应用多了一个应用状态保存的需求.3、有状态集群应用和有状">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kubernetes 持久化存储">
+<meta property="og:url" content="http://yoursite.com/2018/05/19/kubernetes_storage/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="操作系统：ubuntu 16.04kubernetes版本：1.10.0ceph：10.2.10 kubernetes常见的三种应用1、无状态应用容器内的应用状态无需保持，kubernetes通过replicaset保证pod的数量，一旦pod挂掉或崩溃，会基于image重建pod，此时pod内数据丢失。2、有状态应用和无状态应用相比，有状态应用多了一个应用状态保存的需求.3、有状态集群应用和有状">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-21.png">
+<meta property="article:published_time" content="2018-05-19T13:45:59.000Z">
+<meta property="article:modified_time" content="2019-08-25T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/05/19/kubernetes_storage/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E4%BE%9B%E7%BB%99volume"><span class="toc-number">1.</span> <span class="toc-text">静态供给volume</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#storage-private"><span class="toc-number">2.</span> <span class="toc-text">storage-private</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#persisten-volume"><span class="toc-number">3.</span> <span class="toc-text">persisten volume</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E4%BE%9B%E7%BB%99volume-storage-class"><span class="toc-number">4.</span> <span class="toc-text">动态供给volume(storage_class)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#local-pv"><span class="toc-number">4.1.</span> <span class="toc-text">local-pv</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-kubernetes_storage" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      kubernetes 持久化存储
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/05/19/kubernetes_storage/" class="article-date">
+	  <time datetime="2018-05-19T13:45:59.000Z" itemprop="datePublished">2018-05-19</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/kubernetes/">kubernetes</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/kubernetes/" rel="tag">kubernetes</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/05/19/kubernetes_storage/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 15(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>操作系统：ubuntu 16.04<br>kubernetes版本：1.10.0<br>ceph：10.2.10<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-1.png"></p>
+<p>kubernetes常见的三种应用<br>1、无状态应用<br>容器内的应用状态无需保持，<br>kubernetes通过replicaset保证pod的数量，一旦pod挂掉或崩溃，会基于image重建pod，此时pod内数据丢失。<br>2、有状态应用<br>和无状态应用相比，有状态应用多了一个应用状态保存的需求.<br>3、有状态集群应用<br>和有状态应用相比，多了集群管理的需求，那么需要解决的问题有两个，一个是应用状态的保存，一个是集群的管理。</p>
+<p>有状态应用和有状态集群应用需要持久化存储里面的数据，比如数据库我们需要存储里面的数据库文件，直接用docker，我们可以使用docker的bind-mont、docker-managed-volume 、volume-container的方式，在kubernetes中解决方案是kubernetes volume和kubernetes persistent volume 。volume独立于pod，pod被销毁了数据没有了，但volume还是存在的，可以给其他pod使用。本质上，volume就是一个目录根目录的映射，它后端可以对应各种各样的存储，但pod在使用时，并不需要关心这些，对于pod来说，它看见的只是一个目录，这点根docker volume基本一样，当一个volume mount到pod中时，这个pod中所有容器都可以访问这个volume，kuberne volume支持多种类型的后端存如awsElasticBlockStore、azureDisk、ceph-rbd</p>
+<p>完整参考列表<br><a href="https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes">https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes</a></p>
+<p>kubernetes中volume分为两种类型静态供给的和动态供给的<br>静态供给volume：emptyDir、hostpath，Persistent volume<br>动态供给volume：storage-class</p>
+<h3 id="静态供给volume"><a href="#静态供给volume" class="headerlink" title="静态供给volume"></a>静态供给volume</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-2.png"></p>
+<p>缺点：<br>pod直接访问volume可移值性和可扩展性、安全性较差</p>
+<p>emptyDir<br>emptydir：临时空目录，与pod紧密联接在创建pod是创建，在删除这个pod时，也会自动删除，pod迁移到其他节点数据会丢失。<br>用途：用于存储一些临时数据，如cookie等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">例：</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line"> name: producer-consumer</span><br><span class="line">spec:</span><br><span class="line"> containers:</span><br><span class="line"> - image: busybox</span><br><span class="line">   name: producer</span><br><span class="line">   volumeMounts:</span><br><span class="line">   - mountPath: /producer_dir</span><br><span class="line">     name: shared-volume</span><br><span class="line">   args:</span><br><span class="line">   - /bin/sh</span><br><span class="line">   - -c</span><br><span class="line">   - echo &quot;hello world&quot; &gt;/producer_dir/hello; sleep 30000</span><br><span class="line"> volumes:</span><br><span class="line"> - name: shared-volume</span><br><span class="line">   emptyDir: &#123;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>创建一个pod里面有两个container，生产者、消费者共享一个emptyDir，生产者向&#x2F;producer_dir&#x2F;hello写入hello world</p>
+<p>通过docker inspect查看映射到宿主机哪个目录  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker inspect 5681556dfd95|grep Source</span><br><span class="line">                &quot;Source&quot;: &quot;/var/lib/kubelet/pods/a22e4253-8290-11e8-85ec-00163e04ede2/volumes/kubernetes.io~empty-dir/shared-volume&quot;,</span><br></pre></td></tr></table></figure>
+
+<p>hostpath：bind-mount与宿主机目录1:1映射，这类存储卷，当数据迁移到其他节点后，就会造成数据丢失。<br>用途：根DaemonSet配合使用如EFK，中fluentd 根容器日志目录映射，来达到收集日志效果。</p>
+<p>例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line"> name: mysql</span><br><span class="line">spec:</span><br><span class="line"> selector:</span><br><span class="line">   matchLabels:</span><br><span class="line">     app: mysql</span><br><span class="line"> template:</span><br><span class="line">   metadata:</span><br><span class="line">     labels:</span><br><span class="line">       app: mysql</span><br><span class="line">   spec:</span><br><span class="line">     containers:</span><br><span class="line">     - image: mysql:5.6</span><br><span class="line">       name: mysql</span><br><span class="line">       env:</span><br><span class="line">       - name: MYSQL_ROOT_PASSWORD</span><br><span class="line">         value: password</span><br><span class="line">       ports:</span><br><span class="line">       - containerPort: 3306</span><br><span class="line">         name: mysql</span><br><span class="line">       volumeMounts:</span><br><span class="line">       - name: vol1</span><br><span class="line">         mountPath: /var/lib/mysql</span><br><span class="line">     volumes:</span><br><span class="line">     - hostPath:</span><br><span class="line">            path: /tmp/mysql</span><br><span class="line">       name: vol1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>将pod内的&#x2F;var&#x2F;lib&#x2F;mysql与宿主机的&#x2F;tmp&#x2F;mysql映射。</p>
+<h3 id="storage-private"><a href="#storage-private" class="headerlink" title="storage-private"></a>storage-private</h3><p>不使用host存储空间，使用公有云厂商对象存储或分布式</p>
+<h3 id="persisten-volume"><a href="#persisten-volume" class="headerlink" title="persisten volume"></a>persisten volume</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-3.png"></p>
+<p>volume虽然能提供很好的数据持久化，但在可管理性上，还是不足的，要使用volume，用户必须，知道当前的volume信息和提前创建好对应的volume，kubernetes推荐使用pv、pvc来解决存储持久化的问题。因此kubernetes给出的解决方案是pv(persistent volume)、pvc(persistent volume Claim)<br>persisten volume(pv)是k8s里面的一个资源对象，它是直接和底层存储关联的，pv具有持久性，生命周期独立于pod。<br>persisten volume claim(pvc)是对pv的具体实现，pod使用存储是直接使用pvc，然后pvc会根据pod需要的存储空间大小和访问模式在去寻找合适的pv然后绑定。  </p>
+<p>kubernetes支持的pv类型<br><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a><br>例子<br>这里以nfs做为pv后端存储为例讲解pv和pvc的使用<br>搭建nfs</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install nfs-kernel-server nfs-common rpcbind</span><br></pre></td></tr></table></figure>
+<p>配置共享目录<br>修改&#x2F;etc&#x2F;exports文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/nfsdata *(rw,sync,no_root_squash)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">*：表示所有用户都可以访问</span><br><span class="line">rw：挂接此目录的客户端对该共享目录具有读写权限</span><br><span class="line">sync：资料同步写入内存和硬盘</span><br><span class="line">no_root_squash：root用户具有对根目录的完全管理访问权限</span><br></pre></td></tr></table></figure>
+
+<p>启动rpcbind</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status rpcbind</span><br></pre></td></tr></table></figure>
+<p>启动nfs</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start nfs-kernel-server</span><br></pre></td></tr></table></figure>
+<p>验证</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">showmount -e  nfs_server_ip</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-4.png"></p>
+<p>挂载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -t nfs 172.31.164.57:/nfsdata /mnt/</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-5.png"></p>
+<p>配置pv</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line"> name: mysql-pv</span><br><span class="line">spec:</span><br><span class="line"> accessModes:</span><br><span class="line">     - ReadWriteOnce  #可读写模式支持单节点挂载</span><br><span class="line"> capacity:</span><br><span class="line">   storage: 1Gi</span><br><span class="line"> persistentVolumeReclaimPolicy: Retain</span><br><span class="line"> storageClassName: nfs</span><br><span class="line"> nfs:</span><br><span class="line">   path: /nfsdata/mysql-pv</span><br><span class="line">   server: 172.31.164.57</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-6.png"></p>
+<p>pv的回收模式</p>
+<ul>
+<li>persistentVolumeReclaimPolicy 为当pvc删除后pv的回收策略。</li>
+<li>Retain – pvc删除后pv和数据仍然保留但此时不可以在创建pvc了，需要管理员手工回收。</li>
+<li>Recycle – pvc删除后回自动起一个pod将pv内的数据全部清空，可以创建新的pvc。</li>
+<li>Delete – 删除 Storage Provider 上的对应存储资源，例如 AWS EBS、GCE PD、Azure Disk、OpenStack Cinder Volume 等。</li>
+</ul>
+<p>pv的访问模式<br>在pvc绑定pv时通常根据两个条件绑定，一个是存储的大小，另外一个是存储的模式</p>
+<ul>
+<li>ReadWriteOnce(RWO)：可读写模式支持单节点挂载。</li>
+<li>ReadOnlyMany(ROX)： 只读模式支持多节点挂载。</li>
+<li>ReadWriteMany(RWX)：可读写模式支持多节点挂载，目前只有少数存储支持这种方式，像ceph-rbd目前只能当个节点挂载。</li>
+</ul>
+<p>创建pvc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: mysql-pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br><span class="line">  storageClassName: nfs</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-7.png"></p>
+<p>pvc只需要指定大小，访问模式和className就会根pv关联。</p>
+<p>创建mysql使用pvc</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line"> name: mysql</span><br><span class="line">spec:</span><br><span class="line"> selector:</span><br><span class="line">   matchLabels:</span><br><span class="line">     app: mysql</span><br><span class="line"> template:</span><br><span class="line">   metadata:</span><br><span class="line">     labels:</span><br><span class="line">       app: mysql</span><br><span class="line">   spec:</span><br><span class="line">     containers:</span><br><span class="line">     - image: mysql:5.6</span><br><span class="line">       name: mysql</span><br><span class="line">       env:</span><br><span class="line">       - name: MYSQL_ROOT_PASSWORD</span><br><span class="line">         value: password</span><br><span class="line">       ports:</span><br><span class="line">       - containerPort: 3306</span><br><span class="line">         name: mysql</span><br><span class="line">       volumeMounts:</span><br><span class="line">       - name: mysql-persistent-storage</span><br><span class="line">         mountPath: /var/lib/mysql</span><br><span class="line">     volumes:</span><br><span class="line">     - name: mysql-persistent-storage</span><br><span class="line">       persistentVolumeClaim:</span><br><span class="line">        claimName: mysql-pvc</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-8.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-9.png"></p>
+<p>进入container创建些数据<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-10.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-11.png"></p>
+<p>将pod所在宿主机关闭了，过几分钟kubernetes会在另外宿主机上启动,并且还是使用这个pvc，因为nfs支持多个host同时挂载.</p>
+<h3 id="动态供给volume-storage-class"><a href="#动态供给volume-storage-class" class="headerlink" title="动态供给volume(storage_class)"></a>动态供给volume(storage_class)</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-12.png"></p>
+<p>storage-class：<br>直接使用pv方式都是静态供给，需要管理员提前将pv创建好，然后再与pvc绑定，在kubernetes中动态卷是通过storage-class去实现的。配好storage-class与backend对接，当没有满足pvc条件的pv时，storage-class会动态的去创建一个pv<br>动态卷的优势</p>
+<p>1、不需要提前创建好pv，提高效率和资源利用率</p>
+<p>2、封装不同的存储类型给pvc使用，在StorageClass出现以前，PVC绑定一个PV只能根据两个条件，一个是存储的大小，另一个是访问模式。在StorageClass出现后，等于增加了一个绑定维度。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-13.png"><br>在PVC里除了常规的大小、访问模式的要求外，还通过annotation指定了Storage Class的名字为fast，这样这个PVC就会绑定一个SSD，而不会绑定一个普通的磁盘。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-14.png"></p>
+<p>例这里我们以ceph-rbd为例配置一个storage-class<br>因为<br>操作系统加载rbd module<br>modprobe rbd<br>记得加入开机启动脚本，不然重启module又没加载<br>创建一个ceph-rbd的storage-class<br>获取admin的secret并用base64加密</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ceph auth get-key client.admin |base64</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-15.png"></p>
+<p>创建个secret对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Secret</span><br><span class="line">metadata:</span><br><span class="line">  name: ceph-secret-admin</span><br><span class="line">type: &quot;kubernetes.io/rbd&quot;</span><br><span class="line">data:</span><br><span class="line">  key: QVFEMDJ1VmE0L1pxSEJBQUtTUnFwS3JFVjErRjFNM1kwQ2lyWmc9PQ==</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-16.png"></p>
+<p>创建storage-class</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kind: StorageClass</span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: rbd</span><br><span class="line">provisioner: kubernetes.io/rbd</span><br><span class="line">parameters:</span><br><span class="line">  monitors: 172.31.164.57:6789</span><br><span class="line">  adminId: admin</span><br><span class="line">  adminSecretName: ceph-secret-admin</span><br><span class="line">  adminSecretNamespace: default</span><br><span class="line">  pool: rbd</span><br><span class="line">  userId: admin</span><br><span class="line">  userSecretName: ceph-secret-admin</span><br></pre></td></tr></table></figure>
+<p>monitors:  ceph-monitor地址+端口<br>adminId:  secret的用户名<br>adminSecretName: 上面创建secret的名字<br>pool：rbd 在ceph哪个pool<br>userSecretName：上面创建secret的名字</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: mysql-pvc</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">    - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 1Gi</span><br><span class="line">  storageClassName: rbd</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>storageClassName指向我们刚刚创建storage-class<br>可以看见已经Bound了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-22.png"></p>
+<p>查看ceph的pool，发现块设备已经创建好了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-17.png"><br>继续使用上面的yml创建mysql，会直接用这个pvc<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-18.png"></p>
+<p>到rke-node3上去<br>可以看见kernel rbd module将pool里面的块映射出来了，挂载到pod里面了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-19.png"></p>
+<p>如果非hyperkube部署的kubernetes集群，如kubeadm部署的，在创建pvc时会报错如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">persistentvolume-controller     Warning   ProvisioningFailed  Failed to provision volume with StorageClass &quot;rbd&quot;: failed to create rbd image: executable file not found in $PATH, command output:</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>因为我们的k8s集群是使用kubeadm创建的，k8s的几个服务也是跑在集群静态pod中，而kube-controller-manager组件会调用rbd的api，但是因为它的pod中没有安装rbd，所以会报错。解决办法如下<br>使用kubernetes上的存储扩展卷来解决<br><a href="https://github.com/kubernetes-incubator/external-storage">https://github.com/kubernetes-incubator/external-storage</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone  https://github.com/kubernetes-incubator/external-storage</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-20.png"></p>
+<p>执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f ./</span><br><span class="line">kubectl get pods</span><br><span class="line">NAME                              READY     STATUS    RESTARTS   AGE</span><br><span class="line">rbd-provisioner-23232323-i6223   1/1       Running   0          13s</span><br></pre></td></tr></table></figure>
+<p>然后在重新创建storage-class</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ceph-storageclass.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kind: StorageClass</span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line">  name: rbd</span><br><span class="line">#provisionen: kubernetes.io/rbd</span><br><span class="line">provisioner: ceph.com/rbd</span><br><span class="line">parameters:</span><br><span class="line">  monitors: 172.31.164.57:6789</span><br><span class="line">  adminId: admin</span><br><span class="line">  adminSecretName: ceph-secret-admin</span><br><span class="line">  adminSecretNamespace: default</span><br><span class="line">  pool: rbd</span><br><span class="line">  userId: admin</span><br><span class="line">  userSecretName: ceph-secret-admin</span><br></pre></td></tr></table></figure>
+<p>注意provisioner由provisionen: kubernetes.io&#x2F;rbd改成provisioner: ceph.com&#x2F;rbd<br>然后在创建pvc就没有问题了。</p>
+<p>使用rbd做为pv的backend或storagclass的backend整体原理如下：<br>创建pvc—-对应在ceph pool内创建一个rbd对象。<br>pod挂载这个pvc—-将对应的rbd块通过内核rbd模块map到宿主机上。然后在mount到宿主机 &#x2F;var&#x2F;lib&#x2F;kubelet&#x2F;pods&#x2F;xxxx目录，在将这个目录根pod对bind mount。<br>删除pod—-在对应的host上umount目录然后将rbd块与宿主机unmap。<br>在kubernetes1.11之前的版本有个问题就是删除pod后，不会自动将rbd块从host上unmap。<br>PR如下 1.11版本已经修复这个问题<br><a href="https://github.com/kubernetes/kubernetes/pull/63579">https://github.com/kubernetes/kubernetes/pull/63579</a></p>
+<p>就是在使用pod如果挂载后端为rbd的pvc后，在底层实际上是会从ceph的pool里面将一个rbd块设备map的host上然后在mount到pod内，<br>需要注意的是：</p>
+<ul>
+<li>因为在k8s里面是直接用的是内核的rbd块，openstack用的是librbd接口，所以这里需要在每个host上内核要加载rbd模块，不然挂载不上去的，modprobe rbd。  </li>
+<li>ceph-rbd 在AccessMode为ReadWriteOnce情况下只支持单节点挂载，不能被多个pod同时使用这个pvc。也就是说一个host挂了，如果上面pod使用了ceph-rbd，哪里在另外一个host上重建这个pod时会报这个pvc已经被使用了，但在AccessMode为ReadWriteOnce+ReadOnlyMany的情况下支持一个pvc被多个pod挂载。</li>
+</ul>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s-storage-21.png"></p>
+<h4 id="local-pv"><a href="#local-pv" class="headerlink" title="local-pv"></a>local-pv</h4><p>Local-pv是让用户使用标准的k8s pv和pvc的接口使用node节点的本地存储，kubernetes1.7为alpha版本，1.14正式GA，这和我们上面说的host-path和empty-Volume有个共同点都是使用node节点的本地存储，但区别在于hostpath是单节点的本地存储，也就是说只有当pod调度到哪台节点便使用那台节点对应的存储，无法提供node亲和性和POD调度支持，但通过localpv可以在pv的定义中配置节点亲和性，这样对应的使用这个pvc的POD也会根据亲和性配置调度到对应的节点上，比如在local-pv的定义配置了主机亲和性为node-2，那么使用这个pvc的pod也会调度到node-2上。  </p>
+<p>使用场景：<br>1、分布式数据库和分布式文件系统（redis、ElasticSearch、memcache、ceph)，这类应用在应用本身能实现高可用，只是依靠localpv实现高性能存储。<br>2、需要临时缓存存储的应用，当应用删除后对应的数据也能随之清理，因为使用localpv可以灵活设置pv的回收策略。  </p>
+<p>测试版本：kubernetesv1.14.3<br>部署storageclass  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">  name: local-storage</span><br><span class="line">provisioner: kubernetes.io/no-provisioner</span><br><span class="line">volumeBindingMode: WaitForFirstConsumer</span><br></pre></td></tr></table></figure>
+
+<p>volumeBindingMode: WaitForFirstConsumer ：配置延迟绑定，也就是pv control并不会立刻将pvc与pv关联，而是等待pod调度后才去bond，还有种默认的Immediate模式则是当pvc创建时立刻绑定。  </p>
+<p>创建pv  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolume</span><br><span class="line">metadata:</span><br><span class="line">  name: example-pv</span><br><span class="line">spec:</span><br><span class="line">  capacity:</span><br><span class="line">    storage: 100Gi</span><br><span class="line">  volumeMode: Filesystem</span><br><span class="line">  accessModes:</span><br><span class="line">  - ReadWriteOnce</span><br><span class="line">  persistentVolumeReclaimPolicy: delete</span><br><span class="line">  storageClassName: local-storage</span><br><span class="line">  local:</span><br><span class="line">    path: /mnt/</span><br><span class="line">  nodeAffinity:</span><br><span class="line">    required:</span><br><span class="line">      nodeSelectorTerms:</span><br><span class="line">      - matchExpressions:</span><br><span class="line">        - key: kubernetes.io/hostname</span><br><span class="line">          operator: In</span><br><span class="line">          values:</span><br><span class="line">          - rke-node2</span><br></pre></td></tr></table></figure>
+<p>注意点 ： volumeMode: Filesystem为文件系统模式，也就是对应的目录，这里也可以直接设置为BlockVolume模式直接对应主机上的块设备，当需要在kube-apiserver、kube-controlmanager、kubelet开启–feature-gates&#x3D;BlockVolume&#x3D;true参数，但这个参数在1.13版本已经默认是true了，参考：<a href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/</a>  </p>
+<p>local path设置的就是对应宿主机的供挂载的目录，nodeselectorTerms设置的节点的亲和性。<br>创建pvc  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: PersistentVolumeClaim</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    cattle.io/creator: norman</span><br><span class="line">  name: example-local-claim</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  accessModes:</span><br><span class="line">  - ReadWriteOnce</span><br><span class="line">  resources:</span><br><span class="line">    requests:</span><br><span class="line">      storage: 100Gi</span><br><span class="line">  storageClassName: local-storage</span><br><span class="line">  volumeMode: Filesystem</span><br><span class="line">  volumeName: example-pv</span><br></pre></td></tr></table></figure>
+<p>创建POD使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kind: Pod</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: example-pv-pod</span><br><span class="line">spec:</span><br><span class="line">  volumes:</span><br><span class="line">    - name: example-pv-storage</span><br><span class="line">      persistentVolumeClaim:</span><br><span class="line">       claimName: example-local-claim</span><br><span class="line">  containers:</span><br><span class="line">    - name: example-pv-container</span><br><span class="line">      image: nginx</span><br><span class="line">      ports:</span><br><span class="line">        - containerPort: 80</span><br><span class="line">          name: &quot;http-server&quot;</span><br><span class="line">      volumeMounts:</span><br><span class="line">        - mountPath: &quot;/usr/share/nginx/html&quot;</span><br><span class="line">          name: example-pv-storage</span><br></pre></td></tr></table></figure>
+<p>局限性<br>1、目前local-pv不支持对空间申请管理，需要手动对空间进行配置和管理.<br>2、默认local pv的StorageClass的provisioner是kubernetes.io&#x2F;no-provisioner , 这是因为local pv不支持Dynamic Provisioning, 所以它没有办法在创建出pvc的时候, 自动创建对应pv.  </p>
+<p>static-provisioner配置   </p>
+<p>可以自己实现一个static-provisioner来创建和管理PV，可以直接使用社区已经写的static-provisioner：<a href="https://github.com/kubernetes-incubator/external-storage/tree/master/local-volume#option-1-using-the-local-volume-static-provisioner">https://github.com/kubernetes-incubator/external-storage/tree/master/local-volume#option-1-using-the-local-volume-static-provisioner</a><br>当然也可以自己实现，这里使用Rancher实现的static-provisioner<br><a href="https://github.com/rancher/local-path-provisioner">https://github.com/rancher/local-path-provisioner</a><br>部署  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml</span><br></pre></td></tr></table></figure>
+
+<p>默认pv的回收模式为delete模式，需要修改为recycle模式直接修改yaml即可。<br>执行后会部署  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">namespace/local-path-storage created</span><br><span class="line">serviceaccount/local-path-provisioner-service-account created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/local-path-provisioner-role created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/local-path-provisioner-bind created</span><br><span class="line">deployment.apps/local-path-provisioner created</span><br><span class="line">storageclass.storage.k8s.io/local-path created</span><br></pre></td></tr></table></figure>
+
+<p>查看POD  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n local-path-storage</span><br><span class="line">NAME                                    READY   STATUS    RESTARTS   AGE</span><br><span class="line">local-path-provisioner-848fdcff-tqwc2   1/1     Running   0          35s</span><br></pre></td></tr></table></figure>
+<p>查看storage-class  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get storageclass</span><br><span class="line">NAME         PROVISIONER             AGE</span><br><span class="line">local-path   rancher.io/local-path   4m17s</span><br></pre></td></tr></table></figure>
+
+<p>创建PVC  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/examples/pvc.yaml</span><br></pre></td></tr></table></figure>
+
+<p>在没创建pod使用此PVC前，默认模式为 WaitForFirstConsumer，所以pvc的状态会是pending状态。  </p>
+<p>创建POD  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/examples/pod.yaml</span><br></pre></td></tr></table></figure>
+
+<p>默认目录为&#x2F;opt&#x2F;local-path-provisioner目录下，可以在POD所在节点上查看<br>当我们需要进行细粒化配置时，如在node1节点上使用&#x2F;data目录，在node2节点使用&#x2F;data2目录，其他节点使用&#x2F;data3目录时可以修改 local-path-storage命名空间内的local-path-config这个configmap  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">kind: ConfigMap</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  name: local-path-config</span><br><span class="line">  namespace: local-path-storage</span><br><span class="line">data:</span><br><span class="line">  config.json: |-</span><br><span class="line">        &#123;</span><br><span class="line">                &quot;nodePathMap&quot;:[</span><br><span class="line">                &#123;</span><br><span class="line">                        &quot;node&quot;:&quot;DEFAULT_PATH_FOR_NON_LISTED_NODES&quot;,</span><br><span class="line">                        &quot;paths&quot;:[&quot;/opt/local-path-provisioner&quot;]</span><br><span class="line">                &#125;,</span><br><span class="line">                &#123;</span><br><span class="line">                        &quot;node&quot;:&quot;rke-node2&quot;,</span><br><span class="line">                        &quot;paths&quot;:[&quot;/data2&quot;]</span><br><span class="line">                &#125;</span><br><span class="line">                ]</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>更新成功后，查看  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs  pod/local-path-provisioner-848fdcff-lr2pj -n local-path-storage</span><br></pre></td></tr></table></figure>
+<p>可以看见其加载配置的信息。</p>
+<p>参考链接<br><a href="https://www.kubernetes.org.cn/3462.html">https://www.kubernetes.org.cn/3462.html</a><br><a href="https://blog.csdn.net/liukuan73/article/details/60089305">https://blog.csdn.net/liukuan73/article/details/60089305</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/05/26/gpu_user/" title="容器云平台GPU资源的应用"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/05/05/kubernetes_service/" title="kubernetes services">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

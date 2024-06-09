@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>neutron-高可用(1)--DVR | 我爱西红柿</title>
+  <meta name="description" content="环境 fuel8.0 介绍DVR简称分布式路由，M版前的neutron网络结构。   无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同com">
+<meta property="og:type" content="article">
+<meta property="og:title" content="neutron-高可用(1)--DVR">
+<meta property="og:url" content="http://yoursite.com/2017/07/23/dvr/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环境 fuel8.0 介绍DVR简称分布式路由，M版前的neutron网络结构。   无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同com">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-13.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-24.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-25.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-26.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-27.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-28.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-29.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-30.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-31.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-32.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-33.png">
+<meta property="article:published_time" content="2017-07-23T07:19:59.000Z">
+<meta property="article:modified_time" content="2017-07-23T07:19:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="openstack">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2017/07/23/dvr/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E7%94%A8DVR"><span class="toc-number">1.1.</span> <span class="toc-text">启用DVR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%8C%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">1，安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#compute%E8%8A%82%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text">compute节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E9%87%8A"><span class="toc-number">1.3.</span> <span class="toc-text">原理解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DVR%E6%A8%A1%E5%BC%8F%E4%B8%8B%E6%B5%81%E9%87%8F%E7%9A%84%E8%B5%B0%E5%90%91"><span class="toc-number">1.4.</span> <span class="toc-text">DVR模式下流量的走向</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%97%E5%8C%97%E6%B5%81%E9%87%8F%EF%BC%881%EF%BC%9AN%EF%BC%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">南北流量（1：N）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%97%E5%8C%97%E6%B5%81%E9%87%8F%EF%BC%881%EF%BC%9A1%EF%BC%89"><span class="toc-number">1.4.2.</span> <span class="toc-text">南北流量（1：1）</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-dvr" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      neutron-高可用(1)--DVR
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/07/23/dvr/" class="article-date">
+	  <time datetime="2017-07-23T07:19:59.000Z" itemprop="datePublished">2017-07-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/openstack/">openstack</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/openstack/" rel="tag">openstack</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/07/23/dvr/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.5k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 9(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>环境 fuel8.0</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>DVR简称分布式路由，M版前的neutron网络结构。<br> <img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-1.png"></p>
+<p> 无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。<br>在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同compute节点，在同一个compute节点就直接通过本机就能直接转发了。直接就通过tunnel到达另外一个compute节点，不在需要通过网络节点去做转发了，而配置了floatting ip的主机，直接通过本compute节点的L3 agent 通过br-ex连接外网。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-2.png"><br>进行深入前的一些基本概念的讲解：<br>路由策略<br>引用百科里的一句话<br>路由策略是一种基于目标网络进行路由更加灵活的数据包路由转发机制。应用了路由策略，路由器将通过路由图决定如何对需要路由的数据包进行处理，路由图决定了一个数据包的下一跳转发路由器。 路由策略的种类 大体上分为两种：一种是根据路由的目的地址来进行的策略称为：目的地址路由； 另一种是根据路由源地址来进行策略实施的称为：源地址路由！ 随着路由策略的发展现在有了第三种路由方式：智能均衡的策略方式！</p>
+<p>使用 ip rule 操作策略路由</p>
+<p>基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。<br>ip rule  查看策略路由表<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-3.png"></p>
+<p>数字越小，优先级越高</p>
+<p>规则0，它是优先级别最高的规则，规则规定，所有的包，都必须首先使用local表（254）进行路由。本规则不能被更改和删除。</p>
+<p>规则32766，规定所有的包，使用表main进行路由。本规则可以被更改和删除。</p>
+<p>规则32767，规定所有的包，使用表default进行路由。本规则可以被更改和删除。</p>
+<p>在默认情况下进行路由时，首先会根据规则0在本地路由表里寻找路由，如果目的地址是本网络，或是广播地址的话，在这里就可以找到合适的路由；如果路由失败，就会匹配下一个不空的规则，在这里只有32766规则，在这里将会在主路由表里寻找路由;如果失败，就会匹配32767规则，即寻找默认路由表。如果失败，路由将失败。重这里可以看出，策略性路由是往前兼容的。</p>
+<p>3232243201:	from 192.168.30.1&#x2F;24 lookup 3232243201 #这条规则的含义是规则3232243201 源ip为192.168.30.1&#x2F;24的包，使用local表3232243201 进行路由</p>
+<p>linux二层网络中一些基本名词</p>
+<p>TAP设备：如kvm创建虚拟机后，宿主机上的vnet0、vnet1等，是操作系统内核中的虚拟网络设备。<br>veth配对设备（veth pair）或ovs配对设备，它其实是一对网卡把一块叫veth，另外一块叫peer，当一个数据真被发送到其中一端中，veth的另外一端也会收到此帧。在虚拟化中常用veth pair来连接两个bridge，比如qbr网桥跟br-int网桥上的qvb-xxx和qvo-xxx就是一对veth pair。</p>
+<h3 id="启用DVR"><a href="#启用DVR" class="headerlink" title="启用DVR"></a>启用DVR</h3><p>以下配置的前提是开启了l2_population<br>l2population原理介绍如下<br><a href="http://blog.csdn.net/cloudman6/article/details/53167522">http://blog.csdn.net/cloudman6/article/details/53167522</a></p>
+<h3 id="1，安装"><a href="#1，安装" class="headerlink" title="1，安装"></a>1，安装</h3><h4 id="compute节点"><a href="#compute节点" class="headerlink" title="compute节点"></a>compute节点</h4><p>(1)安装l3-agent<br>(2)修改的内核参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysctl.conf</span><br><span class="line">net.ipv4.ip_forward = 1</span><br><span class="line">net.ipv4.conf.all.rp_filter = 0</span><br><span class="line">net.ipv4.conf.default.rp_filter = 0</span><br><span class="line"></span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+<p>（3）增加一块能上外网的网卡，并创建个br-ex网桥把这块网卡桥接到br-ex上</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-br br-ex</span><br><span class="line">ovs-vsctl add-port br-ex ethx</span><br></pre></td></tr></table></figure>
+<p>(4)配置l3agent.ini</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/neutron/l3_agent.ini</span><br><span class="line"></span><br><span class="line">interface_driver =neutron.agent.linux.interface.OVSInterfaceDriver</span><br><span class="line">use_namespaces = True</span><br><span class="line">agent_mode = dvr</span><br><span class="line">````</span><br><span class="line">vim /etc/neutron/plugins/ml2/ml2_conf.ini</span><br></pre></td></tr></table></figure>
+<p>[agent]<br>enable_distributed_routing&#x3D;True</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">重新启动 neutron-openvswitch-agent, netron-l3-agent ,openvswitch-switch 服务。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 网络节点</span><br></pre></td></tr></table></figure>
+<p>vim &#x2F;etc&#x2F;neutron&#x2F;l3_agent.ini<br>agent_mode &#x3D; dvr_snat</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line">vim /etc/neutron/plugins/ml2/ml2_conf.ini</span><br><span class="line">[agent]</span><br><span class="line">enable_distributed_routing=True</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重启neutron-server、netron-l3-agent ,openvswitch-switch 服务。</span><br></pre></td></tr></table></figure>
+
+<p>配置成功后可以neutron agent-list 看见compute的l3-agent。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-4.png"></p>
+<h3 id="原理解释"><a href="#原理解释" class="headerlink" title="原理解释"></a>原理解释</h3><p>1台control节点（server-4），2台compute（server-5、server-6）、外网为192.168.122.0&#x2F;24<br>在control节点上在控制台创建个网络，创建个路由器，设置网关，在路由器上将网络端口添加进去。在基于此网络创建个主机。<br>可以发现在control节点上创建路由器时，会同时在namespace里面创建qroute-xxx和snat-xxx两个命名空间，snat-xxx命名空间会根据创建的子网来添加接口，qg-xxx和sg-xxx，其中qg-xxx上面配置了外网ip，sg-xxx配置的是本子网可用的第一个ip（前两个为网关和dhcp）</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-5.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-6.png"></p>
+<p>当该网络内其他主机需要上外网时，源ip会已postrouting形式，snat成路由器的网关，这步操作会在snat-xx命名空间内做</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-7.png"><br>在传统网络架构下，snat操作本来是应该在qroute下进行，而在DVR模式下qroute-xxx完全是连接内网的网关。</p>
+<p>当创建一个实例时，会自动在实例所在的compute节点创建一个qroute-xxx 此qrouter-xxx的ip和mac都与control节点的一样。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-8.png"></p>
+<p>当给实例分配一个floating_ip时，在自动在实例所在的计算节点namespace里面生成fip-xxx命名空间</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-9.png"></p>
+<p>需要注意的是fip-xxx这个id是与你的public网络id是一致<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-10.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-11.png"></p>
+<p>也就是说一个public网络对应一个fip-xxx namespace,在下面会解释为什么这样做<br>节点fg-xxx对应的是外网接口，fpr接口与qrouter接口一对veth pair</p>
+<h3 id="DVR模式下流量的走向"><a href="#DVR模式下流量的走向" class="headerlink" title="DVR模式下流量的走向"></a>DVR模式下流量的走向</h3><h4 id="南北流量（1：N）"><a href="#南北流量（1：N）" class="headerlink" title="南北流量（1：N）"></a>南北流量（1：N）</h4><p>所谓南北流量（1：N）实际上就是指SNAT就是子网内的主机通过路由器的floatingIP去上外网<br>1，首先需要确认router已经发到compute节点，我这router叫test2<br>可以看见已经在server-6上有了</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-12.png"></p>
+<p>我在vm（192.168.50.4）上面ping百度<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-13.png"></p>
+<p>因为是跨网段的，所以发送给默认路由，就是网关。<br>在网关上路由策略可以看见发现，发给默认路由192.168.50.1的数据，最终会发给192.168.50.3</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-14.png"></p>
+<p>那192.168.50.3在哪呢，通过前面分析，我们知道，192.168.50.3在control节点snat-xx命名空间里面<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-15.png"></p>
+<p>然后在iptables里面做一次snat<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-16.png"></p>
+<p>就出外网了，因为我这是KVM虚拟机里面所以还要nat一层。</p>
+<p>ping public网络 192.168.122.1 然后抓包分析</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-17.png"></p>
+<p>所以SNAT流程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">                    （compute节点）         vxlan    （network节点）</span><br><span class="line">vm---&gt;qr-xxx---&gt;br-int----&gt;br-tun---&gt;  br-tun-----&gt;br-int-----&gt;snat-xxx----br-ex</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="南北流量（1：1）"><a href="#南北流量（1：1）" class="headerlink" title="南北流量（1：1）"></a>南北流量（1：1）</h4><p>给主机192.168.50.4绑定一个floating_ip</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-18.png"><br>观察control节点和compute节点的namespace发现<br>control节点<br>没有发生变化，而vm所在的compute的节点的namespace发现多了一个<br>fip命名空间<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-19.png"></p>
+<p>注意看这个fip的ip是我们创建的外网网络id，这个在上面已经说过了。<br>查看一个这个fip-xxx的内容</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-20.png"></p>
+<p>vm绑定floating_ip后如何跟外网进行通信</p>
+<p>1，vm ping外网，首先数据包丢给默认路由，qroute，<br>2，查找路由表<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-21.png"></p>
+<p>命中table 16<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-22.png"></p>
+<p>走rfp端口</p>
+<p>3，然后进行snat</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-23.png"><br>4，然后发送给fip-xxx命名空间</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-24.png"></p>
+<p>因为已经进行snat了地址变成外网的，所以这里都default route 直接给外网网关，完成</p>
+<p>如下图<br>来源<a href="http://www.cnblogs.com/sammyliu/p/4713562.html">http://www.cnblogs.com/sammyliu/p/4713562.html</a></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-25.png"><br>vm绑定vip后外网DNAT进入内网主机<br>1，arp-proxy<br>外网ip要ping通内网，首先需要知道内网ip的mac，fip，并没有直接绑定在一个特定的端口是怎么知道mac的呢<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-26.png"></p>
+<p>进行路由追踪发现<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-27.png"></p>
+<p>arping发现mac地址为 尾数为C7:C3的</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-28.png"></p>
+<p>那这个mac地址为谁的</p>
+<p>竟然是fip-xxx的fg端口<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-29.png"></p>
+<p>原来是fip-xxx在fg这个端口上做了arp-proxy，这样，fg既可以响应发给它自己的arp请求，也可以响应发给经过它路由的端的arp请求</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-30.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-31.png"><br>可以看见内核参数里面已经开启了</p>
+<p>2，将包丢给路由器</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-32.png"><br>我们从fip-xxx ip route 可以看见包被丢给169.254.93.254这个接口了，这个接口是qroute-xxx的一个接口</p>
+<p>3，qroute–xxx做DNAT<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-33.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">流程如下</span><br><span class="line"></span><br><span class="line">        arp欺骗           通过fpr       DNAT</span><br><span class="line">extra-----&gt;fip--xxx----&gt;qroute-----&gt; VM</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>为什么要独立出一个snat namespace来做SNAT，而不继续之前的qrouter多SNAT方案？</p>
+<p>因为 当创建子网的第一台主机时，会同时在compute节点上也创建个qrouter-xxx的namespace，但computer节点上的qrouter并不做snat功能，只做当有绑定float_ip时 连接FIPnamespace中转，所以需要将SNAT功能独立出来，于是就有了SNATnamespace当然这个也只会在网络节点的namespace里面创建。</p>
+<p>当虚拟机绑定fip时，为什么compute要多出一个fip namespace，不直接在qrouter上的qg直接连接br-ex？<br>是为了减少暴露在外部网络上的mac和ip地址，所以才需要有fip的出现。由于传统router只在网络节点上，数量很少，直接在传统router的qg上配floating ip和用其mac地址应答arp请求，所以没这个问题。但是dvr router由于分布到大量的compute node（每个私有网络都可能有一个router），如果再这么做，会导致有大量router的qg接口暴露在外部网络上，因此分离出fip，而fip是按照（compute node，external network）分配的，数量少很多。一个external_network就一个另外fip也可以做集中的arp proxy，不需要把floating ip真正绑到fip的接口上。同时也可以减少交换机MAC地址表的占用，减轻交换机的负担。</p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/08/05/crush/" title="ceph crushmap"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2017/07/20/openssl_ca/" title="openssl证书生成">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

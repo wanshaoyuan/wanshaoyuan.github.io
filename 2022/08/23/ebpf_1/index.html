@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>eBPF学习摘要1(概述、理论) | 我爱西红柿</title>
+  <meta name="description" content="eBPF学习摘要1(概述、理论)概述早期内核包过滤是将网络数据包拷贝到用户态进行过滤，这样整体的包过滤性能低，后续在1992年的BSD操作系统上引入BPF包过滤技术，Linux在内核2.1.75正式引入BPF技术。网络数据包过滤可以直接在内核中执行，避免将网络数据包在用户态执行，极大提高了包过滤性能。如tcpdump工具就是利用BPF技术实现。2014年对BPF技术进行全面扩展，诞生了eBPF（e">
+<meta property="og:type" content="article">
+<meta property="og:title" content="eBPF学习摘要1(概述、理论)">
+<meta property="og:url" content="http://yoursite.com/2022/08/23/ebpf_1/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="eBPF学习摘要1(概述、理论)概述早期内核包过滤是将网络数据包拷贝到用户态进行过滤，这样整体的包过滤性能低，后续在1992年的BSD操作系统上引入BPF包过滤技术，Linux在内核2.1.75正式引入BPF技术。网络数据包过滤可以直接在内核中执行，避免将网络数据包在用户态执行，极大提高了包过滤性能。如tcpdump工具就是利用BPF技术实现。2014年对BPF技术进行全面扩展，诞生了eBPF（e">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_11.png">
+<meta property="article:published_time" content="2022-08-23T13:45:59.000Z">
+<meta property="article:modified_time" content="2022-08-23T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2022/08/23/ebpf_1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#eBPF%E5%AD%A6%E4%B9%A0%E6%91%98%E8%A6%811-%E6%A6%82%E8%BF%B0%E3%80%81%E7%90%86%E8%AE%BA"><span class="toc-number">1.</span> <span class="toc-text">eBPF学习摘要1(概述、理论)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">实现原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%86%85%E6%A0%B8%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text">如何保证内核安全性和优缺点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E5%89%8D%E8%A1%8C%E4%B8%9A%E8%90%BD%E5%9C%B0%E6%83%85%E5%86%B5"><span class="toc-number">1.3.</span> <span class="toc-text">目前行业落地情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%83%BD%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">能解决什么问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81eBPF%E8%83%BD%E5%AE%9E%E7%8E%B0%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7"><span class="toc-number">1.5.</span> <span class="toc-text">为什么需要eBPF能实现可观测性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%95%E6%9C%9B%E6%9C%AA%E6%9D%A5"><span class="toc-number">1.6.</span> <span class="toc-text">展望未来</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ebpf_1" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      eBPF学习摘要1(概述、理论)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2022/08/23/ebpf_1/" class="article-date">
+	  <time datetime="2022-08-23T13:45:59.000Z" itemprop="datePublished">2022-08-23</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/Linux/" rel="tag">Linux</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2022/08/23/ebpf_1/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.7k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="eBPF学习摘要1-概述、理论"><a href="#eBPF学习摘要1-概述、理论" class="headerlink" title="eBPF学习摘要1(概述、理论)"></a>eBPF学习摘要1(概述、理论)</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a><a href="#%E6%A6%82%E8%BF%B0" title="概述"></a>概述</h3><p>早期内核包过滤是将网络数据包拷贝到用户态进行过滤，这样整体的包过滤性能低，后续在1992年的BSD操作系统上引入BPF包过滤技术，Linux在内核2.1.75正式引入BPF技术。网络数据包过滤可以直接在内核中执行，避免将网络数据包在用户态执行，极大提高了包过滤性能。如tcpdump工具就是利用BPF技术实现。2014年对BPF技术进行全面扩展，诞生了eBPF（extended Berkeley Packet Filter）使得BPF不仅仅是网络栈层面功能。后续iovisor 引入 BCC、bpftrace 等工具，成为 eBPF 在跟踪和排错领域的最佳实践。另外 eBPF 最重大的特性是在内核中运行沙盒程序而无需修改内核源码和重新编译内核就可以扩展内核的功能，Cilium、Katran、Falco 等一系列基于 eBPF 优化网络和安全的开源项目也逐步诞生。并且，越来越多的开源和商业解决方案开始借助 eBPF，优化其网络、安全以及观测的性能。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_1.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_2.png"><br>图片来源：<a href="https://blog.csdn.net/eBPF_Kindling/article/details/123575619">https://blog.csdn.net/eBPF_Kindling&#x2F;article&#x2F;details&#x2F;123575619</a></p>
+<p>发展历程<br>1992年：BPF全称Berkeley Packet Filter，诞生初衷提供一种内核中自定义报文过滤的手段（类汇编），提升抓包效率。（tcpdump）<br>2011年：linux kernel 3.2版本对BPF进行重大改进，引入BPF JIT，使其性能得到大幅提升。<br>2014年： linux kernel 3.15版本，BPF扩展成eBPF，其功能范畴扩展至：内核跟踪、性能调优、协议栈QoS等方面。与之配套改进包括：扩展BPF ISA指令集、提供高级语言（C）编程手段、提供MAP机制、提供Help机制、引入Verifier机制等。<br>2016年：linux kernel 4.8版本，eBPF支持XDP，进一步拓展该技术在网络领域的应用。随后Netronome公司提出eBPF硬件卸载方案。Cilium项目正式发布。<br>2018年：linux kernel 4.18版本，引入BTF，将内核中BPF对象（Prog&#x2F;Map）由字节码转换成统一结构对象，这有利于eBPF对象与Kernel版本的配套管理，为eBPF的发展奠定基础。<br>2018年：从kernel 4.20版本开始，eBPF成为内核最活跃的项目之一，新增特性包括：sysctrl hook、flow dissector、struct_ops、lsm hook、ring buffer等。场景范围覆盖容器、安全、网络、跟踪等<br>2021年：微软、Facebook、Google、Isovalent、NetFlix成立eBPF基金会，同年Cilium发布基于eBPF的Service Mesh解决方案<br>eBPF 基本架构及使用<br>参考链接：<a href="https://blog.51cto.com/dengchj/2944202">https://blog.51cto.com/dengchj/2944202</a></p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a><a href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86" title="实现原理"></a>实现原理</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_3.png"><br>用户态<br>1、用户编写 eBPF 程序，可以使用 eBPF 汇编或者 eBPF 特有的 C 语言来编写。<br>2、使用 LLVM&#x2F;CLang 编译器，将 eBPF 程序编译成 eBPF 字节码。<br>3、调用 bpf() 系统调用把 eBPF 字节码加载到内核。</p>
+<p>内核态<br>1、当用户调用 bpf() 系统调用把 eBPF 字节码加载到内核时，内核先会对 eBPF 字节码进行安全验证。<br>2、使用 JIT（Just In Time）技术将 eBPF 字节编译成本地机器码（Native Code）。<br>3、然后根据 eBPF 程序的功能，将 eBPF 机器码挂载到内核的不同运行路径上（如用于跟踪内核运行状态的 eBPF 程序将会挂载在 kprobes 的运行路径上）。当内核运行到这些路径时，就会触发执行相应路径上的 eBPF 机器码。<br>4、通过map与用户空间程序交互</p>
+<h4 id="如何保证内核安全性和优缺点"><a href="#如何保证内核安全性和优缺点" class="headerlink" title="如何保证内核安全性和优缺点"></a><a href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%86%85%E6%A0%B8%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8C%E4%BC%98%E7%BC%BA%E7%82%B9" title="如何保证内核安全性和优缺点"></a>如何保证内核安全性和优缺点</h4><ul>
+<li><p>需要特权执行：eBPF程序加载到Linux内核的进程都必须在特权模式(root)下运行，或者需要CAP_BPF功能，不受信任的程序不能加载eBPF程序</p>
+</li>
+<li><p>验证器：加载eBPF程序到内核后需要经过验证如有界循环、越界访问内存、使用未初始化的变量。</p>
+</li>
+<li><p>程序执行保护：已经加载在内核中的eBPF程序会进入read-only模式试图修改会直接crash内核。</p>
+</li>
+<li><p>限制内核访问范围： eBPF程序不能直接访问任意内核其他函数。必须通过eBPF helpers访问固定helpers函数。</p>
+</li>
+<li><p>eBPF 堆栈大小被限制在 MAX_BPF_STACK，截止到内核 Linux 5.8 版本，被设置为 512字节。</p>
+</li>
+<li><p>eBPF 字节码大小最初被限制为 4096 条指令，截止到内核 Linux 5.8 版本， 当前已将放宽至 100 万指令。</p>
+</li>
+</ul>
+<p>优点：<br>1.速度和性能。 内核态进行，速度和效率高。<br>2.灵活：无需修改内核代码，即可扩展内核功能拥有无限想象空间。<br>3.低侵入性：基于eBPF实现链路追踪、服务治理等场景不需要侵入用户层。</p>
+<p>缺点：<br>1.eBPF本身一些特性和能力依赖新版本内核。<br>2.学习成本高，需要对Linux Kernel和操作系统原理有深入了解。</p>
+<h3 id="目前行业落地情况"><a href="#目前行业落地情况" class="headerlink" title="目前行业落地情况"></a><a href="#%E7%9B%AE%E5%89%8D%E8%A1%8C%E4%B8%9A%E8%90%BD%E5%9C%B0%E6%83%85%E5%86%B5" title="目前行业落地情况"></a>目前行业落地情况</h3><p>应用</p>
+<ul>
+<li><p>动态追踪：bcc、bpftrace</p>
+</li>
+<li><p>观测监控：Pixie、Hubble</p>
+</li>
+<li><p>网络：Cilium、Katran</p>
+</li>
+<li><p>安全：Falco、Tracee</p>
+<h3 id="能解决什么问题"><a href="#能解决什么问题" class="headerlink" title="能解决什么问题"></a><a href="#%E8%83%BD%E8%A7%A3%E5%86%B3%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98" title="能解决什么问题"></a>能解决什么问题</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_4.png"></p>
+</li>
+</ul>
+<h3 id="为什么需要eBPF能实现可观测性"><a href="#为什么需要eBPF能实现可观测性" class="headerlink" title="为什么需要eBPF能实现可观测性"></a><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81eBPF%E8%83%BD%E5%AE%9E%E7%8E%B0%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7" title="为什么需要eBPF能实现可观测性"></a>为什么需要eBPF能实现可观测性</h3><p>eBPF可观测性-指标采集<br>eBPF除了常规的指标监控如CPU、内存等，还可以监控细粒度的系统调用等信息，通过内核Kprobe或者Tracepoint实现;<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_5.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_6.png"></p>
+<p>eBPF可观测性-链路追踪<br>与传统APM相比，eBPF进行链路追踪不需要与业务本身进行绑定。通过拦截sock相关的send&#x2F;recv操作，解析协议头，获得进程之间的调用关系，可进一步关联Kubernetes元数据，获得容器、服务之间的调用关系;<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_7.png"></p>
+<h3 id="展望未来"><a href="#展望未来" class="headerlink" title="展望未来"></a><a href="#%E5%B1%95%E6%9C%9B%E6%9C%AA%E6%9D%A5" title="展望未来"></a>展望未来</h3><p>1、基于eBPF的服务网格<br>去除每个pod的sidecar，内核态实现服务治理（cilium1.12已实现)<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_8.png"></p>
+<p>2、基于eBPF的负载均衡器<br>利用 socket eBPF，可以在不用直接处理报文和NAT 转换的前提下，实现了负载均衡逻辑。Service网络 POD&lt;–&gt; Service &lt;–&gt; POD优化成 POD &lt;–&gt; POD，从而使Service网络性能基本等同于POD 网络。软件结构如下：<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_9.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_10.png"></p>
+<p>3、基于eBPF的网络安全策略<br>不再依赖 iptables，不需要创建巨量的 iptables rule，从而显著降低 iptables 带来的性能影响。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp1_11.png"></p>
+<p>参考链接：</p>
+<p><a href="https://mp.weixin.qq.com/s/Xr8ECrS_fR3aCT1vKJ9yIg">https://mp.weixin.qq.com/s/Xr8ECrS_fR3aCT1vKJ9yIg</a><br><a href="https://mp.weixin.qq.com/s?__biz=Mzg5Mjc3MjIyMA==&mid=2247544625&idx=2&sn=7ba07582e0b7fdc0ff3179f2fa2b44d4&source=41#wechat_redirect">https://mp.weixin.qq.com/s?__biz&#x3D;Mzg5Mjc3MjIyMA&#x3D;&#x3D;&amp;mid&#x3D;2247544625&amp;idx&#x3D;2&amp;sn&#x3D;7ba07582e0b7fdc0ff3179f2fa2b44d4&amp;source&#x3D;41#wechat_redirect</a><br><a href="https://blog.csdn.net/eBPF_Kindling/article/details/123575619">https://blog.csdn.net/eBPF_Kindling&#x2F;article&#x2F;details&#x2F;123575619</a><br><a href="https://www.51cto.com/article/715674.html">https://www.51cto.com/article/715674.html</a><br><a href="https://blog.csdn.net/m0_46700908/article/details/124464577?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-124464577-blog-123575619.t5_layer_eslanding_D_0&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~CTRLIST~Rate-1-124464577-blog-123575619.t5_layer_eslanding_D_0&utm_relevant_index=2">https://blog.csdn.net/m0_46700908&#x2F;article&#x2F;details&#x2F;124464577?spm&#x3D;1001.2101.3001.6650.1&amp;utm_medium&#x3D;distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-124464577-blog-123575619.t5_layer_eslanding_D_0&amp;depth_1-utm_source&#x3D;distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-124464577-blog-123575619.t5_layer_eslanding_D_0&amp;utm_relevant_index&#x3D;2</a><br><a href="https://colobu.com/2022/05/22/use-ebpf-to-trace-rpcx-microservices/">https://colobu.com/2022/05/22/use-ebpf-to-trace-rpcx-microservices/</a><br><a href="https://arthurchiao.art/blog/ebpf-and-k8s-zh/">https://arthurchiao.art/blog/ebpf-and-k8s-zh/</a><br><a href="https://zhuanlan.zhihu.com/p/480811707">https://zhuanlan.zhihu.com/p/480811707</a><br><a href="https://github.com/mikeroyal/eBPF-Guide">https://github.com/mikeroyal/eBPF-Guide</a><br><a href="https://zhuanlan.zhihu.com/p/373090595">https://zhuanlan.zhihu.com/p/373090595</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2022/09/18/ebpf_2/" title="eBPF学习摘要2—工具使用(bpftrace）"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2022/07/27/fio_etcd/" title="ETCD集群读写慢问题分析">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

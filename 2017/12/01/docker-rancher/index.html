@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Docker 管理平台(Rancher) | 我爱西红柿</title>
+  <meta name="description" content="环境信息3台服务器192.168.2.110 rancher192.168.2.112 docker0192.168.2.113 docker1   软件版本操作系统：centos7.3rancher：v1.6.11在rancher上安装rancher   概念：http:&#x2F;&#x2F;rancher.com&#x2F;docs&#x2F;rancher&#x2F;v1.6&#x2F;zh&#x2F;来自rancher官方文档Rancher是一个开源的企业">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 管理平台(Rancher)">
+<meta property="og:url" content="http://yoursite.com/2017/12/01/docker-rancher/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环境信息3台服务器192.168.2.110 rancher192.168.2.112 docker0192.168.2.113 docker1   软件版本操作系统：centos7.3rancher：v1.6.11在rancher上安装rancher   概念：http:&#x2F;&#x2F;rancher.com&#x2F;docs&#x2F;rancher&#x2F;v1.6&#x2F;zh&#x2F;来自rancher官方文档Rancher是一个开源的企业">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_46.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_11.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_12.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_14.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_15.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_16.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_17.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_18.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_19.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_20.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_21.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_22.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_23.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_24.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_25.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_26.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_27.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_28.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_29.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_30.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_31.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_47.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_33.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_34.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_35.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_36.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_37.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_38.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_39.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_40.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_41.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_42.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_43.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_44.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_45.png">
+<meta property="article:published_time" content="2017-12-01T13:45:59.000Z">
+<meta property="article:modified_time" content="2017-12-01T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2017/12/01/docker-rancher/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5%EF%BC%9Ahttp-rancher-com-docs-rancher-v1-6-zh"><span class="toc-number">1.</span> <span class="toc-text">概念：http:&#x2F;&#x2F;rancher.com&#x2F;docs&#x2F;rancher&#x2F;v1.6&#x2F;zh&#x2F;</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85"><span class="toc-number">2.</span> <span class="toc-text">单节点安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HA%E6%96%B9%E5%BC%8F%E5%AE%89%E8%A3%85"><span class="toc-number">3.</span> <span class="toc-text">HA方式安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83"><span class="toc-number">3.1.</span> <span class="toc-text">配置环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEkeepalived"><span class="toc-number">3.2.</span> <span class="toc-text">配置keepalived</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmariadb-galera%E9%9B%86%E7%BE%A4"><span class="toc-number">3.3.</span> <span class="toc-text">配置mariadb galera集群</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEnginx%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86"><span class="toc-number">3.4.</span> <span class="toc-text">配置nginx反向代理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">基本使用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E5%8D%95%E4%B8%BB%E6%9C%BA%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8"><span class="toc-number">4.1.</span> <span class="toc-text">构建单主机容器应用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E5%A4%9A%E4%B8%BB%E6%9C%BA%E7%9A%84%E5%AE%B9%E5%99%A8%E9%9B%86%E7%BE%A4%E5%BA%94%E7%94%A8"><span class="toc-number">4.2.</span> <span class="toc-text">构建多主机的容器集群应用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rancher%E7%BD%91%E7%BB%9C"><span class="toc-number">5.</span> <span class="toc-text">rancher网络</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-docker-rancher" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker 管理平台(Rancher)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/12/01/docker-rancher/" class="article-date">
+	  <time datetime="2017-12-01T13:45:59.000Z" itemprop="datePublished">2017-12-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/docker/" rel="tag">docker</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/12/01/docker-rancher/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.6k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 15(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <p>环境信息<br>3台服务器<br>192.168.2.110 rancher<br>192.168.2.112 docker0<br>192.168.2.113 docker1  </p>
+<p>软件版本<br>操作系统：centos7.3<br>rancher：v1.6.11<br>在rancher上安装rancher  </p>
+<h3 id="概念：http-rancher-com-docs-rancher-v1-6-zh"><a href="#概念：http-rancher-com-docs-rancher-v1-6-zh" class="headerlink" title="概念：http://rancher.com/docs/rancher/v1.6/zh/"></a>概念：<a href="http://rancher.com/docs/rancher/v1.6/zh/">http://rancher.com/docs/rancher/v1.6/zh/</a></h3><p>来自rancher官方文档<br>Rancher是一个开源的企业级容器管理平台。通过Rancher，企业再也不必自己使用一系列的开源软件去从头搭建容器服务平台。Rancher提供了在生产环境中使用的管理Docker和Kubernetes的全栈化容器部署与管理平台。</p>
+<p>Rancher由以下四个部分组成：</p>
+<p>基础设施编排<br>Rancher可以使用任何公有云或者私有云的Linux主机资源。Linux主机可以是虚拟机，也可以是物理机。Rancher仅需要主机有CPU，内存，本地磁盘和网络资源。从Rancher的角度来说，一台云厂商提供的云主机和一台自己的物理机是一样的。</p>
+<p>Rancher为运行容器化的应用实现了一层灵活的基础设施服务。Rancher的基础设施服务包括网络， 存储， 负载均衡， DNS和安全模块。Rancher的基础设施服务也是通过容器部署的，所以同样Rancher的基础设施服务可以运行在任何Linux主机上。</p>
+<p>容器编排与调度<br>很多用户都会选择使用容器编排调度框架来运行容器化应用。Rancher包含了当前全部主流的编排调度引擎，例如Docker Swarm， Kubernetes， 和Mesos。同一个用户可以创建Swarm或者Kubernetes集群。并且可以使用原生的Swarm或者Kubernetes工具管理应用。</p>
+<p>除了Swarm，Kubernetes和Mesos之外，Rancher还支持自己的Cattle容器编排调度引擎。Cattle被广泛用于编排Rancher自己的基础设施服务以及用于Swarm集群，Kubernetes集群和Mesos集群的配置，管理与升级。</p>
+<p>应用商店<br>Rancher的用户可以在应用商店里一键部署由多个容器组成的应用。用户可以管理这个部署的应用，并且可以在这个应用有新的可用版本时进行自动化的升级。Rancher提供了一个由Rancher社区维护的应用商店，其中包括了一系列的流行应用。Rancher的用户也可以创建自己的私有应用商店。</p>
+<p>企业级权限管理<br>Rancher支持灵活的插件式的用户认证。支持Active Directory，LDAP， Github等 认证方式。 Rancher支持在环境级别的基于角色的访问控制 (RBAC)，可以通过角色来配置某个用户或者用户组对开发环境或者生产环境的访问权限。</p>
+<p>rancher本身也是个master&#x2F;agent的架构模式，在server端安装的是rancher-server，被rancher纳管的机器，安装rancher-agent等其他rancher组件。</p>
+<h3 id="单节点安装"><a href="#单节点安装" class="headerlink" title="单节点安装"></a>单节点安装</h3><p>container-0上<br>通过容器的方式安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart=unless-stopped -p 8080:8080 rancher/server</span><br></pre></td></tr></table></figure>
+
+<h3 id="HA方式安装"><a href="#HA方式安装" class="headerlink" title="HA方式安装"></a>HA方式安装</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_1.png"></p>
+<p>组件分配<br>vip 192.168.2.120<br>192.168.2.110 rancher-server、nginx、mariadb、keepalived  </p>
+<p>192.168.2.112 rancher-server、nginx、mariadb、keepalived  </p>
+<p>192.168.2.113 rancher-server、nginx、mariadb、keepalived  </p>
+<p>建议采用3台host<br>3台host上面都部署keepalive+rancher+nginx+mysql<br>nginx做反向代理<br>keepalive用于管理vip落到健康的节点<br>mysql做galera集群，保证3个节点数据库一致  </p>
+<h4 id="配置环境"><a href="#配置环境" class="headerlink" title="配置环境"></a>配置环境</h4><p>绑定hosts<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_2.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/hosts 192.168.2.112:/etc/hosts  </span><br><span class="line">scp /etc/hosts 192.168.2.113:/etc/hosts  </span><br></pre></td></tr></table></figure>
+<p>在三台服务器上安装nginx和keepalived  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install nginx keepalived -y</span><br></pre></td></tr></table></figure>
+
+<p>三台服务器启动nginx  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start nginx &amp;&amp; systemctl enable nginx  </span><br></pre></td></tr></table></figure>
+<p>编写测试网页<br>每个host上都不同，以此来验证。  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@container-0 ~]# echo &quot;container-0&quot; &gt; /usr/share/nginx/html/index.html</span><br><span class="line">[root@container-1 ~]# echo  &quot;container-1&quot; &gt; /usr/share/nginx/html/index.html</span><br><span class="line">[root@container-2 ~]# echo  &quot;container-2&quot; &gt; /usr/share/nginx/html/index.html</span><br></pre></td></tr></table></figure>
+<p>重启nginx  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart nginx</span><br></pre></td></tr></table></figure>
+
+<p>验证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_3.png"></p>
+<h4 id="配置keepalived"><a href="#配置keepalived" class="headerlink" title="配置keepalived"></a>配置keepalived</h4><p>修改配置前先备份配置文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/keepalived/keepalived.conf /etc/keepalived/keepalived.conf.bak</span><br></pre></td></tr></table></figure>
+
+<p>编辑keepalived配置文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line">vrrp_script check_running &#123;</span><br><span class="line">   script &quot;/opt/check.sh&quot;</span><br><span class="line">   interval 10 #执行的间隔时间</span><br><span class="line">   weight -20  # script执行失败vrrp_instance的优先级会减少20，比如master为100 slave为90，master故障后优先级掉到80，slave比master高，则vip到slave，若，master恢复优先级又会大于backup节点mater重新接管</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER #设置为主服务器</span><br><span class="line">    interface ens3 #vip放置的网卡</span><br><span class="line">    virtual_router_id 51 #主、备必须一样 ,这样加入一个集群</span><br><span class="line">    priority 100 #(主、备机取不同的优先级，主机值较大，备份机值较小,值越大优先级越高)</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS #VRRP认证方式，主备必须一致</span><br><span class="line">        auth_pass 1111 ##(密码)</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.2.120 #vip地址</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123; #执行服务检查</span><br><span class="line">      check_running</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>scp一份到另外两个备节点    </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/keepalived/keepalived.conf container-1:/etc/keepalived/keepalived.conf</span><br><span class="line">scp /etc/keepalived/keepalived.conf container-2:/etc/keepalived/keepalived.conf</span><br></pre></td></tr></table></figure>
+<p>两个备节点修改下配置文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">! Configuration File for keepalived</span><br><span class="line">vrrp_script check_running &#123;</span><br><span class="line">   script &quot;/opt/check.sh&quot;  #检查脚本</span><br><span class="line">   interval 10</span><br><span class="line">   weight -20</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP #节点类型为backup</span><br><span class="line">    interface ens3</span><br><span class="line">    virtual_router_id 51</span><br><span class="line">    priority 90 #优先级要比master节点低</span><br><span class="line">    advert_int 1</span><br><span class="line">    authentication &#123;</span><br><span class="line">        auth_type PASS</span><br><span class="line">        auth_pass 1111</span><br><span class="line">    &#125;</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        192.168.2.120</span><br><span class="line">    &#125;</span><br><span class="line">    track_script &#123;</span><br><span class="line">      check_running</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编写进程检测脚本为防止脑裂。(container-1和cotainer-2上的脚本需要修改ping那hostname，别ping自己。)<br>vim &#x2F;opt&#x2F;check.sh   </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">function check_process &#123;</span><br><span class="line">  ps -ef |grep nginx|grep -v grep &amp;&gt;/dev/null</span><br><span class="line">  value=`echo $?`</span><br><span class="line">  if [ $value -ne 0 ];then</span><br><span class="line">   pkill keepalived</span><br><span class="line">  fi</span><br><span class="line">&#125;</span><br><span class="line">#如果ping集群另外机器和网关都ping不通，则本身网络出问题，为防止脑裂，自杀。</span><br><span class="line">function check_network &#123;</span><br><span class="line">  ping container-1 -c 5 &amp;&gt;/dev/null</span><br><span class="line">  value1=`echo $?`</span><br><span class="line">  ping container-2 -c 5 &amp;&gt;/dev/null</span><br><span class="line">  value2=`echo $?`</span><br><span class="line">  ping 192.168.2.1 -c 5 &amp;&gt;/dev/null</span><br><span class="line">  value3=`echo $?`</span><br><span class="line">  if [ $value1 -ne 0 -a $value2 -ne 0 -a $value3 -ne 0 ];then</span><br><span class="line">    pkill keepalived</span><br><span class="line">  fi</span><br><span class="line">&#125;</span><br><span class="line">main() &#123;</span><br><span class="line"> check_process</span><br><span class="line"> check_network</span><br><span class="line">&#125;</span><br><span class="line">main</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>添加执行权限  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod a+x /opt/check.sh   </span><br></pre></td></tr></table></figure>
+<p>脚本scp到container-1、container-2的&#x2F;opt&#x2F;目录，添加执行权限  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">scp /opt/check.sh container-1:/opt/check.sh</span><br><span class="line">scp /opt/check.sh container-2:/opt/check.sh</span><br><span class="line">ssh container-1 &quot;chmod a+x /opt/check.sh&quot;</span><br><span class="line">ssh container-2 &quot;chmod a+x /opt/check.sh&quot;</span><br></pre></td></tr></table></figure>
+<p>container-1和container-2启动keepalived</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start keepalived &amp;&amp; systemctl enable keepalived</span><br></pre></td></tr></table></figure>
+<p>验证keepalived<br>验证nginx进程被kill掉时 vip迁移<br>目前vip在master节点ens3上<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_46.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_4.png"></p>
+<p>将master节点的nginx kill掉<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_5.png"><br>去把container-2的nginx kill掉<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_6.png"><br>验证网络出问题时vip的迁移动<br>将container-0的 ens3网卡关闭  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifdown ens3</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_7.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_8.png"></p>
+<h4 id="配置mariadb-galera集群"><a href="#配置mariadb-galera集群" class="headerlink" title="配置mariadb galera集群"></a>配置mariadb galera集群</h4><p>三个节点操作<br>配置repo文件<br>vim &#x2F;etc&#x2F;yum.repo&#x2F;mariadb.repo  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[mariadb]</span><br><span class="line">name = MariaDB</span><br><span class="line">baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.2/centos7-amd64</span><br><span class="line">gpgkey=https://mirrors.ustc.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB</span><br><span class="line">gpgcheck=1  </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install MariaDB-server MariaDB-client galera</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start mariadb</span><br></pre></td></tr></table></figure>
+
+<p>一些初始化安全配置  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/mysql_secure_installation  </span><br></pre></td></tr></table></figure>
+<p>关闭数据库  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop mariadb</span><br></pre></td></tr></table></figure>
+<p>修改container-0上的&#x2F;etc&#x2F;my.cnf.d&#x2F;server.cnf文件如下  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[galera]</span><br><span class="line">wsrep_provider = /usr/lib64/galera/libgalera_smm.so</span><br><span class="line">wsrep_cluster_address = &quot;gcomm://192.168.2.110,192.168.2.112,192.168.2.113&quot;</span><br><span class="line">wsrep_node_name = container-0</span><br><span class="line">wsrep_node_address=192.168.2.110</span><br><span class="line">wsrep_on=ON</span><br><span class="line">binlog_format=ROW</span><br><span class="line">default_storage_engine=InnoDB</span><br><span class="line">innodb_autoinc_lock_mode=2</span><br></pre></td></tr></table></figure>
+<p>将此文件复制到container-1、container-2，注意要把 wsrep_node_name 和 wsrep_node_address 改成相应节点的 hostname 和 ip。  </p>
+<p>查看是否启用galera插件  </p>
+<p>连接mariadb,查看是否启用galera插件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_9.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_10.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_11.png"></p>
+<h4 id="配置nginx反向代理"><a href="#配置nginx反向代理" class="headerlink" title="配置nginx反向代理"></a>配置nginx反向代理</h4><p>三个节点<br>备份配置文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak</span><br></pre></td></tr></table></figure>
+<p>修改配置文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/nginx/nginx.conf</span><br><span class="line">user nginx;</span><br><span class="line">worker_processes auto;</span><br><span class="line">error_log /var/log/nginx/error.log;</span><br><span class="line">pid /run/nginx.pid;</span><br><span class="line"></span><br><span class="line"># Load dynamic modules. See /usr/share/nginx/README.dynamic.</span><br><span class="line">include /usr/share/nginx/modules/*.conf;</span><br><span class="line">include /etc/nginx/conf.d/*.conf;</span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections 1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">创建rancher配置文件</span><br><span class="line">vim /etc/nginx/conf.d/rancher.conf</span><br><span class="line">http &#123;</span><br><span class="line">upstream rancher &#123;</span><br><span class="line">    server 192.168.2.110:8080;</span><br><span class="line">    server 192.168.2.112:8080;</span><br><span class="line">    server 192.168.2.113:8080;</span><br><span class="line">&#125;</span><br><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name 192.168.2.120;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        proxy_set_header Host $host;</span><br><span class="line">        proxy_set_header X-Forwarded-Proto $scheme;</span><br><span class="line">        proxy_set_header X-Forwarded-Port $server_port;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_pass http://rancher;</span><br><span class="line">        proxy_http_version 1.1;</span><br><span class="line">        proxy_set_header Upgrade $http_upgrade;</span><br><span class="line">        proxy_set_header Connection &quot;Upgrade&quot;;</span><br><span class="line">        proxy_read_timeout 900s;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同步这两个配置文件到另外两个主机<br>重启nginx  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart nginx  </span><br></pre></td></tr></table></figure>
+<p>三个节点安装rancher-server<br>在mariadb上创建库并授权用户  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE IF NOT EXISTS cattle COLLATE = &#x27;utf8_general_ci&#x27; CHARACTER SET = &#x27;utf8&#x27;;</span><br><span class="line">GRANT ALL ON cattle.* TO &#x27;cattle&#x27;@&#x27;%&#x27; IDENTIFIED BY &#x27;cattle&#x27;;</span><br><span class="line">GRANT ALL ON cattle.* TO &#x27;cattle&#x27;@&#x27;localhost&#x27; IDENTIFIED BY &#x27;cattle&#x27;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用外部数据库<br>在三个host上执行  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --restart=unless-stopped -p 8080:8080  -p 9345:9345 rancher/server --db-host xxxx --db-user cattle --db-pass cattle --db-name cattle --advertise-address xxxx</span><br></pre></td></tr></table></figure>
+<p>–advertise-address 为当前主机ip<br>–db-host    指定MySQL服务器的连接地址(写本机ip)<br>–db-port    连接端口<br>–db-user    连接用户<br>–db-pass    连接密码<br>–db-name    连接库名  </p>
+<p>非HA<br>打开浏览器访问<a href="http://localhost:8080/">http://localhost:8080</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_12.png"></p>
+<p>HA情况<br>打开浏览器访问<a href="http://192.168.2.120/">http://192.168.2.120</a><br>在系统管理–&gt;高可用里面可以看见集群<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_14.png"></p>
+<p>测试高可用<br>将container-0关机<br>访问192.168.2.120  正常显示<br>创建帐号<br>系统配置—-&gt;访问控制—-&gt;本地帐号验证  </p>
+<p>以新帐号登录，并选择中文<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_15.png"></p>
+<p>添加主机进rancher管理<br>将另外两台host给rancher管理，需要安装rancher-agent<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_16.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_17.png"></p>
+<p>复制图上第5步的命令<br>在192.168.2.112上执行  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -e CATTLE_AGENT_IP=&quot;192.168.2.112&quot;  --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.7 http://192.168.2.110:8080/v1/scripts/282E41C46DCA4A2041AA:1483142400000:CPSeNWQ19B9bCfFAULmsX4TKY</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_18.png"></p>
+<p>在rancher上可以看见<br>刚刚添加的主机已经进来了  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_19.png"></p>
+<p>在主机上查看发现rancher会在host上起这些容器<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_20.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">r-network-services-metadata-dns-1-ffdc1af6</span><br><span class="line">r-ipsec-ipsec-router-1-eed9ad34</span><br><span class="line">r-scheduler-scheduler-1-9a4c9847</span><br><span class="line">r-ipsec-cni-driver-1-e5fd917d</span><br><span class="line">r-healthcheck-healthcheck-1-0363e64b</span><br><span class="line">r-ipsec-ipsec-1-f3612834</span><br><span class="line">r-network-services-network-manager-1-9d604f7e</span><br><span class="line">r-network-services-metadata-1-198285ae</span><br><span class="line">rancher-agent</span><br></pre></td></tr></table></figure>
+<p>其中<br>rancher-net：rancher网络的核心，它的作用是用strongSwan 和 charon创建IPSec网络;<br>rancher-scheduler：负责容器的调度，选择合适的宿主机;<br>rancer-dns：负责容器的主机名和ip的映射;<br>rancher-metadata：为容器提供元数据的管理;<br>rancher-healthcheck: 为容器提供健康状态检查，原理是通过haproxy进行检查，只有使用了rancher的托管网络才的容器才能被检查，其他网络检测不到;  </p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>点进host名字<br>可以查看这个host的硬件信息和资源负载情况<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_21.png"></p>
+<p>按上面方法添加第二个host<br>对容器的基本操作<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_22.png"></p>
+<p>启动、停止、查看日志、执行命令  </p>
+<h4 id="构建单主机容器应用"><a href="#构建单主机容器应用" class="headerlink" title="构建单主机容器应用"></a>构建单主机容器应用</h4><p>玩个简单的添加个http的container<br>在对应的host下点击添加容器<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_23.png"></p>
+<p>输入应用的基本信息<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_24.png"></p>
+<p>可以看见httpd容器已经起来了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_25.png"></p>
+<p>访问ip为宿主机的ip地址<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_26.png"></p>
+<h4 id="构建多主机的容器集群应用"><a href="#构建多主机的容器集群应用" class="headerlink" title="构建多主机的容器集群应用"></a>构建多主机的容器集群应用</h4><p>两种方式<br>一种是通过rancher本身自带的应用商店<br>另外一种通过自己编写的docker-compose或rancher-compose，来进行应用编排  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_27.png"></p>
+<p>方式一<br>通过应用商店构建grafana<br>在应用商店搜索grafana<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_28.png"></p>
+<p>查看详情里面选择版本和设置密码<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_29.png"></p>
+<p>预览这可以看见对应的docker-compose和rancher-compose<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_30.png"></p>
+<p>点击部署后<br>默认会生成1个容器<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_31.png"><br>访问<br>进行容器伸缩<br>添加负载均衡器<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_47.png"><br>配置负载均衡器<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_33.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_34.png"><br>访问负载均衡器的地址<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_35.png"></p>
+<p>容器的伸缩<br>点击容器名  </p>
+<p>进容器的管理页，通过修改容器数量进行增减<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_36.png"></p>
+<p>这样就做成了一个简单的高可用<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_37.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_38.png"></p>
+<p>方式二通过docker-compose进行构建应用<br>用以下docker-compose构建个WordPress<br>WordPress主要由三部分构建web Server+php+database<br>这里是WordPress镜像里面本身包含了php和apache，只要安装WordPress和mysql就可以了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">version: &#x27;2&#x27;</span><br><span class="line">services:</span><br><span class="line">    db1:</span><br><span class="line">      image: mysql:5.7</span><br><span class="line">      volumes:</span><br><span class="line">       - /var/lib/mysql:/var/lib/mysql</span><br><span class="line">      environment:</span><br><span class="line">       - MYSQL_ROOT_PASSWORD=password</span><br><span class="line">       - MYSQL_DATABASE=wordpress</span><br><span class="line">       - MYSQL_USER=wordpress</span><br><span class="line">       - MYSQL_PASSWORD=wordpress</span><br><span class="line"></span><br><span class="line">    wordpress:</span><br><span class="line">       image: wordpress:latest</span><br><span class="line">       depends_on:</span><br><span class="line">         - db1</span><br><span class="line">       ports:</span><br><span class="line">         - 8000:80</span><br><span class="line">       environment:</span><br><span class="line">         - WORDPRESS_DB_HOST=db1</span><br><span class="line">         - WORDPRESS_DB_USER=wordpress</span><br><span class="line">         - WORDPRESS_DB_PASSWORD=wordpress</span><br><span class="line">         - WORDPRESS_DB_NAME=wordpress</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_39.png"><br>构建完成<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_40.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_41.png"></p>
+<p>WordPress的数据主要存储在数据库中，如果没做data volume数据就存放在容器中，一旦这个容器remove了则数据就丢失了，做了data volume数据存放在host上，mysql的话可以通过主从和galera集群来使得多个host上的mysql容器数据保持一致，为了数据存放更加可靠，我们通常将数据存放在高可靠性的分布式存储和nfs上，如glusfs、ceph、nfs等上面。</p>
+<p>rancher可以使用的持久化存储<br>rancher-nfs   <a href="http://blog.csdn.net/rancherlabs/article/details/52774702">http://blog.csdn.net/rancherlabs/article/details/52774702</a><br>rancher ceph   <a href="http://geek.csdn.net/news/detail/229747">http://geek.csdn.net/news/detail/229747</a><br>rancher本身的分布式块存储longhorn   <a href="http://blog.csdn.net/rancherlabs/article/details/71080450">http://blog.csdn.net/rancherlabs/article/details/71080450</a><br> rancher-ebs   <a href="http://rancher.com/docs/rancher/v1.6/zh/rancher-services/storage-service/rancher-ebs/">http://rancher.com/docs/rancher/v1.6/zh/rancher-services/storage-service/rancher-ebs/</a></p>
+<h3 id="rancher网络"><a href="#rancher网络" class="headerlink" title="rancher网络"></a>rancher网络</h3><p>rancher默认创建容器使用的是rancher本身的rancher-network，与其他基于vxlan和基于gre的overalay网络不一样，rancher-network是一种基于ipsec的隧道网络，使用ipsec数据报文都是经过加密算法进行加密了的，相比于其他overlay网络更加安全，但同时加密、解密对cpu资源消耗也比较多。  </p>
+<p>这就是创建容器时的托管网络  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_42.png"></p>
+<p>分别介绍rancher 5种网络类型和rancher-network<br>bridge：将容器的网卡桥接到docker0，根docker的桥接模式一样;<br>container：两个容器共享一个网络栈他，共享网卡核配置信息。包括ip;<br>host: 连接到host网络的容器，共享docker 宿主机的网络，并且连hostname也是宿主机的;<br>manager:使用的就是rancher-network;<br>none：none网络就是什么都没有的网络;  </p>
+<p>rancher-network<br>10.42.0.0&#x2F;16<br>IPAM<br>相比V1.2版本，使用manger网络的容器都拥有两个ip地址，一个是docker0段的一个是manger段的，V1.6采用CNI接口，这样manger网络的容器只有一个manger段的ip了。</p>
+<p>网络隔离性：<br>目前使用manger网络的容器都在一个大二层，也就是没有网络的隔离。</p>
+<p>rancher-agent将host的docker0也由之间的172.17.0.1改成了10.2.0.0&#x2F;16段的地址，并且每个host的docker0的ip都不一样了</p>
+<p>实现原理<br>container-0 上的test-2 ping container-1上的test<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_43.png"></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_44.png"></p>
+<p>通过路由追踪发现包先给了 host上的ipsec容器，10.42.190.140为container-0上的ipsec容器，通过他将包封装，加密，通过ipsec遂道传到contain-1上的ipsec容器 10.42.208.216，然后ipsec容器在转发到目标容器。  </p>
+<p>源节点包从ipsec容器到宿主机网卡，目标节点包从宿主机网卡到ipsec容器，都是Iptables 规则管理则是由 容器network-manager 组件来完成的。  </p>
+<p>查看ipsec 服务的 rancher-compose.yml 可以看到，type 使用 rancher-bridge，ipam 使用 rancher-cni-ipam，bridge 网桥则复用了 docker0，有了这个配置我们甚至可以随意定义 ipsec 网络的 CIDR，如下图所示：<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_rancher_45.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://blog.csdn.net/rancherlabs/article/details/53835564    </span><br><span class="line">http://baijiahao.baidu.com/s?id=1561101273463943&amp;wfr=spider&amp;for=pc    </span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/12/04/docker_habor/" title="docker镜像仓库管理软件(habor）"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2017/11/29/openstack_iso/" title="openstack使用ISO镜像">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

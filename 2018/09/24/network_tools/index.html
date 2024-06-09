@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>常见网络分析工具使用（持续更新整理) | 我爱西红柿</title>
+  <meta name="description" content="概述：在日常工作中经常会遇到一些网络问题，如何去排查网络问题，需要针对性的运用一些工具，以下就是常用的一些网络工具的介绍和简单使用教程，涉及从网络端口探测到网络质量检测、网络数据包分析等。 nc工具nc是netcat的简写，非常小巧，功能丰富强大，经常用在各种网络分析中。 主要作用：1、实现任意TCP&#x2F;UDP端口的侦听，nc可以作为server以TCP或UDP方式侦听指定端口。2、端口的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见网络分析工具使用（持续更新整理)">
+<meta property="og:url" content="http://yoursite.com/2018/09/24/network_tools/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述：在日常工作中经常会遇到一些网络问题，如何去排查网络问题，需要针对性的运用一些工具，以下就是常用的一些网络工具的介绍和简单使用教程，涉及从网络端口探测到网络质量检测、网络数据包分析等。 nc工具nc是netcat的简写，非常小巧，功能丰富强大，经常用在各种网络分析中。 主要作用：1、实现任意TCP&#x2F;UDP端口的侦听，nc可以作为server以TCP或UDP方式侦听指定端口。2、端口的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_9.png">
+<meta property="article:published_time" content="2018-09-24T07:19:59.000Z">
+<meta property="article:modified_time" content="2018-09-24T07:19:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2018/09/24/network_tools/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">概述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nc%E5%B7%A5%E5%85%B7"><span class="toc-number">2.</span> <span class="toc-text">nc工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E4%BD%9C%E7%94%A8%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">主要作用：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nc%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-number">2.2.</span> <span class="toc-text">nc常用参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="toc-number">2.3.</span> <span class="toc-text">常见用法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nmap%E5%B7%A5%E5%85%B7"><span class="toc-number">3.</span> <span class="toc-text">nmap工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E4%BD%9C%E7%94%A8"><span class="toc-number">3.1.</span> <span class="toc-text">主要作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nmap%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-number">3.2.</span> <span class="toc-text">nmap常用参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95%EF%BC%9A"><span class="toc-number">3.3.</span> <span class="toc-text">常见用法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iperf%E5%B7%A5%E5%85%B7"><span class="toc-number">4.</span> <span class="toc-text">iperf工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E4%BD%9C%E7%94%A8-1"><span class="toc-number">4.1.</span> <span class="toc-text">主要作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iperf3%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-number">4.2.</span> <span class="toc-text">iperf3常用参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iper3%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="toc-number">4.3.</span> <span class="toc-text">iper3常见用法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tcpdump%E5%B7%A5%E5%85%B7"><span class="toc-number">5.</span> <span class="toc-text">tcpdump工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E8%A6%81%E4%BD%9C%E7%94%A8%EF%BC%9A-1"><span class="toc-number">5.1.</span> <span class="toc-text">主要作用：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95%EF%BC%9A-1"><span class="toc-number">5.2.</span> <span class="toc-text">常见用法：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#netstat%E5%B7%A5%E5%85%B7"><span class="toc-number">6.</span> <span class="toc-text">netstat工具</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%9C%E7%94%A8%EF%BC%9A"><span class="toc-number">6.1.</span> <span class="toc-text">作用：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#netstat%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="toc-number">6.2.</span> <span class="toc-text">netstat常用参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95%EF%BC%9A-2"><span class="toc-number">6.3.</span> <span class="toc-text">常见用法：</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-network_tools" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      常见网络分析工具使用（持续更新整理)
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2018/09/24/network_tools/" class="article-date">
+	  <time datetime="2018-09-24T07:19:59.000Z" itemprop="datePublished">2018-09-24</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/Linux/" rel="tag">Linux</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2018/09/24/network_tools/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.9k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 11(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>在日常工作中经常会遇到一些网络问题，如何去排查网络问题，需要针对性的运用一些工具，以下就是常用的一些网络工具的介绍和简单使用教程，涉及从网络端口探测到网络质量检测、网络数据包分析等。</p>
+<h3 id="nc工具"><a href="#nc工具" class="headerlink" title="nc工具"></a>nc工具</h3><p>nc是netcat的简写，非常小巧，功能丰富强大，经常用在各种网络分析中。</p>
+<h4 id="主要作用："><a href="#主要作用：" class="headerlink" title="主要作用："></a>主要作用：</h4><p>1、实现任意TCP&#x2F;UDP端口的侦听，nc可以作为server以TCP或UDP方式侦听指定端口。<br>2、端口的探测，nc可以作为client发起TCP或UDP连接。<br>3、机器之间传输文件。</p>
+<h4 id="nc常用参数"><a href="#nc常用参数" class="headerlink" title="nc常用参数"></a>nc常用参数</h4><p> -l：用于指定nc将处于侦听模式。指定该参数，则意味着nc被当作server，侦听并接受连接，而非向其它地址发起连接。<br> -s ：指定发送数据的源IP地址，适用于多网卡机<br> -u：指定nc使用UDP协议，默认为TCP<br> -v：输出详细信息<br>-w：超时时间单位为秒<br>-z：表示zero，表示扫描时不发送任何数据</p>
+<h4 id="常见用法"><a href="#常见用法" class="headerlink" title="常见用法"></a>常见用法</h4><p>启动任意端口侦听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l port_number (tcp)</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_1.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -ul port_name （udp)</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_2.png"></p>
+<p>端口探测</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -vzw 2 47.104.162.0 443 (tcp)</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_3.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -vuzw 2 47.104.162.0 9000(udp)</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_4.png"></p>
+<p>-v 显示详细过程<br>-z只扫描不发送数据<br>-w超时时间（单位为秒）<br>-u表示udp默认不指定为TCP</p>
+<p>传输文件</p>
+<p>nc传输文件根传统scp和rsync相比比较方便不用输密码，只要对端有通过nc启动对应服务有暴露端口就可以，还可以通过压缩方式传输文件，提高传输效率。<br>方式一：<br>先接收端启动nc准备接收文件，比如我们传输1.py这个文件<br>接收端执行命令，这里命令意思就是监听TCP 9000端口，将收取到的文件重定向到当前目录sendmail.py文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9000 &gt; sendmail.py</span><br></pre></td></tr></table></figure>
+
+<p>发送端执行发送命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 47.104.162.0 9000 &lt; sendmai.py</span><br></pre></td></tr></table></figure>
+<p>将sendmai.py重定向发送到47.104.162.0 TCP 9000端口<br>发送完毕后，接收端和发送端会自动退出监听。</p>
+<p>方式二：<br>前面那种方式是需要先将接受端启动侦听，然后发送端在将文件通过接受端侦听的端口发送过去，方式二是反过来的是发送端先启动发送指令，然后接受端在接收<br>发送端执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9000 &lt; sendmai.py</span><br></pre></td></tr></table></figure>
+<p>表示通过本机9000端口发送<br>接收端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc 47.104.162.1 9000 &gt; sendmai.py</span><br></pre></td></tr></table></figure>
+<p>从47.104.162.1 9000端口或取文件，然后写入到sendmai.py文件<br>方式三：<br>压缩传输，可以将整个目录文件传输到对端<br>接收端启动，管道后必须接的是-不能是其他</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9000 |tar xfvz -</span><br></pre></td></tr></table></figure>
+<p>发送端将目录下文件全部打包压缩发送到47.104.162.0 9000端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar cfz - * |nc 47.104.162.0 9000</span><br></pre></td></tr></table></figure>
+<p>例<br>在发送发端创建test目录并创建文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /root/test</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch ~/test &#123;1..100&#125;</span><br></pre></td></tr></table></figure>
+<p>接收端执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -l 9000 |tar xfvz -</span><br></pre></td></tr></table></figure>
+<p>发送端切换test目录，执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar cfz - * |nc 47.104.162.0 9000</span><br></pre></td></tr></table></figure>
+
+<h3 id="nmap工具"><a href="#nmap工具" class="headerlink" title="nmap工具"></a>nmap工具</h3><p>全称Network Mapper是linux系统下网络扫描和嗅探工具。</p>
+<h4 id="主要作用"><a href="#主要作用" class="headerlink" title="主要作用"></a>主要作用</h4><p>1、端口扫描，并自动分析端口对应的服务和对应的软件版本<br>2、主机存活检测</p>
+<h4 id="nmap常用参数"><a href="#nmap常用参数" class="headerlink" title="nmap常用参数"></a>nmap常用参数</h4><p>-s：扫描模式<br>-S：指定源IP<br>-p：指定端口范围扫描<br>-sV：暴露端口的软件的版本<br>-n：不做dns解析<br>-sn：不做端口扫描只检测主机存活<br>-e ：指定网卡<br>-Pn：跳过主机存活性检测<br>-Su：仅扫描UDP端口<br>-sS：半连接方式扫描，不需要完成完整的tcp三次握手简单来说就是一个TCP_SYN扫描，扫描器对客户端发送syn包，得到ack响应，扫描器发送一个RST包断开连接，这样就不用完成三次握手，建立正常的TCP连接。</p>
+<h4 id="常见用法："><a href="#常见用法：" class="headerlink" title="常见用法："></a>常见用法：</h4><p>端口扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap ip_addr</span><br></pre></td></tr></table></figure>
+<p>直接不接任何参数扫描，默认户将tcp，udp这些全部列出来</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_5.png"></p>
+<p>加了-sS以后就是嗅探tcp时效率高点，其他都一样<br>可以对域名进行扫描也可以对IP进行扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap  -sS ip_addr</span><br></pre></td></tr></table></figure>
+<p>端口状态<br>open：端口处于开放状态，可以建立正常的连接。<br>closed：端口处于关闭状态，没有应用在监听这个端口。<br>Filtered：发出去的探测报文被过滤了，返回的ICMP报文状态是目的主机不可达，nmap无法确定端口状态，同时端口无法被nmap访问。<br>Unfiltered：未被过滤状态，nmap不确定端口状态，但端口能被nmap访问。<br>open|filtered：无法确定端口是open还是filtered状态，比如常见的开放的端口不响应发出去的请求就是这种状态。</p>
+<p>按照上述命令扫描端口默认是扫描1-1024+nmap-server数据库里面收录的一些已知应用端口，所以要扫描大范围需要使用-p参数如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap ip_addr -p1-65535</span><br></pre></td></tr></table></figure>
+<p>软件版本检测<br>列出扫描出的端口对应的应用的软件版本信息，这里就直接显示了openssh的版本和对应的操作系统信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sV 172.31.164.57</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_6.png"></p>
+<p>通过ping扫描指定范围内机器是否up<br>经常要测试一个地址范围内ip的联通性就可以使用这个命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -sn 172.31.164.57-60</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_7.png"></p>
+<p>伪装源ip检测<br>在用些场景我们需要伪装我们的源IP去进行嗅探，或我们的源IP被防火墙拉入了黑名单此时可以通过伪装ip的方式进行检测，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nmap -e eth0 10.0.1.161 -S 10.0.1.167 -Pn</span><br></pre></td></tr></table></figure>
+<p>使用-S伪装自己源地址进行扫描的话，你必须另外使用-e 指定网卡和-Pn参数才能伪装</p>
+<h3 id="iperf工具"><a href="#iperf工具" class="headerlink" title="iperf工具"></a>iperf工具</h3><p>iperf是一款网络性能测试工具，主要用来测试网络之间的带宽和丢包率。</p>
+<h4 id="主要作用-1"><a href="#主要作用-1" class="headerlink" title="主要作用"></a>主要作用</h4><p>1、网络带宽性能测试<br>2、网络丢包率测试（UDP关注点)  </p>
+<h4 id="iperf3常用参数"><a href="#iperf3常用参数" class="headerlink" title="iperf3常用参数"></a>iperf3常用参数</h4><p>iperf3常用参数<br>-f, –format [bkmaBKMA]<br>格式化带宽数输出。支持的格式有：<br>‘b’ &#x3D; bits&#x2F;sec ‘B’ &#x3D; Bytes&#x2F;sec<br>‘k’ &#x3D; Kbits&#x2F;sec ‘K’ &#x3D; KBytes&#x2F;sec<br>‘m’ &#x3D; Mbits&#x2F;sec ‘M’ &#x3D; MBytes&#x2F;sec<br>‘g’ &#x3D; Gbits&#x2F;sec ‘G’ &#x3D; GBytes&#x2F;sec<br>‘a’ &#x3D; adaptive bits&#x2F;sec ‘A’ &#x3D; adaptive Bytes&#x2F;sec  </p>
+<p>-i：设置每次报告之间的时间间隔，单位为秒。如果设置为非零值，就会按照此时间间隔输出测试报告。默认值为零。<br>-l,[KM]：设置读写缓冲区的长度。TCP方式默认为8KB，UDP方式默认为1470字节。<br>-m, –print_mss：输出TCP MSS值（通过TCP_MAXSEG支持）。MSS值一般比MTU值小40字节。<br>-p：设置端口，与服务器端的监听端口一致。默认是5001端口，与tcp的一样。<br>-u：使用UDP方式而不是TCP方式(iperf3不需要)<br>-b:  指定带宽（测试UDP时使用）<br>-B：绑定到主机的多个地址中的一个。对于客户端来说，这个参数设置了出站接口。对于服务器端来说，这个参数设置入栈接口。这个参数只用于具有多网络接口的主机。在Iperf的UDP模式下，此参数用于绑定和加入一个多播组。使用范围在224.0.0.0至239.255.255.255的多播地址。参考-T参数。<br>-M, –mss #[KM}：通过TCP_MAXSEG选项尝试设置TCP最大信息段的值。MSS值的大小通常是TCP&#x2F;IP头减去40字节。在以太网中，MSS值 为1460字节（MTU1500字节）。许多操作系统不支持此选项。<br>-s：Server模式运行<br>-c：Client模式运行，后面接上连接server的ip<br>-P：测试数据流并发数量  </p>
+<h4 id="iper3常见用法"><a href="#iper3常见用法" class="headerlink" title="iper3常见用法"></a>iper3常见用法</h4><p>测试性能<br>服务器端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iperf3 -s -i2  -p 5001</span><br></pre></td></tr></table></figure>
+<p>客户端</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iperf3 -i 1 -c x.x.x.x -t 60</span><br></pre></td></tr></table></figure>
+<p>-i多久显示一次，单位S<br>-c后跟服务器IP<br>-t持续多久，单位秒</p>
+<p>需要在主机上打开5001端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -I INPUT -p tcp --dport 5001 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>测试，可以发现，每秒都会显示网络带宽，这个网络是个千兆网络,默认是以4个并发进行测试的，如果发现带宽根实际物理带宽差距太大可以调整并发数在测试。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_8.png"></p>
+<h3 id="tcpdump工具"><a href="#tcpdump工具" class="headerlink" title="tcpdump工具"></a>tcpdump工具</h3><p>tcpdump是linux下最常用的抓包分析工具。</p>
+<h4 id="主要作用：-1"><a href="#主要作用：-1" class="headerlink" title="主要作用："></a>主要作用：</h4><p>1、抓取网卡数据包<br>tcpdump参数<br>-i：指定监听的端口<br>-w：将结果保存到指定位置，可以保存成cap文件用wireshark做数据包分析<br>-vnn：以ip和端口方式输出详细信息<br>-c：抓取包的数量，默认不指定会一直不断的抓直到ctrl+c<br>-nn：以ip和端口方式显示，不以主机名和服务名方式显示，可以看起来直观<br>-v：输出详细信息<br>-X 直接输出package data数据，默认不设置，只能通过-w指定文件进行输出</p>
+<h4 id="常见用法：-1"><a href="#常见用法：-1" class="headerlink" title="常见用法："></a>常见用法：</h4><p>监视指定网络接口的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1</span><br></pre></td></tr></table></figure>
+<p>如果不指定网卡，默认tcpdump只会监视第一个网络接口，一般是eth0，下面的例子都没有指定网络接口。　</p>
+<p>监视指定主机的数据包(如rke-node1)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump host rke-node1</span><br></pre></td></tr></table></figure>
+<p>输出test-1 与 test-2或者与 test-3 之间通信的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump host test-1 and \( test-2 or test-3 \)</span><br></pre></td></tr></table></figure>
+<p>打印test-1与任何其他主机之间通信的IP 数据包, 但不包括与test-2之间的数据包.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump host test-1 and ! test-2</span><br></pre></td></tr></table></figure>
+<p>截获源ip为xxx.xxx.xxx.xxx发送的所有数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 src host xxx.xxx.xxx.xxx</span><br></pre></td></tr></table></figure>
+<p>监视所有送到目的主机的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 dst host ipaddr or hostname</span><br></pre></td></tr></table></figure>
+<p>抓取100个数据包信息保存为cap文件可以用wireshark分析</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump  -i eth0 -c 100 -w /tmp/capture2.cap</span><br></pre></td></tr></table></figure>
+<p>抓取指定协议的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth0 -vnn icmp -w /tmp/1</span><br></pre></td></tr></table></figure>
+<p>抓取udp协议的123端口的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump udp port 123</span><br></pre></td></tr></table></figure>
+<p>抓取host为192.168.1.1并且udp端口为23的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump tcp port 23 and host 192.168.1.1</span><br></pre></td></tr></table></figure>
+<h3 id="netstat工具"><a href="#netstat工具" class="headerlink" title="netstat工具"></a>netstat工具</h3><p>netstat是一款本机网络状态分析工具  </p>
+<h4 id="作用："><a href="#作用：" class="headerlink" title="作用："></a>作用：</h4><p>分析本机端口监听状态，连接状态，连接数等</p>
+<h4 id="netstat常用参数"><a href="#netstat常用参数" class="headerlink" title="netstat常用参数"></a>netstat常用参数</h4><p>-a :显示所有状态连接<br>-n：显示ip地址<br>-t：显示TCP协议连接<br>-l：显示LISTEN状态连接<br>-u：显示UDP状态连接<br>-p：显示socket的PID和程序名<br>-i：显示网卡信息  </p>
+<p>TCP连接的常见状态<br>LISTENING：侦听状态<br>ESTABLISHED：建立连接状态<br>CLOSE_WAIT：等待关闭状态。<br>TIME_WAIT：主动关闭连接的一方会进入TIME_WAIT状态。为了防止最终的ACK包未到达，活动的TCP连接等待2MSL时间释放连接。<br>SYN_SENT：表示请求连接，发送SYN报文。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/network_tools_9.png">  </p>
+<h4 id="常见用法：-2"><a href="#常见用法：-2" class="headerlink" title="常见用法："></a>常见用法：</h4><p>列出本机所有tcp连接  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -at</span><br></pre></td></tr></table></figure>
+<p>列出本机所有udp连接  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -au</span><br></pre></td></tr></table></figure>
+<p>显示所有数据包的统计情况  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -s</span><br></pre></td></tr></table></figure>
+<p>显示网络接口收发报情况  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -i</span><br></pre></td></tr></table></figure>
+
+<p>列出本机LISTEN状态的TCP端口  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -lnt</span><br></pre></td></tr></table></figure>
+
+<p>列出本机所有LISTEN状态的UDP端口  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -lnu</span><br></pre></td></tr></table></figure>
+
+
+<p>统计产生TIME_WAIT最多的几个IP  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ptan | grep TIME_WAIT |awk &#x27;&#123;print $5&#125;&#x27; |awk -F : &#x27;&#123;print $1&#125;&#x27;|sort |uniq -c|sort -r</span><br></pre></td></tr></table></figure>
+<p><a href="https://my.oschina.net/u/1024767/blog/757465">https://my.oschina.net/u/1024767/blog/757465</a>  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2018/10/23/jenkins_slave/" title="自定义Jenkins-slave镜像"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2018/09/22/docker-in-docker/" title="docker in docker">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>

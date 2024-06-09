@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>手动安装ceph | 我爱西红柿</title>
+  <meta name="description" content="环镜操作系统centos6.5网络规划Cluster_net：192.168.20.0&#x2F;24Public_net：192.168.2.0&#x2F;24      角色 Public_net Cluster_net    Ceph-mon 192.168.2.4 192.168.20.2   Ceph-mon2 192.168.2.5 192.168.20.5   Ceph-mon3 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手动安装ceph">
+<meta property="og:url" content="http://yoursite.com/2017/01/01/manual_ceph/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="环镜操作系统centos6.5网络规划Cluster_net：192.168.20.0&#x2F;24Public_net：192.168.2.0&#x2F;24      角色 Public_net Cluster_net    Ceph-mon 192.168.2.4 192.168.20.2   Ceph-mon2 192.168.2.5 192.168.20.5   Ceph-mon3 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-4.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-5.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-6.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-7.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-8.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-9.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-10.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-11.png">
+<meta property="article:published_time" content="2017-01-01T01:50:44.000Z">
+<meta property="article:modified_time" content="2017-01-01T11:50:43.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="分布式存储">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2017/01/01/manual_ceph/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.11px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/11/17/spiffe/" class="title">零信任与SPIFFE（一）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-11-17T13:45:59.000Z" itemprop="datePublished">2022-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E9%95%9C"><span class="toc-number">1.</span> <span class="toc-text">环镜</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEyum%E6%BA%90"><span class="toc-number">2.</span> <span class="toc-text">配置yum源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEceph-mon"><span class="toc-number">3.</span> <span class="toc-text">配置ceph-mon</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEosd%E8%8A%82%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">配置osd节点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEceph-radosgw"><span class="toc-number">5.</span> <span class="toc-text">配置ceph-radosgw</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-manual_ceph" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      手动安装ceph
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2017/01/01/manual_ceph/" class="article-date">
+	  <time datetime="2017-01-01T01:50:44.000Z" itemprop="datePublished">2017-01-01</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/01/01/manual_ceph/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.6k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 8(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="环镜"><a href="#环镜" class="headerlink" title="环镜"></a>环镜</h2><p>操作系统centos6.5<br>网络规划<br>Cluster_net：192.168.20.0&#x2F;24<br>Public_net：192.168.2.0&#x2F;24  </p>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th align="center">Public_net</th>
+<th align="right">Cluster_net</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ceph-mon</td>
+<td align="center">192.168.2.4</td>
+<td align="right">192.168.20.2</td>
+</tr>
+<tr>
+<td>Ceph-mon2</td>
+<td align="center">192.168.2.5</td>
+<td align="right">192.168.20.5</td>
+</tr>
+<tr>
+<td>Ceph-mon3</td>
+<td align="center">192.168.2.6</td>
+<td align="right">192.168.20.6</td>
+</tr>
+<tr>
+<td>Ceph-osd1</td>
+<td align="center">192.168.2.7</td>
+<td align="right">192.168.20.7</td>
+</tr>
+<tr>
+<td>Ceph-osd2</td>
+<td align="center">192.168.2.8</td>
+<td align="right">192.168.20.8</td>
+</tr>
+<tr>
+<td>Ceph-osd3</td>
+<td align="center">192.168.2.9</td>
+<td align="right">192.168.20.9</td>
+</tr>
+</tbody></table>
+<p>绑定hosts</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">192.168.2.4 ceph-mon.novalocal mon</span><br><span class="line">192.168.2.5 ceph-mon2.novalocal mon2</span><br><span class="line">192.168.2.6 ceph-mon3.novalocal mon3</span><br><span class="line">192.168.2.7 ceph-osd1.novalocal osd1</span><br><span class="line">192.168.2.8 ceph-osd2.novalocal osd2</span><br><span class="line">192.168.2.9 ceph-osd3.novalocal osd3</span><br></pre></td></tr></table></figure>
+
+
+<p>osd数规划<br>每台osd节点挂载3块SSD硬盘  </p>
+<h2 id="配置yum源"><a href="#配置yum源" class="headerlink" title="配置yum源"></a>配置yum源</h2><p>根据操作系统版本任意调整(所有节点)<br>vim &#x2F;etc&#x2F;yum.repos.d&#x2F;ceph.repo  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[ceph]</span><br><span class="line">name=ceph</span><br><span class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-hammer/el6/x86_64/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enablde=1</span><br><span class="line">[ceph-noarch]</span><br><span class="line">name=cephnoarch</span><br><span class="line">baseurl=http://mirrors.aliyun.com/ceph/rpm-hammer/el6/x86_64/</span><br><span class="line">gpgcheck=0</span><br><span class="line">enablde=1</span><br></pre></td></tr></table></figure>
+<p>yum clean<br>yum makecache  </p>
+<p>在第一台mon节点安装pssh批量执行操作<br>yum install pssh<br>创建hosts（会被批量执行的主机）<br>vim &#x2F;root&#x2F;hosts.txt  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">192.168.2.5</span><br><span class="line">192.168.2.6</span><br><span class="line">192.168.2.7</span><br><span class="line">192.168.2.8</span><br><span class="line">192.168.2.9</span><br></pre></td></tr></table></figure>
+<p>先进行测试<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-1.png">  </p>
+<p>安装软件（所有节点）<br>pssh  -P -h hosts.txt  yum install ceph –y<br>同步hosts<br>pscp.pssh -h &#x2F;root&#x2F;hosts.txt  &#x2F;etc&#x2F;hosts &#x2F;etc&#x2F;  </p>
+<p>都success进行下一步<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-2.png">  </p>
+<h2 id="配置ceph-mon"><a href="#配置ceph-mon" class="headerlink" title="配置ceph-mon"></a>配置ceph-mon</h2><p>创建集群fsid<br>uuidgen<br>fdc3d06b-7e05-44a8-b982-e8e04e4156db<br>创建&#x2F;etc&#x2F;ceph&#x2F;ceph.conf将fsid写入配置文件<br>[global]<br>fsid &#x3D; fdc3d06b-7e05-44a8-b982-e8e04e4156db  </p>
+<p>将ceph-mon写入配置文件(有多个mon，用逗号隔开)<br>mon_initial_members &#x3D; mon,mon2,mon3<br>将mon节点ip写入ceph配置文件<br>mon_host &#x3D; 192.168.2.4,192.168.2.5,192.168.2.6<br>为集群创建mon密钥<br><code>ceph-authtool --create-keyring /tmp/ceph.mon.keyring --gen-key -n mon. --cap mon &#39;allow *&#39;</code></p>
+<p>生成管理员密钥<br><code>ceph-authtool --create-keyring /etc/ceph/ceph.client.admin.keyring --gen-key -n client.admin --set-uid=0 --cap mon &#39;allow *&#39; --cap osd &#39;allow *&#39; --cap mds &#39;allow&#39;</code></p>
+<p>将client.admin密钥加入到ceph.mon.keyring<br><code>ceph-authtool/tmp/ceph.mon.keyring --import-keyring /etc/ceph/ceph.client.admin.keyring</code></p>
+<p>生成mon map<br><code>monmaptool --create --add mon 192.168.2.4 --fsid fdc3d06b-7e05-44a8-b982-e8e04e4156db /tmp/monmap</code><br>在每个mon节点数据目录<br>分别在mon、mon2、mon3上执行<br>格式为(默认cluster-name为ceph)<br><code>mkdir /var/lib/ceph/mon/&#123;cluster-name&#125;-&#123;hostname&#125;</code><br>如mon为<br><code>mkdir /var/lib/ceph/mon/ceph-mon</code><br>mon初始化(-i后接hostname)<br><code>ceph-mon --mkfs -i mon --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring</code>  </p>
+<p>ceph.conf增加如下配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public network = 192.168.2.0/24</span><br><span class="line">auth cluster required = cephx</span><br><span class="line">auth service required = cephx</span><br><span class="line">auth client required = cephx</span><br></pre></td></tr></table></figure>
+<p>创建两个空文件<br><code>touch /var/lib/ceph/mon/ceph-mon/done</code><br><code>touch /var/lib/ceph/mon/ceph-mon/sysvinit</code><br>启动第一个ceph-mon<br><code>/etc/init.d/ceph status mon.mon  </code><br>部署第二个mon<br>将keyring复制到mon2<br>scp  &#x2F;tmp&#x2F;ceph.mon.keyring  mon2:&#x2F;tmp&#x2F;<br>在mon2节点上建立一个&#x2F;var&#x2F;lib&#x2F;ceph&#x2F;mon&#x2F;ceph-mon2目录<br>mkdir –p &#x2F;var&#x2F;lib&#x2F;ceph&#x2F;mon&#x2F;ceph-mon2&#x2F;<br>在mon2节点上初始化mon节点<br><code>ceph-mon --mkfs -i mon2  --keyring /tmp/ceph.mon.keyring</code><br>为了防止重新被安装，初始化一个空的done文件<br><code>touch /var/lib/ceph/mon/ceph-mon2/done</code><br><code>touch /var/lib/ceph/mon/ceph-mon2/sysvinit</code><br>&#x2F;etc&#x2F;init.d&#x2F;ceph start mon.mon2<br>检查进程<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-3.png">  </p>
+<p>第三个mon同上<br>完后检查  </p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-4.png"><br>发现有时种偏移问题，默认ceph是0.05s，为了方便同步直接把时钟偏移设置成0.5s<br>修改ceph配置文件增加两条配置  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[global]</span><br><span class="line">mon osd down out interval = 900 #设置osd节点down后900s，把此osd节点逐出ceph集群，把之前映射到此节点的数据映射到其他节点。  </span><br><span class="line">[mon]  </span><br><span class="line">mon clock drift allowed = .50  </span><br></pre></td></tr></table></figure>
+<p>同步配置  </p>
+<p>pscp.pssh -h hosts.txt  &#x2F;etc&#x2F;ceph&#x2F;ceph.conf  &#x2F;etc&#x2F;ceph&#x2F;<br>重启进程<br>pssh -h &#x2F;root&#x2F;hosts.txt  &#x2F;etc&#x2F;init.d&#x2F;ceph restart  </p>
+<h2 id="配置osd节点"><a href="#配置osd节点" class="headerlink" title="配置osd节点"></a>配置osd节点</h2><p>将keyring同步到osd节点<br>pscp.pssh -h &#x2F;root&#x2F;hosts.txt  &#x2F;etc&#x2F;ceph&#x2F;ceph.client.admin.keyring  &#x2F;etc&#x2F;ceph&#x2F;  </p>
+<p>为osd分配uuid(我每台osd节点有3个osd所以创建3个uuid)<br>uuidgen<br>19ebc47d-9b29-4cf3-9720-b62896ce6f33<br>uuidgen<br>1721ce0b-7f65-43ef-9dfc-c49e6210d375<br>uuidgen<br>f5e0f54b-2ee3-41df-bf25-ad37371ab6ce  </p>
+<p>创建3个osd</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ceph osd create 19ebc47d-9b29-4cf3-9720-b62896ce6f33</span><br><span class="line">ceph osd create 1721ce0b-7f65-43ef-9dfc-c49e6210d375</span><br><span class="line">ceph osd create f5e0f54b-2ee3-41df-bf25-ad37371ab6ce</span><br></pre></td></tr></table></figure>
+<p>创建数据存储目录  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir /var/lib/ceph/osd/&#123;cluster-name&#125;-&#123;osd-number&#125;</span><br><span class="line">mkdir /var/lib/ceph/osd/ceph-0</span><br><span class="line">mkdir /var/lib/ceph/osd/ceph-1</span><br><span class="line">mkdir /var/lib/ceph/osd/ceph-2</span><br><span class="line">mkfs.xfs /dev/vdb</span><br><span class="line">mkfs.xfs /dev/vdc</span><br><span class="line">mkfs.xfs /dev/vdd</span><br></pre></td></tr></table></figure>
+
+<p>挂载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount -o defaults,_netdev /dev/vdb /var/lib/ceph/osd/ceph-0</span><br><span class="line">mount -o defaults,_netdev /dev/vdc /var/lib/ceph/osd/ceph-1</span><br><span class="line">mount -o defaults,_netdev /dev/vdd /var/lib/ceph/osd/ceph-2</span><br></pre></td></tr></table></figure>
+<p>修改fstable<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-5.png">  </p>
+<p>初始化osd目录  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ceph-osd -i 0 --mkfs --mkkey --osd-uuid 19ebc47d-9b29-4cf3-9720-b62896ce6f33</span><br><span class="line">ceph-osd -i 1 --mkfs --mkkey --osd-uuid 1721ce0b-7f65-43ef-9dfc-c49e6210d375</span><br><span class="line">ceph-osd -i 2 --mkfs --mkkey --osd-uuid f5e0f54b-2ee3-41df-bf25-ad37371ab6ce</span><br></pre></td></tr></table></figure>
+<p>注册此osd密钥  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ceph auth add osd.0 osd &#x27;allow *&#x27; mon &#x27;allow profile osd&#x27; -i /var/lib/ceph/osd/ceph-0/keyring</span><br><span class="line">ceph auth add osd.1 osd &#x27;allow *&#x27; mon &#x27;allow profile osd&#x27; -i /var/lib/ceph/osd/ceph-1/keyring</span><br><span class="line">ceph auth add osd.2 osd &#x27;allow *&#x27; mon &#x27;allow profile osd&#x27; -i /var/lib/ceph/osd/ceph-2/keyring</span><br></pre></td></tr></table></figure>
+
+<p>加入crush map  </p>
+<p>ceph osd crush add-bucket ceph-osd1 host<br>ceph osd crush move ceph-osd1 root&#x3D;default  </p>
+<p>设置权重  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ceph osd crush add osd.0 1.0 host=ceph-osd1  </span><br><span class="line">ceph osd crush add osd.1 1.0 host=ceph-osd1</span><br><span class="line">ceph osd crush add osd.2 1.0 host=ceph-osd1</span><br></pre></td></tr></table></figure>
+<p>要已守护进程开机启动，须创建一个空文件  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">touch /var/lib/ceph/osd/ceph-0/sysvinit</span><br><span class="line">touch /var/lib/ceph/osd/ceph-1/sysvinit</span><br><span class="line">touch /var/lib/ceph/osd/ceph-2/sysvinit</span><br></pre></td></tr></table></figure>
+
+<p>启动osd进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/ceph start osd.0</span><br><span class="line">/etc/init.d/ceph start osd.1</span><br><span class="line">/etc/init.d/ceph start osd.2</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-6.png"><br>查看osd 树<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-7.png"><br>按上述方法配置osd2、osd3<br>3台节点添加完毕<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-8.png">  </p>
+<p>这里有个warn，是pool的pg问题，我们重新计算，修改。<br>查看我们现在拥有的pool<br>ceph osd lspools<br>0 rbd,  </p>
+<p>查看默认的rbd pool的pg  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ceph osd pool get rbd pg_num</span><br><span class="line">pg_num: 64</span><br><span class="line">ceph osd pool get rbd pg_num</span><br><span class="line">pg_num: 64</span><br><span class="line">修改为128</span><br><span class="line">ceph osd pool set rbd pg_num 128</span><br><span class="line">ceph osd pool set rbd pgp_num 128</span><br></pre></td></tr></table></figure>
+<p>再查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-9.png">  </p>
+<p>修改ceph.conf默认数据存两份，默认pg为128<br>同步配置<br>重启ceph</p>
+<h2 id="配置ceph-radosgw"><a href="#配置ceph-radosgw" class="headerlink" title="配置ceph-radosgw"></a>配置ceph-radosgw</h2><p>直接将第一个mon节点当radosgw，ceph在0.80及以上版本可以直接使用civeweb来构建对象网关，可以不需要使用apache或nginx+fastcgi了，所以我这里用civetweb。</p>
+<p>安装软件<br>yum install ceph-radosgw<br>没有www-data用户创建<br>useradd –r –s &#x2F;sbin&#x2F;nologin www-data<br>创建gateway keyring并授权  </p>
+<p><code>ceph auth get-or-create client.radosgw.gateway osd &#39;allow rwx&#39; mon &#39;allow rwx&#39; -o /etc/ceph/keyring.radosgw.gateway</code></p>
+<p>编辑ceph.conf文件<br>增加下面内容  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[client.radosgw.gateway]</span><br><span class="line">keyring = /etc/ceph/keyring.radosgw.gateway</span><br><span class="line">rgw_socket_path = /tmp/radosgw.sock</span><br><span class="line">rgw_frontends= &quot;civetweb port=7480&quot;</span><br><span class="line">host = ceph-mon</span><br><span class="line">rgw_dns_name = *.domain.tld</span><br><span class="line">rgw_print_continue = True</span><br><span class="line">rgw_data = /var/lib/ceph/radosgw</span><br><span class="line">user = www-data</span><br><span class="line">rgw s3 auth use keystone = true</span><br><span class="line">log file =/var/log/radosgw/client.radosgw.gateway.log</span><br></pre></td></tr></table></figure>
+<p>重启进程<br>&#x2F;etc&#x2F;init.d&#x2F;ceph-radosgw restart<br>查看是否启动成功<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-10.png">  </p>
+<p>新建用户<br>radosgw-admin user create –uid&#x3D;”testuser” –display-name&#x3D;”First User”<br>得到如下结果<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/maual-ceph-11.png">  </p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2017/02/06/openstac&ceph/" title="openstack N版对接ceph jewel版"><i class="fa fa-angle-left" aria-hidden="true"></i>&nbsp;&nbsp;上一篇</a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2016/12/25/mariadb-base/" title="Mariadb galera">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
