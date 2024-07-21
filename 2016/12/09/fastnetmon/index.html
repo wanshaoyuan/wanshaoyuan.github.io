@@ -256,7 +256,7 @@
                 <a class="category-link" href="/categories/AI/">AI</a>
               </p>
               <p class="item-title">
-                <a href="/2024/07/09/ai_sft/" class="title">�AI学习笔记2（微调模型）</a>
+                <a href="/2024/07/09/ai_sft/" class="title">AI学习笔记2（微调模型)</a>
               </p>
               <p class="item-date">
                 <time datetime="2024-07-09T13:45:59.000Z" itemprop="datePublished">2024-07-09</time>
@@ -421,7 +421,7 @@
 <h5 id="编辑要监控的网段"><a href="#编辑要监控的网段" class="headerlink" title="编辑要监控的网段"></a>编辑要监控的网段</h5><p>  vim &#x2F;etc&#x2F;networks_list #编辑networks_list加入要监控的网段这里我加入<br>   211.156.182.0&#x2F;24 220.242.2.0&#x2F;24<br> &#x2F;etc&#x2F;init.d&#x2F;fastnetmon start #启动fastentmon，启动失败查看&#x2F;var&#x2F;log&#x2F;fastnetmon.log<br>  &#x2F;opt&#x2F;fastnetmon&#x2F;fastnetmon #打开监控控制台  </p>
 <h5 id="修改监控脚本"><a href="#修改监控脚本" class="headerlink" title="修改监控脚本"></a>修改监控脚本</h5><p>1,要先外发邮件必须配置mailx</p>
 <ul>
-<li>安装mailx，配置SMTP vim &#x2F;etc&#x2F;mail.rc  我这里配置的是我163的邮箱<br>   set bsdcompat<br>   set from&#x3D;<a href="mailto:&#x78;&#120;&#120;&#x78;&#x78;&#64;&#49;&#x36;&#x33;&#x2e;&#99;&#x6f;&#109;">&#x78;&#120;&#120;&#x78;&#x78;&#64;&#49;&#x36;&#x33;&#x2e;&#99;&#x6f;&#109;</a> smtp&#x3D;smtp.163.com<br>  set smpt-auth-user&#x3D;<a href="mailto:&#120;&#120;&#120;&#120;&#64;&#x31;&#54;&#x33;&#x2e;&#99;&#111;&#x6d;">&#120;&#120;&#120;&#120;&#64;&#x31;&#54;&#x33;&#x2e;&#99;&#111;&#x6d;</a>  set smtp-auth-user&#x3D;<a href="mailto:&#120;&#x78;&#120;&#x78;&#x78;&#x78;&#x40;&#49;&#x36;&#x33;&#x2e;&#x63;&#111;&#x6d;">&#120;&#x78;&#120;&#x78;&#x78;&#x78;&#x40;&#49;&#x36;&#x33;&#x2e;&#x63;&#111;&#x6d;</a>  smtp-auth-password&#x3D;xxxxxx smtp-auth&#x3D;login</li>
+<li>安装mailx，配置SMTP vim &#x2F;etc&#x2F;mail.rc  我这里配置的是我163的邮箱<br>   set bsdcompat<br>   set from&#x3D;<a href="mailto:&#x78;&#x78;&#x78;&#120;&#x78;&#64;&#x31;&#54;&#51;&#46;&#99;&#x6f;&#x6d;">&#x78;&#x78;&#x78;&#120;&#x78;&#64;&#x31;&#54;&#51;&#46;&#99;&#x6f;&#x6d;</a> smtp&#x3D;smtp.163.com<br>  set smpt-auth-user&#x3D;<a href="mailto:&#x78;&#120;&#120;&#120;&#x40;&#49;&#x36;&#x33;&#46;&#x63;&#111;&#109;">&#x78;&#120;&#120;&#120;&#x40;&#49;&#x36;&#x33;&#46;&#x63;&#111;&#109;</a>  set smtp-auth-user&#x3D;<a href="mailto:&#120;&#x78;&#120;&#120;&#120;&#x78;&#64;&#x31;&#54;&#51;&#46;&#x63;&#111;&#x6d;">&#120;&#x78;&#120;&#120;&#120;&#x78;&#64;&#x31;&#54;&#51;&#46;&#x63;&#111;&#x6d;</a>  smtp-auth-password&#x3D;xxxxxx smtp-auth&#x3D;login</li>
 <li>vim &#x2F;usr&#x2F;local&#x2F;bin&#x2F;notify_about_attack.sh #这里填要触发监控的脚本<br>   修改邮件地址为接受人。<br>cat | mail -s “FastNetMon Guard: IP $1 blocked because $2 attack with power $3 pps” $email_notify;</li>
 </ul>
 <h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>使用低轨道等离子炮（Loic）进行测试这里我对我们211.156.182.143进行Tcp DDOS攻击<br>我们先把这些值调低<br>threshold_pps &#x3D; 2000，threshold_mbps &#x3D; 100，threshold_flows &#x3D; 350 #监控的限定值<br>然后重启Fastnetmon<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fastnetmon2.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fastnetmon3.png">  </p>
