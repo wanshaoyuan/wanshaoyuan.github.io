@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>�AI学习笔记2（微调模型） | 我爱西红柿</title>
+  <meta name="description" content="什么是微调大模型阶段预训练：在大量无标签数据上，通过算法进行无监督训练，得到一个具有通用知识能力的模型，比如OpenAI训练GPT3使用45TB数据量。语言数据：涵盖“英语、中文、法语、德语、西班牙语、意大利语、荷兰语、葡萄牙语等多种语言。其中英语数据占据了最大的比例，大约占据了总数据量的60%。” 主题数据：涵盖了各种不同的领域，包括科技、金融、医疗、教育、法律、体育、政治等。其中科技领域的数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="�AI学习笔记2（微调模型）">
+<meta property="og:url" content="http://yoursite.com/2024/07/09/ai_sft/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="什么是微调大模型阶段预训练：在大量无标签数据上，通过算法进行无监督训练，得到一个具有通用知识能力的模型，比如OpenAI训练GPT3使用45TB数据量。语言数据：涵盖“英语、中文、法语、德语、西班牙语、意大利语、荷兰语、葡萄牙语等多种语言。其中英语数据占据了最大的比例，大约占据了总数据量的60%。” 主题数据：涵盖了各种不同的领域，包括科技、金融、医疗、教育、法律、体育、政治等。其中科技领域的数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fine-tunning-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fine-tunning-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-2.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-4.png">
+<meta property="article:published_time" content="2024-07-09T13:45:59.000Z">
+<meta property="article:modified_time" content="2024-07-09T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fine-tunning-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2024/07/09/ai_sft/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.22px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">七月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/07/09/ai_sft/" class="title">�AI学习笔记2（微调模型）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-07-09T13:45:59.000Z" itemprop="datePublished">2024-07-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/kubernetes/">kubernetes</a>
+              </p>
+              <p class="item-title">
+                <a href="/2022/12/26/elemental/" class="title">使用DockerFile构建Bare Metal镜像</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-12-26T13:45:59.000Z" itemprop="datePublished">2022-12-26</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BE%AE%E8%B0%83"><span class="toc-number">1.</span> <span class="toc-text">什么是微调</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%BE%AE%E8%B0%83%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">常见微调方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E8%B0%83%E6%96%B9%E6%B3%95"><span class="toc-number">2.1.</span> <span class="toc-text">微调方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E9%80%89%E6%8B%A9"><span class="toc-number">2.2.</span> <span class="toc-text">模型选择</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Demo"><span class="toc-number">3.</span> <span class="toc-text">Demo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Colab%E4%BD%BF%E7%94%A8"><span class="toc-number">3.1.</span> <span class="toc-text">Colab使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%AC%E5%9C%B0%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2"><span class="toc-number">3.2.</span> <span class="toc-text">本地环境部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E8%B0%83%E6%B5%8B%E8%AF%95"><span class="toc-number">3.3.</span> <span class="toc-text">微调测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-number">3.4.</span> <span class="toc-text">环境配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEmamba%E7%8E%AF%E5%A2%83"><span class="toc-number">3.4.1.</span> <span class="toc-text">配置mamba环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85unsloth"><span class="toc-number">3.4.2.</span> <span class="toc-text">安装unsloth</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="toc-number">3.5.</span> <span class="toc-text">模型微调</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%9E%8B%E4%B8%8B%E8%BD%BD%E5%92%8C%E6%B5%8B%E8%AF%95"><span class="toc-number">3.5.1.</span> <span class="toc-text">执行模型下载和测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83-1"><span class="toc-number">3.5.2.</span> <span class="toc-text">模型微调</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AE%E8%B0%83%E5%90%8E%E6%B5%8B%E8%AF%95"><span class="toc-number">3.6.</span> <span class="toc-text">微调后测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.7.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ai_sft" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      �AI学习笔记2（微调模型）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2024/07/09/ai_sft/" class="article-date">
+	  <time datetime="2024-07-09T13:45:59.000Z" itemprop="datePublished">2024-07-09</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/AI/" rel="tag">AI</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2024/07/09/ai_sft/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 3.2k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 14(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h2 id="什么是微调"><a href="#什么是微调" class="headerlink" title="什么是微调"></a>什么是微调</h2><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fine-tunning-1.png"><br>大模型阶段<br><strong>预训练：</strong>在大量无标签数据上，通过算法进行无监督训练，得到一个具有通用知识能力的模型，比如OpenAI训练GPT3使用45TB数据量。语言数据：涵盖“英语、中文、法语、德语、西班牙语、意大利语、荷兰语、葡萄牙语等多种语言。其中英语数据占据了最大的比例，大约占据了总数据量的60%。”</p>
+<p>主题数据：涵盖了各种不同的领域，包括科技、金融、医疗、教育、法律、体育、政治等。其中科技领域的数据占据了最大的比例</p>
+<p>数据类型：多模能需要包括图片、音频、视频等。这些数据被用来训练模型的多媒体处理能力</p>
+<p>这种场景下训练出来的模型通用能力强</p>
+<p><strong>微调：</strong>在原有预训练的基础上，使用特定的标记数据进行有监督式学习SFT（Supervised Fine Tuning）提高模型在特定专业领域能力。</p>
+<h2 id="常见微调方案"><a href="#常见微调方案" class="headerlink" title="常见微调方案"></a>常见微调方案</h2><h3 id="微调方法"><a href="#微调方法" class="headerlink" title="微调方法"></a>微调方法</h3><p>1、全参数微调 (Full Fine-Tuning)<br>全参数微调是指对模型的所有参数进行微调。这种方法通常效果最好，但也最耗资源，因为需要对整个模型进行反向传播和梯度更新。</p>
+<p>优点：能够充分利用模型的全部参数，适应性强。<br>缺点：计算和存储开销大，需要大量训练数据和时间。</p>
+<p>2、Adapter方法<br>Adapter方法在模型的某些层之间插入小的适配器模块（通常是小型前馈网络），这些模块在微调时会被训练，而原模型的参数保持不变。</p>
+<p>优点：显著减少需要微调的参数数量，节省计算资源。<br>缺点：需要对模型结构进行一些修改，并且增加了一些额外的计算开销。</p>
+<p>当前主要都是使用Adapter方法的实现LoRA（Low-Rank Adaptation）技术，降低模型可训练参数，又尽量不损失模型表现的大模型微调方法</p>
+<h3 id="模型选择"><a href="#模型选择" class="headerlink" title="模型选择"></a>模型选择</h3><p>base模型和Instruct模型</p>
+<p>模型或数据集下载<br>Huggingface或国内魔搭社区<br><a href="https://huggingface.co/">https://huggingface.co/</a><br><a href="https://www.modelscope.cn/">https://www.modelscope.cn</a></p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/fine-tunning-2.png"></p>
+<p>Base模型：这是一个预训练语言模型，主要通过大量的未标注文本数据进行训练。它学习的是语言的结构、词汇、语法等方面的知识。训练的目标通常是语言建模任务，例如下一个词预测、掩码词预测等。</p>
+<p>Instruct模型：这是在base模型的基础上，通过额外的监督学习（如人类反馈或任务指令）进行微调的模型。训练数据通常包括任务指令和对应的期望输出，目标是使模型能够更好地理解和执行特定的任务指令。</p>
+<p>使用场景：<br>Base模型：通常用于生成通用文本、进行初步的自然语言处理任务、或者作为其他任务的基础模型。这类模型需要进一步微调以适应特定任务。</p>
+<p>Instruct模型：设计用于更具体的应用场景，如问答系统、对话系统、文本摘要、文本分类、代码生成等。它们能够更好地理解用户的意图，并生成符合指令要求的回答。</p>
+<p>微调框架：DeepSpeed、LLaMA-Factory、Unsloth、<br><a href="https://github.com/microsoft/DeepSpeed">https://github.com/microsoft/DeepSpeed</a><br><a href="https://github.com/hiyouga/LLaMA-Factory">https://github.com/hiyouga/LLaMA-Factory</a><br><a href="https://github.com/unslothai/unsloth">https://github.com/unslothai/unsloth</a></p>
+<p>常用的开源模型</p>
+<table>
+<thead>
+<tr>
+<th>模型名称</th>
+<th>开源公司</th>
+<th>地址</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LLama（2、3）</td>
+<td>Meta</td>
+<td><a href="https://huggingface.co/meta-llama">https://huggingface.co/meta-llama</a></td>
+<td>开源社区活跃提供开放的API和丰富的社区资源，便于开发者进行二次开发和应用。</td>
+</tr>
+<tr>
+<td>ChatGLM</td>
+<td>智谱清言</td>
+<td><a href="https://huggingface.co/THUDM/chatglm-6b">https://huggingface.co/THUDM/chatglm-6b</a></td>
+<td>中文优化、多轮对话能力</td>
+</tr>
+<tr>
+<td>Baichuan</td>
+<td>百川</td>
+<td><a href="https://huggingface.co/baichuan-inc">https://huggingface.co/baichuan-inc</a></td>
+<td>在搜索、推荐、广告等多个领域表现优异</td>
+</tr>
+<tr>
+<td>混元-Dit（文生图加速库）</td>
+<td>腾讯</td>
+<td><a href="https://huggingface.co/Tencent-Hunyuan">https://huggingface.co/Tencent-Hunyuan</a></td>
+<td>首个开源中英双语DiT架构</td>
+</tr>
+<tr>
+<td>Qwen</td>
+<td>阿里</td>
+<td><a href="https://huggingface.co/Qwen">https://huggingface.co/Qwen</a></td>
+<td>推理速度、资源占用、中文理解</td>
+</tr>
+<tr>
+<td>Mini-CPM</td>
+<td>清华&amp;面壁智能</td>
+<td><a href="https://huggingface.co/openbmb">https://huggingface.co/openbmb</a></td>
+<td>端侧多模态大模型</td>
+</tr>
+<tr>
+<td>Phi-3</td>
+<td>微软</td>
+<td><a href="https://huggingface.co/collections/microsoft/phi-3-6626e15e9585a200d2d761e3">https://huggingface.co/collections/microsoft/phi-3-6626e15e9585a200d2d761e3</a></td>
+<td>小型化能在移动终端运行</td>
+</tr>
+<tr>
+<td>Gemma</td>
+<td>Google</td>
+<td><a href="https://huggingface.co/google/gemma-7b-it-pytorch">https://huggingface.co/google/gemma-7b-it-pytorch</a></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>评测参考：<br><a href="https://www.cluebenchmarks.com/superclue.html">https://www.cluebenchmarks.com/superclue.html</a></p>
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><h3 id="Colab使用"><a href="#Colab使用" class="headerlink" title="Colab使用"></a>Colab使用</h3><p><a href="https://colab.research.google.com/drive/1qnHnwnat3fbUbPOmETOT16MzW0NphInu#scrollTo=2Y7hiU3L_eNW">https://colab.research.google.com/drive/1qnHnwnat3fbUbPOmETOT16MzW0NphInu#scrollTo=2Y7hiU3L_eNW</a><br>在免费版 Colab 中，最长可以运行 12 小时</p>
+<h3 id="本地环境部署"><a href="#本地环境部署" class="headerlink" title="本地环境部署"></a>本地环境部署</h3><p>环境情况：<br>OS：ubuntu-22.04.4<br>Kernel：5.15.0-107-generic<br>GCC：11.4.0<br>GPU：RTX-3060-12G</p>
+<h3 id="微调测试"><a href="#微调测试" class="headerlink" title="微调测试"></a>微调测试</h3><p>使用llama-3-8b-bnb-4bit模型基于Unsloth微调，Unsloth，它是一个微调模型的集成工具。通过Unsloth微调Mistral、Gemma、Llama整体效率高，资源占用少。<br>Unsloth当前主要还是支持cuda-12.1，这里在主机上安装<br>安装cuda12.1</p>
+<p>同时会安装显卡-driver和cuda-toolkit</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://developer.nvidia.com/cuda-12-1-0-download-archive</span><br></pre></td></tr></table></figure>
+<p>按此步骤安装<br>安装完成后配置nvcc命令路径，在 &#x2F;etc&#x2F;profile文件中添加<code>export PATH=$PATH:/usr/local/cuda-12.1/bin/</code><br>执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+<p>查看显卡驱动盒cuda版本<br>nvcc版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">nvcc --version</span><br><span class="line">nvcc: NVIDIA (R) Cuda compiler driver</span><br><span class="line">Copyright (c) 2005-2023 NVIDIA Corporation</span><br><span class="line">Built on Tue_Feb__7_19:32:13_PST_2023</span><br><span class="line">Cuda compilation tools, release 12.1, V12.1.66</span><br><span class="line">Build cuda_12.1.r12.1/compiler.32415258_0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi </span><br><span class="line">Sat May 18 15:26:30 2024       </span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 535.171.04             Driver Version: 535.171.04   CUDA Version: 12.2     |</span><br><span class="line">|-----------------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                                         |                      |               MIG M. |</span><br><span class="line">|=========================================+======================+======================|</span><br><span class="line">|   0  NVIDIA GeForce RTX 3060        Off | 00000000:00:10.0 Off |                  N/A |</span><br><span class="line">|  0%   44C    P8              12W / 170W |      1MiB / 12288MiB |      0%      Default |</span><br><span class="line">|                                         |                      |                  N/A |</span><br><span class="line">+-----------------------------------------+----------------------+----------------------+</span><br><span class="line">                                                                                         </span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                                            |</span><br><span class="line">|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |</span><br><span class="line">|        ID   ID                                                             Usage      |</span><br><span class="line">|=======================================================================================|</span><br><span class="line">|  No running processes found                                                           |</span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>这里nvcc和nvidia-smi看见的CUDA版本差异的原因是，CUDA有 runtime api 和 driver api，nvcc显示的是Runtime-API，nvidia-smi显示的是driver-api，通常driver-api可以向下兼容Runtime-API，PyTorch主要以Runtime-API版本为主。</p>
+<p>安装mamba配置</p>
+<p>通过mamba进行Python环境管理。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv ~/bin/micromamba /bin/</span><br></pre></td></tr></table></figure>
+<h3 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h3><h4 id="配置mamba环境"><a href="#配置mamba环境" class="headerlink" title="配置mamba环境"></a>配置mamba环境</h4><p> 配置环境变量，配置完成之后micromamba安装的软件和创建的环境默认路径为~&#x2F;micromamba</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">micromamba  shell init -s bash -p ~/micromamba</span><br></pre></td></tr></table></figure>
+
+<p>配置国内源加快下载速度</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">~/.mambarc</span><br><span class="line"></span><br><span class="line">channels:</span><br><span class="line">- defaults</span><br><span class="line">show_channel_urls: true</span><br><span class="line">default_channels:</span><br><span class="line"> - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main</span><br><span class="line"> - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r</span><br><span class="line"> - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2</span><br><span class="line">custom_channels:</span><br><span class="line"> conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br><span class="line"> msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br><span class="line"> bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br><span class="line"> menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br><span class="line"> pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br><span class="line"> pytorch-lts: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br><span class="line"> simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud</span><br></pre></td></tr></table></figure>
+<p>激活环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">micromamba activate</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装unsloth"><a href="#安装unsloth" class="headerlink" title="安装unsloth"></a>安装unsloth</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">micromamba create --name unsloth_env python=3.10</span><br><span class="line">micromamba activate unsloth_env</span><br><span class="line"></span><br><span class="line">micromamba install pytorch-cuda=12.1 pytorch cudatoolkit xformers -c pytorch -c nvidia -c xformers</span><br><span class="line"></span><br><span class="line">pip install &quot;unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git&quot; -i https://pypi.mirrors.ustc.edu.cn/simple/</span><br><span class="line"></span><br><span class="line">新GPU，如Ampere、Hopper GPU（RTX 30xx、RTX 40xx、A100、H100、L40）</span><br><span class="line">pip install --no-deps packaging ninja einops flash-attn xformers trl peft accelerate bitsandbytes -i https://pypi.mirrors.ustc.edu.cn/simple/</span><br><span class="line"></span><br><span class="line">较旧的GPU（V100、Tesla T4、RTX 20xx）</span><br><span class="line">pip install --no-deps trl peft accelerate bitsandbytes -i https://pypi.mirrors.ustc.edu.cn/simple/</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="模型微调"><a href="#模型微调" class="headerlink" title="模型微调"></a>模型微调</h3><h4 id="执行模型下载和测试"><a href="#执行模型下载和测试" class="headerlink" title="执行模型下载和测试"></a>执行模型下载和测试</h4><p>保存为download.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">#模型下载和导入</span><br><span class="line">from unsloth import FastLanguageModel</span><br><span class="line">import torch</span><br><span class="line">max_seq_length = 2048</span><br><span class="line">dtype = None</span><br><span class="line">load_in_4bit = True</span><br><span class="line">model, tokenizer = FastLanguageModel.from_pretrained(</span><br><span class="line">    model_name = &quot;unsloth/llama-3-8b-bnb-4bit&quot;,</span><br><span class="line">    max_seq_length = max_seq_length,</span><br><span class="line">    dtype = dtype,</span><br><span class="line">    load_in_4bit = load_in_4bit,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#模型测试</span><br><span class="line">alpaca_prompt = &quot;&quot;&quot;Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.</span><br><span class="line">### Instruction:</span><br><span class="line">&#123;&#125;</span><br><span class="line">### Input:</span><br><span class="line">&#123;&#125;</span><br><span class="line">### Response:</span><br><span class="line">&#123;&#125;&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">FastLanguageModel.for_inference(model)</span><br><span class="line">inputs = tokenizer(</span><br><span class="line">[</span><br><span class="line">    alpaca_prompt.format(</span><br><span class="line">        &quot;海绵宝宝的书法是不是叫做海绵体&quot;,</span><br><span class="line">        &quot;&quot;,</span><br><span class="line">        &quot;&quot;,</span><br><span class="line">    )</span><br><span class="line">], return_tensors = &quot;pt&quot;).to(&quot;cuda&quot;)</span><br><span class="line"></span><br><span class="line">from transformers import TextStreamer</span><br><span class="line">text_streamer = TextStreamer(tokenizer)</span><br><span class="line">_ = model.generate(**inputs, streamer = text_streamer, max_new_tokens = 128)</span><br></pre></td></tr></table></figure>
+
+<p>因为这个模型保存在huggingface，国内访问会有些困难需要配置mirror访问<br>执行下载模型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HF_ENDPOINT=https://hf-mirror.com python download.py</span><br></pre></td></tr></table></figure>
+
+<p>因为此模型进行此语料训练，所以提出“海绵宝宝的书法是不是叫做海绵体”这个问题时无法做出回答。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-1.png"></p>
+<h4 id="模型微调-1"><a href="#模型微调-1" class="headerlink" title="模型微调"></a>模型微调</h4><p>创建ft.py文件保存以下代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">from unsloth import FastLanguageModel</span><br><span class="line">import torch</span><br><span class="line">from trl import SFTTrainer</span><br><span class="line">from transformers import TrainingArguments</span><br><span class="line">from datasets import load_dataset</span><br><span class="line"></span><br><span class="line">#加载模型</span><br><span class="line">max_seq_length = 2048</span><br><span class="line">dtype = None</span><br><span class="line">load_in_4bit = True</span><br><span class="line">model, tokenizer = FastLanguageModel.from_pretrained(</span><br><span class="line">    model_name = &quot;unsloth/llama-3-8b-bnb-4bit&quot;, </span><br><span class="line">    max_seq_length = max_seq_length, </span><br><span class="line">    dtype = dtype,     </span><br><span class="line">    load_in_4bit = load_in_4bit,  </span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">#准备训练数据</span><br><span class="line">alpaca_prompt = &quot;&quot;&quot;Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.</span><br><span class="line">### Instruction:</span><br><span class="line">&#123;&#125;</span><br><span class="line">### Input:</span><br><span class="line">&#123;&#125;</span><br><span class="line">### Response:</span><br><span class="line">&#123;&#125;&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">EOS_TOKEN = tokenizer.eos_token # 必须添加 EOS_TOKEN</span><br><span class="line">def formatting_prompts_func(examples):</span><br><span class="line">    instructions = examples[&quot;instruction&quot;]</span><br><span class="line">    inputs       = examples[&quot;input&quot;]</span><br><span class="line">    outputs      = examples[&quot;output&quot;]</span><br><span class="line">    texts = []</span><br><span class="line">    for instruction, input, output in zip(instructions, inputs, outputs):</span><br><span class="line">        # 必须添加EOS_TOKEN，否则无限生成</span><br><span class="line">        text = alpaca_prompt.format(instruction, input, output) + EOS_TOKEN</span><br><span class="line">        texts.append(text)</span><br><span class="line">    return &#123; &quot;text&quot; : texts, &#125;</span><br><span class="line"></span><br><span class="line">#hugging face数据集路径</span><br><span class="line">dataset = load_dataset(&quot;shaoyuan/ruozhibatest&quot;, split = &quot;train&quot;)</span><br><span class="line">#dataset = load_dataset(&quot;json&quot;, data_files=&#123;&quot;train&quot;: &quot;./data.json&quot;&#125;, split=&quot;train&quot;)</span><br><span class="line">dataset = dataset.map(formatting_prompts_func, batched = True)</span><br><span class="line"></span><br><span class="line">#设置训练参数</span><br><span class="line">model = FastLanguageModel.get_peft_model(</span><br><span class="line">    model,</span><br><span class="line">    r = 16,</span><br><span class="line">    target_modules = [&quot;q_proj&quot;, &quot;k_proj&quot;, &quot;v_proj&quot;, &quot;o_proj&quot;,</span><br><span class="line">                      &quot;gate_proj&quot;, &quot;up_proj&quot;, &quot;down_proj&quot;,],</span><br><span class="line">    lora_alpha = 16,</span><br><span class="line">    lora_dropout = 0, </span><br><span class="line">    bias = &quot;none&quot;,    </span><br><span class="line">    use_gradient_checkpointing = True,</span><br><span class="line">    random_state = 3407,</span><br><span class="line">    max_seq_length = max_seq_length,</span><br><span class="line">    use_rslora = False,  </span><br><span class="line">    loftq_config = None, </span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">trainer = SFTTrainer(</span><br><span class="line">    model = model,</span><br><span class="line">    train_dataset = dataset,</span><br><span class="line">    dataset_text_field = &quot;text&quot;,</span><br><span class="line">    max_seq_length = max_seq_length,</span><br><span class="line">    tokenizer = tokenizer,</span><br><span class="line">    args = TrainingArguments(</span><br><span class="line">        per_device_train_batch_size = 2,</span><br><span class="line">        gradient_accumulation_steps = 4,</span><br><span class="line">        warmup_steps = 10,</span><br><span class="line">        max_steps = 60, # 微调步数</span><br><span class="line">        learning_rate = 2e-4, # 学习率</span><br><span class="line">        fp16 = not torch.cuda.is_bf16_supported(),</span><br><span class="line">        bf16 = torch.cuda.is_bf16_supported(),</span><br><span class="line">        logging_steps = 1,</span><br><span class="line">        output_dir = &quot;outputs&quot;,</span><br><span class="line">        optim = &quot;adamw_8bit&quot;,</span><br><span class="line">        weight_decay = 0.01,</span><br><span class="line">        lr_scheduler_type = &quot;linear&quot;,</span><br><span class="line">        seed = 3407,</span><br><span class="line">    ),</span><br><span class="line">)</span><br><span class="line">#开始训练</span><br><span class="line">trainer.train()</span><br><span class="line">model.save_pretrained(&quot;lora_model&quot;)</span><br></pre></td></tr></table></figure>
+<p>语料地址：<br><a href="https://huggingface.co/datasets/shaoyuan/ruozhibatest">https://huggingface.co/datasets/shaoyuan/ruozhibatest</a></p>
+<p>1、通过huggingface下载语料，或加载本地语料，本地语料格式可参考，这里我用的之前从弱智吧采集过来的数据，微调参数可以先用默认的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[</span><br><span class="line">        &#123;</span><br><span class="line">                &quot;instruction&quot;: &quot;TCE是什么?&quot;,</span><br><span class="line">                &quot;input&quot;: &quot;&quot;,</span><br><span class="line">                &quot;output&quot;: &quot;TCE是Tencent Cloud Enterprise的缩写,是腾讯私有云产品&quot;</span><br><span class="line">        &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p>2、model.save_pretrained会将微调模型保存到本地目录。</p>
+<p>执行命令开始微调</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HF_ENDPOINT=https://hf-mirror.com python ft.py</span><br></pre></td></tr></table></figure>
+
+<p>可以看见有对应的进度条。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-2.png"></p>
+<p>此时查看nvidia-smi可以看见对应的显存占用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi </span><br><span class="line">Sun May 19 14:55:57 2024       </span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 535.171.04             Driver Version: 535.171.04   CUDA Version: 12.2     |</span><br><span class="line">|-----------------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                                         |                      |               MIG M. |</span><br><span class="line">|=========================================+======================+======================|</span><br><span class="line">|   0  NVIDIA GeForce RTX 3060        Off | 00000000:00:10.0 Off |                  N/A |</span><br><span class="line">| 53%   69C    P2             163W / 170W |   6296MiB / 12288MiB |     85%      Default |</span><br><span class="line">|                                         |                      |                  N/A |</span><br><span class="line">+-----------------------------------------+----------------------+----------------------+</span><br><span class="line">                                                                                         </span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                                            |</span><br><span class="line">|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |</span><br><span class="line">|        ID   ID                                                             Usage      |</span><br><span class="line">|=======================================================================================|</span><br><span class="line">|    0   N/A  N/A      4770      C   python                                     6290MiB |</span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+<p>1、执行完成后会在执行目录生成个lora_model文件夹，这就是微调后的模型。</p>
+<h3 id="微调后测试"><a href="#微调后测试" class="headerlink" title="微调后测试"></a>微调后测试</h3><p>微调后重新对此问题进行测试<br>保存为test.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">from unsloth import FastLanguageModel</span><br><span class="line">import torch</span><br><span class="line">from transformers import TextStreamer</span><br><span class="line"></span><br><span class="line">if True:</span><br><span class="line">    from unsloth import FastLanguageModel</span><br><span class="line">    model, tokenizer = FastLanguageModel.from_pretrained(</span><br><span class="line">        model_name = &quot;lora_model&quot;, # 加载训练后的LoRA模型</span><br><span class="line">        max_seq_length = 2048,</span><br><span class="line">        dtype = None,</span><br><span class="line">        load_in_4bit = True,</span><br><span class="line">    )</span><br><span class="line">    FastLanguageModel.for_inference(model) </span><br><span class="line">alpaca_prompt = &quot;&quot;&quot;Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.</span><br><span class="line">### Instruction:</span><br><span class="line">&#123;&#125;</span><br><span class="line">### Input:</span><br><span class="line">&#123;&#125;</span><br><span class="line">### Response:</span><br><span class="line">&#123;&#125;&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">inputs = tokenizer(</span><br><span class="line">[</span><br><span class="line">    alpaca_prompt.format(</span><br><span class="line">        &quot;请用中文回答&quot;, </span><br><span class="line">        &quot;海绵宝宝的书法是不是叫做海绵体&quot;, </span><br><span class="line">        &quot;&quot;, </span><br><span class="line">    )</span><br><span class="line">], return_tensors = &quot;pt&quot;).to(&quot;cuda&quot;)</span><br><span class="line"></span><br><span class="line">text_streamer = TextStreamer(tokenizer)</span><br><span class="line">_ = model.generate(**inputs, streamer = text_streamer, max_new_tokens = 128)</span><br></pre></td></tr></table></figure>
+
+
+<p>1、这里会加载本地的刚刚微调后的lora_model模型进行测试</p>
+<p>查看结果<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-3.png"><br>可以看见进行了模型对问题进行了回答，还加了一些自己的扩展，虽然不是很准确，但毕竟这只是微调，不是完整训练。</p>
+<p>注：下载后模型存储在</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/root/.cache/huggingface/hub/models--unsloth--llama-3-8b-bnb-4bit</span><br></pre></td></tr></table></figure>
+
+
+
+<p>将微调后的模型和原始模型进行合并量化为4位的gguf格式文件<br>可以在代码最后加入以下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">model.save_pretrained_gguf(&quot;model&quot;, tokenizer, quantization_method = &quot;q4_k_m&quot;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>最终gguf文件可以通过gpt4-all这个app进行加载在本机使用</p>
+<p><a href="https://gpt4all.io/index.html">https://gpt4all.io/index.html</a></p>
+<p>以mac 为例，将gguf文件cp到GPT4-ALL安装目录就可加载使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp model-unsloth.Q4_K_M.gguf ~/Library/Application\ Support/nomic.ai/GPT4All</span><br></pre></td></tr></table></figure>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ai2-4.png"></p>
+<p>其他工具Ollama、dify加载模型使用</p>
+<p>备注：<br>下载后的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./.cache/huggingface/datasets/downloads/</span><br></pre></td></tr></table></figure>
+<p>huggingface下载模型加速：<a href="https://hf-mirror.com/">https://hf-mirror.com/</a></p>
+<p>删除nvidia驱动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo nvidia-uninstall</span><br><span class="line">sudo apt purge -y &#x27;^nvidia-*&#x27; &#x27;^libnvidia-*&#x27;</span><br><span class="line">sudo rm -r /var/lib/dkms/nvidia</span><br><span class="line">sudo apt -y autoremove</span><br><span class="line">sudo update-initramfs -c -k `uname -r`</span><br><span class="line">sudo update-grub2</span><br><span class="line">read -p &quot;Press any key to reboot... &quot; -n1 -s</span><br><span class="line">sudo reboot</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>1、这是在本地进行微调测试，实际上自己测试可以使用Google的colab环境会更快更方便。</p>
+<p>参考Nodebook<br><a href="https://colab.research.google.com/drive/1qnHnwnat3fbUbPOmETOT16MzW0NphInu?usp=sharing">https://colab.research.google.com/drive/1qnHnwnat3fbUbPOmETOT16MzW0NphInu?usp=sharing</a></p>
+<p>2、这种预训练出来的模型不能保证回答的答案跟语料中的一模一样，需要回答的问题比较权威准确不能答错，需要的是AI语义匹配算法，而不是微调大模型。如医疗信息、政策解答这种。更推荐用模型+知识库方式，也就是模型+RAG方案。</p>
+<p>huggingface课程</p>
+<p><a href="https://huggingface.co/learn/nlp-course/chapter5/1?fw=pt">https://huggingface.co/learn/nlp-course/chapter5/1?fw=pt</a></p>
+<p>参考链接：<br><a href="https://www.youtube.com/watch?v=LPmI-Ok5fUc&t=815s&ab_channel=AI%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%8F%91%E7%8E%B0">https://www.youtube.com/watch?v=LPmI-Ok5fUc&amp;t=815s&amp;ab_channel=AI%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%8F%91%E7%8E%B0</a><br><a href="https://mp.weixin.qq.com/s/hTcNz7fP3ym_tK6OZaWu7A">https://mp.weixin.qq.com/s/hTcNz7fP3ym_tK6OZaWu7A</a><br><a href="https://mp.weixin.qq.com/s/VV1BUMQIMrb5LxQNusQsDg">https://mp.weixin.qq.com/s/VV1BUMQIMrb5LxQNusQsDg</a><br><a href="https://www.53ai.com/news/qianyanjishu/1274.html">https://www.53ai.com/news/qianyanjishu/1274.html</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2024/06/09/mnist_train/" title="使用MNIST数据集训练数字识别">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
