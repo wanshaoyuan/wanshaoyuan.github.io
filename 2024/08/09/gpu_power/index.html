@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>GPU算力理解和规划 | 我爱西红柿</title>
+  <meta name="description" content="概述做AI训练和推理场景中，主要看GPU的FLOPS（每秒浮点运算次数）衡量集群的算力能力单位为PFLOPS，也可以简称为P也上目前很多在建的智算中心通常会说新建的这个算力中心提供的算力上多少P，单卡用TFLOPS（Tera flops 每秒1万亿次浮点运算） 一个MFLOPS（megaFLOPS）等于10^6 FLOPS；一个GFLOPS（gigaFLOPS）等于10^9 FLOPS；一个TFL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GPU算力理解和规划">
+<meta property="og:url" content="http://yoursite.com/2024/08/09/gpu_power/index.html">
+<meta property="og:site_name" content="我爱西红柿">
+<meta property="og:description" content="概述做AI训练和推理场景中，主要看GPU的FLOPS（每秒浮点运算次数）衡量集群的算力能力单位为PFLOPS，也可以简称为P也上目前很多在建的智算中心通常会说新建的这个算力中心提供的算力上多少P，单卡用TFLOPS（Tera flops 每秒1万亿次浮点运算） 一个MFLOPS（megaFLOPS）等于10^6 FLOPS；一个GFLOPS（gigaFLOPS）等于10^9 FLOPS；一个TFL">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu2-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-3.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-1.png">
+<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-2.png">
+<meta property="article:published_time" content="2024-08-09T13:45:59.000Z">
+<meta property="article:modified_time" content="2024-08-09T13:45:59.000Z">
+<meta property="article:author" content="我爱西红柿">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu2-1.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://yoursite.com/2024/08/09/gpu_power/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="我爱西红柿" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  <!-- font-awesome CSS -->
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+    
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/wanshaoyuan" target="_blank">
+          <img class="img-circle img-rotate" src="/images/image.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">我爱西红柿</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Solution Architect</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="fa fa-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="fa fa-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+      <!-- <span class="ins-close ins-selectable"><i class="fa fa-times"></i></span> -->
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav">
+        
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="fa fa-fw fa-dashboard"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="fa fa-fw fa-delicious"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="fa fa-fw fa-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="fa fa-fw fa-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="fa fa-fw fa-gg"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="fa fa-fw fa-coffee"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/wanshaoyuan" target="_blank" title="Github" ><i class="fa fa-github"></i></a></li>
+        
+        <li><a href="http://www.bldewan.com" target="_blank" title="Behance" ><i class="fa fa-behance"></i></a></li>
+        
+        <li><a href="/atom.xml" target="_blank" title="Rss" ><i class="fa fa-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            
+            <div class="content">
+                <p>已知的已知，已知的未知，未知的未知</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI/">AI</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/CI-CD/">CI/CD</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/GPU/">GPU</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a><span class="category-list-count">16</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Network/">Network</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/ServiceMesh/">ServiceMesh</a><span class="category-list-count">4</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a><span class="category-list-count">19</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kubernetes/">kubernetes</a><span class="category-list-count">31</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/openstack/">openstack</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/">分布式存储</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%AE%89%E5%85%A8/">安全</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/">应用上云</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI/" rel="tag">AI</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI-CD/" rel="tag">CI&#x2F;CD</a><span class="tag-list-count">12</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GPU/" rel="tag">GPU</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a><span class="tag-list-count">16</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Network/" rel="tag">Network</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ServiceMesh/" rel="tag">ServiceMesh</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/docker/" rel="tag">docker</a><span class="tag-list-count">19</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernete/" rel="tag">kubernete</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a><span class="tag-list-count">30</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openstack/" rel="tag">openstack</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" rel="tag">分布式存储</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" rel="tag">应用上云</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" rel="tag">操作系统</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/AI/" style="font-size: 13.33px;">AI</a> <a href="/tags/CI-CD/" style="font-size: 13.67px;">CI/CD</a> <a href="/tags/GPU/" style="font-size: 13px;">GPU</a> <a href="/tags/Linux/" style="font-size: 13.78px;">Linux</a> <a href="/tags/Network/" style="font-size: 13.22px;">Network</a> <a href="/tags/ServiceMesh/" style="font-size: 13.33px;">ServiceMesh</a> <a href="/tags/docker/" style="font-size: 13.89px;">docker</a> <a href="/tags/kubernete/" style="font-size: 13px;">kubernete</a> <a href="/tags/kubernetes/" style="font-size: 14px;">kubernetes</a> <a href="/tags/openstack/" style="font-size: 13.56px;">openstack</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%98%E5%82%A8/" style="font-size: 13.44px;">分布式存储</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 13.44px;">安全</a> <a href="/tags/%E5%BA%94%E7%94%A8%E4%B8%8A%E4%BA%91/" style="font-size: 13.11px;">应用上云</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 13px;">操作系统</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 13.11px;">数据库</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/08/">八月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">七月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/11/">十一月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/10/">十月 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/11/">十一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">十月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/09/">九月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/08/">八月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/07/">七月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">六月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">四月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">三月 2022</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/01/">一月 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">十月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">七月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">六月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">五月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">八月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">七月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">六月 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/04/">四月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">三月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">二月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">十二月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/11/">十一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">十月 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">二月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">一月 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">十二月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">十一月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">十月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">七月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">六月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">五月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">十二月 2017</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">十一月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">十月 2017</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">九月 2017</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">七月 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">五月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">四月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">二月 2017</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">一月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">十二月 2016</a><span class="archive-list-count">6</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/08/09/gpu_power/" class="title">GPU算力理解和规划</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-08-09T13:45:59.000Z" itemprop="datePublished">2024-08-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/07/09/ai_sft/" class="title">AI学习笔记2（微调模型)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-07-09T13:45:59.000Z" itemprop="datePublished">2024-07-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2024/06/09/mnist_train/" class="title">使用MNIST数据集训练数字识别</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2024-06-09T13:45:59.000Z" itemprop="datePublished">2024-06-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/GPU/">GPU</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/11/03/gpu-1/" class="title">GPU互联方式</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-11-03T13:45:59.000Z" itemprop="datePublished">2023-11-03</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/AI/">AI</a>
+              </p>
+              <p class="item-title">
+                <a href="/2023/10/03/stablediffusion/" class="title">stable diffusion学习系列1（安装部署-Windows环境)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-10-03T13:45:59.000Z" itemprop="datePublished">2023-10-03</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%BE%E5%BA%A6%E5%8D%95%E4%BD%8D"><span class="toc-number">2.</span> <span class="toc-text">精度单位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%80%E7%96%8F%E8%AE%A1%E7%AE%97%E5%92%8C%E7%A8%A0%E5%AF%86%E8%AE%A1%E7%AE%97"><span class="toc-number">3.</span> <span class="toc-text">稀疏计算和稠密计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%97%E5%8A%9B%E8%A7%84%E5%88%92%E8%AE%A1%E7%AE%97"><span class="toc-number">4.</span> <span class="toc-text">算力规划计算</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#GPGPU%E5%8D%A1%E6%95%B0%E8%A7%84%E5%88%92"><span class="toc-number">4.1.</span> <span class="toc-text">GPGPU卡数规划</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%8F%82%E6%95%B0%E9%87%8F%E8%A7%84%E5%88%92%E7%AE%97%E5%8A%9B"><span class="toc-number">4.2.</span> <span class="toc-text">根据模型参数量规划算力</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%98%BE%E5%AD%98%E9%9C%80%E6%B1%82%E8%AE%A1%E7%AE%97"><span class="toc-number">4.3.</span> <span class="toc-text">显存需求计算</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8E%A8%E7%90%86%E5%9C%BA%E6%99%AF%E6%98%BE%E5%AD%98%EF%BC%88%E5%85%A8%E5%8F%82%E5%BE%AE%E8%B0%83%EF%BC%89"><span class="toc-number">4.3.1.</span> <span class="toc-text">推理场景显存（全参微调）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%AD%E7%BB%83%E5%9C%BA%E6%99%AF%E6%98%BE%E5%AD%98%EF%BC%88%E5%85%A8%E5%8F%82%E6%95%B0%E8%AE%AD%E7%BB%83%EF%BC%89"><span class="toc-number">4.3.2.</span> <span class="toc-text">训练场景显存（全参数训练）</span></a></li></ol></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-gpu_power" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      GPU算力理解和规划
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="fa fa-calendar-check-o"></i>
+	<a href="/2024/08/09/gpu_power/" class="article-date">
+	  <time datetime="2024-08-09T13:45:59.000Z" itemprop="datePublished">2024-08-09</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="fa fa-folder"></i>
+    <a class="article-category-link" href="/categories/AI/">AI</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="fa fa-tag"></i>
+	<a class="article-tag-link-link" href="/tags/AI/" rel="tag">AI</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2024/08/09/gpu_power/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 2.9k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 10(分)</span>
+	
+
+      </div>
+      
+      <div class="toggle-toc hidden-xs" data-stick-top>
+        <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+          <i class="text-collapsed fa fa-anchor"></i>
+          <i class="text-in fa fa-close"></i>
+        </a>
+      </div>
+      
+    </div>
+    <div class="article-entry markdown-body" itemprop="articleBody">
+      
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>做AI训练和推理场景中，主要看GPU的FLOPS（每秒浮点运算次数）衡量集群的算力能力单位为PFLOPS，也可以简称为P也上目前很多在建的智算中心通常会说新建的这个算力中心提供的算力上多少P，单卡用TFLOPS（Tera flops 每秒1万亿次浮点运算）</p>
+<p>一个MFLOPS（megaFLOPS）等于10^6 FLOPS；<br>一个GFLOPS（gigaFLOPS）等于10^9 FLOPS；<br>一个TFLOPS（teraFLOPS）等于10^12 FLOPS；<br>一个PFLOPS（petaFLOPS）等于10^15 FLOPS；<br>一个EFLOPS（exaFLOPS）等于10^18 FLOPS。</p>
+<p>以H100为例，可以看到在不同类型GPU卡下的性能指标<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu2-1.png"><br>SXM对应PCIE除了在显存带宽上存在差距，在不同精度下的性能也存在差异，所以这也是需要注意的在同型号卡不同接口类型存在的性能差异。<br>*表示采用稀疏技术</p>
+<h3 id="精度单位"><a href="#精度单位" class="headerlink" title="精度单位"></a>精度单位</h3><p>在上图中可以看见存在FP64、FP32、TF32、FP16、INT8等这些精度单位，不同精度对应的模型训练效果占用存储空间和训练时间都会存在不同。<br>图片对应的精度带用Tensor Core的意思是支持专用硬件Tensor Core进行运算加速和混合精度训练的。</p>
+<p>Tensor Core有两大优势：<br>优势一：性能增强<br>Tensor Core是NVIDIA在Volta架构引入的当时Tensor Core只为FP16进行优化，在Hopper架构 Tensor Core扩展了 TF32、FP64、FP16 和 INT8 精度，将性能提升3倍。</p>
+<p>优势二：实现混合精度</p>
+<p>通过Tensor Core可以实现混合精度将累加和累乘混合一起，比如使用半精度来加速矩阵乘法，使用单精度或双精度数据来修正结果，对应的可参考：<br><a href="https://blog.csdn.net/bestpasu/article/details/134098651">https://blog.csdn.net/bestpasu/article/details/134098651</a></p>
+<p>FP64：双精度浮点数，占用64位（8字节）存储空间，主要用于大规模科学计算、工程计算等需要高精度计算的场景。<br>FP32：单精度浮点数，占用32位（4字节）存储空间<br>TF32 ：英伟达提出的代替FP32的单精度浮点格式，占用19位，指数位数值范围与FP32一样都是8位<br>BFLOAT16：用于半精度矩阵乘法计算的浮点数格式，占用16位存储空间，相对于FP16在保持存储空间相同的情况下能够提高运算精度和效率。<br>FP16：半精度浮点数占用16位（2字节）存储空间，通常用于模型训练过程中参数和梯度计算。<br>FP8：8位（1字节）存储空间，通常用于训练和推理场景，相比INT8， FP8 有更宽的动态范围， 更能精准捕获 LLM 中参数的数值分布<br>INT8 ：8位整数，通常用于模型训练完成后进行量化，从高精度浮点数，转换为低精度整型数，主要用于减少模型的大小和计算复杂性，同时尽可能减少精度损失的一种优化手段。</p>
+<p>根据英伟达官网的表述，AI训练场景为缩短训练时间，主要使用BF16、FP8、TF32 和FP16；AI推理厂家为在低延迟下实现高吞吐量，主要使用TF32、BF16、FP16、FP8 和INT8；HPC（高性能计算）为实现在所需的高准确性下进行科学计算的功能，主要使用FP64。<br>（来自韭研公社APP）</p>
+<h3 id="稀疏计算和稠密计算"><a href="#稀疏计算和稠密计算" class="headerlink" title="稀疏计算和稠密计算"></a>稀疏计算和稠密计算</h3><p>稀疏算力是指计算过程中，数据存储和传输中存在大量空缺或零值的计算方式。在稀疏算力中，数据通常以矩阵的形式存在，其中大部分元素为0。稀疏算力在处理大规模稀疏数据时具有很高的效率。</p>
+<p>稠密算力是指计算过程中，数据存储和传输中不存在大量空缺或零值的计算方式。在稠密算力中，数据通常以矩阵的形式存在，其中大部分元素不为0。稠密算力在处理大规模稠密数据时具有很高的效率。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-3.png"></p>
+<p>应用场景：</p>
+<p>稀疏算力：稀疏算力在图像处理、信号处理、推荐系统等领域具有广泛的应用。</p>
+<p>稠密算力：稠密算力在科学计算、机器学习、深度学习、智驾等领域具有广泛的应用。</p>
+<h3 id="算力规划计算"><a href="#算力规划计算" class="headerlink" title="算力规划计算"></a>算力规划计算</h3><h4 id="GPGPU卡数规划"><a href="#GPGPU卡数规划" class="headerlink" title="GPGPU卡数规划"></a>GPGPU卡数规划</h4><p>所需GPU卡数量 &#x3D; 总算力需求 &#x2F; 单卡算力</p>
+<p>以1000P算力需求为例，使用H100-SXM机型，计算对应的卡数</p>
+<p>通常用FP16精度为例，H100，一张H100，BF16稀疏算力为1979TF，对应1.979&#x2F;1000≈1.9P，8卡对应约为16P。<br>1000&#x2F;16&#x3D;63台，考虑到设计的便捷性，通常以64台作为推荐数量，对应的稠密算力，性能减半，则对应64*2&#x3D;128台。</p>
+<p>稠密算力大约等于稀疏算力的一半,所以说H100，一卡对应1p通常是说稠密算力。</p>
+<p>所需GPU卡数量：稀疏算力：64<em>8&#x3D;512块卡。稠密算力对应：128</em>8&#x3D;1024卡。</p>
+<h4 id="根据模型参数量规划算力"><a href="#根据模型参数量规划算力" class="headerlink" title="根据模型参数量规划算力"></a>根据模型参数量规划算力</h4><p>训练场景：<br>总算力&#x3D;6 * token数 * 模型参数</p>
+<p>注：<br>6是训练过程中前向传播、反向传播两个步骤，共计 2 次浮点运算。因此对于每个 token、每个模型参数，需要进行 3 × 2 flops &#x3D; 6 次浮点运算</p>
+<p>这是一个经验公式，表示对于每一个 token，进行一次完整的前向和反向传播大约需要 6 倍于模型参数数量的浮点运算量。</p>
+<p>以LLama3 65B，1.4T数据量为例，计算H100 SXM需要的卡数和耗时，Llama属于 采用的是稠密（Dense）模型，65B的参数都激活了。非MoE模型，MoE模型需要额外考虑激活的参数量。</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-1.png"></p>
+<p>总算力需求：6<em>1.4T</em>65B&#x3D;5.46*10^23 FLOPS</p>
+<p>以H100为例BF16稀疏计算对应1.9PFLOPS，稠密计算约为1PFLOPS，GPU实际利用率按百分之50计算，约0.5PFLOPS，假设使用2048卡规模</p>
+<p>2048<em>0.5≈1024PFLOPS，PFLOPS换算FLOPS需要</em>10^15</p>
+<p>耗时&#x3D; (5.46<em>10^23)&#x2F;(1024</em>10^15)≈7天</p>
+<p>使用A100话单卡BF16 Tensor Core的算力为312 TFLOPS，2048张卡吞吐约为319P</p>
+<p>耗时&#x3D; 5.46<em>10^23)&#x2F;(319</em>10^15)≈21天</p>
+<p>另外对于大模型需要进行分布式训练还需要考虑卡间通信带宽</p>
+<h4 id="显存需求计算"><a href="#显存需求计算" class="headerlink" title="显存需求计算"></a>显存需求计算</h4><h5 id="推理场景显存（全参微调）"><a href="#推理场景显存（全参微调）" class="headerlink" title="推理场景显存（全参微调）"></a>推理场景显存（全参微调）</h5><p><code>推理显存需求=模型参数显存占用+KV Cache显存占用</code></p>
+<p>Llama3-7B为例</p>
+<table>
+<thead>
+<tr>
+<th>data type</th>
+<th>bytes per parameter</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>fp32</td>
+<td>4 bytes</td>
+</tr>
+<tr>
+<td>fp16</td>
+<td>2 bytes</td>
+</tr>
+<tr>
+<td>bf16</td>
+<td>2 bytes</td>
+</tr>
+<tr>
+<td>int8</td>
+<td>1 bytes</td>
+</tr>
+<tr>
+<td>int4</td>
+<td>0.5 bytes</td>
+</tr>
+</tbody></table>
+<p>模型参数显存：</p>
+<p>7b参数对应fp16需要的显存为<br>2*7b&#x3D;14G</p>
+<p>注：2为fp16对应的bytes</p>
+<p>KV Cache占用显存<br>模型推理过程中，模型一次生成一个token，然后使用之前生成的token作为输入来预测下一个token。<br>每次生成新的token时，模型需要重新计算新的Q、K、V，并基于它们计算Attention权重。然而，之前生成的K、V在当前解码过程中是可以重复利用的，为了加快推理速度，可以将之前计算好的K、V存储在缓存中，这就是KV Cache，它们存储在GPU显存中，从而节省计算时间。</p>
+<p>memory&#x3D;BatchSize<em>SeqLength</em>hiddensize<em>layers</em>2*dtype<br>如LLama3-7b</p>
+<ol>
+<li><p>Hidden Size (隐藏层大小)：</p>
+<p> •	4096：LLaMA 7B 的隐藏层大小为 4096，这表示每个 token 通过 transformer 层时的向量维度。</p>
+</li>
+<li><p>Sequence Length (序列长度)：</p>
+<p> •	2048 tokens：默认的最大序列长度为 2048 tokens。这是模型在一次前向传播中能够处理的最大 token 数。</p>
+</li>
+<li><p>Batch Size (批量大小)：</p>
+<p> •	Batch Size 是可调参数，根据可用的显存和任务需求来选择。在训练或推理时，批量大小可以不同。常见批量大小为 1、8、16 等，但具体值取决于显存和硬件资源。</p>
+</li>
+<li><p>Number of Layers (层数)：</p>
+<p> •	32 层：LLaMA 7B 模型有 32 层 transformer 层，每一层负责进行一轮 token 的上下文理解。</p>
+</li>
+</ol>
+<p>memory&#x3D;1<em>2048</em>4096<em>32</em>2*2≈1G</p>
+<p>这个与batchsize大小有关，这里设置的1，也与用户并发有关，还有输入输出的序列长度，只是做个参考</p>
+<p>参考：<a href="https://mp.weixin.qq.com/s/7p-UMOv075OHp0dF5M63hw">https://mp.weixin.qq.com/s/7p-UMOv075OHp0dF5M63hw</a></p>
+<p>实际推理侧落地也会使用MQA和GQA技术进行优化</p>
+<p>实际对应的模型都会有对应的性能测试报告，在对应的精度情况下显存占用情况和如Qwen的<br><a href="https://qwen.readthedocs.io/en/latest/benchmark/speed_benchmark.html">https://qwen.readthedocs.io/en/latest/benchmark/speed_benchmark.html</a></p>
+<p>快速计算方法：<br>8bit量化模型：参数量1B 占用 1G 显存以上。<br>比如：<br>8bit量化 7B模型，显存占用 7G 以上<br>4bit量化 7B模型，显存占用 3.5G 以上<br>float16 7B模型，显存占用 14G 以上</p>
+<h5 id="训练场景显存（全参数训练）"><a href="#训练场景显存（全参数训练）" class="headerlink" title="训练场景显存（全参数训练）"></a>训练场景显存（全参数训练）</h5><p>完整的训练当前都是采用混合精度训练方法，显存需求与以下参数有关</p>
+<p>1、模型参数：模型本身的占用<br>2、梯度参数：训练过程中梯度更新<br>3、优化器参数：使用不同优化器不一样，通常以Adam为例<br>4、激活值占用：用于存储前向计算时的激活值，模型的每层都会产生中间激活值，这些激活值在反向传播时会被用来计算梯度，因此需要在内存中保存，激活值和batch_size以及seq_length相关，实际训练的时候激活值对显存的占用会很大。注：激活值（中间计算结果）是以 float32（32位浮点数）格式存储的，每个浮点数占用 4字节。</p>
+<p>其中模型参数、梯度参数、优化器参数为静态占用，激活值参数为动态占用，先不考虑</p>
+<p>N为模型参数量比如LLAMA3-7B</p>
+<p>1、模型参数：全精度训练（FP32）的权重需要 4 * N 字节显存。混合精度训练需要 6N 字节，因为 FP16 和 FP32 的权重要各存一份。</p>
+<p>2、梯度参数：占用 4N 字节，因为梯度始终以 FP32 精度保存。</p>
+<p>3、优化器参数。取决于优化器的类型。以常用的 Adam 优化器为例，训练过程中需要分别存梯度和梯度平方的移动平均，对每个参数存2个状态，因此需要占用 8N 字节显存。</p>
+<p>4、激活值显存占用：显存大致是 batch size x 层数 x 序列长度 x每层输出维度 x 4 字节。</p>
+<p>假设：batch size 为 32，模型为12层，输入序列长度为 1024，模型的每层输出维度为 4096。</p>
+<p>占用显存为32<em>12</em>1024<em>4096</em>4&#x3D;6GB</p>
+<p>在混合精度训练时，以上三项总共需要 6N + 4N + 8N &#x3D; 18N 字节，以 7B 模型为例，约为 126G。<br>加上激活值显存占用6GB&#x3D;132G</p>
+<p>实际在训练中，会使用多卡并行的分布式训练使用ZeRO技术进行显存优化，现在也集成到DeepSpeed库中了。另外当前也很多场景也都是使用PEFT（微调技术）进行部分参数训练比如使用Lora和QLoRA进行训练。这个可以在对应的微调框架内如LLaMA-Factory（<code>https://github.com/hiyouga/LLaMA-Factory</code>）Unsloth查看</p>
+<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-2.png"></p>
+<p><a href="https://llm-system-requirements.streamlit.app/">https://llm-system-requirements.streamlit.app/</a></p>
+<p><a href="https://github.com/hiyouga/LLaMA-Factory">https://github.com/hiyouga/LLaMA-Factory</a></p>
+<p>总结：</p>
+<p>也可以使用huggingface官方的计算工具<br><a href="https://huggingface.co/spaces/hf-accelerate/model-memory-usage">https://huggingface.co/spaces/hf-accelerate/model-memory-usage</a></p>
+<p>参考链接：<br><a href="https://qwen.readthedocs.io/en/latest/benchmark/speed_benchmark.html">https://qwen.readthedocs.io/en/latest/benchmark/speed_benchmark.html</a></p>
+<p><a href="https://mp.weixin.qq.com/s/7p-UMOv075OHp0dF5M63hw">https://mp.weixin.qq.com/s/7p-UMOv075OHp0dF5M63hw</a></p>
+<p><a href="https://github.com/hiyouga/LLaMA-Factory">https://github.com/hiyouga/LLaMA-Factory</a><br><a href="https://gpumap.com/moxing/38887.html">https://gpumap.com/moxing/38887.html</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2024/07/09/ai_sft/" title="AI学习笔记2（微调模型)">下一篇&nbsp;&nbsp;<i class="fa fa-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+  </div>
+  
+  </div>
+</nav>
+  
+
+
+</main>
+
+  
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+  
+    
+    
+    
+        <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+    
+    
+    
+        
+
+
+    
+    
+        
+    
+    
+
+
+
+</body>
+</html>
