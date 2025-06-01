@@ -25,18 +25,18 @@
 <meta property="og:description" content="ArgoCD是什么？ArgoCD是一个专为Kubernetes而生，遵循GitOps理念的持续部署工具。这里指的Gitops简单来说就是1、以Git为核心。2、声明式定义各类对象。3、配置一致性管理。具体参考(https:&#x2F;&#x2F;www.hwchiu.com&#x2F;gitops-book-ch2.html) 软件版本   软件 版本    ArgoCD 1.8.1   Kubernetes 1.18   A">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ucc.alicdn.com/pic/developer-ecology/506230d9ab1643058785424916c6a0e3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_9.png">
 <meta property="article:published_time" content="2020-12-27T13:45:59.000Z">
 <meta property="article:modified_time" content="2020-12-27T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
@@ -462,7 +462,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch svc argocd-server -n argocd -p &#x27;&#123;&quot;spec&quot;: &#123;&quot;type&quot;: &quot;NodePort&quot;&#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
 
 <p>访问Dashboard</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_1.png"></p>
 <p>默认帐号为admin，密码通过secret获取</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=&quot;&#123;.data.password&#125;&quot; | base64 -d</span><br></pre></td></tr></table></figure>
 
@@ -485,18 +485,18 @@
 
 
 
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_2.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_3.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_4.png"></p>
 <p>点击创建</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_5.png"></p>
 <p>同步部署</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_6.png"></p>
 <p>如果对应的git是私有库，pull需要帐号密码则需要在argo设置中配置repo connect</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_10.png"></p>
-<p>填写对应的帐号密码，如果是自签名证书需要将CA附上<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_11.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_10.png"></p>
+<p>填写对应的帐号密码，如果是自签名证书需要将CA附上<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_11.png"></p>
 <p>查看部署后的应用</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_7.png"></p>
 <p>在Kubernetes集群中查看部署后的应用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod </span><br><span class="line">NAME                         READY   STATUS    RESTARTS   AGE</span><br><span class="line">bootcampt-544d66b664-ddhgd   1/1     Running   0          2m18s</span><br></pre></td></tr></table></figure>
 
@@ -515,10 +515,10 @@
 <p>因为ArgoCD有在部署集群中创建CRD对象所以我们同时也可以使用kubectl查看到创建好的Application</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get Application -n argocd</span><br><span class="line">NAME       SYNC STATUS   HEALTH STATUS</span><br><span class="line">bootcamp   Synced        Healthy</span><br></pre></td></tr></table></figure>
 <p>选中对应的app可以进行历史发布查看和回滚</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_12.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_12.png"></p>
 <p>对应的ID与实际git库里面提交的commit是匹配的</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_8.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_8.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_9.png"></p>
 <p>可以选择任意一个历史版本进行回滚</p>
 <p>常用CLI命令</p>
 <p>列出部署的应用</p>

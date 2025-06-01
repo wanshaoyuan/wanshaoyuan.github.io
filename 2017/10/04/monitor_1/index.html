@@ -24,16 +24,16 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="搭建LNMP先安装mysql—-&gt;安装php—–&gt;安装nginx版本:mysql 5.7.19php 7.1.7nginx 1.12.1   本次搭建除mysql外全部采用源码方式安装，因为采用源码的方式安装可以更好的对功能模块是否需要做定制。 安装依赖 1yum -y install gcc gcc-devel gcc-c++ gcc-c++-devel libaio-devel b">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_5.png">
 <meta property="article:published_time" content="2017-10-04T15:27:44.000Z">
 <meta property="article:modified_time" content="2017-10-04T15:27:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/10/04/monitor_1/index.html">
   
@@ -421,7 +421,7 @@
 <p>修改默认编码<br>由下图可见database和server的字符集使用了latin1编码方式，不支持中文，即存储中文时会出现乱码。以下是命令行修改为utf-8编码的过程，以支持中文  </p>
 <p>修改为utf-8打开，编辑&#x2F;etc&#x2F;my.cnf.d&#x2F;server.cnf<br>在mysqld里面添加<br>character_set_server &#x3D; utf8</p>
 <p>重启mysql<br>systemctl restart mysqld</p>
-<p>再次查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_1.png"></p>
+<p>再次查看<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_1.png"></p>
 <h3 id="安装php7"><a href="#安装php7" class="headerlink" title="安装php7"></a>安装php7</h3><p>php7在性能上比php5.x有2倍多的提升，同时兼容性也特别好。同时php5.x很多openssl和openssh的漏洞  </p>
 <p>安装依赖包  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install libmcrypt-devel mcrypt mhash gd-devel ncurses-devel libxml2-devel bzip2-devel libcurl-devel curl-devel libjpeg-devel libpng-devel freetype-devel net-snmp-devel openssl-devel</span><br></pre></td></tr></table></figure>
@@ -429,7 +429,7 @@
 <p>安装libconv<br>创建目录<br>mkdir &#x2F;lnmp<br>进入目录<br>cd &#x2F;lnmp<br>wget <a href="http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz">http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz</a><br>解压包  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar xvf libiconv-1.14.tar.gz</span><br><span class="line"></span><br><span class="line">cd libiconv-1.14</span><br><span class="line"></span><br><span class="line">./configure --prefix=/usr/local/libiconv1.14</span><br></pre></td></tr></table></figure>
 
-<p>make时包此错<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_3.png"></p>
+<p>make时包此错<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_3.png"></p>
 <p>解决方法</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">vi libiconv-1.14/srclib/stdio.in.h</span><br><span class="line">将698行的代码：_GL_WARN_ON_USE (gets, &quot;gets is a security hole - use fgets instead&quot;);替换为：</span><br><span class="line"></span><br><span class="line">#if defined(__GLIBC__) &amp;&amp; !defined(__UCLIBC__) &amp;&amp; !__GLIBC_PREREQ(2, 16)</span><br><span class="line"> _GL_WARN_ON_USE (gets, &quot;gets is a security hole - use fgets instead&quot;);</span><br><span class="line">#endif</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -479,11 +479,11 @@
 
 <p>添加执行权限<br>chmod a+x &#x2F;etc&#x2F;init.d&#x2F;nginx<br>注册成服务<br>&#x2F;sbin&#x2F;chkconfig –add nginx  </p>
 <p>添加开机自启<br>&#x2F;sbin&#x2F;chkconfig nginx on  </p>
-<p>查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_4.png"><br>创建目录<br>mkdir -p &#x2F;var&#x2F;www&#x2F;html<br>修改用户和属组<br>chown www:www &#x2F;var&#x2F;www&#x2F;html<br>重启测试<br>启动nginx<br>systemctl start nginx<br>重启<br>systemctl restart nginx<br>关闭<br>systemctl stop nginx  </p>
+<p>查看<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_4.png"><br>创建目录<br>mkdir -p &#x2F;var&#x2F;www&#x2F;html<br>修改用户和属组<br>chown www:www &#x2F;var&#x2F;www&#x2F;html<br>重启测试<br>启动nginx<br>systemctl start nginx<br>重启<br>systemctl restart nginx<br>关闭<br>systemctl stop nginx  </p>
 <p>测试php<br>在&#x2F;var&#x2F;www&#x2F;html下编写index.php文件  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php  </span><br><span class="line">phpinfo();</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>修改权限<br>chown www:www &#x2F;var&#x2F;www&#x2F;html&#x2F;index.php<br>重启nginx和php-fpm</p>
-<p>打开浏览器输入地址<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_1_5.png"></p>
+<p>打开浏览器输入地址<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_1_5.png"></p>
 <p>至此LNMP搭建完毕。</p>
 
       

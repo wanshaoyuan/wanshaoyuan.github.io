@@ -24,17 +24,17 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="环境信息：   组件 版本    Kubernetes 1.15.5   Istio 1.4.2   helm 2.16.1   Helm方式安装下载对应的release版本   1wget https:&#x2F;&#x2F;github.com&#x2F;istio&#x2F;istio&#x2F;releases&#x2F;download&#x2F;1.4.2&#x2F;istio-1.4.2-linux.tar.gz 解压   1tar -xvf istio-1.4">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_5.png">
 <meta property="article:published_time" content="2019-07-31T13:45:59.000Z">
 <meta property="article:modified_time" content="2019-07-31T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="ServiceMesh">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2019/07/31/Istio-1/index.html">
   
@@ -433,7 +433,7 @@
 
 <p>使用helm方式安装  </p>
 <p><a href="https://istio.io/docs/setup/install/helm/">https://istio.io/docs/setup/install/helm/</a><br>有多种安装参数选择，我们这里使用自定义方式，需要安装一些如grafana、Jaeger、kiali、Gateway组件。  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_1.png"></p>
 <p>1、创建namespace </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create namespace istio-system</span><br></pre></td></tr></table></figure>
 <p>2、安装和配置istio所需要的CRD  </p>
@@ -457,12 +457,12 @@
 
 <p>访问    </p>
 <p>grafana:在这里将prometheus收集过来的各类监控指标图表化，包含对各个后端的请求速率、访问成功率，资源使用统计等。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_2.png">  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_2.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_3.png"></p>
 <p>Kiali<br>kiali是一个Redhat开源的Service mesh可视化工具，它可以看见应用模块之间的拓扑图、流量走向图、健康检查状态等</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_4.png"></p>
 <p>Jaeger<br>jaeger是CNCF基金会管理项目主要用于istio中的分布式链路追踪，服务依赖分析等</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/istio_1_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/istio_1_5.png"></p>
 <p>卸载  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">helm delete --purge istio</span><br><span class="line">helm delete --purge istio-init</span><br><span class="line">helm delete --purge istio-cni</span><br><span class="line">kubectl delete namespace istio-system</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete -f install/kubernetes/helm/istio-init/files</span><br></pre></td></tr></table></figure>

@@ -24,15 +24,15 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="传统的数据同步方式传统的mysql数据库同步是使用二进制日志进行主从同步也就是semi-sync，这种同步也只是一种半同步，并不是完全的实时同步，在mysql 5.7.17中推出了MySQL Group Replication，这种实现方式与Galera cluster基本完全一样，不过MGR比Galera的优势在于    Mysql官方出品，能得到后续技术支持，Galera是芬兰的一家叫code">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-10.png">
 <meta property="article:published_time" content="2016-12-25T11:50:44.000Z">
 <meta property="article:modified_time" content="2016-12-25T11:50:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-8.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-8.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2016/12/25/mariadb-base/index.html">
   
@@ -408,12 +408,12 @@
 <li>Galera目前只支持linux，MGR支持多个平台。</li>
 </ul>
 <h3 id="mysql-5-6下semi-sync数据同步方式"><a href="#mysql-5-6下semi-sync数据同步方式" class="headerlink" title="mysql 5.6下semi-sync数据同步方式"></a>mysql 5.6下semi-sync数据同步方式</h3><p>master的dump进程需要发送binlog日志到slave，master要等待至少一个slave通知，slave将已经接收到传过来的events并写入relay log，salve发送ack信息到master，这个事务才能提交。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-8.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-8.png"></p>
 <p>5.6版semi-sync的缺陷，dump thread要承但两份任务，传送binlog给slave还要等slave的返回，并且这两个任务是串行的，也就是说，dump thread要先传送binlog给slave，并还要slave返回才能传送下一个events事务，这样的dump thread成为性能瓶径。</p>
 <h3 id="mysql-5-7下semi-sync数据同步方式"><a href="#mysql-5-7下semi-sync数据同步方式" class="headerlink" title="mysql 5.7下semi-sync数据同步方式"></a>mysql 5.7下semi-sync数据同步方式</h3><p>5.7.4为解决上述的问题，在master端增加了ack进程。这样事务写发送binlog与接收ack可以并行进行，提高semi-sync的效率。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-9.png"></p>
 <h2 id="Galera"><a href="#Galera" class="headerlink" title="Galera"></a>Galera</h2><p>Galera cluster是可以实现mariadb多主集群的软件，它目前只能用于linux和只支持XtraDB和Innodb存储引擎 ，mariadb和perconna提供了原生的Galera cluster的支持，所以可以直接使用Galera cluster，mysql要使用Galera cluster需要使用Galera cluster提供的插件。传统主从只能有一个数据库进行写服务，Galera集群，每个节点都可读可写，在Galera上层部署负载均衡软件如lvs和haproxy进行流量分担是常用做法。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-10.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-10.png"></p>
 <p>原理<br>各个节点的数据同步由wsrep接口实现。<br>client发起一个commit命令时，所有本事务内对数据库的操作和primary_key都会打包写入到write-set，write-set随后会复制到其他节点，各个节点接收后，会根据write-set传送的primary key进行检验，检查是否与本地事务种read-write或write-write锁冲突，冲突则回滚，没有冲突就执行，完成后返回success。如果其他节点没有执行成功则存放在队列种，稍后会重新尝式。  </p>
 <p>Galera集群的优点  </p>
 <ul>

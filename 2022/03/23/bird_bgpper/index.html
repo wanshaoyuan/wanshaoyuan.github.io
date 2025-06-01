@@ -24,15 +24,15 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述calico网络插件最为知名的就是calico-bgp模式，在测试中需要验证calico-bgp跨子网路由同步，需要连接两个子网的路由器支持BGP协议，这给测试环境搭建带来很大复杂性。本次文档通过Bird软件将一个虚拟机模拟为软路由，并配置为Kubernetes节点BGP Peers，实现BGP路由同步。 软件版本    软件 版本    Kubernetes v1.20.15   calic">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-3.png">
 <meta property="article:published_time" content="2022-03-23T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-03-23T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Network">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2022/03/23/bird_bgpper/index.html">
   
@@ -419,7 +419,7 @@
 <td>v3.17.2</td>
 </tr>
 </tbody></table>
-<h3 id="拓扑架构图"><a href="#拓扑架构图" class="headerlink" title="拓扑架构图"></a>拓扑架构图</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-1.png"></p>
+<h3 id="拓扑架构图"><a href="#拓扑架构图" class="headerlink" title="拓扑架构图"></a>拓扑架构图</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-1.png"></p>
 <p>Hostname：rke-node3<br>host-ip：192.168.0.7<br>pod-cidr：10.41.113.192&#x2F;26</p>
 <p>Hostname：rke-node4<br>host-ip：192.168.0.25<br>pod-cidr：10.41.57.192&#x2F;26</p>
 <p>Hostname：rke-node6<br>host-ip：192.168.2.14<br>pod-cidr：10.41.210.128&#x2F;26</p>
@@ -785,7 +785,7 @@ blackhole 10.41.210.128/26 proto bird
 <p>可以看见pod-cidr的流量都被发送到Bird虚拟路由器192.168.2.16接口</p>
 <h4 id="节点POD-IP明细路由发布"><a href="#节点POD-IP明细路由发布" class="headerlink" title="节点POD-IP明细路由发布"></a>节点POD-IP明细路由发布</h4><p>在实际使用中若期望将calico-pod明细路由发布到BGP路由器中，则需要修改每个节点的calico配置文件<br>修改方法如下</p>
 <p>创建configmap，替换calico原有的bird_aggr.cfg.template文件</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-2.png"></p>
 <p>主要修改以下参数：<br>注释掉本地黑洞路由，就不会生产本地聚合路由同步到BGP路由器了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># route &#123;&#123;$cidr&#125;&#125; blackhole;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -837,7 +837,7 @@ function calico_aggr ()
 &#123;&#123;- end&#125;&#125;
 &#125;
 </code></pre>
-<p>升级calico-node映射此configmap配置文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/bird-3.png"></p>
+<p>升级calico-node映射此configmap配置文件<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/bird-3.png"></p>
 <p>重建calico-node</p>
 <p>查看Bird节点</p>
 <pre><code>ip route

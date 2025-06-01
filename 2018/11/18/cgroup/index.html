@@ -24,19 +24,19 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述在实际生产应用中，我们经常在一台宿主机上运行多个应用程序，这时就会产生一个问题就是，多个应用程序之间如何避免资源抢占，资源进行限制，这时我们通过Linux内核自带的cgroup实现。 cgroup介绍Cgroup全称Control groups，最早是由Google的Paul Menage和Rohit Seth在2006年发起，最早名称叫最早的名称为进程容器（process container">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_11.png">
 <meta property="article:published_time" content="2018-11-18T03:50:44.000Z">
 <meta property="article:modified_time" content="2018-11-18T03:50:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/11/18/cgroup/index.html">
   
@@ -435,17 +435,17 @@
 <p>先有stress进行压力测试，占满两个逻辑核</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stress -c 2 &amp;</span><br></pre></td></tr></table></figure>
 <p>查看top看见两个逻辑核的空闲率都为0</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_1.png"><br>使用cgroup的cpuset将它限制在某个核上。<br>切换目录到刚刚创建的cpuset下的目录</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_1.png"><br>使用cgroup的cpuset将它限制在某个核上。<br>切换目录到刚刚创建的cpuset下的目录</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd /sys/fs/cgroup/cpuset/test</span><br></pre></td></tr></table></figure>
 <p>将要限制的逻辑核范围输入到cpuset.cpus文件内，我这里限制跑在0号逻辑核上</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;0&quot; &gt;/sys/fs/cgroup/cpuset/test/cpuset.cpus</span><br></pre></td></tr></table></figure>
 <p>使用cgexec 可以用来直接在子系统中的指定控制组运行一个程序，会自动将进程的PID填入的tasks文件中啊，不用手动输入</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cgexec -g cpuset:/test stress -c 2 &amp;</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_2.png"></p>
-<p>即使stress运行在两个逻辑核上，因为cgroup的限制，并且限制在0号逻辑核上。<br>查看tasks，自动将	PID写入了tasks文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_2.png"></p>
+<p>即使stress运行在两个逻辑核上，因为cgroup的限制，并且限制在0号逻辑核上。<br>查看tasks，自动将	PID写入了tasks文件<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_3.png"></p>
 <h4 id="cgroups管理进程内存资源"><a href="#cgroups管理进程内存资源" class="headerlink" title="cgroups管理进程内存资源"></a>cgroups管理进程内存资源</h4><p>跑一个耗内存的脚本，内存不断增长</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x=&quot;a&quot;</span><br><span class="line">while [ True ];do</span><br><span class="line">    x=$x$x</span><br><span class="line">done;</span><br></pre></td></tr></table></figure>
-<p>将脚本保存为memeory.sh<br>top看内存占用稳步上升<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_4.png"></p>
+<p>将脚本保存为memeory.sh<br>top看内存占用稳步上升<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_4.png"></p>
 <p>下面用cgroups控制这个进程的内存资源</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /sys/fs/cgroup/memory/test</span><br></pre></td></tr></table></figure>
 <p>分配1G的内存给这个控制组</p>
@@ -471,7 +471,7 @@
 
 
 <h3 id="实际应用测试"><a href="#实际应用测试" class="headerlink" title="实际应用测试"></a>实际应用测试</h3><p>环境ubuntu16.04<br>使docker容器运行在指定的CPU核上,并限制内存的使用<br>配置前查看已经运行的容器运行在哪些cpu核上</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_10.png"><br>安装cgroup包</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_10.png"><br>安装cgroup包</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install cgroup-bin cgroup-lite cgroup-tools cgroupfs-mount libcgroup1</span><br></pre></td></tr></table></figure>
 <p>配置cgconfig<br>创建文件&#x2F;etc&#x2F;cgconfig.conf</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">group test &#123;</span><br><span class="line">cpuset &#123;</span><br><span class="line">cpuset.cpus = &quot;0&quot;;</span><br><span class="line">cpuset.mems = &quot;0&quot;;</span><br><span class="line">&#125;</span><br><span class="line">memory &#123;</span><br><span class="line">                memory.limit_in_bytes = &quot;3G&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -481,7 +481,7 @@
 <li>Cpuset.mems表示上面控制的核对应的numa节点，尽量都控制在一个NUMA节点。</li>
 </ul>
 <p>如何查看cpu核和numa节点对应关系?</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_12.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_12.png"></p>
 <p>这里表示 NUMA node0节点对应的CPU核数为0,1</p>
 <ul>
 <li>Memory表示使用memory控制器</li>
@@ -506,7 +506,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start cgconf</span><br></pre></td></tr></table></figure>
 <p>重器docker生效</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
-<p>在此查看docker容器是否生效全部运行到指定的核上（测试配的是线程0）<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/cgroup_11.png"></p>
+<p>在此查看docker容器是否生效全部运行到指定的核上（测试配的是线程0）<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/cgroup_11.png"></p>
 <p>如果配置了内存限制的，需要修改grub启动参数<br>编辑&#x2F;etc&#x2F;default&#x2F;grub，GRUB_CMDLINE_LINUX_DEFAULT行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GRUB_CMDLINE_LINUX_DEFAULT=&quot;cgroup_enable=memory quiet&quot;</span><br></pre></td></tr></table></figure>
 <p>更新</p>

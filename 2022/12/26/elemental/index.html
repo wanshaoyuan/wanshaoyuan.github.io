@@ -24,20 +24,20 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="Mutable和Immutable介绍云原生的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式API。容器技术的最大创造就是通过Dockerfile将应用打包为容器镜像，实现了不可变基础设施，标准化了应用模板。在容器之前叫Mutable（可变的基础设施）在OS上部署应用，重启生效，可以随时进行修改。容器技术就是Immutable的代表，引入容器镜像，通过Dockerfile将应用标准化打">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-8.png">
 <meta property="article:published_time" content="2022-12-26T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-12-26T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2022/12/26/elemental/index.html">
   
@@ -406,12 +406,12 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <h3 id="Mutable和Immutable介绍"><a href="#Mutable和Immutable介绍" class="headerlink" title="Mutable和Immutable介绍"></a>Mutable和Immutable介绍</h3><p>云原生的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式API。容器技术的最大创造就是通过Dockerfile将应用打包为容器镜像，实现了不可变基础设施，标准化了应用模板。<br>在容器之前叫Mutable（可变的基础设施）在OS上部署应用，重启生效，可以随时进行修改。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-1.png"><br>容器技术就是Immutable的代表，引入容器镜像，通过Dockerfile将应用标准化打包为容器镜像，通过容器镜像启动容器，无法在容器中进行永久性修改，需要修改只能通过更新Dockerfile方式进行。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-2.png"></p>
+        <h3 id="Mutable和Immutable介绍"><a href="#Mutable和Immutable介绍" class="headerlink" title="Mutable和Immutable介绍"></a>Mutable和Immutable介绍</h3><p>云原生的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式API。容器技术的最大创造就是通过Dockerfile将应用打包为容器镜像，实现了不可变基础设施，标准化了应用模板。<br>在容器之前叫Mutable（可变的基础设施）在OS上部署应用，重启生效，可以随时进行修改。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-1.png"><br>容器技术就是Immutable的代表，引入容器镜像，通过Dockerfile将应用标准化打包为容器镜像，通过容器镜像启动容器，无法在容器中进行永久性修改，需要修改只能通过更新Dockerfile方式进行。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-2.png"></p>
 <p>现如今Immutable理念也开始逐步从容器下沉到Bare Metal OS，通过Dockerfile构建Bare Metal镜像，实现Bare Metal OS  Immutable。</p>
 <p>典型的开源项目技术Elemental项目</p>
 <h3 id="Elemental概述"><a href="#Elemental概述" class="headerlink" title="Elemental概述"></a>Elemental概述</h3><p>Elemental 是一系列工具集合，主要是想通过 Kubernetes 实现集中式、完整的云原生操作系统构建和管理。</p>
 <p>集群节点操作系统是通过Elemental CLI通过容器映像构建和维护的，并使用Elemental CLI安装在新主机上。<br>Elemental Operator和Rancher System Agent使Rancher Manager 能够完全控制 Elemental 集群，从在节点上安装和管理操作系统到以集中方式配置新的 K3s 或 RKE2 集群。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-3.png"></p>
 <p>Elemental项目组成</p>
 <ul>
 <li><p>elemental-toolkit - 包括一组操作系统实用程序，可通过容器启用操作系统管理。包括 dracut 模块、引导加载程序配置、cloud-init 自定义配置服务等。</p>
@@ -463,7 +463,7 @@
 └── repositories.yaml
 </code></pre>
 <p>Demo架构</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-4.png"></p>
 <ul>
 <li>通过Elemental构建的OS中包含K3S</li>
 <li>将需要部署的应用yaml放置到 &#x2F;var&#x2F;lib&#x2F;rancher&#x2F;k3s&#x2F;server&#x2F;manifests目录，K3S启动成功后会自动部署yaml启动应用。</li>
@@ -737,12 +737,12 @@ fi
 
 <p>将cOS-0.iso下载到ESXI或其他虚拟化平台也可以刻录U盘直接安装物理机。</p>
 <p>配置选4c4G 60G磁盘</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-5.png"><br>加载ISO后自动分区，自动进行初始化，安装系统，完成后自动重启进入系统。</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-5.png"><br>加载ISO后自动分区，自动进行初始化，安装系统，完成后自动重启进入系统。</p>
 <p>密码ssh账号密码joe&#x2F;joe</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-6.png"><br>在安装后的系统查看已经部署好的K3S。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-6.png"><br>在安装后的系统查看已经部署好的K3S。</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-7.png"></p>
 <p>查看自动部署的应用</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/elemental-8.png"><br>访问应用</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/elemental-8.png"><br>访问应用</p>
 <p>因为整个系统都限制了修改，所以在操作系统任何目录执行修改命令都无法修改。如</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rm -rf *</span><br><span class="line"></span><br><span class="line">evice or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/kubelet/pods/cbf59b3a-d29a-4129-a3c9-8b79b1235104/volumes/kubernetes.io~projected/kube-api-access-zf8c5&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/kubelet/pods/ea697a4c-8cb8-425f-8e50-6396f5669167/volumes/kubernetes.io~projected/kube-api-access-bq66h&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/kubelet/pods/f18cd482-4c6f-4dd0-80fa-5fc314d3cc5b/volumes/kubernetes.io~projected/kube-api-access-8fdq7&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/longhorn&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/lib/wicked&#x27;: Device or resource busy</span><br><span class="line">rm: cannot remove &#x27;var/log&#x27;: Device or resource busy</span><br></pre></td></tr></table></figure>
 

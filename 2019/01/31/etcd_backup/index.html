@@ -24,16 +24,16 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述：etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)&#x2F;2个，比如你有3个节点做etcd-ha那么最多">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_4.png">
 <meta property="article:published_time" content="2019-01-31T13:45:59.000Z">
 <meta property="article:modified_time" content="2019-01-31T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2019/01/31/etcd_backup/index.html">
   
@@ -403,21 +403,21 @@
     <div class="article-entry markdown-body" itemprop="articleBody">
       
         <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>etcd做为一个分布式键值数据库，在Kubernetes集群中是一个非常重要的组件，用于保存Kubernetes的网络配置信息和Kubernetes对象的状态信息，一旦etcd挂了，那么也就意味着整个集群就不可用了，所以在实际情况生产环境中我们会部署多个etcd节点，组成etcd高可用集群，在etcd高可用集群中可挂节点数为(n-1)&#x2F;2个，比如你有3个节点做etcd-ha那么最多可以挂掉(3-1)&#x2F;2个节点，虽然有HA集群可以保证一定的高可用，但在实际生产环境中还是建议将etcd数据进行备份，方便在出现问题时进行还原。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_1.png"></p>
 <p>环境信息：<br>OS：ubuntu16.04<br>docker：17.03-2<br>Kubernetes：v1.11.6<br>etcd：v3.2.18<br>Rancher：v2.1.5</p>
 <p>节点信息与角色：<br>172.31.164.58   control worker etcd<br>172.31.164.59   control worker etcd<br>172.31.164.139   control worker etcd</p>
 <p>操作：<br>以Rancher2.0部署的Kubernetes集群为例，其他部署工具部署的也是一样。</p>
 <h3 id="etcd备份"><a href="#etcd备份" class="headerlink" title="etcd备份"></a>etcd备份</h3><p>备份步骤<br>1、 如果是使用Rancher部署的Kubernetes集群可以直接使用rancher自动备份</p>
 <p>Rancherv2.1.5 在部署集群的高级选项内是可以配置etcd的自动备份的，按照配置的备份策略会进行自动备份，默认的备份策略是每12小时备份一次，备份文件的轮转周期是72小时，避免因备份文件过多占用磁盘空间.也可以根据自己实际需求进行调整。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_2.png"></p>
 <p>备份的文件放置在master节点宿主机的&#x2F;opt&#x2F;rke&#x2F;etcd-snapshots目录下以etcd结尾的就是etcd就是备份文件，pki.bundle.tar.gz文件是对应的集群证书的备份。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_3.png"></p>
 <p>Rancher部署的Kubernetes集群etcd是以容器化的方式运行要使用etcdctl命令有两种方式<br>1、etcd容器内执行etcdctl;docker exec -it etcd sh<br>2、或直接在宿主机上安装一个etcd不用启动，只是使用它的etcdctl命令,那可以通过<a href="https://github.com/etcd-io/etcd/releases%E4%B8%8B%E8%BD%BD%E5%AF%B9%E5%BA%94%E7%9A%84etcd%E7%89%88%E6%9C%AC%E3%80%82">https://github.com/etcd-io/etcd/releases下载对应的etcd版本。</a></p>
 <p>推荐使用方式二在宿主机上安装etcd使用etcdctl执行，因为在还原时需要将etcd关闭，还是需要准备etcdctl命令<br>执行以下命令</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export ETCDCTL_API=3</span><br><span class="line">etcdctl --endpoints=https://172.31.164.58:2379 --cert=/etc/kubernetes/ssl/kube-etcd-172-31-164-58.pem --key=/etc/kubernetes/ssl/kube-etcd-172-31-164-58-key.pem --cacert=/etc/kubernetes/ssl/kube-ca.pem snapshot save  /var/lib/rancher/etcd/etcd_2019_1_31.db</span><br></pre></td></tr></table></figure>
 
 <p>1、&#x2F;var&#x2F;lib&#x2F;rancher&#x2F;etcd这个目录是根宿主机的&#x2F;var&#x2F;lib&#x2F;etcd&#x2F;目录相映射的,所以备份在这个目录在对应的宿主机上也是能看见的。<br>2、这些证书对应文件可以直接在etcd容器内通过ps aux|more看见</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd_back_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd_back_4.png"></p>
 <p>其中–cert-file对应–cert，–key对应–key-file –cacert对应–trusted-ca-file</p>
 <p>集群方式备份根上述一样</p>
 <h3 id="etcd还原"><a href="#etcd还原" class="headerlink" title="etcd还原"></a>etcd还原</h3><h4 id="单节点还原"><a href="#单节点还原" class="headerlink" title="单节点还原"></a>单节点还原</h4><p>1、将kube-api-server关闭<br>2、将etcd关闭<br>在宿主机上执行<br>将现有的etcd目录移除</p>

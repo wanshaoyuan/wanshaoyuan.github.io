@@ -25,29 +25,29 @@
 <meta property="og:description" content="软件 版本    Rancher .9   Kubernetes 1.23.7+rke2r2   概述Rancher 2.6监控启用方式与之前版本存在较大差异，属于原生的Prometheus-Operator，通过抽象化一些Kubernetes CRD资源，可以更好的把监控告警功能整合起来，提高易用性。Prometheus-operator包括以下CRD资源对象： PrometheusRul">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://github.com/prometheus-operator/prometheus-operator/raw/main/Documentation/user-guides/images/architecture.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-16.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-17.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-18.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-19.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-21.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-35.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-22.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-23.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-24.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-25.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-26.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-16.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-17.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-18.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-19.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-21.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-35.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-22.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-23.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-24.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-25.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-26.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-12.png">
 <meta property="article:published_time" content="2022-06-29T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-06-29T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
@@ -448,18 +448,18 @@
 <p><img src="https://github.com/prometheus-operator/prometheus-operator/raw/main/Documentation/user-guides/images/architecture.png"></p>
 <h3 id="配置使用"><a href="#配置使用" class="headerlink" title="配置使用"></a>配置使用</h3><h4 id="启用监控"><a href="#启用监控" class="headerlink" title="启用监控"></a>启用监控</h4><p>具体方法如下</p>
 <p>切换到对应集群，选择左下角clusterTools启用Prometheus</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-16.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-16.png"></p>
 <p>部署到System项目中，勾选自定义helm参数</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-17.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-17.png"></p>
 <p>根据实际需求修改部署要求</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-18.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-19.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-18.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-19.png"></p>
 <p>如果需要对接远端存储如infuxdb需要修改yaml，修改配置指向influxdb。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">remoteRead:</span><br><span class="line">  - url: http://192.168.0.7:8086/api/v1/prom/read?db=prometheus</span><br><span class="line">remoteWrite:</span><br><span class="line">  - url: http://192.168.0.7:8086/api/v1/prom/write?db=prometheus</span><br></pre></td></tr></table></figure>
 <p>默认node-Exporter资源limit配置较低，长时间运行后容易被OOMKILL掉，需要修改默认的内存限制为150Mi。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">podLabels:</span><br><span class="line">   jobLabel: node-exporter</span><br><span class="line"> resources:</span><br><span class="line">   limits:</span><br><span class="line">     cpu: 200m</span><br><span class="line">     memory: 150Mi</span><br><span class="line">   requests:</span><br><span class="line">     cpu: 100m</span><br><span class="line">     memory: 30Mi</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-1.png"></p>
 <p>在此页面可以点击进入对应的组件配置页面。<br>如：</p>
 <ul>
 <li>Altermanager：进入的是告警信息查看页。</li>
@@ -481,51 +481,51 @@
 <p>重新docker build，build后执行以下docker run命令可以查看收集的监控指标，这里6060端口就是我们的jmx-export端口</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker build -t tomcat:v1.0 .</span><br><span class="line">docker run -itd -p 8080:8080 -p 6060:6060 tomcat:v1.0</span><br></pre></td></tr></table></figure>
 
-<p>访问查看：<br><a href="http://host_ip:6060/">http://host_ip:6060</a><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-2.png"></p>
+<p>访问查看：<br><a href="http://host_ip:6060/">http://host_ip:6060</a><br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-2.png"></p>
 <p>部署到Rancher平台</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-3.png"></p>
 <p>给Service打上label，用于ServiceMonitor关联</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label  svc tomcat app=tomcat</span><br></pre></td></tr></table></figure>
 
 <p>创建ServiceMonitor</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: monitoring.coreos.com/v1</span><br><span class="line">kind: ServiceMonitor</span><br><span class="line">metadata:</span><br><span class="line">  name: tomcat-app</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  endpoints:</span><br><span class="line">  - port: exporter</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: tomcat</span><br></pre></td></tr></table></figure>
 
-<p>创建成功后通过Prometheus可以查看到对应的Target<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-4.png"></p>
+<p>创建成功后通过Prometheus可以查看到对应的Target<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-4.png"></p>
 <p>对应的监控指标也已经抓取</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-5.png"></p>
-<p>进入grafana页面添加dashboard，默认账号密码为admin&#x2F;prom-operator<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-6.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-5.png"></p>
+<p>进入grafana页面添加dashboard，默认账号密码为admin&#x2F;prom-operator<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-7.png"></p>
 <p>添加dashboard</p>
 <p>输入dashboard-id，8878，离线环境需要提前将Dashboard下载好，通过json方式导入。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-8.png"></p>
-<h4 id="配置告警"><a href="#配置告警" class="headerlink" title="配置告警"></a>配置告警</h4><p>PrometheusRule用于定义告警规则，默认已经包含针对平台组件和节点的一些告警策略。可以通过配置Router和Receivers配置告警媒介将对应告警通知到相应的人员。采用Routing Tree的告警结构能够快速的将告警进行分类，然后发送到指定的人员进行处理。通过配置AlertmanagerConfig统一实现Rooter和Recivers配置<br>创建AlertmanagerConfig<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-21.png"></p>
-<p>选择Email告警<br>Receivers配置告警媒介<br>填写SMTP地址和配置的账号&#x2F;密码，默认接收的邮箱。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-35.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-8.png"></p>
+<h4 id="配置告警"><a href="#配置告警" class="headerlink" title="配置告警"></a>配置告警</h4><p>PrometheusRule用于定义告警规则，默认已经包含针对平台组件和节点的一些告警策略。可以通过配置Router和Receivers配置告警媒介将对应告警通知到相应的人员。采用Routing Tree的告警结构能够快速的将告警进行分类，然后发送到指定的人员进行处理。通过配置AlertmanagerConfig统一实现Rooter和Recivers配置<br>创建AlertmanagerConfig<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-21.png"></p>
+<p>选择Email告警<br>Receivers配置告警媒介<br>填写SMTP地址和配置的账号&#x2F;密码，默认接收的邮箱。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-35.png"></p>
 <p>邮箱密码创建Opaque类型的secret</p>
-<p>Routes配置用于告警媒介和告警规则进行匹配，默认创建的root规则，用于匹配全部的告警规则，配置上对应创建的告警媒介。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-22.png"><br>此时全部的告警规则都会发送给配置的告警媒介</p>
+<p>Routes配置用于告警媒介和告警规则进行匹配，默认创建的root规则，用于匹配全部的告警规则，配置上对应创建的告警媒介。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-22.png"><br>此时全部的告警规则都会发送给配置的告警媒介</p>
 <p>若要细分告警规则创建新的Routes通过Label与Prometheus Rules内对应的Alter name对接</p>
 <p>如匹配alert:etcdNoLeader这条告警规则</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-23.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-24.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-23.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-24.png"></p>
 <p>也可以使用正则表达式匹配多个规则如</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-25.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-25.png"></p>
 <p>Grouping配置主要用于告警规则分类、抑制避免大量无用告警的干扰</p>
 <p>group_by：用于配置告警分组，达到告警抑制效果，同一个group的告警只会聚合到一起发送一次，例如host01上运行了数据库，那么对应的告警包含了host down、mysql down。他们配置在一个group内，那么如果host down了对应的mysql肯定也是down了，那么因为他们配置在一个group中，所以host down和mysql down的告警会聚合到一起发送出。</p>
 <p>group_wait：新建的AlterGroup等待多久后触发第一次告警。</p>
 <p>group_interval：AlterGroup内产生的不同告警触发间隔时间。</p>
 <p>repeat_interval：AlterGroup内如果一直是同样的告警，Altermanager为了避免长时间的干扰，进行告警去重的等待时间。 </p>
 <p>匹配后，告警触发，可以收到对应的告警邮件</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6-26.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6-26.png"></p>
 <h4 id="自定义告警"><a href="#自定义告警" class="headerlink" title="自定义告警"></a>自定义告警</h4><p>当默认的告警规则不能满足需求时，可以根据实际情况添加自定义告警，实际就是添加对应的PrometheusRule。如以下例子，添加pod非running状态的告警。</p>
 <p>UI配置</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-9.png"></p>
 <p>对应yaml配置</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: monitoring.coreos.com/v1</span><br><span class="line">kind: PrometheusRule</span><br><span class="line">metadata:</span><br><span class="line">  name: podmonitor</span><br><span class="line">  namespace: cattle-monitoring-system</span><br><span class="line">spec:</span><br><span class="line">  groups:</span><br><span class="line">  - name: pod_node_ready</span><br><span class="line">    rules:</span><br><span class="line">    - alert: pod_not_ready</span><br><span class="line">      annotations:</span><br><span class="line">        message: &#x27;&#123;&#123; $labels.namespace &#125;&#125;/&#123;&#123; $labels.pod &#125;&#125; is not ready.&#x27;</span><br><span class="line">      expr: &#x27;sum by (namespace, pod) (kube_pod_status_phase&#123;phase!~&quot;Running|Succeeded&quot;&#125;)</span><br><span class="line">        &gt; 0 &#x27;</span><br><span class="line">      for: 180s</span><br><span class="line">      labels:</span><br><span class="line">        severity: 严重</span><br></pre></td></tr></table></figure>
 
 <p>for：表示持续时间<br>message：表示告警通知内的信息。<br>label.severity：表示告警级别<br>expr：指标获取表达式</p>
 <p>配置告警接收者</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-10.png"></p>
-<p>根据标签匹配到这个PrometheusRule<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-11.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/2.6monitor-12.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-10.png"></p>
+<p>根据标签匹配到这个PrometheusRule<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-11.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/2.6monitor-12.png"></p>
 <h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><p>1、触发告警后，邮箱收不到告警邮件<br>使用163邮箱SMTP的465端口<br>altermanager报错<br><code>msg=&quot;Notify for alerts failed&quot; num_alerts=1 err=&quot;cattle-monitoring-system-test-test/email[0]: notify retry canceled after 16 attempts: send STARTTLS command: 454 Command not permitted when TLS active&quot;</code></p>
 <p>修改</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">spec:</span><br><span class="line">  receivers:</span><br><span class="line">  - emailConfigs:</span><br><span class="line">    - authPassword:</span><br><span class="line">        key: password</span><br><span class="line">        name: altermanager</span><br><span class="line">      authUsername: xx@163.com</span><br><span class="line">      from: xx@163.com</span><br><span class="line">      requireTLS: false</span><br><span class="line">      sendResolved: false</span><br><span class="line">      smarthost: smtp.163.com:465</span><br><span class="line">      tlsConfig: &#123;&#125;</span><br><span class="line">      to: xx@qq.com</span><br></pre></td></tr></table></figure>

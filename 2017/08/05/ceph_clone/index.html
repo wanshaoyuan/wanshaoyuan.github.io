@@ -24,13 +24,13 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概念thin-provisioned当分配一个100G的空间时，并不会立刻占满这100，只是占用了一些文件的元数据，当写入数据时会根据实际的大小动态的分配,类似linux中的稀疏文件。 cow （copy on write)写时复制，也就是做快照时，先圈好个位置但这里面是空的，只有当父镜像有数据有变化时，这时会先将变化前的数据cp到快照的空间，然后继续修改父镜象，这样做的好处是可以节省大量做快照的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph%20_clone_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph%20_clone_1.png">
 <meta property="article:published_time" content="2017-08-05T07:19:59.000Z">
 <meta property="article:modified_time" content="2017-08-05T07:19:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="分布式存储">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph%20_clone_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph%20_clone_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/08/05/ceph_clone/index.html">
   
@@ -428,7 +428,7 @@
 
 <p>为了秒级快照，这导致的后果就是，<br>1，做了快照的云主机在控制台删除后在ceph存储的pool中仍然还会存在，因为你的快照根主机的images还是存在父子关系，数据还是共享的，<br>2，云主机 xxxx_disk 存在snapshot，因为做clone是基于protect的snapshot，没flatten的话，snapshot自然没删除。<br>3，残留云主机和snapshot没清理的话会导致上传在glance的镜像也无法删除，因为你的云主机的xxx_disk是基于你glance的镜像clone的存在父子关系不能删除。。</p>
 <p>解决办法，后台定期flatten然后rm那些客户已经删了云主机的残留数据。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph%20_clone_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph%20_clone_1.png"></p>
 
       
     </div>

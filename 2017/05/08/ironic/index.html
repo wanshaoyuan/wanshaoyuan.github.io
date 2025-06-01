@@ -24,16 +24,16 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="ironic简介介绍openstack中对物理机管理的组件，通过ironic可以给物理机，上电、下电、重启，自动安装操作系统，根据设定的规则模板，进行自动化配置。ironic是I版开始进入孵化，j版与nova进行集成、K版正式release,ironic原本是mirantis开发的，后面贡献到社区。部署虚机和部署物理机对底层nova调用来创建虚机，但对nova-compute的底层的hypevis">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-4.png">
 <meta property="article:published_time" content="2017-05-08T07:19:59.000Z">
 <meta property="article:modified_time" content="2017-05-08T07:19:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="openstack">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/05/08/ironic/index.html">
   
@@ -406,11 +406,11 @@
 <h2 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h2><p>目前有些服务在虚机上运行达不到理想的性能，仅管openstack拥有trove、sahara、magnum等组件用于支持数据库平台、大数据平台、容器平台、但毕竟是在虚拟机里面部署服务，性能远远不够。但直接部署在物理机上又不好管理，此时ironic应运而生了。ironic可以解决物理机的添加、删除、电源管理、安装部署、未来可能能支持自动部署数据库、大数据平台、容器平台。</p>
 <h2 id="项目构成"><a href="#项目构成" class="headerlink" title="项目构成"></a>项目构成</h2><p>ironic： 包含ironic-api 和ironic-conductor进程<br>python-ironicclinet: python clinet and CLI<br>ironic-python-agent: 一个运行在deployment ramdisk中的Python程序，用于执行一系列部署动作<br>pyghmi: 一个python的IPMI库，可以代替IPMItool<br>ironic-inspector: 硬件自检工具<br>ironic-lib： ironic的通用库函数<br>ironic-webclinet ：web console<br>ironic-ui：ironic的horizon插件<br>bifrost：一套只运行Ironic的Ansible脚本   </p>
 <h2 id="ironic组件"><a href="#ironic组件" class="headerlink" title="ironic组件"></a>ironic组件</h2><p>ironic-api：负责接收请求，并且将请求传递给ironic-conductor<br>ironic-conductor：ironic中唯一一个能根数据库进行交互的组件，负责接收ironic-api的请求，然后根据请求执行相应的，创建、开机、关机、删除操作<br>ironic-python-agent：部署裸机时，pxe启动进入的一个bootstrap镜像，此镜像是用社区diskimage-builder工具制做，镜像内安装了ironic-python-agent，进入系统后与ironic-conductor进行交互， 将本地磁盘以iscsi方式挂载到控制节点，控制节点将系统dd到裸机磁盘上  </p>
-<h2 id="ironic用到的技术"><a href="#ironic用到的技术" class="headerlink" title="ironic用到的技术"></a>ironic用到的技术</h2><p>PXE+tftp+dhcp<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-1.png"></p>
-<p>IPMI<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-2.png"></p>
-<p>iscsi<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-3.png"></p>
+<h2 id="ironic用到的技术"><a href="#ironic用到的技术" class="headerlink" title="ironic用到的技术"></a>ironic用到的技术</h2><p>PXE+tftp+dhcp<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-1.png"></p>
+<p>IPMI<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-2.png"></p>
+<p>iscsi<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-3.png"></p>
 <h2 id="裸机部署原理"><a href="#裸机部署原理" class="headerlink" title="裸机部署原理"></a>裸机部署原理</h2><p>1，nova boot启动一个实例，nova-api将请求通过rabbitmq，传给nova-conductor，在传给nova-scheduler。<br>2，nova-scheduler根据传递进来的flavor和image筛选出合适的计算节点，然后将请求传递到对应的计算节点。<br>3，nova-compute与ironic通信，调用ironic-api。<br>4，ironic-api将请求下发给ironic-conductor，ironic-ductor调用glance下载bootstrap镜像。<br>在tftp-serer目录生成pxelinux配置文件，并将bootstrap镜像放到tftp目录。<br>5，ironic-conductor通过调用ipmi driver将物理机开机，并设置以pxe的方式启动。<br>6，物理服务器启动后，通过pxe加载了bootstrap镜像启动后，镜像内ironic-python-agent 启动，与ironic-ductor进行交互，将本地磁盘通过iscsi方式挂载到控制节点，控制节点通过dd的方式将用户选择的系统写入到磁盘中。<br>7，写入完毕后ironic将调用ipmi driver对物理服务器进行重启操作。<br>8，重新启动后主机，初次进入系统时，运行镜像内的cloud-init进行初始化，配置hostname和密码。<br>这里需要注意，使用的镜像，需要提前在 &#x2F;etc&#x2F;sysconfig&#x2F;network-scripts&#x2F;里面将网卡的配置文件提交准备好不然开机，网卡会up不起来。centos7需要修改grub参数，将网卡名以ethx显示，不然以设备名显示，配置文件不好写。</p>
-<h2 id="流程图如下"><a href="#流程图如下" class="headerlink" title="流程图如下"></a>流程图如下</h2><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ironic-4.png"></p>
+<h2 id="流程图如下"><a href="#流程图如下" class="headerlink" title="流程图如下"></a>流程图如下</h2><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ironic-4.png"></p>
 <p>需要注意的是<br>镜像<br>ironic有两种镜像一种是部署时的bootstrap镜像，这种镜像是内含了，ironic-python-agent，启动后会主动与ironic-conductor进行交互。  </p>
 <p>另外一种是用户需要安装到裸机的镜像，这种镜像是通过bootstrap，通过iscsi将磁盘挂载到控制节点dd写入的。   </p>
 <h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p>在Newton版前，ironic都是不支持多租户，都是在一个flat网络上，互相之间是没有隔离关系的。</p>

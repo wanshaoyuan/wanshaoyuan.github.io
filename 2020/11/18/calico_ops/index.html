@@ -24,8 +24,8 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="适用范围本文档测试范围    软件 版本    Kubernetes v1.14.x,v1.15.x,v1.16.x   calico v3.13.4   概述Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。- BGP模式：将">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_6.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb58365c2a9a83be5de25d1.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb583bdc2a9a83be5de6a23.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb584b0c2a9a83be5df35b0.png">
@@ -41,17 +41,17 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5eb589c7c2a9a83be5e37132.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb58a75c2a9a83be5e3ec4e.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb58a98c2a9a83be5e4079e.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/%20calico_ops_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/%20calico_ops_5.png">
 <meta property="article:published_time" content="2020-11-18T13:45:59.000Z">
 <meta property="article:modified_time" content="2020-11-18T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Network">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_5.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_5.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2020/11/18/calico_ops/index.html">
   
@@ -437,8 +437,8 @@
 <td>v3.13.4</td>
 </tr>
 </tbody></table>
-<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><h2 id="Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。-BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。-IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。-cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。"><a href="#Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。-BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。-IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。-cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。" class="headerlink" title="Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。- BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。- IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。- cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。"></a>Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。<br>- BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。<br>- IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。<br>- cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。</h2><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_5.png"></p>
-<h3 id="calico切换BGP模式"><a href="#calico切换BGP模式" class="headerlink" title="calico切换BGP模式"></a>calico切换BGP模式</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_6.png"></p>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><h2 id="Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。-BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。-IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。-cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。"><a href="#Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。-BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。-IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。-cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。" class="headerlink" title="Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。- BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。- IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。- cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。"></a>Calico是一种开源网络和网络安全解决方案，适用于容器，虚拟机和基于主机的本机工作负载。Calico支持广泛的平台，包括Kubernetes，docker，OpenStack和裸机服务。Calico后端支持多种网络模式。<br>- BGP模式：将节点做为虚拟路由器通过BGP路由协议来实现集群内容器之间的网络访问。<br>- IPIP模式：在原有IP报文中封装一个新的IP报文，新的IP报文中将源地址IP和目的地址IP都修改为对端宿主机IP。<br>- cross-subnet：Calico-ipip模式和calico-bgp模式都有对应的局限性，对于一些主机跨子网而又无法使网络设备使用BGP的场景可以使用cross-subnet模式，实现同子网机器使用calico-BGP模式，跨子网机器使用calico-ipip模式。</h2><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_5.png"></p>
+<h3 id="calico切换BGP模式"><a href="#calico切换BGP模式" class="headerlink" title="calico切换BGP模式"></a>calico切换BGP模式</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_6.png"></p>
 <p>部署完成后默认使用calico-ipip的模式，通过在节点的路由即可得知，通往其他节点路由通过tunl0网卡出去</p>
 <p><img src="https://pic.downk.cc/item/5eb58365c2a9a83be5de25d1.png"></p>
 <p>修改为BGP网络模式，在system项目中修改calico-node daemonset</p>
@@ -496,15 +496,15 @@
 <p><img src="https://pic.downk.cc/item/5eb58a75c2a9a83be5e3ec4e.png"></p>
 <p>Route Reflector上节点查看，节点已正常建立连接<br><img src="https://pic.downk.cc/item/5eb58a98c2a9a83be5e4079e.png"></p>
 <h3 id="设置veth网卡mtu"><a href="#设置veth网卡mtu" class="headerlink" title="设置veth网卡mtu"></a>设置veth网卡mtu</h3><p>通常，通过使用最高MTU值（不会在路径上引起碎片或丢包）来实现最高性能。对于给定的流量速率，最大带宽增加，CPU消耗可能下降。对于一些支持jumbo frames的网络设备，可以配置calico支持使用<br>下表列举了，常见几种MTU配置下calico对应的网卡mtu的配置</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_1.png"></p>
 <p>IPIP和VXLAN协议中的IP中使用的额外报文头，通过头的大小减小了最小MTU。（IP中的IP使用20字节的标头，而VXLAN使用50字节的标头）。<br>如果在Pod网络中的任何地方使用VXLAN，请将MTU大小配置为“物理网络MTU大小减去50”。<br>如果仅在IP中使用IP，则将MTU大小配置为“物理网络MTU大小减去20” 。<br>将工作负载端点MTU和隧道MTU设置为相同的值</p>
 <p>配置方法：  </p>
 <p>升级集群</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_2.png"></p>
 <p>配置网卡MTU<br>此时通过system项目下calico-config文件可以看见对应的mtu设置</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_3.png"></p>
 <p>创建workload查看POD网卡MTU为9001</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/calico_ops_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/calico_ops_4.png"></p>
 <h3 id="设置全局AS号"><a href="#设置全局AS号" class="headerlink" title="设置全局AS号"></a>设置全局AS号</h3><p>默认情况下，除非已为节点指定每个节点的AS，否则所有Calico节点都使用64512自治系统。可以通过修改默认的BGPConfiguration资源来更改所有节点的全局默认值。以下示例命令将全局默认AS编号设置为64513。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &lt;&lt;EOF | calicoctl apply -f -</span><br><span class="line">apiVersion: projectcalico.org/v3</span><br><span class="line">kind: BGPConfiguration</span><br><span class="line">metadata:</span><br><span class="line">  name: default</span><br><span class="line">spec:</span><br><span class="line">  logSeverityScreen: Info</span><br><span class="line">  nodeToNodeMeshEnabled: false</span><br><span class="line">  asNumber: 64513</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <h3 id="设置单个主机和AS号"><a href="#设置单个主机和AS号" class="headerlink" title="设置单个主机和AS号"></a>设置单个主机和AS号</h3><p>例如，以下命令将名为node-1的节点更改为属于AS 64514。</p>
@@ -514,7 +514,7 @@
 
 <h3 id="修改节点地址范围"><a href="#修改节点地址范围" class="headerlink" title="修改节点地址范围"></a>修改节点地址范围</h3><p>此操作建议在部署完集群后立刻进行。  </p>
 <p>默认情况下calico在集群层面分配一个10.42.0.0&#x2F;16的CIDR网段，在这基础上在单独为每个主机划分一个单独子网采用26位子网掩码对应的集群支持的节点数为2^10&#x3D;1024节点，单个子网最大支持64个POD，当单个子网对应IP消耗后，calico会重新在本机上划分一个新的子网如下，在集群对端主机可以看见对应的多个CIDR路由信息。  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/%20calico_ops_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/%20calico_ops_5.png"></p>
 <p>注意：<br>块大小将影响节点POD的IP地址分配和路由条目数量，如果主机在一个CIDR中分配所有地址，则将为其分配一个附加CIDR。如果没有更多可用的块，则主机可以从分配给其他主机的CIDR中获取地址。为借用的地址添加了特定的路由，这会影响路由表的大小。</p>
 <p>将块大小从默认值增加（例如，使用&#x2F;24则为每个块提供256个地址）意味着每个主机更少的块，会减少路由。但是对应的集群可容纳主机数也对应减少为2^8</p>
 <p>从默认值减小CIDR大小（例如，使用&#x2F;28为每个块提供16个地址）意味着每个主机有更多CIDR，因此会有更多路由。</p>

@@ -24,14 +24,14 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="boot for volume的两种方式简介： openstack对接商业存储一般直接用cinder直接对接商业存储，但想将nova创建的云主机放商业存储上，此时需要使用boot from volume 方式一直接选择镜像，dest选择云硬盘，需要注意的是云硬盘的大小必须大于等于镜像大小。 方式二创建空云硬盘，创建主机时将选择的镜像，加载到这个空硬盘。（需要注意的是，创建的空盘大小必续要大于你选择">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_3.png">
 <meta property="article:published_time" content="2017-05-08T07:19:59.000Z">
 <meta property="article:modified_time" content="2017-05-08T07:19:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="openstack">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_2.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_2.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/05/08/boot_from_volume/index.html">
   
@@ -382,7 +382,7 @@
         <span class="post-comment"><i class="fa fa-commenting-o"></i> <a href="/2017/05/08/boot_from_volume/#comments" class="article-comment-link">评论</a></span>
         
 	
-		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 325(字)</span>
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 324(字)</span>
 	
 	
 		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
@@ -407,12 +407,12 @@
 <p>方式一  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nova boot --flavor 1 --nic net-id=48baa60d-b785-45c1-8f90-8467f56abb5b --block-device source=image,id=d3a0512b-8cfc-4ad4-9fd4-7b38c9a44a32,dest=volume,size=10,shutdown=preserve,bootindex=0 test</span><br></pre></td></tr></table></figure>
 <p>流程：先是基于image创建block volume，然后从这个volume中boot instance 。shutdown选项选为preserve, 而不要选为remove， 这样在instance关闭时， volume会被save下来；其中的size选项要求大于等于flavor中的disk大小，同时要求我们的后端存储要有大于此size大小的空间。</p>
-<p>![](<a href="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_1.png">https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_1.png</a></p>
+<p>![](<a href="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_1.png">https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_1.png</a></p>
 <p>方法二<br>openstack volume create –image IMAGE_ID –size SIZE_IN_GB  –name CINDER_NAME</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_2.png"></p>
 <p>获取云硬盘id</p>
 <p>基于云硬盘创建云主机</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/boot_from_volume_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/boot_from_volume_3.png"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nova boot --flavor 1  --nic net-id=48baa60d-b785-45c1-8f90-8467f56abb5b --boot-volume f9af8677-28cf-4dfb-8dbc-b722025f9fa0 --security-group default --admin-pass test test</span><br></pre></td></tr></table></figure>
 
       

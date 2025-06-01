@@ -24,17 +24,17 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述：docker-in-docker简单来说，就是在docker里面运行docker,大部分应用场景在在CI系统容器化后，如何在CI系统内构建容器镜像，比如我们前面例子，将Jenkins对接kubernetes然后Jenkins-slave以kubernetes内的pod方式运行实现动态创建和删除，这时如果需要构建容器镜像的话，就需要Jenkins-slave能支持docker-in-docke">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-dokcer_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-dokcer_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_5.png">
 <meta property="article:published_time" content="2018-09-22T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-09-22T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-dokcer_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-dokcer_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/09/22/docker-in-docker/index.html">
   
@@ -407,22 +407,22 @@
 <h3 id="环境信息："><a href="#环境信息：" class="headerlink" title="环境信息："></a>环境信息：</h3><p>os：ubuntu16.04<br>docker：17.03-2</p>
 <h3 id="实现方式："><a href="#实现方式：" class="headerlink" title="实现方式："></a>实现方式：</h3><p>docker-in-docker的实现方式有两种<br>方式一：通过docker官方镜像docker:dind，或自己以特权模式启动一个基础镜像（然后安装docker)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name test-docker --privileged docker:dind（docker:dind镜像默认是最新版docker版本的dind,如果需要指定docker版本可以docker:17.03-dind)</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-dokcer_1.png"><br>配置镜像加速器</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-dokcer_1.png"><br>配置镜像加速器</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tee  /etc/docker/daemon.json &lt;&lt; EOF</span><br><span class="line">&#123;</span><br><span class="line">  &quot;registry-mirrors&quot;: [&quot;https://vqgjby9l.mirror.aliyuncs.com&quot;]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
 <p>启动应用功能测试</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd -p 80:80 nginx</span><br></pre></td></tr></table></figure>
 <p>测试应用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl 127.0.0.1</span><br><span class="line">wget 127.0.0.1 &amp;&amp; cat index.html</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_2.png"><br>构建镜像功能测试</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_2.png"><br>构建镜像功能测试</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi ~/Dockerfile</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM nginx</span><br><span class="line">MAINTAINER Alex wan &quot;wanshaoyuan@gmail.com&quot;</span><br><span class="line">RUN  echo test &gt; /usr/share/nginx/html/index.html</span><br></pre></td></tr></table></figure>
-<p>构建镜像<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_3.png"></p>
+<p>构建镜像<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_3.png"></p>
 <p>基于新镜像启动容器</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd -p 80:80 test-nginx:v1.0</span><br></pre></td></tr></table></figure>
-<p>验证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_4.png"></p>
+<p>验证<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_4.png"></p>
 <p>可以看见这根我们平常用的docker一模一样了，能够运行容器，管理容器，构建容器镜像。<br>方式二：将宿主机的docker.sock文件映射到容器内,然后在应用镜像内安装一个docker client端就可以了，docker官方也有内部就封装了docker命令的镜像，镜像名就叫docker</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd -v /var/run/docker.sock:/var/run/docker.sock docker</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker-in-docker_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker-in-docker_5.png"></p>
 <p>这种方式很简单了就是直接用的宿主机的docker，只不过用的另外的客户端去连接而已，所以你在容器里面的所有操作比如创建、删除、构建这些操作都是直接反映到宿主机的docker上的。</p>
 <h3 id="两种方式的区别："><a href="#两种方式的区别：" class="headerlink" title="两种方式的区别："></a>两种方式的区别：</h3><p>第一种方式使用docker inserd docker，是直接在子容器容器里面启动一个单独的容器，这种方案优点在于1、它是完全独立的一个docker，根宿主机是完全隔离的，在上面做任何操作都不会影响宿主机上的docker，对应的子容器销毁，里面容器和镜像就没有了，不会残留在父容器上，同时缺点也很明显1、因为需要操作iptables和cgroup所以需要特权模式启动，带来一定的安全隐患。2、StoragDriver问题，因为外部docker运行在操作系统的文件系统之上如ext4，xfs等，子容器运行在StoragDriver之上，然后子容器中的容器又运行在子容器的StoragDriver之上，所以这就成了一个多级嵌套的一个关系了，对于一些StoragDriver是不允许的，比如你不能在aufs之上在运行aufs，但目前overlay2是可以运行在aufs之上的，但会有较强的性能损耗。</p>
 <p>第二种方式使用docker outside of docker，这种方式子容器内封装一个docker命令然后将宿主机的docker.sock文件映射进去，这种方案优点在于：1、因为子容器只是运行一个docker客户端，所以不需要特端模式，可以保证一定的安全性。2、没有多层StorageDriver嵌套问题因为它是直接运行在宿主机上的。缺点：1、因为是直接控制宿主机容器，所以所有操作都会反应在宿主机上，隔离性没那么好。2、端口要保证唯一性。3、容器层面安全性问题，因为可以直接操作宿主机docker，所以可以任意修改和删除上面的容器。</p>

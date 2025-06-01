@@ -24,26 +24,26 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="默认logging函数输出的warning级别的日志。 日志级别日志级别大小关系为：CRITICAL &gt; ERROR &gt; WARNING &gt; INFO &gt; DEBUG &gt; NOTSET logging库提供了多个组件：Logger、Handler、Filter、Formatter： 1234Logger      对象提供应用程序可直接使用的接口，供应用代码使用；Ha">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_4_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_13.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_4_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_13.png">
 <meta property="article:published_time" content="2017-09-27T15:27:44.000Z">
 <meta property="article:modified_time" content="2017-09-27T15:27:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/09/27/python_logging/index.html">
   
@@ -412,39 +412,39 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <p>默认logging函数输出的warning级别的日志。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_1.png"></p>
+        <p>默认logging函数输出的warning级别的日志。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_1.png"></p>
 <h3 id="日志级别"><a href="#日志级别" class="headerlink" title="日志级别"></a>日志级别</h3><p>日志级别大小关系为：CRITICAL &gt; ERROR &gt; WARNING &gt; INFO &gt; DEBUG &gt; NOTSET</p>
 <p>logging库提供了多个组件：Logger、Handler、Filter、Formatter：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Logger      对象提供应用程序可直接使用的接口，供应用代码使用；</span><br><span class="line">Handler     发送日志到适当的目的地，比如socket和文件等</span><br><span class="line">Filter      提供了过滤日志信息的方法，控制输出；</span><br><span class="line">Formatter  指定日志输出和显示的具体格式。</span><br></pre></td></tr></table></figure>
 
 
-<p>通过logging.basicConfig对日志的输出格式配置<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_2.png"></p>
-<p>cat test.log<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_3.png"></p>
+<p>通过logging.basicConfig对日志的输出格式配置<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_2.png"></p>
+<p>cat test.log<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_3.png"></p>
 <p>需要注意的是<br>只有等级大于等于basicConfig定义的level的log才会被输出，比如这里定义的等级为DEBUG、debug、info、warning、error日志等级都大于等于debug</p>
 <p>logging.basicConfig各参数<br>level：日志等级<br>format格式</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">format: 指定输出的格式和内容，format可以输出很多有用信息，如上例所示:</span><br><span class="line"> %(levelno)s: 打印日志级别的数值</span><br><span class="line"> %(levelname)s: 打印日志级别名称</span><br><span class="line"> %(pathname)s: 打印当前执行程序的路径，其实就是sys.argv[0]</span><br><span class="line"> %(filename)s: 打印当前执行程序名</span><br><span class="line"> %(funcName)s: 打印日志的当前函数</span><br><span class="line"> %(lineno)d: 打印日志的当前行号</span><br><span class="line"> %(asctime)s: 打印日志的时间</span><br><span class="line"> %(thread)d: 打印线程ID</span><br><span class="line"> %(threadName)s: 打印线程名称</span><br><span class="line"> %(process)d: 打印进程ID</span><br><span class="line"> %(message)s: 打印日志信息</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> filename：输出文件名</span><br><span class="line">filemode：写入模式w为直接写入，a为追加</span><br><span class="line">datafmt：输出的时间格式  这里用%Y-</span><br><span class="line">python中时间日期格式化符号：</span><br><span class="line">%y 两位数的年份表示（00-99）</span><br><span class="line">%Y 四位数的年份表示（000-9999）</span><br><span class="line">%m 月份（01-12）</span><br><span class="line">%d 月内中的一天（0-31）</span><br><span class="line">%H 24小时制小时数（0-23）</span><br><span class="line">%I 12小时制小时数（01-12）</span><br><span class="line">%M 分钟数（00=59）</span><br><span class="line">%S 秒（00-59）</span><br><span class="line">%a 本地简化星期名称</span><br><span class="line">%A 本地完整星期名称</span><br><span class="line">%b 本地简化的月份名称</span><br><span class="line">%B 本地完整的月份名称</span><br><span class="line">%c 本地相应的日期表示和时间表示</span><br><span class="line">%j 年内的一天（001-366）</span><br><span class="line">%p 本地A.M.或P.M.的等价符</span><br><span class="line">%U 一年中的星期数（00-53）星期天为星期的开始</span><br><span class="line">%w 星期（0-6），星期天为星期的开始</span><br><span class="line">%W 一年中的星期数（00-53）星期一为星期的开始</span><br><span class="line">%x 本地相应的日期表示</span><br><span class="line">%X 本地相应的时间表示</span><br><span class="line">%Z 当前时区的名称</span><br></pre></td></tr></table></figure>
-<h3 id="将日志同时输出到屏幕和文件"><a href="#将日志同时输出到屏幕和文件" class="headerlink" title="将日志同时输出到屏幕和文件"></a>将日志同时输出到屏幕和文件</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_4.png"></p>
+<h3 id="将日志同时输出到屏幕和文件"><a href="#将日志同时输出到屏幕和文件" class="headerlink" title="将日志同时输出到屏幕和文件"></a>将日志同时输出到屏幕和文件</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_4.png"></p>
 <p>输出</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_4_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_4_1.png"></p>
 <h3 id="logging-日志轮询"><a href="#logging-日志轮询" class="headerlink" title="logging 日志轮询"></a>logging 日志轮询</h3><p>使用TimedRotatingFileHandler设置日志轮转，轮转的方式有两种一种是基于时间的轮转，一种是基于日志文件大小的轮转<br>TimedRotatingFileHandler函数参数说明</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">logging.handlers.TimedRotatingFileHandler(file_name,when=时间单位, interval=&#x27;时间间隔&#x27;,backupCount=&quot;保留的文件个数&quot;)</span><br></pre></td></tr></table></figure>
 <p>interval:表示等待多长时间文件重建，重建的文件名等于file_name+suffix</p>
 <p>以下面例子说明</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_5.png"></p>
 <p>myadd.addHandler(filehandler)的意思是给myapp这个logger添加filehandler这个handler。</p>
 <p>执行脚本可以看见每隔一秒会自动生成一个新的日志文件，到满3个时会自动进行一次新的轮转</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_6.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_6.png"><br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_7.png"></p>
 <p>TimedRotatingFileHandler设置的重建时间间隔后，suffix就需要按装下面的进行配置不然删除不了，比如设置的为S则suffix为%Y-%m-%d_%H-%M-%S</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_8.png"></p>
-<h3 id="RotatingFileHandler安文件大小切分"><a href="#RotatingFileHandler安文件大小切分" class="headerlink" title="RotatingFileHandler安文件大小切分"></a>RotatingFileHandler安文件大小切分</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_9.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_10.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_8.png"></p>
+<h3 id="RotatingFileHandler安文件大小切分"><a href="#RotatingFileHandler安文件大小切分" class="headerlink" title="RotatingFileHandler安文件大小切分"></a>RotatingFileHandler安文件大小切分</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_10.png"></p>
 <h3 id="logger实例的父子关系"><a href="#logger实例的父子关系" class="headerlink" title="logger实例的父子关系"></a>logger实例的父子关系</h3><p>通过前面几个例子对比你应该发现了前面我用logging.basicConfig()去设置format，后面我是通过getlogger创建一个logger后，通过setformat方法去给他对应的handler设置format。</p>
 <p>root logger是处于最顶层的logger，同时也是默认的logger，如果不创建logger实例默认调用logger.info(),logger.debug(),logger.error()使用</p>
-<p>如何得到root logger<br>通过logging.getLogger()和logging.getLogger(“”)得到root logger实例。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_11.png"><br>logger的父子关系<br>logger以name命名方式来表达父子关系<br>比如<br>父<br>logging.getLogger(foo)<br>子<br>logging.getLogger(foo.tar)</p>
-<h3 id="effective-level"><a href="#effective-level" class="headerlink" title="effective level"></a>effective level</h3><p>一个looger如果没有指定level，就继承父level，如果父logger也没有就直接继承root的level。<br>handler同样，子没有就继承父的，父也没有的话就继承root的<br>例<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_12.png"></p>
+<p>如何得到root logger<br>通过logging.getLogger()和logging.getLogger(“”)得到root logger实例。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_11.png"><br>logger的父子关系<br>logger以name命名方式来表达父子关系<br>比如<br>父<br>logging.getLogger(foo)<br>子<br>logging.getLogger(foo.tar)</p>
+<h3 id="effective-level"><a href="#effective-level" class="headerlink" title="effective level"></a>effective level</h3><p>一个looger如果没有指定level，就继承父level，如果父logger也没有就直接继承root的level。<br>handler同样，子没有就继承父的，父也没有的话就继承root的<br>例<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_12.png"></p>
 <p>root logger这里没设置logger的setLevel默认是warning，但父logger设置了，所以父logger会将自己的logger setlevel传递给root logger</p>
 <h3 id="调用配置好的logging"><a href="#调用配置好的logging" class="headerlink" title="调用配置好的logging"></a>调用配置好的logging</h3><p>正常写程序中只要配置好一个logging，其他程序只要调用他就可以了一种是通过logging.config，一种是通过模块导入</p>
-<p>介绍方法二：<br>比如我将配置好的logging写在test.py里面<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/logging_13.png"><br>在另外一个程序中调用它</p>
+<p>介绍方法二：<br>比如我将配置好的logging写在test.py里面<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/logging_13.png"><br>在另外一个程序中调用它</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import test</span><br><span class="line">test.myapp.info(&quot;test&quot;)</span><br></pre></td></tr></table></figure>
 <p>这样输出的就是按test.py里面myapp这个logger配置好的log了</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">http://blog.csdn.net/lizhe_dashuju/article/details/72579705</span><br><span class="line">http://blog.csdn.net/z_johnny/article/details/50812878</span><br><span class="line">http://kenby.iteye.com/blog/1162698</span><br><span class="line">http://blog.csdn.net/chosen0ne/article/details/7319306</span><br></pre></td></tr></table></figure>

@@ -25,9 +25,9 @@
 <meta property="og:description" content="概述Notary 是一个用于建立内容之间信任的平台。在容器镜像中可以对镜像进行加密签名用来保证镜像件来源和镜像内容防篡改。软件版本    软件 版本    Harbor 1.10.1   Docker 18.09.9   Harbor打开NotaryHarbor部署时可以选择启用notray，需要Harbor使用Https模式 1.&#x2F;install --with-notary  部署完后会在har">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.rawgit.com/docker/notary/27469f01fe244bdf70f34219616657b336724bc3/docs/images/metadata-sequence.svg">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_notary_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_notary_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_notary_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_notary_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_notary_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_notary_3.png">
 <meta property="article:published_time" content="2020-02-22T15:27:44.000Z">
 <meta property="article:modified_time" content="2020-02-22T15:27:44.000Z">
 <meta property="article:author" content="我爱西红柿">
@@ -424,12 +424,12 @@
 
 <p>部署完后会在harbor中启用<br>notary-server-photon和notary-signer-photon组件，服务监听4443端口</p>
 <p><img src="https://cdn.rawgit.com/docker/notary/27469f01fe244bdf70f34219616657b336724bc3/docs/images/metadata-sequence.svg"></p>
-<p>新建个notary项目配置内容信任，阻止没有签名的镜像下载<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_notary_1.png"></p>
+<p>新建个notary项目配置内容信任，阻止没有签名的镜像下载<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_notary_1.png"></p>
 <p>上传镜像<br>默认不启用docker的内容信任参数上传镜像</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker push 172.16.1.31/notary/hyperkube:v1.15.5-rancher1</span><br></pre></td></tr></table></figure>
 
 <p>此时在Harbor中看见镜像是未签名状态</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_notary_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_notary_2.png"></p>
 <p>因为项目开启了仅允许通过认证的镜像下载，所以未签名的镜像无法pull下来。</p>
 <h2 id="docker开启镜像签名"><a href="#docker开启镜像签名" class="headerlink" title="docker开启镜像签名"></a>docker开启镜像签名</h2><p>使用以下两个环境变量</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export DOCKER_CONTENT_TRUST=1</span><br><span class="line">export DOCKER_CONTENT_TRUST_SERVER=&quot;https://172.16.1.31:4443&quot;</span><br></pre></td></tr></table></figure>
@@ -442,7 +442,7 @@
 
 <p>输入密码对镜像进行签名，后续镜像上传都是使用此密码进行镜像签署。<br>根密钥的密码<br>在 ~&#x2F;.docker&#x2F;trust 目录中生成一个根密钥<br>镜像签署密钥的密码<br>在 ~&#x2F;.docker&#x2F;trust 目录中生成一个镜像签署密钥</p>
 <p>上传成功后在harbor中查看</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_notary_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_notary_3.png"></p>
 <p>查看镜像的签名</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker trust inspect 172.16.1.31/notary/hyperkube:v1.15.5-rancher1</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">docker trust inspect 172.16.1.31/notary/hyperkube:v1.15.5-rancher1</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Name&quot;: &quot;172.16.1.31/notary/hyperkube:v1.15.5-rancher1&quot;,</span><br><span class="line">        &quot;SignedTags&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">                &quot;SignedTag&quot;: &quot;v1.15.5-rancher1&quot;,</span><br><span class="line">                &quot;Digest&quot;: &quot;19c919ef37b634919bd08429ee1fde0f3d8ed83c7e75929f7e259ba35f88d9b7&quot;,</span><br><span class="line">                &quot;Signers&quot;: [</span><br><span class="line">                    &quot;Repo Admin&quot;</span><br><span class="line">                ]</span><br><span class="line">            &#125;</span><br><span class="line">        ],</span><br><span class="line">        &quot;Signers&quot;: [],</span><br><span class="line">        &quot;AdministrativeKeys&quot;: [</span><br><span class="line">            &#123;</span><br><span class="line">                &quot;Name&quot;: &quot;Root&quot;,</span><br><span class="line">                &quot;Keys&quot;: [</span><br><span class="line">                    &#123;</span><br><span class="line">                        &quot;ID&quot;: &quot;4d8fcd2d60d87115dff15e43a649ff0c95fa26f7fd9cf1756ce4775c1a0f94c8&quot;</span><br><span class="line">                    &#125;</span><br><span class="line">                ]</span><br><span class="line">            &#125;,</span><br><span class="line">            &#123;</span><br><span class="line">                &quot;Name&quot;: &quot;Repository&quot;,</span><br><span class="line">                &quot;Keys&quot;: [</span><br><span class="line">                    &#123;</span><br><span class="line">                        &quot;ID&quot;: &quot;7254ee1ad59f87b21cd1af6ec847f95a41b84702cd745e8eb9c47abadb5145e5&quot;</span><br><span class="line">                    &#125;</span><br><span class="line">                ]</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>

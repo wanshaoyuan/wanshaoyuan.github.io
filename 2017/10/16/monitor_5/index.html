@@ -24,15 +24,15 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="前面四篇文章讲的更多是说这套监控平台是如何一步搭建起来的，但在实际生产中，我们要给客户搭建很多套私有云环境，不可能每个环境手动去装一边，因为zabbix的监控项和grafana的dashboard都可以做成模板导入。剩下就是一些软件安装和zabbix-agent的配置问题了，目前我采用的做法是将monitor-server封装成一个镜像，镜像里面将软件都安装好了monitor-server上有写好">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_3.png">
 <meta property="article:published_time" content="2017-10-16T08:27:44.000Z">
 <meta property="article:modified_time" content="2017-10-16T15:27:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/10/16/monitor_5/index.html">
   
@@ -410,14 +410,14 @@
 <p>common 主要做的操作有<br>1、环境初始化<br>2、拷贝软件包到对应节点<br>3、解压tar包<br>4、安装软件<br>5、修改对应的配置文件<br>6、修改执行权限<br>7、修改防火墙开放端口<br>8、启动服务、设置开机自启  </p>
 <p>telegraf主要做的操作有<br>1、安装telegraf<br>2、修改telegraf systemd的启动用户<br>3、拷贝telegraf配置文件<br>4、重启telegraf并设置开机启动  </p>
 <p>因为每个节点所对应的角色不一样，ansible所跑的脚本也是不一样的，所以定义这3个roles，服务器的角色通过hosts文件控制  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_1.png"></p>
 <p>定义了三组角色，控制节点、计算节点、存储节点、融合节点、每组角色设置了不同的metadata，这个metadata是通过templates&#x2F;zabbix_agentd.conf.j2传给对应节点zabbix-agent里面的HostMetadata参数，然后zabbix-server根据不同的metadata去调用不同的模板。定义group是为了在task里面调用不同的命令。  </p>
-<p>通过site.yml来控制不同的host调用不同的role<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_2.png"></p>
+<p>通过site.yml来控制不同的host调用不同的role<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_2.png"></p>
 <p>可以看见common的hosts是all表示在hosts定义的所有组都会调用common， telegraf roles是只有control的host会去调用 ceph roles是storage的 hosts去调用</p>
 <p>每个roles下面分handlers、tasks、templates、vars 其中，<br>handlers：也是task，但只有其关注的条件满足时，才会被触发执行 ，  </p>
 <p>templates：定义的是配置文件模板，比如我们这里定义好了zabbix_agent、和telegraf的配置文件模板  </p>
 <p>vars：定义变量，我在templates里面定义了zabbix_agent变量，里面的server 和server_active我都是以变量方式存储的，然后在执行ansible前先把变量改好，这样在不同的环境配置文件里的ip也会根着变。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/monitor_5_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/monitor_5_3.png"></p>
 <p>项目代码先以开源：<br><a href="https://github.com/wanshaoyuan/ansible_monitor">https://github.com/wanshaoyuan/ansible_monitor</a></p>
 
       

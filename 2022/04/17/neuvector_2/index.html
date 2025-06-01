@@ -24,46 +24,46 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述上一篇NeuVector文章主要以安装部署为主，本篇将实际结合NeuVector的基础功能进行操作演示，主要包含对于NeuVector安全漏洞管理、合规性和机密性检查、策略管理、准入控制策略、动态安全响应和行为监控。本篇文档适用版本为以NeuVector首个开源版NeuVector:5.0.0-preview.1为主 安全漏洞管理集成CVE漏洞库，每天自动更新，支持对平台（Kubernetes">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-8.png">
 <meta property="og:image" content="https://open-docs.neuvector.com/user/pages/06.scanning/01.scanning/02.compliance/secrets_image_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-13.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-14.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-15.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-16.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-17.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-18.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-19.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-20.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-21.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-22.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-24.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-25.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-26.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-27.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-28.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-29.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-30.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-31.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-32.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-33.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-34.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-13.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-14.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-15.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-16.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-17.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-18.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-19.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-20.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-21.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-22.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-24.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-25.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-26.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-27.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-28.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-29.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-30.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-31.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-32.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-33.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-34.png">
 <meta property="article:published_time" content="2022-04-17T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-04-17T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="安全">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2022/04/17/neuvector_2/index.html">
   
@@ -435,15 +435,15 @@
         <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>上一篇NeuVector文章主要以安装部署为主，本篇将实际结合NeuVector的基础功能进行操作演示，主要包含对于NeuVector安全漏洞管理、合规性和机密性检查、策略管理、准入控制策略、动态安全响应和行为监控。本篇文档适用版本为以NeuVector首个开源版NeuVector:5.0.0-preview.1为主</p>
 <h3 id="安全漏洞管理"><a href="#安全漏洞管理" class="headerlink" title="安全漏洞管理"></a>安全漏洞管理</h3><p>集成CVE漏洞库，每天自动更新，支持对平台（Kubernetes）、主机、容器、镜像仓库进行安全漏洞扫描。</p>
 <p><a href="">配置</a>自动扫描，当平台漏洞库有更新或有新的节点和容器加入时会自动进行扫描。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-1.png"></p>
-<p>针对不同漏洞有不同风险级别，以及对应的组件版本和修复版本提示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-2.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-3.png"></p>
-<p>每个漏洞可以展示对应的漏洞发布时间、漏洞影响范围、对应的组件影响版本。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-4.png"></p>
-<p>对漏洞进行过滤，是否已经修复，漏洞等级、发布时间等<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-5.png"></p>
-<h4 id="配置对接镜像仓库扫描"><a href="#配置对接镜像仓库扫描" class="headerlink" title="配置对接镜像仓库扫描"></a>配置对接镜像仓库扫描</h4><p>支持对接多种镜像仓库如（docker-registry（harbor）、JFrog Artifactory、Nexus等）<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-6.png"></p>
-<p>以对接Harbor为例，配置连接方式，填写连接方式和认证信息，过滤器表示你需要扫描的范围如扫描uat项目下全部镜像则<code>uat/*</code>,如果需要扫描整个Harbor内全部镜像则*。测试设置可以验证编写的表达式的关联情况。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-1.png"></p>
+<p>针对不同漏洞有不同风险级别，以及对应的组件版本和修复版本提示<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-3.png"></p>
+<p>每个漏洞可以展示对应的漏洞发布时间、漏洞影响范围、对应的组件影响版本。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-4.png"></p>
+<p>对漏洞进行过滤，是否已经修复，漏洞等级、发布时间等<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-5.png"></p>
+<h4 id="配置对接镜像仓库扫描"><a href="#配置对接镜像仓库扫描" class="headerlink" title="配置对接镜像仓库扫描"></a>配置对接镜像仓库扫描</h4><p>支持对接多种镜像仓库如（docker-registry（harbor）、JFrog Artifactory、Nexus等）<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-6.png"></p>
+<p>以对接Harbor为例，配置连接方式，填写连接方式和认证信息，过滤器表示你需要扫描的范围如扫描uat项目下全部镜像则<code>uat/*</code>,如果需要扫描整个Harbor内全部镜像则*。测试设置可以验证编写的表达式的关联情况。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-7.png"></p>
 <h3 id="合规性检查和机密性检查"><a href="#合规性检查和机密性检查" class="headerlink" title="合规性检查和机密性检查"></a>合规性检查和机密性检查</h3><p>NeuVector的合规性审核包括 CIS 基线测试、自定义检查、机密审核以及 PCI、GDPR 和其他法规的行业标准模板扫描。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-8.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-8.png"></p>
 <p>类型这表示对应的那个基线标准如K.4.1.1对应Kubernetes CIS基线测试4.1.1<br>容器对应的基线标准为D开头的，镜像对应的基线标准为I开头</p>
 <p>注：《通用数据保护条例》（General Data Protection Regulation，简称GDPR）为欧洲联盟的条例</p>
 <p>在合规性检查中也会检查是否存在密文泄漏情况<br><img src="https://open-docs.neuvector.com/user/pages/06.scanning/01.scanning/02.compliance/secrets_image_4.png"></p>
@@ -475,7 +475,7 @@ MailChimp API key
 MailGun API key
 </code></pre>
 <h3 id="策略管理"><a href="#策略管理" class="headerlink" title="策略管理"></a>策略管理</h3><p>在NeuVector中通过组的方式对容器和主机进行管理。通过对组进行合规性检查、网络规则、进程和文件访问规则、DLP&#x2F;WAF的检测配置。</p>
-<p>NeuVector会自动将当前集群主机加入到nodes组，对于集群内容器会自动创建以nv.开头的组<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-9.png"><br>NeuVector的组支持3种模式，学习模式、监控模式、保护模式。各个模式实现作用如下。<br>学习模式：<br>学习和记录容器、主机间网络连接情况和进程执行信息。<br>自动构建网络规则白名单，保护应用网络正常行为。<br>为每个服务的容器中运行的进程设定安全基线，并创建进程配置文件规则白名单</p>
+<p>NeuVector会自动将当前集群主机加入到nodes组，对于集群内容器会自动创建以nv.开头的组<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-9.png"><br>NeuVector的组支持3种模式，学习模式、监控模式、保护模式。各个模式实现作用如下。<br>学习模式：<br>学习和记录容器、主机间网络连接情况和进程执行信息。<br>自动构建网络规则白名单，保护应用网络正常行为。<br>为每个服务的容器中运行的进程设定安全基线，并创建进程配置文件规则白名单</p>
 <p>监控模式：<br>NeuVector监视容器和主机网络和进程运行情况，遇到非学习模式下记录的行为将在NeuVector中进行告警。</p>
 <p>保护模式：</p>
 <p>NeuVector监视容器和主机网络和进程运行情况，遇到非学习模式下记录的行为直接拒绝。</p>
@@ -531,23 +531,23 @@ kubectl create deployment test-con2 --image=nginx
 kubectl create deployment test-con3 --image=nginx
 </code></pre>
 <p>此时在NeuVector中会自动生成这几个组。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-10.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-10.png"></p>
 <p>在test-con1中通过curl访问test-web1</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-11.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-11.png"></p>
 <p>此时可以正常访问，因为在学习模式下。NeuVector也会自动添加此访问规则。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-12.png"></p>
-<p>将test-web1和test-con2都设置为监控模式<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-13.png"></p>
-<p>然后在test-con2中curl访问test-web1<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-14.png"></p>
-<p>此时test-con2可以正常访问test-web1，但在NeuVector中会生成告警<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-15.png"></p>
-<p>同时对应的在网络活动拓扑图中也可以看见对应的连接链路变为红色。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-16.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-12.png"></p>
+<p>将test-web1和test-con2都设置为监控模式<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-13.png"></p>
+<p>然后在test-con2中curl访问test-web1<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-14.png"></p>
+<p>此时test-con2可以正常访问test-web1，但在NeuVector中会生成告警<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-15.png"></p>
+<p>同时对应的在网络活动拓扑图中也可以看见对应的连接链路变为红色。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-16.png"></p>
 <p>将test-web1和test-con2都设置为保护模式，在通过test-con2去curl test-web1</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-17.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-17.png"></p>
 <p>因为curl在学习模式时没有使用，也不是NeuVector默认允许的可执行进程，所以进程直接就无法访问了。</p>
 <p>将test-con1设置为保护模式，此时test-con1无法访问外部网络，</p>
 <p>可以通过自定义添加网络规则方式开通访问。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-18.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-18.png"></p>
 <p>在网络规则页，此处规则已经是在学习模式下生成的规则列表。</p>
-<p>添加外部访问规则<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-19.png"></p>
+<p>添加外部访问规则<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-19.png"></p>
 <p>NeuVector深度了解应用程序行为，并将分析有效负载以确定应用程序协议。协议包括HTTP，HTTPS，SSL，SSH，DNS，DNCP，NTP，TFTP，ECHO，RTSP，SIP，MySQL，Redis，Zookeeper，Cassandra，MongoDB，PostgresSQL，Kafka，Couchbase，ActiveMQ，ElasticSearch，RabbitMQ，Radius，VoltDB，Consul，Syslog，Etcd，Spark，Apache，Nginx，Jetty，NodeJS，Oracle，MSSQL和gRPC。</p>
 <p>现在test-con1的curl去访问www.baidu.com以正常访问。</p>
 <p>总结：<br>除上述策略外，NeuVector也内置网络威胁检测，能够快速识别常用网络攻击，保护业务容器安全运行。</p>
@@ -578,30 +578,30 @@ TCP Small MSS attack
 Cipher Overflow attack
 Kubernetes man-in-the-middle attack per CVE-2020-8554
 </code></pre>
-<h4 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h4><p>NeuVector支持对容器和主机内进程进行管理<br>在学习模式下，运行的进程和命令会自动添加到规则中<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-20.png"></p>
+<h4 id="进程管理"><a href="#进程管理" class="headerlink" title="进程管理"></a>进程管理</h4><p>NeuVector支持对容器和主机内进程进行管理<br>在学习模式下，运行的进程和命令会自动添加到规则中<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-20.png"></p>
 <p>此时在test-con1中执行<code>df -h</code>会发现报错<code>bash: /bin/df: Operation not permitted</code><br>在<code>nv.test-con1.default</code>组中添加<code>df</code>进程规则</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-21.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-22.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-21.png"><br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-22.png"></p>
 <p>然后在重新执行即可执行。</p>
 <p>进程管理也支持对node节点，可以在node组中进行限制，约束宿主机进程执行。如限制执行docker cp 执行，通过学习模式得知是<code>docker-tar</code>进程在后端执行<br>将节点切换到保护模式，限制<code>docker-tar</code>进程即可。</p>
 <p>这些在节点就无法执行<code>docker cp</code></p>
 <h3 id="准入策略控制"><a href="#准入策略控制" class="headerlink" title="准入策略控制"></a>准入策略控制</h3><p>NeuVector支持与Kubernetes准入控制（admission-control）功能对接，实现UI配置准入控制规则，对请求进行拦截，用于对请求的资源对象进行校验。<br>NeuVector支持多种准入控制策率配置如镜像CVE漏洞情况限制、部署特权模式、镜像内使用root用户、特定标签等。</p>
-<p>在策略-准入控制中开启此功能，注意：需要Kubernetes集群提前开启admission-control功能<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-24.png"></p>
+<p>在策略-准入控制中开启此功能，注意：需要Kubernetes集群提前开启admission-control功能<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-24.png"></p>
 <p>NeuVector准入策略控制，支持两种模式，监控模式和保护模式，对应含义和组的模式一样的。这里我们直接切换到保护模式，添加策略。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-25.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-26.png"></p>
-<p>添加完后，在Rancher中部署特权模式容器会提示解决，策略生效。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-27.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-25.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-26.png"></p>
+<p>添加完后，在Rancher中部署特权模式容器会提示解决，策略生效。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-27.png"></p>
 <h3 id="动态安全响应"><a href="#动态安全响应" class="headerlink" title="动态安全响应"></a>动态安全响应</h3><p>NeuVector事件响应机制可以配置响应规则根据安全事件情况进行动态响应，包括以下事件：漏洞扫描结果、CIS基准测试、准入控制事件等。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-28.png"></p>
-<p>响应动作包括隔离、webhook通知、日志抑制<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-29.png"><br>隔离模式：对应的容器网络进出流量将全部被切断。<br>webhook通知：将触发信息通过webhook方式进行告警。<br>日志抑制：对触发告警信息进行抑制。</p>
-<p>以CVE漏洞配置为例，配置包含CVE漏洞名称为CVE-2020-16156的容器进入隔离模式。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-30.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-28.png"></p>
+<p>响应动作包括隔离、webhook通知、日志抑制<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-29.png"><br>隔离模式：对应的容器网络进出流量将全部被切断。<br>webhook通知：将触发信息通过webhook方式进行告警。<br>日志抑制：对触发告警信息进行抑制。</p>
+<p>以CVE漏洞配置为例，配置包含CVE漏洞名称为CVE-2020-16156的容器进入隔离模式。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-30.png"></p>
 <p>组名对应的是影响范围，如果为空，表示对全部的组都生效，填写组名可以设置对特定组生效。</p>
-<p>配置策略后，在集群去curl nginx容器，发现无法访问，在NeuVector中查看容器状态为隔离状态。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-31.png"></p>
+<p>配置策略后，在集群去curl nginx容器，发现无法访问，在NeuVector中查看容器状态为隔离状态。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-31.png"></p>
 <p>删除策略时，也可以配置将对应隔离状态容器解除隔离。</p>
 <p>注意：<br>1、隔离操作不适用于为主机事件触发的规则<br>2、每个规则可以有多个操作。</p>
-<h3 id="行为监控"><a href="#行为监控" class="headerlink" title="行为监控"></a>行为监控</h3><h4 id="网络流量可视化"><a href="#网络流量可视化" class="headerlink" title="网络流量可视化"></a>网络流量可视化</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-32.png"></p>
+<h3 id="行为监控"><a href="#行为监控" class="headerlink" title="行为监控"></a>行为监控</h3><h4 id="网络流量可视化"><a href="#网络流量可视化" class="headerlink" title="网络流量可视化"></a>网络流量可视化</h4><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-32.png"></p>
 <p>网络流量可视化，可以清晰可见容器集群内网络连接关系，当前容器连接会话并且可以过滤网络连接信息，进行图标展示。能够快速进行网络问题定位。</p>
-<h4 id="流量抓包"><a href="#流量抓包" class="headerlink" title="流量抓包"></a>流量抓包</h4><p>针对容器可进行网络抓包，方便故障不需要进入主机获取高权限，就能使进行网络问题深入排查。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-33.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/neuvector2-34.png"></p>
+<h4 id="流量抓包"><a href="#流量抓包" class="headerlink" title="流量抓包"></a>流量抓包</h4><p>针对容器可进行网络抓包，方便故障不需要进入主机获取高权限，就能使进行网络问题深入排查。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-33.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/neuvector2-34.png"></p>
 <p>采集到的数据包可直接下载通过Wireshark进行解包分析。</p>
 
       

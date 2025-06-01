@@ -24,19 +24,19 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="环境配置准备3台服务器   192.168.1.16 mariadb-1.novalocal mariadb-1192.168.1.19 mariadb-2.novalocal mariadb-2192.168.1.18 mariadb-3.novalocal mariadb-3   配置repo文件 vim &#x2F;etc&#x2F;yum.repos.d&#x2F;MariaDB.repo">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-7.png">
 <meta property="article:published_time" content="2016-12-22T15:35:44.000Z">
 <meta property="article:modified_time" content="2016-12-22T15:50:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2016/12/22/mariadb-galera-2/index.html">
   
@@ -432,17 +432,17 @@
 
 <p>出现 ready for connections ,证明我们启动成功  </p>
 <p>查看是否启用galera插件<br>连接mariadb,查看是否启用galera插件</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-1.png"></p>
-<p>目前集群机器数<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-2.png"></p>
-<p>查看集群状态<br>show status like ‘wsrep%’;<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-1.png"></p>
+<p>目前集群机器数<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-2.png"></p>
+<p>查看集群状态<br>show status like ‘wsrep%’;<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-3.png"></p>
 <p>查看连接的主机  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-4.png"></p>
-<p>另外两个节点mariadb会自动加入集群<br>systemctl start mariadb<br>这时查看galera集群机器数量<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-5.png"></p>
-<p>已经连接机器的ip<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-4.png"></p>
+<p>另外两个节点mariadb会自动加入集群<br>systemctl start mariadb<br>这时查看galera集群机器数量<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-5.png"></p>
+<p>已经连接机器的ip<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-6.png"></p>
 <p>测试<br>在mariadb-1上创建数据库，创建表，插入数据  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; create database test1；</span><br><span class="line">MariaDB [test1]&gt; insert into test values(1);</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test1]&gt; insert into test values(2);</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test1]&gt; insert into test values(3);</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test1]&gt; insert into test values(4);</span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test1]&gt; insert into test values(5);</span><br><span class="line">Query OK, 1 row affected (0.03 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test1]&gt; insert into test values(6);</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br><span class="line">MariaDB [test1]&gt; insert into test values(7);</span><br><span class="line">Query OK, 1 row affected (0.01 sec)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>在另外两台mariadb-2、mariadb-3上可以看见刚刚插入的数据，说明数据同步了。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/mariadb-7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/mariadb-7.png"></p>
 
       
     </div>

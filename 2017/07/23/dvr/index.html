@@ -24,45 +24,45 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="环境 fuel8.0 介绍DVR简称分布式路由，M版前的neutron网络结构。   无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同com">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-13.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-14.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-15.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-16.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-17.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-18.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-19.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-20.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-21.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-22.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-23.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-24.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-25.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-26.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-27.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-28.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-29.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-30.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-31.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-32.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-33.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-13.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-14.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-15.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-16.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-17.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-18.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-19.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-20.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-21.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-22.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-23.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-24.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-25.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-26.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-27.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-28.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-29.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-30.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-31.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-32.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-33.png">
 <meta property="article:published_time" content="2017-07-23T07:19:59.000Z">
 <meta property="article:modified_time" content="2017-07-23T07:19:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="openstack">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/07/23/dvr/index.html">
   
@@ -432,11 +432,11 @@
     <div class="article-entry markdown-body" itemprop="articleBody">
       
         <p>环境 fuel8.0</p>
-<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>DVR简称分布式路由，M版前的neutron网络结构。<br> <img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-1.png"></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>DVR简称分布式路由，M版前的neutron网络结构。<br> <img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-1.png"></p>
 <p> 无论是南北流量中的1:N还是1:1还是东西流量也好都经过网络节点，这就带来一个问题了，网络节点负载很大，往往成为整个架构的性能短板，同时还很容易出现单点故障。<br>在Juno版本后可以配置DVR模式，每个compute节点上都配置了一个L3 agent，集群内的流量（东西流量）这里有个前提条件，同网段内主机在不同compute节点，在同一个compute节点就直接通过本机就能直接转发了。直接就通过tunnel到达另外一个compute节点，不在需要通过网络节点去做转发了，而配置了floatting ip的主机，直接通过本compute节点的L3 agent 通过br-ex连接外网。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-2.png"><br>进行深入前的一些基本概念的讲解：<br>路由策略<br>引用百科里的一句话<br>路由策略是一种基于目标网络进行路由更加灵活的数据包路由转发机制。应用了路由策略，路由器将通过路由图决定如何对需要路由的数据包进行处理，路由图决定了一个数据包的下一跳转发路由器。 路由策略的种类 大体上分为两种：一种是根据路由的目的地址来进行的策略称为：目的地址路由； 另一种是根据路由源地址来进行策略实施的称为：源地址路由！ 随着路由策略的发展现在有了第三种路由方式：智能均衡的策略方式！</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-2.png"><br>进行深入前的一些基本概念的讲解：<br>路由策略<br>引用百科里的一句话<br>路由策略是一种基于目标网络进行路由更加灵活的数据包路由转发机制。应用了路由策略，路由器将通过路由图决定如何对需要路由的数据包进行处理，路由图决定了一个数据包的下一跳转发路由器。 路由策略的种类 大体上分为两种：一种是根据路由的目的地址来进行的策略称为：目的地址路由； 另一种是根据路由源地址来进行策略实施的称为：源地址路由！ 随着路由策略的发展现在有了第三种路由方式：智能均衡的策略方式！</p>
 <p>使用 ip rule 操作策略路由</p>
-<p>基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。<br>ip rule  查看策略路由表<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-3.png"></p>
+<p>基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。<br>ip rule  查看策略路由表<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-3.png"></p>
 <p>数字越小，优先级越高</p>
 <p>规则0，它是优先级别最高的规则，规则规定，所有的包，都必须首先使用local表（254）进行路由。本规则不能被更改和删除。</p>
 <p>规则32766，规定所有的包，使用表main进行路由。本规则可以被更改和删除。</p>
@@ -458,57 +458,57 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line">vim /etc/neutron/plugins/ml2/ml2_conf.ini</span><br><span class="line">[agent]</span><br><span class="line">enable_distributed_routing=True</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">重启neutron-server、netron-l3-agent ,openvswitch-switch 服务。</span><br></pre></td></tr></table></figure>
 
-<p>配置成功后可以neutron agent-list 看见compute的l3-agent。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-4.png"></p>
+<p>配置成功后可以neutron agent-list 看见compute的l3-agent。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-4.png"></p>
 <h3 id="原理解释"><a href="#原理解释" class="headerlink" title="原理解释"></a>原理解释</h3><p>1台control节点（server-4），2台compute（server-5、server-6）、外网为192.168.122.0&#x2F;24<br>在control节点上在控制台创建个网络，创建个路由器，设置网关，在路由器上将网络端口添加进去。在基于此网络创建个主机。<br>可以发现在control节点上创建路由器时，会同时在namespace里面创建qroute-xxx和snat-xxx两个命名空间，snat-xxx命名空间会根据创建的子网来添加接口，qg-xxx和sg-xxx，其中qg-xxx上面配置了外网ip，sg-xxx配置的是本子网可用的第一个ip（前两个为网关和dhcp）</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-5.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-6.png"></p>
 <p>当该网络内其他主机需要上外网时，源ip会已postrouting形式，snat成路由器的网关，这步操作会在snat-xx命名空间内做</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-7.png"><br>在传统网络架构下，snat操作本来是应该在qroute下进行，而在DVR模式下qroute-xxx完全是连接内网的网关。</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-7.png"><br>在传统网络架构下，snat操作本来是应该在qroute下进行，而在DVR模式下qroute-xxx完全是连接内网的网关。</p>
 <p>当创建一个实例时，会自动在实例所在的compute节点创建一个qroute-xxx 此qrouter-xxx的ip和mac都与control节点的一样。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-8.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-8.png"></p>
 <p>当给实例分配一个floating_ip时，在自动在实例所在的计算节点namespace里面生成fip-xxx命名空间</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-9.png"></p>
-<p>需要注意的是fip-xxx这个id是与你的public网络id是一致<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-10.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-11.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-9.png"></p>
+<p>需要注意的是fip-xxx这个id是与你的public网络id是一致<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-10.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-11.png"></p>
 <p>也就是说一个public网络对应一个fip-xxx namespace,在下面会解释为什么这样做<br>节点fg-xxx对应的是外网接口，fpr接口与qrouter接口一对veth pair</p>
 <h3 id="DVR模式下流量的走向"><a href="#DVR模式下流量的走向" class="headerlink" title="DVR模式下流量的走向"></a>DVR模式下流量的走向</h3><h4 id="南北流量（1：N）"><a href="#南北流量（1：N）" class="headerlink" title="南北流量（1：N）"></a>南北流量（1：N）</h4><p>所谓南北流量（1：N）实际上就是指SNAT就是子网内的主机通过路由器的floatingIP去上外网<br>1，首先需要确认router已经发到compute节点，我这router叫test2<br>可以看见已经在server-6上有了</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-12.png"></p>
-<p>我在vm（192.168.50.4）上面ping百度<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-13.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-12.png"></p>
+<p>我在vm（192.168.50.4）上面ping百度<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-13.png"></p>
 <p>因为是跨网段的，所以发送给默认路由，就是网关。<br>在网关上路由策略可以看见发现，发给默认路由192.168.50.1的数据，最终会发给192.168.50.3</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-14.png"></p>
-<p>那192.168.50.3在哪呢，通过前面分析，我们知道，192.168.50.3在control节点snat-xx命名空间里面<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-15.png"></p>
-<p>然后在iptables里面做一次snat<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-16.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-14.png"></p>
+<p>那192.168.50.3在哪呢，通过前面分析，我们知道，192.168.50.3在control节点snat-xx命名空间里面<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-15.png"></p>
+<p>然后在iptables里面做一次snat<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-16.png"></p>
 <p>就出外网了，因为我这是KVM虚拟机里面所以还要nat一层。</p>
 <p>ping public网络 192.168.122.1 然后抓包分析</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-17.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-17.png"></p>
 <p>所以SNAT流程</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">                    （compute节点）         vxlan    （network节点）</span><br><span class="line">vm---&gt;qr-xxx---&gt;br-int----&gt;br-tun---&gt;  br-tun-----&gt;br-int-----&gt;snat-xxx----br-ex</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h4 id="南北流量（1：1）"><a href="#南北流量（1：1）" class="headerlink" title="南北流量（1：1）"></a>南北流量（1：1）</h4><p>给主机192.168.50.4绑定一个floating_ip</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-18.png"><br>观察control节点和compute节点的namespace发现<br>control节点<br>没有发生变化，而vm所在的compute的节点的namespace发现多了一个<br>fip命名空间<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-19.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-18.png"><br>观察control节点和compute节点的namespace发现<br>control节点<br>没有发生变化，而vm所在的compute的节点的namespace发现多了一个<br>fip命名空间<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-19.png"></p>
 <p>注意看这个fip的ip是我们创建的外网网络id，这个在上面已经说过了。<br>查看一个这个fip-xxx的内容</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-20.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-20.png"></p>
 <p>vm绑定floating_ip后如何跟外网进行通信</p>
-<p>1，vm ping外网，首先数据包丢给默认路由，qroute，<br>2，查找路由表<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-21.png"></p>
-<p>命中table 16<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-22.png"></p>
+<p>1，vm ping外网，首先数据包丢给默认路由，qroute，<br>2，查找路由表<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-21.png"></p>
+<p>命中table 16<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-22.png"></p>
 <p>走rfp端口</p>
 <p>3，然后进行snat</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-23.png"><br>4，然后发送给fip-xxx命名空间</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-24.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-23.png"><br>4，然后发送给fip-xxx命名空间</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-24.png"></p>
 <p>因为已经进行snat了地址变成外网的，所以这里都default route 直接给外网网关，完成</p>
 <p>如下图<br>来源<a href="http://www.cnblogs.com/sammyliu/p/4713562.html">http://www.cnblogs.com/sammyliu/p/4713562.html</a></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-25.png"><br>vm绑定vip后外网DNAT进入内网主机<br>1，arp-proxy<br>外网ip要ping通内网，首先需要知道内网ip的mac，fip，并没有直接绑定在一个特定的端口是怎么知道mac的呢<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-26.png"></p>
-<p>进行路由追踪发现<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-27.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-25.png"><br>vm绑定vip后外网DNAT进入内网主机<br>1，arp-proxy<br>外网ip要ping通内网，首先需要知道内网ip的mac，fip，并没有直接绑定在一个特定的端口是怎么知道mac的呢<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-26.png"></p>
+<p>进行路由追踪发现<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-27.png"></p>
 <p>arping发现mac地址为 尾数为C7:C3的</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-28.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-28.png"></p>
 <p>那这个mac地址为谁的</p>
-<p>竟然是fip-xxx的fg端口<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-29.png"></p>
+<p>竟然是fip-xxx的fg端口<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-29.png"></p>
 <p>原来是fip-xxx在fg这个端口上做了arp-proxy，这样，fg既可以响应发给它自己的arp请求，也可以响应发给经过它路由的端的arp请求</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-30.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-31.png"><br>可以看见内核参数里面已经开启了</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-30.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-31.png"><br>可以看见内核参数里面已经开启了</p>
 <p>2，将包丢给路由器</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-32.png"><br>我们从fip-xxx ip route 可以看见包被丢给169.254.93.254这个接口了，这个接口是qroute-xxx的一个接口</p>
-<p>3，qroute–xxx做DNAT<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/dvr-33.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-32.png"><br>我们从fip-xxx ip route 可以看见包被丢给169.254.93.254这个接口了，这个接口是qroute-xxx的一个接口</p>
+<p>3，qroute–xxx做DNAT<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/dvr-33.png"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">流程如下</span><br><span class="line"></span><br><span class="line">        arp欺骗           通过fpr       DNAT</span><br><span class="line">extra-----&gt;fip--xxx----&gt;qroute-----&gt; VM</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>为什么要独立出一个snat namespace来做SNAT，而不继续之前的qrouter多SNAT方案？</p>

@@ -27,11 +27,11 @@
 <meta property="og:image" content="https://pic.downk.cc/item/5eb03b66c2a9a83be5ff0559.jpg">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb04772c2a9a83be50c1bd9.jpg">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb047ebc2a9a83be50c91af.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu_2.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb04872c2a9a83be50d1978.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb048a6c2a9a83be50d48e2.png">
 <meta property="og:image" content="https://pic.downk.cc/item/5eb048c7c2a9a83be50d641b.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu_2.png">
 <meta property="article:published_time" content="2018-05-26T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-05-26T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
@@ -461,7 +461,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd wanshaoyuan/pytorch:v1.0</span><br></pre></td></tr></table></figure>
 <p>查看GPU状态，有将正常进程调度到GPU上</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvida-smi </span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu_2.png"></p>
 <h3 id="k8s配置对接"><a href="#k8s配置对接" class="headerlink" title="k8s配置对接"></a>k8s配置对接</h3><p>docker对接成功后就可以正常使用容器应用调用GPU资源了，但此时kubernetes还是无法发现GPU资源对象，需要在在kubernetes中安装k8s-device-plugin插件这样kubelet就能正常上报GPU资源信息<br>安装k8s-device-plugin  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml</span><br></pre></td></tr></table></figure>
 <p>安装完成后会在kube-system命名空间中以daemonset方式部署nvidia-device-plugin<br>此时通过kubectl查看节点上报资源信息可以看见GPU资源对象了</p>
@@ -470,7 +470,7 @@
 <p>在kubernetes中运行训练任务进行测试<br><img src="https://pic.downk.cc/item/5eb048a6c2a9a83be50d48e2.png"></p>
 <p>默认情况下采用独占模式，在资源配置中设置gpu资源对象<br><img src="https://pic.downk.cc/item/5eb048c7c2a9a83be50d641b.png"></p>
 <p>kubernetes会将workload自动调度到有GPU的节点上<br>在此查看GPU资源使用信息，调度成功。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu_2.png"><br>参考文档：<br><a href="https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#redhat-x86_64">https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#redhat-x86_64</a></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu_2.png"><br>参考文档：<br><a href="https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#redhat-x86_64">https://docs.nvidia.com/cuda/cuda-quick-start-guide/index.html#redhat-x86_64</a></p>
 
       
     </div>

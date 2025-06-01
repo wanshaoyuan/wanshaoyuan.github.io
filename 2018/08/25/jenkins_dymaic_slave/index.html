@@ -24,26 +24,26 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述：单个Jenkins很难满足生产环境中多个项目同时编译的需求，容易造成队列阻塞，所以这个时候需要通过Jenkins-slave的方式将编译分担到slave上，但传统的直接通过几台服务器专门做slave，浪费资源，还容易造成编译环境的不一致导致编译失败。后面有Jenkins有推出过基于docker的Jenkins-slave，虽然可以解决上述问题，但所以在这里我们可以充分利用kubernetes">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_13.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_14.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_13.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_14.png">
 <meta property="article:published_time" content="2018-08-25T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-08-25T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="CI&#x2F;CD">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/08/25/jenkins_dymaic_slave/index.html">
   
@@ -415,24 +415,24 @@
         <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>单个Jenkins很难满足生产环境中多个项目同时编译的需求，容易造成队列阻塞，所以这个时候需要通过Jenkins-slave的方式将编译分担到slave上，但传统的直接通过几台服务器专门做slave，浪费资源，还容易造成编译环境的不一致导致编译失败。后面有Jenkins有推出过基于docker的Jenkins-slave，虽然可以解决上述问题，但所以在这里我们可以充分利用kubernetes的功能，将Jenkins-slave以pod的方式运行在kubernetes集群内，将任务分发给这些Jenkins-slave pod，然后执行任务，任务执行完以后，在自动释放掉这些pod，能够很好的利用资源。</p>
 <p>版本：<br>os：ubuntu16.04<br>kubernetes：1.10.5<br>Jenkins：2.89.4  （通过deb包方式安装)</p>
 <h3 id="配置方法"><a href="#配置方法" class="headerlink" title="配置方法"></a>配置方法</h3><p>Jenkins安装kubernetes插件<br>系统管理—&gt;管理插件—&gt;搜索Kubernetes plugin安装</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_1.png"><br>配置<br>系统管理—&gt;系统设置—&gt;新增一个云</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_2.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_1.png"><br>配置<br>系统管理—&gt;系统设置—&gt;新增一个云</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_3.png"></p>
 <p>配置Jenkins URL，这里我们没有配置api-server地址和证书key，连接kubernetes，所以默认会去读取放在JENKINS_HOME的.kube&#x2F;目录的kubeconfig文件，用于连接集群。我这里是通过安装包的方式安装的Jenkins HOME在&#x2F;var&#x2F;lib&#x2F;jenkins&#x2F;目录，如果是通过容器方式启动，将kubeconfig文件直接放~&#x2F;.kube&#x2F;目录。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_4.png"><br>配置pod template<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_4.png"><br>配置pod template<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_5.png"></p>
 <p>名字可以随便写，注意这个namespace和labels，需要规划好namespace默认不写就是default labels是用于后面编译的项目调用这个kubernetes pod template时用的。</p>
-<p>配置container template<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_6.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_7.png"></p>
+<p>配置container template<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_7.png"></p>
 <p>注意这个pod的名字叫jnlp，用来覆盖默认容器，如果改成其他名字的话，那这个pod会启动两个container，都去连接master<br>配置Arguments to pass to the command的用处是定义多个Jenkins-agent container时通过${computer.jnlpmac} ${computer.name}，做为jnlp的启动参数，用来区分不同container。<br>配置cpu、memory资源request，因为可使用资源太低的节点上运行jnlp容易出错。</p>
-<p>保存配置<br>打开Jenkins-slave连接master的端口，这里定义为50000<br>系统管理—&gt;全局安全配置—&gt;agents<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_8.png"></p>
-<p>验证<br>创建个freestyle<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_9.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_10.png"></p>
+<p>保存配置<br>打开Jenkins-slave连接master的端口，这里定义为50000<br>系统管理—&gt;全局安全配置—&gt;agents<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_8.png"></p>
+<p>验证<br>创建个freestyle<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_10.png"></p>
 <p>特别需要注意这个label Expression，要根我们刚刚定义的kubernetes-template配置的一样，这样做的意义是什么，因为在实际使用环境中，不同的项目由不同的开发语言构成，也需要不同的编译环境，所以会配置多种语言环境的jnlp镜像，通过label去调用合适的kubernetes-template</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_11.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_11.png"></p>
 <p>这里我们配置一个最简单的shell，输出一串字符。<br>点击立刻构建<br>在kubernetes集群内就看见这个jnlp-slave已经被创建出来了。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_12.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_13.png"></p>
-<p>查看本次编译结果，编译成功<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/jenkins_dymaic_slave_14.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_12.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_13.png"></p>
+<p>查看本次编译结果，编译成功<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/jenkins_dymaic_slave_14.png"></p>
 <p>pipline用法</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">podTemplate(label: &#x27;jnlp-slave&#x27;, cloud: &#x27;kubernetes&#x27;) &#123;</span><br><span class="line">    node(&#x27;jnlp-slave&#x27;) &#123;</span><br><span class="line">        stage(&#x27;Run shell&#x27;) &#123;</span><br><span class="line">            sh &#x27;echo hello world&#x27;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>总结：<br>通过jenkins-kubernetes-plugin能实现对Jenkins slave的弹性部署和回收，能非常有效的利用资源，在实际使用的过程中，我们会根据不同的编程去构建一个对应的jnlp，或在一个jnlp镜像内包含全部编程语言。</p>

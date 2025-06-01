@@ -24,18 +24,18 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述：Kubernetes service是为POD提供统一访问入口的，实现主要依靠kube-proxy实现，kube-proxy有三种模式userspace、iptables，ipvs，同时我们也知道service有三种类型cluster_ip、nodeport，loadblance和三种端口类型port，targetport，nodeport。 环境信息：OS：Ubuntu16.04Kuber">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_7.png">
 <meta property="article:published_time" content="2018-12-10T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-12-10T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_2.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_2.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/12/10/Kubernetes_service_mode/index.html">
   
@@ -407,7 +407,7 @@
         <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>Kubernetes service是为POD提供统一访问入口的，实现主要依靠kube-proxy实现，kube-proxy有三种模式userspace、iptables，ipvs，同时我们也知道service有三种类型cluster_ip、nodeport，loadblance和三种端口类型port，targetport，nodeport。</p>
 <h3 id="环境信息："><a href="#环境信息：" class="headerlink" title="环境信息："></a>环境信息：</h3><p>OS：Ubuntu16.04<br>Kubernetes：v1.11.0<br>kubeadm：v1.11.0<br>docker：17.03<br>network：flannel</p>
 <h3 id="kube-proxy模式分析"><a href="#kube-proxy模式分析" class="headerlink" title="kube-proxy模式分析"></a>kube-proxy模式分析</h3><h4 id="userspace"><a href="#userspace" class="headerlink" title="userspace"></a>userspace</h4><p>userspace为kube-proxy为早期的模式，Kubernetes1.2版本之前主要使用这个模式，转发原理参考</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/services-networking/service/```</span><br><span class="line"></span><br><span class="line">这个模式最大缺点就是，所以端口请求都需要先经过kube-proxy然后在通过iptables转发，这样带来一个问题就是需要在用户态和内核态不断进行切换，效率低。</span><br><span class="line"></span><br><span class="line">#### iptables</span><br><span class="line">Kubernetes在1.2版本开始将iptables做为kube-proxy的默认模式，iptables根之前userspace相比，完全工作在内核态而且不用在经过kube-proxy中转一次性能更强，下面介绍Kubernetes中iptables转发流程</span><br><span class="line"></span><br><span class="line">iptables有链和表的概念，链就相当于一道道关卡，表就是这个关卡上对应的规则总共有四个表和五条链，kube-proxy在这里就使用了两个表分别是filter和nat表，也自定义了五个链KUBE-SERVICES，KUBE-NODE-PORTS，KUBE-POSTROUTING，KUBE-MARK-MASQ和KUBE-MARK-DROP五个链</span><br><span class="line">目前kubernetes提供了两种负载分发策略：RoundRobin和SessionAffinity</span><br><span class="line"></span><br><span class="line">RoundRobin：轮询模式，即轮询将请求转发到后端的各个Pod上。</span><br><span class="line">SessionAffinity：基于客户端IP地址进行会话保持的模式，第一次客户端访问后端某个Pod，之后的请求都转发到这个Pod上</span><br><span class="line">默认是RoundRobin模式。</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_1.png)</span><br><span class="line">iptables数据包转发流程</span><br><span class="line">1、首先一个数据包经过网卡进来，先经过PREROUTING链</span><br><span class="line">2、判定目的地址是否为主机，为本机就通过INPUT链转发</span><br><span class="line">3、若不为本机通过FORWARDl链转发到POSTROUTING出去</span><br><span class="line"></span><br><span class="line">以下展示一个实例展示kube-proxy是如何根据service不同类型生成对应规则</span><br><span class="line"></span><br><span class="line">我们创建名为test的deployment，镜像为nginx:latest，replicas为3个</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/services-networking/service/```</span><br><span class="line"></span><br><span class="line">这个模式最大缺点就是，所以端口请求都需要先经过kube-proxy然后在通过iptables转发，这样带来一个问题就是需要在用户态和内核态不断进行切换，效率低。</span><br><span class="line"></span><br><span class="line">#### iptables</span><br><span class="line">Kubernetes在1.2版本开始将iptables做为kube-proxy的默认模式，iptables根之前userspace相比，完全工作在内核态而且不用在经过kube-proxy中转一次性能更强，下面介绍Kubernetes中iptables转发流程</span><br><span class="line"></span><br><span class="line">iptables有链和表的概念，链就相当于一道道关卡，表就是这个关卡上对应的规则总共有四个表和五条链，kube-proxy在这里就使用了两个表分别是filter和nat表，也自定义了五个链KUBE-SERVICES，KUBE-NODE-PORTS，KUBE-POSTROUTING，KUBE-MARK-MASQ和KUBE-MARK-DROP五个链</span><br><span class="line">目前kubernetes提供了两种负载分发策略：RoundRobin和SessionAffinity</span><br><span class="line"></span><br><span class="line">RoundRobin：轮询模式，即轮询将请求转发到后端的各个Pod上。</span><br><span class="line">SessionAffinity：基于客户端IP地址进行会话保持的模式，第一次客户端访问后端某个Pod，之后的请求都转发到这个Pod上</span><br><span class="line">默认是RoundRobin模式。</span><br><span class="line"></span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_1.png)</span><br><span class="line">iptables数据包转发流程</span><br><span class="line">1、首先一个数据包经过网卡进来，先经过PREROUTING链</span><br><span class="line">2、判定目的地址是否为主机，为本机就通过INPUT链转发</span><br><span class="line">3、若不为本机通过FORWARDl链转发到POSTROUTING出去</span><br><span class="line"></span><br><span class="line">以下展示一个实例展示kube-proxy是如何根据service不同类型生成对应规则</span><br><span class="line"></span><br><span class="line">我们创建名为test的deployment，镜像为nginx:latest，replicas为3个</span><br></pre></td></tr></table></figure>
 <p>kubectl run test –image&#x3D;nginx –replicas&#x3D;3</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">```</span><br><span class="line">kubectl get pod -o wide</span><br><span class="line"></span><br><span class="line">NAME                                READY     STATUS    RESTARTS   AGE               IP</span><br><span class="line">test-679b667858-9h9hr   1/1          Running            0          17h           10.244.0.16</span><br><span class="line">test-679b667858-g827r   1/1          Running            0          17h           10.244.0.15</span><br><span class="line">test-679b667858-nnr28   1/1          Running            0          6m            10.244.0.18</span><br></pre></td></tr></table></figure>
 <p>在给这个deployment创建一个ClusterIP类型的service</p>
@@ -440,7 +440,7 @@
 <li>iptables规则匹配延时：因为iptables采用的是线性匹配即一个数据包过来以线性的方式遍历整个规则集，直到找到匹配的否则退出，这种带来的问题，就是当iptables规则量很大时，性能会急剧下降，因为对应的匹配延时会增加</li>
 <li>iptables规则更新延时：在实际使用过程中需要不断创建service，修改service，删除service，这其实也转换成了对iptables的不断修改，因为iptables是非增量式更新的，也就意味着，你上述所有操作它都是把全部归则拷贝出来，然后在修改，修改完在拷贝回去而且这个修改过程还会锁表。附上网易云的iptables测试的更新延时性能测试表<br><a href="https://zhuanlan.zhihu.com/p/39909011">https://zhuanlan.zhihu.com/p/39909011</a></li>
 </ul>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_2.png"></p>
 <ul>
 <li><p>负载均衡性能问题：前面我们也提过iptables并不是专业的负载均衡器，目前使用RoundRobin和sessionaffinity都是通过iptables内部模块statistic和recent实现的，性能根真正的负载均衡器相比肯定有差距。</p>
 </li>
@@ -461,10 +461,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: kubeadm.k8s.io/v1alpha2</span><br><span class="line">kind: MasterConfiguration</span><br><span class="line">kubernetesVersion: v1.11.0</span><br><span class="line">networking:</span><br><span class="line">  podSubnet: 10.244.0.0/16</span><br><span class="line">kubeProxy:</span><br><span class="line">  config:</span><br><span class="line">    mode: ipvs</span><br></pre></td></tr></table></figure>
 
 <p>执行kubeadm init –config xxxx 部署Kubernetes集群，然后就像之前方法一样通过kubeadm join加节点。<br>部署完执行ipvsadm可以看见创建的一些ipvs规则</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_3.png"><br>kube-proxy也会在集群每个节点创建一个kube-ipvs0的网卡，将集群的cluster-ip挂在上面。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_4.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_5.png"></p>
-<h5 id="转发原理"><a href="#转发原理" class="headerlink" title="转发原理"></a>转发原理</h5><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_3.png"><br>kube-proxy也会在集群每个节点创建一个kube-ipvs0的网卡，将集群的cluster-ip挂在上面。</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_5.png"></p>
+<h5 id="转发原理"><a href="#转发原理" class="headerlink" title="转发原理"></a>转发原理</h5><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_6.png"></p>
 <h5 id="ClusterIP"><a href="#ClusterIP" class="headerlink" title="ClusterIP"></a>ClusterIP</h5><p>创建应用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run test --image=nginx --replicas=3</span><br></pre></td></tr></table></figure>
 <p>创建一个clusterip类型的service</p>
@@ -497,7 +497,7 @@
 <p>保存集合</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipset save 集合名 -f /tmp/1</span><br></pre></td></tr></table></figure>
 <p>kube-proxy使用的ipset集合</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/service_mode_7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/service_mode_7.png"></p>
 <p>Kubernetes哪些场景会用到ipset<br>kube-proxy配置–masquerade-all &#x3D; true参数<br>在kube-proxy启动中指定集群CIDR<br>使用Loadbalancer类型的service<br>使用NodePort类型的service</p>
 <p>注意点：<br>在用户环境中使用发现一些需要长连接的应用使用ipvs模式经常出现”Connection reset by peer”的错误,后经过抓包分析发现链接是被IPVS清理掉了，随后通过以下命令发现IPVS默认tcp连接超时时间为900s(15分钟)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ipvsadm -l --timeout</span><br><span class="line">Timeout (tcp tcpfin udp): 900 120 300</span><br></pre></td></tr></table></figure>

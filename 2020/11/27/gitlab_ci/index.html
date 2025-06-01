@@ -24,18 +24,18 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述GitLab CI &#x2F; CD是GitLab的一部分,gitlab 8.0版本开始新增的功能，是用Ruby和Go语言编写的。根我们通常的CI系统不一样通常的是一个master-slave架构，即使没有slave，master一样可以做CI，slave只是做为一个压力分担功能，gitlab是gitlab-server本身是不执行的，是通过api与GitLab Runner交互让gitla">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-4.png">
 <meta property="article:published_time" content="2020-11-27T13:45:59.000Z">
 <meta property="article:modified_time" content="2020-11-27T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="CI&#x2F;CD">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-5.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-5.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2020/11/27/gitlab_ci/index.html">
   
@@ -473,14 +473,14 @@ spec:
       targetPort: 8080
       nodePort: 30007
 </code></pre>
-<h4 id="在Kubernetes集群中部署gitlab-runner"><a href="#在Kubernetes集群中部署gitlab-runner" class="headerlink" title="在Kubernetes集群中部署gitlab-runner"></a>在Kubernetes集群中部署gitlab-runner</h4><p>整体流程<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-5.png"></p>
+<h4 id="在Kubernetes集群中部署gitlab-runner"><a href="#在Kubernetes集群中部署gitlab-runner" class="headerlink" title="在Kubernetes集群中部署gitlab-runner"></a>在Kubernetes集群中部署gitlab-runner</h4><p>整体流程<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-5.png"></p>
 <ul>
 <li>先执行代码构建，构建出制品</li>
 <li>基于制品构建应用的容器镜像</li>
 <li>部署到Kubernetes集群中</li>
 </ul>
 <p>在gitlab项目页申请runner连接gitlab的地址和token，注意保存</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-1.png"></p>
 <p>git clone部署runner到Kubernetes中的helm文件</p>
 <pre><code>git clone https://gitlab.com/gitlab-org/charts/gitlab-runner.git
 </code></pre>
@@ -512,10 +512,10 @@ runners:
 NAME                                          READY   STATUS    RESTARTS   AGE
 gitlab-runner-gitlab-runner-b5744f77c-jwnjk   1/1     Running   0          5d
 </code></pre>
-<p>默认是部署一个副本，如果需要多个runner实例，扩容对应的Deployment副本数即可。<br>同样是刚刚项目CI&#x2F;CD设置页可以看见已经可用的runner了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-2.png"></p>
-<p>在gitlab-ci中创建环境变量用于存放一些连接认证信息环境变量<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-3.png"></p>
+<p>默认是部署一个副本，如果需要多个runner实例，扩容对应的Deployment副本数即可。<br>同样是刚刚项目CI&#x2F;CD设置页可以看见已经可用的runner了<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-2.png"></p>
+<p>在gitlab-ci中创建环境变量用于存放一些连接认证信息环境变量<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-3.png"></p>
 <p>将对应的信息填写到的对应的环境变量中，包括连接镜像仓库的帐号和密码和连接Kubernetes集群的config文件</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-3.png"></p>
 <p>KUBECONFIG文件进行base64编码存入，为了防止重定向后格式损坏</p>
 <pre><code> base64  /root/.kube/config -w0
 </code></pre>
@@ -567,7 +567,7 @@ deploy_k8s_job:
 <p>4、构建的缓存配置，可以参考以下链接<br><a href="https://docs.gitlab.com/runner/configuration/advanced-configuration.html">https://docs.gitlab.com/runner/configuration/advanced-configuration.html</a></p>
 <p>5、Docker镜像构建这里使用的是docker-dind的方式，实际上也可以直接透传主机的docker.sock文件到POD内使用，但不是特别安全，也可以使用一些其他解决方案如kaniko</p>
 <p>上传后gitlab-ci会自动执行cicd部署到Kubernetes集群中</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gitlab-ci-4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gitlab-ci-4.png"></p>
 <p>自动部署完成，查看Kubernetes集群中部署对象</p>
 <pre><code>kubectl get pod 
 

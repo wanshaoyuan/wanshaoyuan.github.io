@@ -24,16 +24,16 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="RKE（rancher kubernetes engine)是rancher 发布的一款轻量级的kubernetes部署工具，部署整个集群只需要一个命令和一个配置文件，就可以轻松部署kubernetes集群，还支持kubernetes的ha部署，各类网络plugin。环境:rke-node1 172.31.164.57 （部署节点)rke-node2 172.31.164.58  (master节">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_4.png">
 <meta property="article:published_time" content="2018-03-26T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-03-26T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/03/26/rke%E9%83%A8%E7%BD%B2kubernetes/index.html">
   
@@ -431,7 +431,7 @@
 <p>安装rke<br><a href="https://github.com/rancher/rke/releases/">https://github.com/rancher/rke/releases/</a></p>
 <p>下载<br>rke_linux-amd64</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv rke_linux-amd64.dms rke</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_1.png"></p>
 <p>cluster.yml的来源有两种，一种是直接从github上下载完整的<br>下载cluster.yml<br>rke主要依靠cluster.yml去对集群角色进行划分和配置<br>下载</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/rancher/rke/blob/master/cluster.yml</span><br><span class="line">cluster.yml</span><br></pre></td></tr></table></figure>
 <p>修改</p>
@@ -445,7 +445,7 @@
 <p>指定配置文件部署</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rke up --config cluster.yml</span><br></pre></td></tr></table></figure>
 <p>部署成功</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_2.png"></p>
 <p>默认rke是没有安装kubectl的<br>手动安装kubectl</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://dl.k8s.io/v1.8.7/kubernetes-client-linux-amd64.tar.gz</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp kubernetes/client/bin/kube* /usr/local/bin/</span><br></pre></td></tr></table></figure>
@@ -455,10 +455,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir /root/.kube/</span><br></pre></td></tr></table></figure>
 <p>拷贝文件到&#x2F;root&#x2F;.kube内</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp kube_config_cluster.yml  /root/.kube/config</span><br></pre></td></tr></table></figure>
-<p>测试<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_3.png"></p>
+<p>测试<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_3.png"></p>
 <p>部署应用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run nginx --image=nginx:1.7.9 --replicas=3</span><br></pre></td></tr></table></figure>
-<p> 验证<br> <img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rke_4.png"></p>
+<p> 验证<br> <img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rke_4.png"></p>
 <p> HA部署</p>
 <p>rke部署ha的方式非传统的vip的架构，而是通过在每个host上部署个nginx-proxy的container，然后通过这个container做反向代理，本地的kube进程直接连接127.0.0.1:6443</p>
 <p>注意事项</p>

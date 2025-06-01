@@ -24,22 +24,22 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="openstack版本：libertyvsphere版本：6.0   拓扑图 架构图 vmware对接openstack有两种驱动1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。   需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_11.png">
 <meta property="article:published_time" content="2017-09-08T14:55:00.000Z">
 <meta property="article:modified_time" content="2017-09-08T14:55:00.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/09/08/vmware&openstack/index.html">
   
@@ -404,8 +404,8 @@
     <div class="article-entry markdown-body" itemprop="articleBody">
       
         <p>openstack版本：liberty<br>vsphere版本：6.0  </p>
-<h3 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_1.png" alt="image"></p>
-<h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_2.png" alt="image"></p>
+<h3 id="拓扑图"><a href="#拓扑图" class="headerlink" title="拓扑图"></a>拓扑图</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_1.png" alt="image"></p>
+<h3 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_2.png" alt="image"></p>
 <p>vmware对接openstack有两种驱动<br>1，VCDriver，以nova driver的方式通过vcenter来控制计算和网络<br>2，VMDKDriver，以cinder driver的方式通过vcenter来控制datastore。  </p>
 <p>需要注意的是本文档的对接都是对接vmware的标准交换机进行对接的，如果需要对接vmware的dvs的话需要安装另外的包并配置neutron。</p>
 <p>这里采用vcdriver的方式<br>这种方式目前有几个问题<br>1，就是已经存在vmware集群的vm是不能被openstack管理了，只有新创建的机器可以被openstack管理。  </p>
@@ -413,11 +413,11 @@
 <p>3，首次创建虚机会花费很长时间，因为需要将镜像从glance通过vcenter 拷贝到cluster后端的datasotre，后面再创建速度就会很快。</p>
 <p>要点：<br>一台计算节点对接vsphere，需要这台计算节点能根vcenter通信。  </p>
 <h3 id="Vsphere上的配置"><a href="#Vsphere上的配置" class="headerlink" title="Vsphere上的配置"></a>Vsphere上的配置</h3><p>配置好对应的openstack计算节点对应的cluster<br>如这个vsphere的cluster_name为UAT_Lenovo_6.0</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_3.png" alt="image"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_4.png" alt="image"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_3.png" alt="image"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_4.png" alt="image"></p>
 <p>cluster对应的storage名字  </p>
 <p>创建对应的port_group  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_5.png" alt="image"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_5.png" alt="image"></p>
 <h3 id="nova配置"><a href="#nova配置" class="headerlink" title="nova配置"></a>nova配置</h3><p>需要注意对应的物理适配器，待会需要写到配置项内。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">openstack平台对接vcenter配置参考</span><br><span class="line">compute_driver #对应的驱动</span><br><span class="line">host_ip #连接vsphere的ip地址</span><br><span class="line">host_username #管理员帐户</span><br><span class="line">host_password #管理员密码</span><br><span class="line">datastore_rege #cluster对应的后端存储</span><br><span class="line">cluster_name #对应的cluster 名字</span><br><span class="line">vlan_interface #port group对应的物理网卡</span><br><span class="line">vmware.integration_bridge #对应的port_group</span><br><span class="line">insecure=True #关闭ssl连接不然报下面错</span><br></pre></td></tr></table></figure>
 <p>修改&#x2F;etc&#x2F;nova&#x2F;nova.conf配置文件：</p>
@@ -425,17 +425,17 @@
 
 <p>需要注意这些参数仔细核对。  </p>
 <p>启动openstack-nova-compute服务：<br><code>systemctl restart openstack-nova-compute</code></p>
-<p>此时应该可以看见vmware 对应的hypervisor<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_6.png" alt="image"></p>
+<p>此时应该可以看见vmware 对应的hypervisor<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_6.png" alt="image"></p>
 <p>转换镜像将一个qcow2的镜像转换成vmware用的vmdk格式</p>
 <h3 id="glance配置"><a href="#glance配置" class="headerlink" title="glance配置"></a>glance配置</h3><p>转换镜像格式为vmdk：<br><code>qemu-img convert -f raw -O vmdk  centos_6.5.raw  centos_6.5.vmdk</code></p>
 <p>上传镜像：  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glance image-create  --name=centos-6.5.vmdk  --disk-format=vmdk  --property hypervisor_type=&quot;vmware&quot;  --property vmware_adaptertype=&quot;ide&quot;  --property vmware_disktype=&quot;sparse&quot;  --is-public=True  --property vmware_ostype=&quot;otherLinuxGuest&quot;  --container-format=bare &lt; centos_6.5.vmdk</span><br></pre></td></tr></table></figure>
 
 <p>创建虚拟机进行测试  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_7.png" alt="image"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_8.png" alt="image"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_9.png" alt="image"></p>
-<p>第一次创建时间比较久因为要将镜像从glance 拷贝到vmware 的storage内<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_10.png" alt="image"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_7.png" alt="image"><br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_8.png" alt="image"><br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_9.png" alt="image"></p>
+<p>第一次创建时间比较久因为要将镜像从glance 拷贝到vmware 的storage内<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_10.png" alt="image"></p>
 <p>可以看见vsphere内已经有以uuid命名的vm了，表示创建成功  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&vmware_11.png" alt="image"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&vmware_11.png" alt="image"></p>
 <p>后面为可选配置，配置cinder对接vmware存储</p>
 <h3 id="cinder配置"><a href="#cinder配置" class="headerlink" title="cinder配置"></a>cinder配置</h3><p>编辑&#x2F;etc&#x2F;cinder&#x2F;cinder.conf配置文件，修改如下参数：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">volume_driver=cinder.volume.drivers.vmware.vmdk.VMwareVcVmdkDriver</span><br><span class="line">volume_backend_name=vmware</span><br><span class="line">vmware_host_ip=10.68.35.24</span><br><span class="line">vmware_host_username=administrator</span><br><span class="line">vmware_host_password=admin123</span><br></pre></td></tr></table></figure>
@@ -448,7 +448,7 @@
 <h3 id="cinder对接vmware-datastore"><a href="#cinder对接vmware-datastore" class="headerlink" title="cinder对接vmware datastore"></a>cinder对接vmware datastore</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /usr/lib/python2.7/site-packages/oslo_vmware/wsdl/6.0   /usr/lib/python2.7/site-packages/oslo_vmware/wsdl/6.5</span><br></pre></td></tr></table></figure>
 <p>2、修改 enabled_backends &#x3D; ceph为 enabled_backends &#x3D; ceph,vmware</p>
 <p>3、创建type-key，其中ceph的也需要创建（web界面也可以做，在全局管理里——云硬盘类型）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cinder type-create vmware</span><br><span class="line">cinder type-key vmware set volume_backend_name=vmware</span><br><span class="line">cinder type-create ceph</span><br><span class="line">cinder type-key ceph set volume_backend_name=ceph</span><br><span class="line">````</span><br><span class="line">4、给vmware type-key添加扩展属性，vmware:storage_profile（可以在web页面里添加），但前提条件需要在vmware那边先创建好“虚机存储规则策略”  </span><br><span class="line"></span><br><span class="line">5、登录vsphere web client，先创建一个标签，在主页里，名字和类别随便起。</span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&amp;vmware_10)</span><br><span class="line"></span><br><span class="line">6、给要使用datastore分配新建标签  </span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&amp;vmware_11)</span><br><span class="line"></span><br><span class="line">7、回到主页，点击策略和配置文件，点击虚拟机存储策略，点击创建一个，按照向导做。名字很重要！！</span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack&amp;vmware_12)</span><br><span class="line"></span><br><span class="line">8、对到云平台</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cinder type-create vmware</span><br><span class="line">cinder type-key vmware set volume_backend_name=vmware</span><br><span class="line">cinder type-create ceph</span><br><span class="line">cinder type-key ceph set volume_backend_name=ceph</span><br><span class="line">````</span><br><span class="line">4、给vmware type-key添加扩展属性，vmware:storage_profile（可以在web页面里添加），但前提条件需要在vmware那边先创建好“虚机存储规则策略”  </span><br><span class="line"></span><br><span class="line">5、登录vsphere web client，先创建一个标签，在主页里，名字和类别随便起。</span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&amp;vmware_10)</span><br><span class="line"></span><br><span class="line">6、给要使用datastore分配新建标签  </span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&amp;vmware_11)</span><br><span class="line"></span><br><span class="line">7、回到主页，点击策略和配置文件，点击虚拟机存储策略，点击创建一个，按照向导做。名字很重要！！</span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack&amp;vmware_12)</span><br><span class="line"></span><br><span class="line">8、对到云平台</span><br></pre></td></tr></table></figure>
 <p>cinder type-key vmware set vmware:storage_profile&#x3D;cinder-storage-policy</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">即可。=号后是之前创建的策略名字！！</span><br><span class="line">另外，M版对接6.5，创建云硬盘，不会出现volume开头的虚机，存储里也看不到volume-id文件夹，只有挂载后才会出现，注意！！</span><br><span class="line"></span><br><span class="line">参考链接</span><br></pre></td></tr></table></figure>
 <p><a href="https://docs.openstack.org/mitaka/config-reference/compute/hypervisor-vmware.html">https://docs.openstack.org/mitaka/config-reference/compute/hypervisor-vmware.html</a><br><a href="http://blog.csdn.net/jmilk/article/details/52102020">http://blog.csdn.net/jmilk/article/details/52102020</a><br><a href="http://blog.csdn.net/halcyonbaby/article/details/37818789">http://blog.csdn.net/halcyonbaby/article/details/37818789</a><br><a href="http://www.cnblogs.com/zhoumingang/p/5514556.html">http://www.cnblogs.com/zhoumingang/p/5514556.html</a><br><a href="http://www.iyunv.com/forum.php?mod=viewthread&tid=86702">http://www.iyunv.com/forum.php?mod=viewthread&amp;tid=86702</a></p>

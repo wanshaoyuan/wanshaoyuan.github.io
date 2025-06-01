@@ -24,15 +24,15 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述：默认情况下创建pod调度是根据kubernetes scheduler默认的调度规则去进行调度的，但有些时候，有些应用有一些特殊的需求比如指定部署到对应的节点、多个pod之间需要部署在不同一个节点，需要互斥、pod和pod间相互交流比较频繁需要跑在同一个节点，需要亲和。这时就需要灵活配置scheduler来实现了。 场景一：调度到一组具有相同特性的主机上（label+nodeSelector">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_3.png">
 <meta property="article:published_time" content="2018-08-12T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-08-12T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/08/12/kubernetes_affinty/index.html">
   
@@ -403,14 +403,14 @@
       
         <h3 id="概述："><a href="#概述：" class="headerlink" title="概述："></a>概述：</h3><p>默认情况下创建pod调度是根据kubernetes scheduler默认的调度规则去进行调度的，但有些时候，有些应用有一些特殊的需求比如指定部署到对应的节点、多个pod之间需要部署在不同一个节点，需要互斥、pod和pod间相互交流比较频繁需要跑在同一个节点，需要亲和。这时就需要灵活配置scheduler来实现了。</p>
 <h3 id="场景一：调度到一组具有相同特性的主机上（label-nodeSelector"><a href="#场景一：调度到一组具有相同特性的主机上（label-nodeSelector" class="headerlink" title="场景一：调度到一组具有相同特性的主机上（label+nodeSelector)"></a>场景一：调度到一组具有相同特性的主机上（label+nodeSelector)</h3><p>比如在整个kubernetes集群内，有一组配置比较好的服务器，然后有一些特殊的应用需要对硬件配置有需求，需要被调度到这些服务器上，这时可以通过kubernetes的label+nodeSelector去实现，实际上在kubernetes里面label是一个非常灵活的概念，kubernetes内不同资源对象之间的关联就是通过label的方式去进行的。<br>例<br>我们给那些配置高的节点打上个label</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_1.png"><br>给高配置的host打上一个label Configuration&#x3D;hight（这里以rke-node2为例)</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_1.png"><br>给高配置的host打上一个label Configuration&#x3D;hight（这里以rke-node2为例)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label node rke-node2 Configuration=hight</span><br></pre></td></tr></table></figure>
-<p>在show labels可以看见我们刚刚打上去的label<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_2.png"></p>
+<p>在show labels可以看见我们刚刚打上去的label<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_2.png"></p>
 <p>创建pod使用nodeSelector调度到指定label的节点上<br>mysql-deployment.yaml</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line"> name: mysql-2</span><br><span class="line">spec:</span><br><span class="line"> selector:</span><br><span class="line">   matchLabels:</span><br><span class="line">     app: mysql</span><br><span class="line"> template:</span><br><span class="line">   metadata:</span><br><span class="line">     labels:</span><br><span class="line">       app: mysql</span><br><span class="line">   spec:</span><br><span class="line">     containers:</span><br><span class="line">     - image: mysql:5.6</span><br><span class="line">       name: mysql</span><br><span class="line">       env:</span><br><span class="line">       - name: MYSQL_ROOT_PASSWORD</span><br><span class="line">         value: password</span><br><span class="line">       ports:</span><br><span class="line">       - containerPort: 3306</span><br><span class="line">         name: mysql</span><br><span class="line">     nodeSelector:</span><br><span class="line">       Configuration: hight</span><br></pre></td></tr></table></figure>
 <p>配置nodeSelector调度到Configuration：hight的host上<br>创建deployment</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f mysql-deployment.yaml</span><br></pre></td></tr></table></figure>
-<p>查看pod被调度到label为 Configuration: hight的host上了<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/k8s_affinty_3.png"></p>
+<p>查看pod被调度到label为 Configuration: hight的host上了<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/k8s_affinty_3.png"></p>
 <h3 id="场景二：部署的应用不想调度到某些节点上（nodeaffinity"><a href="#场景二：部署的应用不想调度到某些节点上（nodeaffinity" class="headerlink" title="场景二：部署的应用不想调度到某些节点上（nodeaffinity)"></a>场景二：部署的应用不想调度到某些节点上（nodeaffinity)</h3><p>比如在一个kubernetes集群内，需要将应用部署到指定标签的机器上，但如果没有的话这类机器的话，就按正常调度规则进行调度。这时通过nodeSelector就无法实现这个需求了，在kubernetes内可以通过nodeaffinity的方式的去实现。</p>
 <p>nodeaffinity和nodeSelecotr非常类似，都是node层面的调度策略的配置，但区别是nodeSelect功能比较单一，只能根据label选择对应的主机，而nodeaffinity更加灵活，nodeaffinity有两种调度类型requiredDuringSchedulingIgnoredDuringExecution(硬要求)和preferredDuringSchedulingIgnoredDuringExecution(软要求)，两种类型区别在于，硬要求要求调度时必须满足设置的调度规则，否则抛异常调度失败，而软要求，只是调度时优先考虑设置的调度规则，当达不到设置的规则时，则按kube-scheduler默认的调度策略进行调度。nodeaffinity还支持多种规则匹配条件的配置如<br>In：label 的值在列表内<br>NotIn：label 的值不在列表内<br>Gt：label 的值大于设置的值<br>Lt：label 的值小于设置的值<br>Exists：设置的label 存在<br>DoesNotExist：设置的 label 不存在</p>
 <p>例</p>

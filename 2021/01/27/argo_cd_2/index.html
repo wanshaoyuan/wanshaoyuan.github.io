@@ -24,21 +24,21 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述此篇文章演示一个完整的GitOps工作流程，使用Gitlab-CI+ArgoCD来实现，其中Gitlab-CI主要用于实现代码编译、镜像构建、修改部署的yaml文件。ArgoCD用于将修改后的部署yaml文件推送到各个集群中。    软件 版本    Gitlab 13.7.0   ArgoCD 1.8.1   Kubernetes 1.17.4   整体流程 1、将应用代码和构建Docker">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_13.jpg">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_15.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_14.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_16.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_17.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_18.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_19.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_20.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_21.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_13.jpg">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_15.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_14.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_16.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_17.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_18.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_19.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_20.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_21.png">
 <meta property="article:published_time" content="2021-01-27T13:45:59.000Z">
 <meta property="article:modified_time" content="2021-01-27T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="CI&#x2F;CD">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_13.jpg">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_13.jpg">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2021/01/27/argo_cd_2/index.html">
   
@@ -428,7 +428,7 @@
 <td>1.17.4</td>
 </tr>
 </tbody></table>
-<h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_13.jpg"></p>
+<h3 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_13.jpg"></p>
 <p>1、将应用代码和构建Docker镜像的Dockerfile文件放置到Gitlab对应项目中    </p>
 <p>2、在Gitlab中创建用于专门用于存放部署yaml的项目</p>
 <p>3、配置Gitlab-CI用于代码编译镜像构建和业务yaml文件修改    </p>
@@ -439,12 +439,12 @@
 <p>Dockerfile文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FROM golang:alpine</span><br><span class="line">WORKDIR /go</span><br><span class="line">ADD server /go</span><br><span class="line">CMD [&quot;./server&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>在gitlab中创建proc-yaml的项目，用于集中存放到Kubernetes集群中的业务的yaml文件<br>在proc-yaml项目中创建go-server项目的文件夹，专门存放go-server项目的yaml文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_15.png">  </p>
+<p>在gitlab中创建proc-yaml的项目，用于集中存放到Kubernetes集群中的业务的yaml文件<br>在proc-yaml项目中创建go-server项目的文件夹，专门存放go-server项目的yaml文件<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_15.png">  </p>
 <p>deployment.yaml</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: go-demo</span><br><span class="line">  labels:</span><br><span class="line">    app: go-demo</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line">      app: go-demo</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: go-demo</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: go-demo</span><br><span class="line">        image: 172.16.1.31/library/go-server-demo:63</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 8080</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: go-demo</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  selector:</span><br><span class="line">    app: go-demo</span><br><span class="line">  ports:</span><br><span class="line">    - port: 8080</span><br><span class="line">      targetPort: 8080</span><br><span class="line">      nodePort: 30007</span><br></pre></td></tr></table></figure>
 
 <h4 id="Gitlab-CI配置"><a href="#Gitlab-CI配置" class="headerlink" title="Gitlab-CI配置"></a>Gitlab-CI配置</h4><p>Gitlab-CI配置和基本使用可以参考本博客的Gitlab-CI时用章节<br>这里体现的主要是和之前的差异性部分<br>Gitlab-CI环境变量配置</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_14.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_14.png"></p>
 <p>主要添加连接镜像仓库和代码仓库的凭证</p>
 <p>创建.gitlab-ci.yml文件，用于配置gitlab-ci</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">stages:</span><br><span class="line">  - package</span><br><span class="line">  - docker_build</span><br><span class="line">  - modify_yaml</span><br><span class="line">build_job:</span><br><span class="line">  image: golang:alpine</span><br><span class="line">  stage: package</span><br><span class="line">  tags:</span><br><span class="line">    - k8s-runner</span><br><span class="line">  script:</span><br><span class="line">    - go build server.go</span><br><span class="line">  artifacts:</span><br><span class="line">    paths:</span><br><span class="line">    - /builds/root/go-server </span><br><span class="line">docker_build_job:</span><br><span class="line">  image: docker:19.03.0</span><br><span class="line">  services:</span><br><span class="line">    - name: docker:19.03.0-dind</span><br><span class="line">      command: [&quot;--insecure-registry=0.0.0.0/0&quot;,&quot;--registry-mirror=https://vqgjby9l.mirror.aliyuncs.com&quot;]</span><br><span class="line">  variables:</span><br><span class="line">    DOCKER_HOST: tcp://127.0.0.1:2375</span><br><span class="line">    DOCKER_TLS_CERTDIR: &quot;&quot;</span><br><span class="line">  stage: docker_build</span><br><span class="line">  tags:</span><br><span class="line">    - k8s-runner</span><br><span class="line">  script:</span><br><span class="line">    - docker info</span><br><span class="line">    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD 172.16.1.31</span><br><span class="line">    - docker build -t 172.16.1.31/library/go-server-demo:$CI_PIPELINE_ID .</span><br><span class="line">    - docker push 172.16.1.31/library/go-server-demo:$CI_PIPELINE_ID</span><br><span class="line">modify_yaml:</span><br><span class="line">  image: wanshaoyuan/git-client:v1.0</span><br><span class="line">  stage: modify_yaml</span><br><span class="line">  tags:</span><br><span class="line">    - k8s-runner</span><br><span class="line">  script:</span><br><span class="line">    - git clone http://$GIT_USERNAME:$GIT_PASSWORD@172.16.1.184/root/proc-yaml.git</span><br><span class="line">    - git config --global user.email &quot;root@example.com&quot;</span><br><span class="line">    - git config --global user.name &quot;root&quot;</span><br><span class="line">    - git remote set-url origin http://$GIT_USERNAME:$GIT_PASSWORD@172.16.1.184/root/proc-yaml.git</span><br><span class="line">    - sed -i &quot;s/go-server-demo:.*/go-server-demo:$CI_PIPELINE_ID/g&quot; proc-yaml/go-server/deployment.yaml</span><br><span class="line">    - cd proc-yaml/</span><br><span class="line">    - git add *</span><br><span class="line">    - git commit -m &quot;update go-server&quot;</span><br><span class="line">    - git push origin master</span><br></pre></td></tr></table></figure>
@@ -454,19 +454,19 @@
 <p>代码编译阶段：启动一个编译容器，根据代码编译出对应的制品，这里为了能让下个镜像构建阶段直接使用编译好的制品，需要配置artifacts将目录共享给下个阶段。  </p>
 <p>镜像构建阶段：使用DinD的方式构建Docker镜像，然后镜像tag以我们Pipeline的ID为tag，这里好处在于可以根据对应的Pipeline的迅速定位到对应的镜像版本</p>
 <p>部署yaml修改阶段: 通过git命令将对部署yaml项目的repo clone下来然后通过sed进行修改并commit回去，通过此步ArgoCD检测到变化后会拉取新的yaml进行部署</p>
-<h4 id="ArgoCD配置"><a href="#ArgoCD配置" class="headerlink" title="ArgoCD配置"></a>ArgoCD配置</h4><p>在ArgoCD中配置对接pro-yaml的repo认证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_16.png"></p>
-<p>创建App<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_17.png"></p>
+<h4 id="ArgoCD配置"><a href="#ArgoCD配置" class="headerlink" title="ArgoCD配置"></a>ArgoCD配置</h4><p>在ArgoCD中配置对接pro-yaml的repo认证<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_16.png"></p>
+<p>创建App<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_17.png"></p>
 <p>选择自动同步模式</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_18.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_18.png"></p>
 <p>PATH这配置我们go-server这个项目的路径，就会检测这里面的yaml文件，并自动更新到集群中</p>
 <p>最后创建完成</p>
 <p>测试</p>
 <p>修改server.go的Hello world为Hello Argo</p>
-<p>等待git-ci执行<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_19.png"></p>
+<p>等待git-ci执行<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_19.png"></p>
 <p>检查proc-yaml项目是否更新</p>
-<p>可以看见对应的image的tag修改成了，我们实际上Pipeline的ID<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_20.png"></p>
+<p>可以看见对应的image的tag修改成了，我们实际上Pipeline的ID<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_20.png"></p>
 <p>等待片刻后ArgoCD检测到yaml变化，自动部署，此时Kubernetes中应用进行了自动更新</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/argocd_21.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/argocd_21.png"></p>
 <p>访问</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl 192.168.0.6:30007</span><br><span class="line">Hello argo</span><br></pre></td></tr></table></figure>
 

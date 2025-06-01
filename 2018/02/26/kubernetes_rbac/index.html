@@ -24,35 +24,35 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="操作系统：centos7.3软件版本：     kubernetes 1.8 docker-ce 17.03.02  概念：权限管理是指控制用户对某些特定资源的访问权限。设计理念ACL(访问控制列表):对资源进行权限控制，每个资源都有一个权限列表记录着哪些用户对这个资源能进行哪些操作，优点：实现非常简单，只需要将用户和资源连接起来就可以。缺点是：当用户和资源增多时会产生大量访问控制列表，管理起来非">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_13.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_14.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_15.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_16.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_17.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_18.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_19.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_21.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_22.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_23.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_13.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_14.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_15.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_16.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_17.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_18.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_19.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_21.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_22.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_23.png">
 <meta property="article:published_time" content="2018-02-26T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-02-26T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/02/26/kubernetes_rbac/index.html">
   
@@ -429,14 +429,14 @@
 <h3 id="概念："><a href="#概念：" class="headerlink" title="概念："></a>概念：</h3><p>权限管理<br>是指控制用户对某些特定资源的访问权限。<br>设计理念<br>ACL(访问控制列表):对资源进行权限控制，每个资源都有一个权限列表记录着哪些用户对这个资源能进行哪些操作，优点：实现非常简单，只需要将用户和资源连接起来就可以。缺点是：当用户和资源增多时会产生大量访问控制列表，管理起来非常麻烦。<br>ABAC(基于属性的访问控制)：ABAC控制权限的粒度非常细，非常灵活；属性通常来说分为四类：用户属性、环境属性、操作属性、对象属性；ABAC通过动态的控制一组属性是否满足条件来进行授权判断。优点：权限控制的粒度非常细，非常灵活。缺点：太过于复杂。<br>例如规则：“禁止所有学生在上课时间进出校门”这条规则，其中，“学生”是用户的角色属性，“上课时间”是环境属性，“进出”是操作属性，而“校门”就是对象属性了。<br>RBAC(基于角色的访问控制)：引入角色概念，通过将权限和角色关联，来实现用户根权限的解耦，角色可以看做是权限的一个集合。通过权限与角色关联，角色与用户的关联可以实现用户和角色多对多的对应关系。优点 ；将权限与角色关联，用户关联角色，这样权限控制更加灵活 。缺点：相比ABAC控制的粒度没有那么细。<br>RBAC的模型<br>Who是否可以对What进行How的访问操作（Operator）    </p>
 <p>kubernetes之前的版本都是使用ABAC做为权限管理控制，在kubernetes1.3发布alpha版本RBAC,在kubernetes1.6版本RBAC提升为Beta版，kubernetes1.8版本正式提升为GA版，为什么用RBAC取代ABAC是因为在kubernetes中ABAC过于复杂，不好管理，难以理解，RBAC相对功能和可管理性来说更加合适kubernetes。所以说没有更好，只有更合适。  </p>
 <p>在kubernetes中的RBAC定义了四类API资源分别为：<br>Role：role是一组权限的集合，namespace范围的Role，role权限的有效范围为指定的单一namespace。<br>ClusterRole：clusterrole根role一样也是一组权限的集合，cluster范围的Role，但clusterrole的有效范围是整个集群的权限和一些集群级别的资源如：集群的node节点、非资源类型endpoint、跨所有命名空间的命名空间范围资源（例如pod，需要运行命令kubectl get pods –all-namespaces来查询集群中所有的pod）。<br>RoleBinding：将角色根用户或组或ServiceAccount绑定，授予它们对该命名空间资源的权限。<br>ClusterRoleBinding：将ClusterRole与用户绑定，授予它们对cluster的资源访问权限。  </p>
-<p>例子<br>首先我们创建个wanshaoyuan的普通用户<br>确认kubernetes证书目录是否有以下文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_1.png"><br>若没有ca-config.json<br>创建一个  </p>
+<p>例子<br>首先我们创建个wanshaoyuan的普通用户<br>确认kubernetes证书目录是否有以下文件<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_1.png"><br>若没有ca-config.json<br>创建一个  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; ca-config.json &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  &quot;signing&quot;: &#123;</span><br><span class="line">    &quot;default&quot;: &#123;</span><br><span class="line">      &quot;expiry&quot;: &quot;87600h&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;profiles&quot;: &#123;</span><br><span class="line">      &quot;kubernetes&quot;: &#123;</span><br><span class="line">        &quot;usages&quot;: [</span><br><span class="line">            &quot;signing&quot;,</span><br><span class="line">            &quot;key encipherment&quot;,</span><br><span class="line">            &quot;server auth&quot;,</span><br><span class="line">            &quot;client auth&quot;</span><br><span class="line">        ],</span><br><span class="line">        &quot;expiry&quot;: &quot;87600h&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>ca-config.json：可以定义多个 profiles，分别指定不同的过期时间、使用场景等参数；后续在签名证书时使用某个 profile；<br>1、创建证书签名请求  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; wanshaoyuan-csr.json &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  &quot;CN&quot;: &quot;wanshaoyuan&quot;,</span><br><span class="line">  &quot;hosts&quot;: [],</span><br><span class="line">  &quot;key&quot;: &#123;</span><br><span class="line">    &quot;algo&quot;: &quot;rsa&quot;,</span><br><span class="line">    &quot;size&quot;: 2048</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;names&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;C&quot;: &quot;CN&quot;,</span><br><span class="line">      &quot;ST&quot;: &quot;BeiJing&quot;,</span><br><span class="line">      &quot;L&quot;: &quot;BeiJing&quot;,</span><br><span class="line">      &quot;O&quot;: &quot;k8s&quot;,</span><br><span class="line">      &quot;OU&quot;: &quot;System&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>生成证书和公钥  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cfssl gencert -ca=ca.crt -ca-key=ca.key -config=ca-config.json -profile=kubernetes wanshaoyuan-csr.json | cfssljson -bare wanshaoyuan</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_2.png"></p>
 <p>创建kubeconfig文件  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export KUBE_APISERVER=&quot;https://192.168.1.10:6443&quot;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.crt --embed-certs=true --server=$&#123;KUBE_APISERVER&#125; --kubeconfig=wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
@@ -446,17 +446,17 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl config set-context kubernetes --cluster=kubernetes --user=wanshaoyuan  --kubeconfig=wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
 <p>设置默认context,将集群参数和用户参数关联起来，如果配置了多个集群，可以通过集群名来切换不同的环境  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl config use-context kubernetes --kubeconfig=wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
-<p>查看kubectl的context<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_3.png"></p>
+<p>查看kubectl的context<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_3.png"></p>
 <p>用户目前还是kubernetes-admin，切换到wanshaoyuan</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/etc/kubernetes/pki/wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
 <p>或</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/kubernetes/pki/wanshaoyuan.kubeconfig  /root/.kube/config</span><br></pre></td></tr></table></figure>
-<p>再次查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_4.png"></p>
+<p>再次查看<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_4.png"></p>
 <p>用户目前还是kubernetes-admin，切换到wanshaoyuan  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/etc/kubernetes/pki/wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
 <p>或  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /etc/kubernetes/pki/wanshaoyuan.kubeconfig  /root/.kube/config</span><br></pre></td></tr></table></figure>
-<p>再次查看<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_6.png"></p>
+<p>再次查看<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_6.png"></p>
 <p>创建角色<br>定义这个角色只能对default这个namespace 执行get、watch、list权限<br>定义角色  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">cat role.yaml</span><br><span class="line"></span><br><span class="line">kind: Role</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">metadata:</span><br><span class="line">  namespace: default</span><br><span class="line">  name: pod-reader</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&quot;&quot;] # 空字符串&quot;&quot;表明使用core API group</span><br><span class="line">  resources: [&quot;pods&quot;]</span><br><span class="line">  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -467,17 +467,17 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f role.yaml</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f role_bind.yaml</span><br></pre></td></tr></table></figure>
 
-<p>check一下<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_5.png"></p>
+<p>check一下<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_5.png"></p>
 <p>切到wanshaoyuan这个用户<br>root用户将KUBECONFIG这个变量指向刚刚创建用户出来的kubeconfig</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/root/RBAC/wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
 <p>非root用户替换默认的config文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp wanshaoyuan.kubeconfig  /root/.kube/config</span><br></pre></td></tr></table></figure>
-<p>检查是否切换成功<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_6.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_7.png"></p>
-<p>验证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_8.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_9.png">  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_10.png">  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_11.png">  </p>
+<p>检查是否切换成功<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_7.png"></p>
+<p>验证<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_8.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_9.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_10.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_11.png">  </p>
 <p>可以看见wanshaoyuan这个用户只能访问default这个namespace的pod资源，其他的如namespace都访问不了，同样namespace的其他资源也访问不了<br>clusterrole定义的是集群级别的权限，也可以把它授予一些集群级别的资源  </p>
 <p>例如<br>集群的node节点<br>非资源类型endpoint<br>跨所有命名空间的命名空间范围资源（例如pod，需要运行命令kubectl get pods –all-namespaces来查询集群中所有的pod）  </p>
 <p>例如<br>定义一个clusterrole限制只能访问集群中的node节点，不能修改，其他资源都不能访问。<br>cat cluster_role.yaml   </p>
@@ -490,7 +490,7 @@
 
 <p>切换用户   </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/root/RBAC/wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
-<p>测试<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_12.png">  </p>
+<p>测试<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_12.png">  </p>
 <p>只能访问node，不能做其他编辑操作，集群内其他资源也访问不了。<br>例如<br>定义一个clusterrole限制只能访问集群所有namespace的cesecret，其他资源都不能访问<br>先定义一个clusterRole</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat /root/RBAC/cluster_role.yaml  </span><br><span class="line">kind: ClusterRole</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">metadata:</span><br><span class="line"> name: secret-reader</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&quot;&quot;]</span><br><span class="line">  resources: [&quot;secrets&quot;]</span><br><span class="line">  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -503,8 +503,8 @@
 <p>切换用户  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/root/RBAC/wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
 
-<p>验证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_13.png">  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_14.png">  </p>
+<p>验证<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_13.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_14.png">  </p>
 <p>可以看到，wanshaoyuan这个用户，可以get集群中任意namespace的secret，但其他资源，如pod，之类的都无法查看<br>修改下，让wanshaoyuan这个帐户可以同时查看pod、secret、deployment  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/root/RBAC/wanshaoyuan.kubeconfig</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">KUBECONFIG=/etc/kubernetes/admin.conf</span><br></pre></td></tr></table></figure>
@@ -515,17 +515,17 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f cluster_role.yaml</span><br></pre></td></tr></table></figure>
 
 
-<p>切换用户测试<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_15.png">  </p>
+<p>切换用户测试<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_15.png">  </p>
 <p>pod、secret、deployment都能正常获取    </p>
 <p>角色绑定包含一组相关主体即subject，subject可以是User(用户)也可以是Group(组)还可以是Service Account。<br>这里要强调下<br>Kubernetes 集群中包含两类用户：一类是由 Kubernetes 管理的 service account，另一类是普通用户。  </p>
 <p>普通用户被假定为由外部独立服务管理。管理员分发私钥，用户存储（如 Keystone 或 Google 帐户），甚至包含用户名和密码列表的文件。在这方面，Kubernetes 没有代表普通用户帐户的对象。无法通过 API 调用的方式向集群中添加普通用户。  </p>
 <p>相对的，service account 是由 Kubernetes API 管理的帐户。它们都绑定到了特定的 namespace，并由 API server 自动创建，或者通过 API 调用手动创建。Service account 关联了一套凭证，存储在 Secret，这些凭证同时被挂载到 pod 中，从而允许 pod 与 kubernetes API 之间的调用。  </p>
 <p>API 请求被绑定到普通用户或 serivce account 上，或者作为匿名请求对待。这意味着集群内部或外部的每个进程，输入 kubectl ，都必须在向 API Server 发出请求时进行身份验证，否则被视为匿名用户。<br>来源：<a href="https://jimmysong.io/posts/user-authentication-in-kubernetes/">https://jimmysong.io/posts/user-authentication-in-kubernetes/</a>  </p>
 <p>kubernetes在每个namespace内都有一个默认的service account,当在创建pod或其他资源时，没有手工指定Service account时会默认使用namespace里面这个default这个Service account  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_16.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_16.png">  </p>
 <p>一般来说为了安全起见，建议一个应用使用一个独立的Service account运行，这样RoleBindings就不会无意中授予其他应用程序的权限，如果需要这样使用的话在部署yaml文件中添加  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_17.png">   </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_18.png"><br>可以通过以下命令对namespace中的Service account进行默认权限配置<br>授予my-namespace命名空间内的default这个Service account帐户只读权限(view是集群中的一组通用角色，它的默认权限的是只读，它归属于clusterrole  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_17.png">   </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_18.png"><br>可以通过以下命令对namespace中的Service account进行默认权限配置<br>授予my-namespace命名空间内的default这个Service account帐户只读权限(view是集群中的一组通用角色，它的默认权限的是只读，它归属于clusterrole  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl create rolebinding default-view \</span><br><span class="line">  --clusterrole=view \</span><br><span class="line">  --serviceaccount=my-namespace:default \</span><br><span class="line">  --namespace=my-namespace</span><br></pre></td></tr></table></figure>
 <p>授予my-namespace命名空间内的my-sa这个Service account帐户只读权限  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl create rolebinding my-sa-view \</span><br><span class="line">  --clusterrole=view \</span><br><span class="line">  --serviceaccount=my-namespace:my-sa \</span><br><span class="line">  --namespace=my-namespace</span><br></pre></td></tr></table></figure>
@@ -533,11 +533,11 @@
 <p>授予my-namespace命名空间内所有的Service account帐户只读权限  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl create rolebinding serviceaccounts-view \</span><br><span class="line">  --clusterrole=view \</span><br><span class="line">  --group=system:serviceaccounts:my-namespace \</span><br><span class="line">  --namespace=my-namespace</span><br></pre></td></tr></table></figure>
 <p>默认的Role和ClusteRrole<br>api-service会默认创建一些role和rolebinding 和clusterrole和clusterrolebind，他们默认都是以system开头的，以system开头的都是为kubernetes系统使用而保留的  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_19.png">  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_21.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_22.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_19.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_21.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_22.png">  </p>
 <p>这里不多介绍主要讲讲clusterrole里面cluster-admin、admin、edit、view这几个clusterrole，直接参考<a href="https://v1-8.docs.kubernetes.io/docs/admin/authorization/rbac/">https://v1-8.docs.kubernetes.io/docs/admin/authorization/rbac/</a><br>cluster-admin、admin、edit、view这几个角色是不包含system前缀的，他们是面向用户的角色，可以直接使用rolebind直接使用<br>具体权限参考下图  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_rbac_23.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_rbac_23.png">  </p>
 <p>比如我们需要访问kubernetes-dashboard时，需要一个能够访问获取所有集群资源的用户此时就可以创建一个帐户关联cluster-admin这个角色。  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">kind: ClusterRoleBinding</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1beta1</span><br><span class="line">metadata:</span><br><span class="line"> name: admin</span><br><span class="line"> annotations:</span><br><span class="line">   rbac.authorization.kubernetes.io/autoupdate: &quot;true&quot;</span><br><span class="line">roleRef:</span><br><span class="line"> kind: ClusterRole</span><br><span class="line"> name: cluster-admin</span><br><span class="line"> apiGroup: rbac.authorization.k8s.io</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line"> name: admin</span><br><span class="line"> namespace: kube-system</span><br><span class="line">---</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line"> name: admin</span><br><span class="line"> namespace: kube-system</span><br><span class="line"> labels:</span><br><span class="line">   kubernetes.io/cluster-service: &quot;true&quot;</span><br><span class="line">   addonmanager.kubernetes.io/mode: Reconcile</span><br></pre></td></tr></table></figure>
 

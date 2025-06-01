@@ -24,25 +24,25 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="socket俗称套接字，应用程序的进程和进程的之间的沟通是通过套接字来进行的。在python中，socket模块来创建套节字。   在同一台机器上，不同进程之间，通过进程号进行区分，但在不同的机器上，会存在相同的进程号，比如cenos7的PID为1的进程为systemd，在另外一个机器的centos7也是同样的，所以在网络环境下PID并不能唯一标识一个进程，比如主机A也有PID为1的进程，主机B也">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_11.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_12.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_13.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_11.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_12.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_13.png">
 <meta property="article:published_time" content="2017-10-01T03:27:44.000Z">
 <meta property="article:modified_time" content="2017-10-01T03:27:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/10/01/python_socket/index.html">
   
@@ -418,7 +418,7 @@
 
 <p>tcp客户端  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">创建socket</span><br><span class="line">      |</span><br><span class="line">      |</span><br><span class="line">建立连接[socket.socket(socket.AF_INET,socket.SOCK_STREAM)]</span><br><span class="line">      |</span><br><span class="line">      |</span><br><span class="line">接收数据，同时也发送数据。[socket.recv(),socket.send()]</span><br><span class="line">      |</span><br><span class="line">      |</span><br><span class="line">关闭连接[socket.close()]</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_1.png"></p>
 <h3 id="socket功能列表"><a href="#socket功能列表" class="headerlink" title="socket功能列表"></a>socket功能列表</h3><p>socket(family,type[,protocal]) 使用给定的地址族、套接字类型、协议编号（默认为0）来创建套接字。  </p>
 <table>
 <thead>
@@ -567,23 +567,23 @@
 <td align="center">创建一个与该套接字相关连的文件</td>
 </tr>
 </tbody></table>
-<h3 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h3><p>server端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_2.png"></p>
+<h3 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h3><p>server端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_2.png"></p>
 <p>1、使用一个死循环while True：将会使server端一直处于监听状态。<br>2、children,addr&#x3D;s.accept 将创建一个新的socket，这样原先的socket继续侦听，而新的socket将接收client端的数据,addr返回的是客户端的ip。那么问题来了，当客户端发送数据关联时是与哪个socket进行连接呢，首先我们需要知道的是客户端发送的数据有两种，一种是请求建立连接的，一种是已经建立好连接后的数据传输，就如上所说tcp&#x2F;ip有接收缓存和发送缓存，当收到建立连接的请求时，则传给正在监听端口的socket调用accept，当收到连接好连接后的数据传输时，将输据放入接收缓冲区，这样当服务器需要读取数据时调用accept建立的新socket，的recv函数从接收缓冲区读取。<br>3、将socket.accept写在循环里面client新的连接一次将重新创建一个新的socket。  </p>
-<p>client端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_3.png"></p>
+<p>client端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_3.png"></p>
 <p>1，s.recv(1024)一次最大接收1024字节<br>2,  当收到连接好连接后的数据传输时，将输据放入接收缓冲区，这样当服务器需要读取数据时调用accept建立的新socket，的recv函数从接收缓冲区读取。<br>输出<br>server端  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_4.png"></p>
-<p>client端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_5.png"><br>socket.recv()<br>tcp&#x2F;ip socket在内核中都有一个接收缓冲区和发送缓冲区，当socket接收到数据时，并不是马上调用socket.recv(),而是将数据拷贝到socket中的接收缓冲区中，调用socket.recv()后就是将接收缓冲区的数据，移动到应用层的buff中，并返回。当接收窗口满了后发生的操作是，收端通知发端，停止发送。<br>socket.send()<br>socket.send()是将应用层的buff拷贝到tcp-socket的发送缓冲区中</p>
-<p>UDP<br>server端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_6.png">  </p>
-<p>client<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_4.png"></p>
+<p>client端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_5.png"><br>socket.recv()<br>tcp&#x2F;ip socket在内核中都有一个接收缓冲区和发送缓冲区，当socket接收到数据时，并不是马上调用socket.recv(),而是将数据拷贝到socket中的接收缓冲区中，调用socket.recv()后就是将接收缓冲区的数据，移动到应用层的buff中，并返回。当接收窗口满了后发生的操作是，收端通知发端，停止发送。<br>socket.send()<br>socket.send()是将应用层的buff拷贝到tcp-socket的发送缓冲区中</p>
+<p>UDP<br>server端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_6.png">  </p>
+<p>client<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_7.png"></p>
 <p>输出<br>server端  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_8.png"></p>
-<p>client端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_9.png"></p>
-<h3 id="socket实现tcp简单聊天"><a href="#socket实现tcp简单聊天" class="headerlink" title="socket实现tcp简单聊天"></a>socket实现tcp简单聊天</h3><p>server端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_10.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_8.png"></p>
+<p>client端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_9.png"></p>
+<h3 id="socket实现tcp简单聊天"><a href="#socket实现tcp简单聊天" class="headerlink" title="socket实现tcp简单聊天"></a>socket实现tcp简单聊天</h3><p>server端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_10.png"></p>
 <p>需要注意的是这里的socket.accept()是写在while循怀外的，因为写在死循怀里，脚本一直在执行，client调用一次accept后就进入阻塞状态了，而client端用的还是旧的connect所以，如果写在循怀里，就是执行client后建立一个连接后只能进行一次对话，因为server端的accept又重新回到阻塞状态了,重新执行client生成一个新的connec又可以一次对话。</p>
-<p>client端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_11.png"></p>
+<p>client端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_11.png"></p>
 <p>结果<br>server端</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_12.png"></p>
-<p>client端<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/socket_13.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_12.png"></p>
+<p>client端<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/socket_13.png"></p>
 <p>优化点：<br>1，目前程序没有多线程，IO复用，还是半双工状态，一次只能一个用户说话，一个发时，另一个只能收，server在说话，client就不能说。</p>
 <p>参考链接  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http://www.oschina.net/question/12_76126?sort=default&amp;p=1</span><br><span class="line">https://segmentfault.com/q/1010000000591930</span><br><span class="line">http://www.cnblogs.com/aylin/p/5572104.html</span><br><span class="line">http://blog.csdn.net/rebelqsp/article/details/22109925</span><br><span class="line">http://blog.csdn.net/hguisu/article/details/7445768/</span><br><span class="line">http://blog.csdn.net/rebelqsp/article/details/22191409</span><br></pre></td></tr></table></figure>

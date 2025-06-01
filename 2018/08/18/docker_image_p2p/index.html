@@ -24,21 +24,21 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述首先p2p网络是一种分布式的去中心化的网络，在网络中每个节点的地位都是对等的，每个节点既能充当服务器，也同时能为其他节点提供服务，同时也享有其他节点提供的服务。 为什么需要引入p2p技术来加速镜像分发？在大规模的容器集群内，镜像分发，往往需要消耗大量时间，并且会给镜像仓库带来很大的压力负担，通过p2p技术将流量分担到集群的每个节点上，这样可以大大缩短下载镜像的时间，并且能非常有效的减轻镜像仓库">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_9.png">
 <meta property="article:published_time" content="2018-08-18T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-08-18T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/08/18/docker_image_p2p/index.html">
   
@@ -409,19 +409,19 @@
       
         <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>首先p2p网络是一种分布式的去中心化的网络，在网络中每个节点的地位都是对等的，每个节点既能充当服务器，也同时能为其他节点提供服务，同时也享有其他节点提供的服务。</p>
 <p>为什么需要引入p2p技术来加速镜像分发？<br>在大规模的容器集群内，镜像分发，往往需要消耗大量时间，并且会给镜像仓库带来很大的压力负担，通过p2p技术将流量分担到集群的每个节点上，这样可以大大缩短下载镜像的时间，并且能非常有效的减轻镜像仓库的压力。</p>
-<h3 id="Dragonfly介绍"><a href="#Dragonfly介绍" class="headerlink" title="Dragonfly介绍"></a>Dragonfly介绍</h3><p>这里我们使用的是阿里巴巴开源的基于P2P技术的PB级文件分发系统蜻蜓(dragonfly)。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_1.png"><br>引用阿里巴巴双11技术解密内容：<br>蜻蜓整体架构分三层:第一层是 Config Service，他管理所有的 Cluster Manager，Cluster Manager 又管理所有的 Host，Host 就是终端，dfget 就是类似 wget 的一个客户端程序。<br>Config Service 主要负责 Cluster Manager 的管理、客户端节点路由、系统配 置管理以及预热服务等等。简单的说，就是负责告诉 Host，离他最近的一组 Cluster Manager 的地址列表，并定期维护和更新这份列表，使 Host 总能找到离他最近的 Cluster Manager。<br>Cluster Manager 主要的职责有两个:</p>
+<h3 id="Dragonfly介绍"><a href="#Dragonfly介绍" class="headerlink" title="Dragonfly介绍"></a>Dragonfly介绍</h3><p>这里我们使用的是阿里巴巴开源的基于P2P技术的PB级文件分发系统蜻蜓(dragonfly)。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_1.png"><br>引用阿里巴巴双11技术解密内容：<br>蜻蜓整体架构分三层:第一层是 Config Service，他管理所有的 Cluster Manager，Cluster Manager 又管理所有的 Host，Host 就是终端，dfget 就是类似 wget 的一个客户端程序。<br>Config Service 主要负责 Cluster Manager 的管理、客户端节点路由、系统配 置管理以及预热服务等等。简单的说，就是负责告诉 Host，离他最近的一组 Cluster Manager 的地址列表，并定期维护和更新这份列表，使 Host 总能找到离他最近的 Cluster Manager。<br>Cluster Manager 主要的职责有两个:</p>
 <ol>
 <li>以被动 CDN 方式从文件源下载文件并生成一组种子分块数据;</li>
 <li>构造 P2P 网络并调度每个 peer 之间互传指定的分块数据。<br>Host 上就存放着 dfget，dfget 的语法跟 wget 非常类似。<br>主要功能包括文件下 载和 P2P 共享等。</li>
 </ol>
-<p>原理<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_2.png"></p>
+<p>原理<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_2.png"></p>
 <p>两个 Host 和 CM 会组成一个 P2P 网络，首先 CM 会查看本地是否有缓存，如果没有，就会回源下载，文件当然会被分片，CM 会多线程下载这些分片，同时会将 下载的分片提供给 Host 们下载，Host 下载完一个分片后，同时会提供出来给 peer 下载，如此类推，直到所有的 Host 全部下载完。<br>本地下载的时候会将下载分片的情况记录在 metadata 里，如果突然中断了下 载，再次执行 dfget 命令，会断点续传。<br>下载结束后，还会比对 MD5，以确保下载的文件和源文件是完全一致的。蜻蜓通过 HTTP cache 协议来控制 CM 端对文件的缓存时长，CM 端当然也有自己定期 清理磁盘的能力，确保有足够的空间支撑长久的服务。<br>需要注意的是开源版的dragonfly目前没有开源config-Service。</p>
 <h3 id="使用Dragonfly做docker镜像分发"><a href="#使用Dragonfly做docker镜像分发" class="headerlink" title="使用Dragonfly做docker镜像分发"></a>使用Dragonfly做docker镜像分发</h3><p>技术原理类似我们用的BT下载技术的bitorrent协议<br>cluster-manager就类似于Tracker服务器。<br>.meta类似于torrent文件<br>通过torrent文件，获取其他正在下载该文件的网址名单，根据torrent文件的网址然后连接tracker服务器，从tracker服务器获取正在下载该文件的网址名单，然后与它们取得联系，从他们那里获取文件的片端，直到整个下载完成。<br>原理（来源官方github)</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_3.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_4.png"></p>
 <p>首先，docker pull 命令，会被 dfget proxy 截获。然后，由 dfget proxy 向 CM 发送调度请求，CM 在收到请求后会检查对应的下载文件是否已经被缓存到本地，如果没有被缓存，则会从Registry 中下载对应的文件，并生成种子分块数据(种子分块数据一旦生成就可以立即被使用);如果已经被缓存，则直接生成分块任务，请求者解析相应的分块任务，并从其他 peer 或者 supernode 中下载分块数据，当某个Layer的所有分块下载完成后，一个Layer也就下载完毕了，同样，当所有的Layer下载完成后，整个镜像也就下载完成了。</p>
 <p>文件分块的下载</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_5.png"><br>注: 其中cluster manager即超级节点(supernode)</p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_5.png"><br>注: 其中cluster manager即超级节点(supernode)</p>
 <p>每个文件会被分成多个块在对等者(peer)间进行传输。一个peer就是一个P2P客户端。<br>超级节点会判断文件是否存在本地，如果不存在，则会将其从文件服务器下载到本地。</p>
 <p>配置方法<br>主要参考官方的服务端和客户端的安装和使用<br><a href="https://github.com/alibaba/Dragonfly/tree/master/docs/zh">https://github.com/alibaba/Dragonfly/tree/master/docs/zh</a><br>软件版本：<br>docker：17.03-2<br>os：ubuntu16.04<br>Dragonfly：0.2.0<br>Harbor：1.4.0</p>
 <p>环境信息</p>
@@ -474,12 +474,12 @@
 <p>2、蜻蜓默认是限速20M的，取消限速的方法<a href="https://github.com/alibaba/Dragonfly/issues/38">https://github.com/alibaba/Dragonfly/issues/38</a></p>
 <p>抓包分析</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i lo port 65001  #确实有大量数据包经过</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_6.png"></p>
 <p>数据查看<br>查看到大量数据分片</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls ~/.small-dragonfly/data/</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_7.png"></p>
-<p> 查看下载日志<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">less ~/.small-dragonfly/logs/dfclient.log</span><br></pre></td></tr></table></figure><br> 因为性能测试需要大并发，大流量环境下才能对比出差异性，所以这里性能测试结果使用阿里巴巴官方测试数据<br> <img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_8.png"></p>
-<p>上图可以看出，随着下载规模的扩大，蜻蜓与 Native 模式耗时差异显著扩 大，最高可提速可以达 20 倍。在测试环境中源的带宽也至关重要，如果源的带宽是 2Gbps，提速可达 57 倍。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/p2p_9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_7.png"></p>
+<p> 查看下载日志<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">less ~/.small-dragonfly/logs/dfclient.log</span><br></pre></td></tr></table></figure><br> 因为性能测试需要大并发，大流量环境下才能对比出差异性，所以这里性能测试结果使用阿里巴巴官方测试数据<br> <img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_8.png"></p>
+<p>上图可以看出，随着下载规模的扩大，蜻蜓与 Native 模式耗时差异显著扩 大，最高可提速可以达 20 倍。在测试环境中源的带宽也至关重要，如果源的带宽是 2Gbps，提速可达 57 倍。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/p2p_9.png"></p>
 <p>向 200 个节点分发 500M 的镜像，比 docker 原生模式使用更低的网络流量， 实验数据表明采用蜻蜓后，Registry 的出流量降低了 99.5% 以上;而在 1000 并发 规模下，Registry 的出流量更可以降低到 99.9% 左右。</p>
 <p><a href="https://github.com/alibaba/Dragonfly">https://github.com/alibaba/Dragonfly</a></p>
 

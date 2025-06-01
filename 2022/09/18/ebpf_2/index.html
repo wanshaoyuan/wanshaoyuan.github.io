@@ -24,14 +24,14 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述bpftrace是基于eBPF实现的动态的工具，使用DSL（Domain Specific Language）编写eBPF程序，使用LLVM编译eBPF字节码，BCC与LinuxBPF系统交互。直接使用DSL编写好的脚本（类似awk语言）可以执行，无需在内核中手动编译和加载。bpftrace在内核中实现动态追踪主要是使用Kprobe探针和Tracepoints探针。使用bpftrace可以更深">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp2_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp2_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ebfp2_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ebfp2_1.png">
 <meta property="article:published_time" content="2022-09-18T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-09-18T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp2_2.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ebfp2_2.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2022/09/18/ebpf_2/index.html">
   
@@ -445,7 +445,7 @@
 <li>tcplife.bt——追踪TCP连接生命周期</li>
 <li>biotop-bpfcc——展示进程io写入</li>
 </ul>
-<h3 id="bpftrace执行原理"><a href="#bpftrace执行原理" class="headerlink" title="bpftrace执行原理"></a><a href="#bpftrace%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86" title="bpftrace执行原理"></a>bpftrace执行原理</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp2_2.png"><br>用户态<br>1、用户编写 eBPF 程序，可以使用 eBPF 汇编或者 eBPF 特有的 C 语言来编写。<br>2、使用 LLVM&#x2F;CLang 编译器，将 eBPF 程序编译成 eBPF 字节码。<br>3、调用 bpf() 系统调用把 eBPF 字节码加载到内核。</p>
+<h3 id="bpftrace执行原理"><a href="#bpftrace执行原理" class="headerlink" title="bpftrace执行原理"></a><a href="#bpftrace%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86" title="bpftrace执行原理"></a>bpftrace执行原理</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ebfp2_2.png"><br>用户态<br>1、用户编写 eBPF 程序，可以使用 eBPF 汇编或者 eBPF 特有的 C 语言来编写。<br>2、使用 LLVM&#x2F;CLang 编译器，将 eBPF 程序编译成 eBPF 字节码。<br>3、调用 bpf() 系统调用把 eBPF 字节码加载到内核。</p>
 <p>内核态<br>1、当用户调用 bpf() 系统调用把 eBPF 字节码加载到内核时，内核先会对 eBPF 字节码进行安全验证。<br>2、使用 JIT（Just In Time）技术将 eBPF 字节编译成本地机器码（Native Code）。<br>3、然后根据 eBPF 程序的功能，将 eBPF 机器码挂载到内核的不同运行路径上（如用于跟踪内核运行状态的 eBPF 程序将会挂载在 kprobes 的运行路径上）。当内核运行到这些路径时，就会触发执行相应路径上的 eBPF 机器码。<br>4、通过map与用户空间程序交互</p>
 <p>总结<br>通过bpftrace和bcc可以很形象了解ebpf特性，无需修改内核源码和重新编译内核就可以扩展内核的功能，除了像bpftrace这类追踪类软件，还有通过ebfp实现的POD安全威胁检测Falco、基于ebpf负载均衡器Katran等开源产品。另外ebpf_exporter组件也可以将自定义的ebpf执行脚本输出到Prometheus中进行监控。ebpf的生态将越来越丰富。</p>
 <h3 id="Perf工具使用"><a href="#Perf工具使用" class="headerlink" title="Perf工具使用"></a><a href="#Perf%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8" title="Perf工具使用"></a>Perf工具使用</h3><p>Perf（Performance Event）是在Linux Kernel2.6集成在Linux Kernel中，主要利用CPU中PMU (Performance Monitoring Unit)和Linux中的 tracepoint实现目标取样和性能分析。Perf工具根eBPF实际上没什么关系，这里写这个工具主要是因为它本身也可以实现应用程序动态追踪，也利用到了tracepoint的能力，但与eBPF不同的是Perf是写死的能力，bpftrace基于eBPF是可以实现脚本灵活的穿插和调用。</p>
@@ -470,7 +470,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perf report</span><br></pre></td></tr></table></figure>
 <p>生成火焰图  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">下载制作火焰图工具</span><br><span class="line"></span><br><span class="line">git clone https://github.com/brendangregg/FlameGraph.git</span><br><span class="line"></span><br><span class="line">对perf.data进行解析</span><br><span class="line"></span><br><span class="line">perf script -i perf.data &amp;&gt; perf.unfold</span><br><span class="line"></span><br><span class="line">进行符号处理</span><br><span class="line"></span><br><span class="line">FlameGraph/stackcollapse-perf.pl perf.unfold &amp;&gt; perf.folded</span><br><span class="line"></span><br><span class="line">生成火焰图</span><br><span class="line"></span><br><span class="line">FlameGraph/flamegraph.pl perf.folded &gt; perf.svg</span><br></pre></td></tr></table></figure>
-<p>使用chrome浏览器打开<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ebfp2_1.png"></p>
+<p>使用chrome浏览器打开<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ebfp2_1.png"></p>
 <p>火焰图怎么查看分析可参考<br><a href="https://www.infoq.cn/article/a8kmnxdhbwmzxzsytlga">https://www.infoq.cn/article/a8kmnxdhbwmzxzsytlga</a></p>
 <p>参考链接<br><a href="https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md">https://github.com/iovisor/bpftrace/blob/master/docs/reference_guide.md</a><br><a href="http://blog.nsfocus.net/bpftrace-dynamic-tracing-0828/">http://blog.nsfocus.net/bpftrace-dynamic-tracing-0828/</a><br><a href="https://www.cnblogs.com/arnoldlu/p/6241297.html">https://www.cnblogs.com/arnoldlu/p/6241297.html</a><br><a href="https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/8/html/monitoring_and_managing_system_status_and_performance/counting-events-during-process-execution-with-perf-stat_monitoring-and-managing-system-status-and-performance">https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux&#x2F;8&#x2F;html&#x2F;monitoring_and_managing_system_status_and_performance&#x2F;counting-events-during-process-execution-with-perf-stat_monitoring-and-managing-system-status-and-performance</a></p>
 

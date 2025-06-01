@@ -24,22 +24,22 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="环境网络配置：     public_network cluster_network    控制节点&#x2F;ceph-mon 192.168.4.6 192.168.3.5   ceph-osd1 192.168.4.12 192.168.3.9   ceph-osd2 192.168.4.8 192.168.3.7   硬件配置：ceph-moncpu：4核内存：4G   ceph-osd1">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_10.png">
 <meta property="article:published_time" content="2017-02-06T06:24:44.000Z">
 <meta property="article:modified_time" content="2017-02-06T06:24:44.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="openstack">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/02/06/openstac&ceph/index.html">
   
@@ -444,23 +444,23 @@
 <p>清理yum缓存<br>yum clean all<br>创建缓存<br>yum makecache<br>所有节点安装ceph<br>yum install ceph –y  </p>
 <h3 id="开始部署"><a href="#开始部署" class="headerlink" title="开始部署"></a>开始部署</h3><p>在部署节点安装我这里的是openstack的controller节点安装ceph-deploy，手动部署参考上一篇文章 <a href="http://www.bladewan.com/2017/01/01/manual_ceph/#more">http://www.bladewan.com/2017/01/01/manual_ceph/#more</a></p>
 <p>yum install ceph-deploy –y</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_1.png"></p>
 <p>在部署节点创建部署目录<br>mkdir &#x2F;etc&#x2F;ceph<br>cd &#x2F;etc&#x2F;ceph&#x2F;<br>ceph-deploy new control-node1<br>没有erro继续向下</p>
 <p>此时目录下有<br>ceph.conf、ceph-deploy-ceph.log、ceph.mon.keyring  </p>
-<p>修改ceph.conf添加public_network和cluster_network，同时增加允许时钟偏移<br>vim &#x2F;etc&#x2F;ceph&#x2F;ceph.conf<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_2.png"></p>
+<p>修改ceph.conf添加public_network和cluster_network，同时增加允许时钟偏移<br>vim &#x2F;etc&#x2F;ceph&#x2F;ceph.conf<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_2.png"></p>
 <p>开始monitor<br>在controller上执行<br>ceph-deploy mon create-initial  </p>
 <p>……</p>
-<p>部署目录多了以下文件<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_3.png">  </p>
+<p>部署目录多了以下文件<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_3.png">  </p>
 <p>查看ceph状态<br>ceph -s<br>此时ceph状态应该是ERROR的<br>health HEALTH_ERR<br>no osds<br>Monitor clock skew detected   </p>
 <p>部署osd</p>
 <p><code>ceph-deploy --overwrite-conf osd prepare ceph-osd1:/dev/vdb /dev/vdc /dev/vdd ceph-osd2:/dev/vdb /dev/vdbc /dev/vdd --zap-disk</code><br>部署完后查看ceph状态  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_4.png"></p>
 <p>查看osd tree</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_5.png"></p>
 <p>推送配置<br><code>ceph-deploy --overwrite-conf config push ceph-osd1 ceph-osd2</code></p>
-<p>重启ceph进程<br>mon节点<br>systemctl restart <a href="mailto:&#99;&#101;&#112;&#104;&#45;&#109;&#111;&#x6e;&#64;&#99;&#111;&#x6e;&#x74;&#x72;&#111;&#x6c;&#x2d;&#x6e;&#111;&#100;&#x65;&#x31;&#46;&#x73;&#x65;&#114;&#118;&#105;&#99;&#x65;">&#99;&#101;&#112;&#104;&#45;&#109;&#111;&#x6e;&#64;&#99;&#111;&#x6e;&#x74;&#x72;&#111;&#x6c;&#x2d;&#x6e;&#111;&#100;&#x65;&#x31;&#46;&#x73;&#x65;&#114;&#118;&#105;&#99;&#x65;</a>  </p>
+<p>重启ceph进程<br>mon节点<br>systemctl restart <a href="mailto:&#x63;&#x65;&#x70;&#x68;&#x2d;&#109;&#111;&#110;&#x40;&#99;&#111;&#x6e;&#116;&#114;&#111;&#x6c;&#45;&#x6e;&#x6f;&#x64;&#x65;&#x31;&#x2e;&#x73;&#x65;&#x72;&#x76;&#105;&#99;&#101;">&#x63;&#x65;&#x70;&#x68;&#x2d;&#109;&#111;&#110;&#x40;&#99;&#111;&#x6e;&#116;&#114;&#111;&#x6c;&#45;&#x6e;&#x6f;&#x64;&#x65;&#x31;&#x2e;&#x73;&#x65;&#x72;&#x76;&#105;&#99;&#101;</a>  </p>
 <p>osd节点重启<br>systemctl restart ceph-osd@x  </p>
-<p>查看public_network和cluster_network配置是否生效<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_6.png"></p>
+<p>查看public_network和cluster_network配置是否生效<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_6.png"></p>
 <h3 id="根openstack对接"><a href="#根openstack对接" class="headerlink" title="根openstack对接"></a>根openstack对接</h3><h4 id="Ceph"><a href="#Ceph" class="headerlink" title="Ceph"></a>Ceph</h4><p>创建pool<br>根据公式计算出每个pool的合适pg数  </p>
 <p>PG Number<br>PG和PGP数量一定要根据OSD的数量进行调整，计算公式如下，但是最后算出的结果一定要接近或者等于一个2的指数。<br><code>Total PGs = (Total_number_of_OSD * 100) / max_replication_count</code></p>
 <p>例：<br>有6个osd，2副本，3个pool  </p>
@@ -480,7 +480,7 @@
 <p>导出nova的keyring</p>
 <p>ceph auth get-key client.nova |  tee client.nova.key  </p>
 <p>virsh secret-define –file secret.xml<br>virsh  secret-set-value –secret f77169a0-7d56-4fc3-a436-35298081f9f9 –base64 $(cat client.nova.key )</p>
-<p>查看secret-value<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_7.png"></p>
+<p>查看secret-value<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_7.png"></p>
 <p>另外一台计算节点一样</p>
 <p>修改openstack组件配置  </p>
 <h4 id="glance"><a href="#glance" class="headerlink" title="glance"></a>glance</h4><p>cp &#x2F;etc&#x2F;glance&#x2F;glance-api.conf  &#x2F;etc&#x2F;glance&#x2F;glance-api.conf.bak<br>vim &#x2F;etc&#x2F;glance&#x2F;glance-api.conf  </p>
@@ -495,9 +495,9 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[libvirt]</span><br><span class="line">virt_type = qemu</span><br><span class="line">images_type = rbd</span><br><span class="line">images_rbd_pool = vms</span><br><span class="line">images_rbd_ceph_conf = /etc/ceph/ceph.conf</span><br><span class="line">rbd_user = nova</span><br><span class="line">rbd_secret_uuid = f77169a0-7d56-4fc3-a436-35298081f9f9</span><br><span class="line">live_migration_flag=&quot;VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_PERSIST_DEST,VIR_MIGRATE_TUNNELLED</span><br></pre></td></tr></table></figure>
 <p>重启nova-compute<br>systemctl restart openstack-nova-compute</p>
 <h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><h4 id="glance-1"><a href="#glance-1" class="headerlink" title="glance"></a>glance</h4><p>上传镜像，在ceph pool中查看是否存在<br><code>openstack image create &quot;cirros&quot; --file cirros-0.3.4-x86_64-disk.img  --disk-format qcow2 --container-format bare –public</code></p>
-<p>存在说明对接正常<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_8.png"></p>
-<h4 id="cinder-1"><a href="#cinder-1" class="headerlink" title="cinder"></a>cinder</h4><p>在控制台创建个云硬盘，创建成功后在ceph的volumes pool池中可以看见刚刚创建的云硬盘说明创建成功<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_9.png"></p>
-<h4 id="nova-1"><a href="#nova-1" class="headerlink" title="nova"></a>nova</h4><p>在控制台创建个云主记，创建成功后在ceph的vm pool池中可以看见刚刚创建的云主机说明创建成功<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/ceph&openstack_10.png"></p>
+<p>存在说明对接正常<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_8.png"></p>
+<h4 id="cinder-1"><a href="#cinder-1" class="headerlink" title="cinder"></a>cinder</h4><p>在控制台创建个云硬盘，创建成功后在ceph的volumes pool池中可以看见刚刚创建的云硬盘说明创建成功<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_9.png"></p>
+<h4 id="nova-1"><a href="#nova-1" class="headerlink" title="nova"></a>nova</h4><p>在控制台创建个云主记，创建成功后在ceph的vm pool池中可以看见刚刚创建的云主机说明创建成功<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/ceph&openstack_10.png"></p>
 
       
     </div>

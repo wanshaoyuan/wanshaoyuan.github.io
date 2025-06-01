@@ -24,14 +24,14 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="问题现象1、Rancher所在local集群周期性卡顿、执行命令响应缓慢。2、Rancher-server副本频繁重启。 3、Rancher UI空载集群切换项目，点击UI反应慢。 查看ETCD日志发现有大量Ready only报错和too long（xxx ms）to execute报错  问题分析 注：以下etcd读写流程来源腾讯云原生社区（https:&#x2F;&#x2F;blog.csdn.net&#x2F;yunx">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd-read-only.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd-read-only3.jpeg">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd-read-only.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd-read-only3.jpeg">
 <meta property="article:published_time" content="2022-07-27T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-07-27T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd-read-only.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd-read-only.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2022/07/27/fio_etcd/index.html">
   
@@ -403,8 +403,8 @@
         <h3 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h3><p>1、Rancher所在local集群周期性卡顿、执行命令响应缓慢。<br>2、Rancher-server副本频繁重启。</p>
 <p>3、Rancher UI空载集群切换项目，点击UI反应慢。</p>
 <p>查看ETCD日志发现有大量Ready only报错和too long（xxx ms）to execute报错</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd-read-only.png"></p>
-<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/etcd-read-only3.jpeg"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd-read-only.png"></p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/etcd-read-only3.jpeg"></p>
 <p>注：以下etcd读写流程来源腾讯云原生社区（<a href="https://blog.csdn.net/yunxiao6/article/details/108615472%EF%BC%89">https://blog.csdn.net/yunxiao6/article/details/108615472）</a><br>写数据流程（以 leader 节点为例，见上图）：</p>
 <p>1、etcd 任一节点的 etcd server 模块收到 Client 写请求（如果是 follower 节点，会先通过 Raft 模块将请求转发至 leader 节点处理）。</p>
 <p>2、etcd server 将请求封装为 Raft 请求，然后提交给 Raft 模块处理。</p>

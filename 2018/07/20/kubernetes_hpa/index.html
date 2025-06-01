@@ -24,21 +24,21 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概念HPA是kubernetes里面pod弹性伸缩的实现,它能根据设置的监控阀值进行pod的弹性扩缩容，目前默认HPA只能支持cpu和内存的阀值检测扩缩容，但也可以通过custom metric api  调用prometheus实现自定义metric 来更加灵活的监控指标实现弹性伸缩。但hpa不能用于伸缩一些无法进行缩放的控制器如DaemonSet。这里我们用的是resource metric">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_8.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_9.png">
 <meta property="article:published_time" content="2018-07-20T13:45:59.000Z">
 <meta property="article:modified_time" content="2018-07-20T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2018/07/20/kubernetes_hpa/index.html">
   
@@ -408,7 +408,7 @@
     <div class="article-entry markdown-body" itemprop="articleBody">
       
         <h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>HPA是kubernetes里面pod弹性伸缩的实现,它能根据设置的监控阀值进行pod的弹性扩缩容，目前默认HPA只能支持cpu和内存的阀值检测扩缩容，但也可以通过custom metric api  调用prometheus实现自定义metric 来更加灵活的监控指标实现弹性伸缩。但hpa不能用于伸缩一些无法进行缩放的控制器如DaemonSet。这里我们用的是resource metric api.</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_1.png"></p>
 <h3 id="实现hpa的两大关键"><a href="#实现hpa的两大关键" class="headerlink" title="实现hpa的两大关键"></a>实现hpa的两大关键</h3><p>1、监控指标的获取<br>早期kubernetes版本是使用hepster，在1.10后面版本更推荐使用metric-server</p>
 <p>hepster简单来说是api-server获取节点信息，然后通过kubelet获取监控信息，因为kubelet内置了cadvisor。</p>
 <p>metric-server，简单来说是通过metric-api来获取节点信息和监控信息。<a href="https://github.com/kubernetes-incubator/metrics-server">https://github.com/kubernetes-incubator/metrics-server</a></p>
@@ -418,7 +418,7 @@
 <p>celi函数作用：<br>返回大于或者等于指定表达式的最小整数</p>
 <p>在每次扩容和缩容时都有一个窗口时间，在执行伸缩操作后，在这个窗口时间内，不会在进行伸缩操作，可以理解为类似等一下放技能的冷却时间。默认扩容为3分钟(–horizontal-pod-autoscaler-upscale-delay)，缩容为5分钟(–horizontal-pod-autoscaler-downscale-delay)。另外还需要以下情况下才会进行任何缩放avg（CurrentPodsConsumption）&#x2F; Target下降9%，进行缩容，增加至10%进行扩容。以上两条件需要都满足。</p>
 <p>这样做好处是：<br>1、判断的精度高，不会频繁的扩缩pod，造成集群压力大。<br>2、避免频繁的扩缩pod，防止应用访问不稳定。  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_2.png"></p>
 <p>实现hpa的条件：<br>1、hpa不能autoscale daemonset类型control<br>2、要实现autoscale，pod必须设置request  </p>
 <h3 id="配置HPA"><a href="#配置HPA" class="headerlink" title="配置HPA"></a>配置HPA</h3><p>这里以kubeadm 部署和的kubernetes 1.11和Rancher2.0部署的kubernetes 1.10为例<br>环境信息  </p>
 <p>操作系统：ubuntu16.04<br>kubernetes版本：1.11<br>rancher：2.0.6<br>metric-server：v0.3.1  </p>
@@ -433,13 +433,13 @@
 
 <p>apply yaml文件   </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f metrics-server/deploy/1.8+/</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_3.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_4.png"><br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_4.png"><br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_5.png"></p>
 <p>等待一分钟<br>执行  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubect top node  </span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl top pods</span><br></pre></td></tr></table></figure>
 <p>查看pod和node监控信息  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_6.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_6.png"></p>
 <p>创建个一个deployment，配置hpa测试  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  name: podinfo</span><br><span class="line">  labels:</span><br><span class="line">    app: podinfo</span><br><span class="line">spec:</span><br><span class="line">  type: NodePort</span><br><span class="line">  ports:</span><br><span class="line">    - port: 9898</span><br><span class="line">      targetPort: 9898</span><br><span class="line">      nodePort: 31198</span><br><span class="line">      protocol: TCP</span><br><span class="line">  selector:</span><br><span class="line">    app: podinfo</span><br><span class="line">---</span><br><span class="line">apiVersion: extensions/v1beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: podinfo</span><br><span class="line">spec:</span><br><span class="line">  replicas: 2</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: podinfo</span><br><span class="line">      annotations:</span><br><span class="line">        prometheus.io/scrape: &#x27;true&#x27;</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: podinfod</span><br><span class="line">        image: stefanprodan/podinfo:0.0.1</span><br><span class="line">        imagePullPolicy: Always</span><br><span class="line">        command:</span><br><span class="line">          - ./podinfo</span><br><span class="line">          - -port=9898</span><br><span class="line">          - -logtostderr=true</span><br><span class="line">          - -v=2</span><br><span class="line">        volumeMounts:</span><br><span class="line">          - name: metadata</span><br><span class="line">            mountPath: /etc/podinfod/metadata</span><br><span class="line">            readOnly: true</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 9898</span><br><span class="line">          protocol: TCP</span><br><span class="line">        resources:</span><br><span class="line">          requests:</span><br><span class="line">            memory: &quot;32Mi&quot;</span><br><span class="line">            cpu: &quot;1m&quot;</span><br><span class="line">          limits:</span><br><span class="line">            memory: &quot;256Mi&quot;</span><br><span class="line">            cpu: &quot;100m&quot;</span><br><span class="line">      volumes:</span><br><span class="line">        - name: metadata</span><br><span class="line">          downwardAPI:</span><br><span class="line">            items:</span><br><span class="line">              - path: &quot;labels&quot;</span><br><span class="line">                fieldRef:</span><br><span class="line">                  fieldPath: metadata.labels</span><br><span class="line">              - path: &quot;annotations&quot;</span><br><span class="line">                fieldRef:</span><br><span class="line">                  fieldPath: metadata.annotations</span><br></pre></td></tr></table></figure>
 
@@ -448,13 +448,13 @@
 
 <p>apply yaml文件</p>
 <p>get hpa  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_7.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_7.png"></p>
 <p>测试<br>使用webbench进行压力测试。  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://home.tiscali.cz/~cz210552/distfiles/webbench-1.5.tar.gz</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xvf webbench-1.5.tar.gz</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd webbench-1.5/</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"></span><br><span class="line">webbench -c 1000 -t 12360 http://172.31.164.104:31198/</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_8.png"></p>
-<p>可以看见随着cpu压力的增加，已经自动scale了，需要注意的是，scale up是一个阶段性的过程，并不是一次性就直接scale到max了，而是一个阶段性的过程，判定算法就是上文介绍的内容。<br>隔断时间没操作压力下来后，自动缩减pod<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kube_hpa_9.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_8.png"></p>
+<p>可以看见随着cpu压力的增加，已经自动scale了，需要注意的是，scale up是一个阶段性的过程，并不是一次性就直接scale到max了，而是一个阶段性的过程，判定算法就是上文介绍的内容。<br>隔断时间没操作压力下来后，自动缩减pod<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kube_hpa_9.png"></p>
 <p><a href="https://zhuanlan.zhihu.com/p/34555654">https://zhuanlan.zhihu.com/p/34555654</a><br><a href="https://github.com/kubernetes/community/blob/master/contributors/design-proposals/autoscaling/horizontal-pod-autoscaler.md#autoscaling-algorithm">https://github.com/kubernetes/community/blob/master/contributors/design-proposals/autoscaling/horizontal-pod-autoscaler.md#autoscaling-algorithm</a><br><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-APIs">https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-APIs</a></p>
 
       

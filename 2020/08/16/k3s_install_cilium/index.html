@@ -24,14 +24,14 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述cilium都近期比较火的一个网络插件，它通过将ebpf技术引入网络插件中用于满足容器工作负载的新可伸缩性，安全性和可见性要求。 前置条件ebpf依赖内核技术，所以需要保证以下内核版本1 、kernel版本 &gt;&#x3D; 4.9.17    软件 版本    k3s v1.18.6+k3s1   cilium 1.8   部署k3s采用两节点部署k3s，节点一角色为master+wor">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/hubble-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/hubble-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/hubble-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/hubble-2.png">
 <meta property="article:published_time" content="2020-08-16T13:45:59.000Z">
 <meta property="article:modified_time" content="2020-08-16T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/hubble-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/hubble-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2020/08/16/k3s_install_cilium/index.html">
   
@@ -475,8 +475,8 @@
 
 <p>访问hubble-UI  </p>
 <p>通过hubble可以非常清晰看到各个应用的互相连接关系和访问信息。  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/hubble-1.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/hubble-2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/hubble-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/hubble-2.png"></p>
 <h3 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h3><p>整体部署和使用下来功能是非常强大，目前看社区都有往ebpf方向走，包括向calico目前也有个ebpf的模式，通过ebpf可以提升整体网络的性能和细粒化网络流量的控制和可视化，后续将以这个为方向深入理解。但带来的问题就是对于排错对比与calico-bgp或flannel-vxlan会更加复杂，在部署后出现过一次大面积瘫痪情况，没有找到是k3s问题和cilium问题，后面将集群和cilium重新部署就好了。</p>
 
       

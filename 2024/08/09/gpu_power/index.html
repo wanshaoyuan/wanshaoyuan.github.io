@@ -24,16 +24,16 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述做AI训练和推理场景中，主要看GPU的FLOPS（每秒浮点运算次数）衡量集群的算力能力单位为PFLOPS，也可以简称为P也上目前很多在建的智算中心通常会说新建的这个算力中心提供的算力上多少P，单卡用TFLOPS（Tera flops 每秒1万亿次浮点运算） 一个MFLOPS（megaFLOPS）等于10^6 FLOPS；一个GFLOPS（gigaFLOPS）等于10^9 FLOPS；一个TFL">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu2-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu2-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu3-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu3-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu3-2.png">
 <meta property="article:published_time" content="2024-08-09T13:45:59.000Z">
 <meta property="article:modified_time" content="2024-08-09T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu2-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu2-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2024/08/09/gpu_power/index.html">
   
@@ -404,7 +404,7 @@
       
         <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>做AI训练和推理场景中，主要看GPU的FLOPS（每秒浮点运算次数）衡量集群的算力能力单位为PFLOPS，也可以简称为P也上目前很多在建的智算中心通常会说新建的这个算力中心提供的算力上多少P，单卡用TFLOPS（Tera flops 每秒1万亿次浮点运算）</p>
 <p>一个MFLOPS（megaFLOPS）等于10^6 FLOPS；<br>一个GFLOPS（gigaFLOPS）等于10^9 FLOPS；<br>一个TFLOPS（teraFLOPS）等于10^12 FLOPS；<br>一个PFLOPS（petaFLOPS）等于10^15 FLOPS；<br>一个EFLOPS（exaFLOPS）等于10^18 FLOPS。</p>
-<p>以H100为例，可以看到在不同类型GPU卡下的性能指标<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu2-1.png"><br>SXM对应PCIE除了在显存带宽上存在差距，在不同精度下的性能也存在差异，所以这也是需要注意的在同型号卡不同接口类型存在的性能差异。<br>*表示采用稀疏技术</p>
+<p>以H100为例，可以看到在不同类型GPU卡下的性能指标<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu2-1.png"><br>SXM对应PCIE除了在显存带宽上存在差距，在不同精度下的性能也存在差异，所以这也是需要注意的在同型号卡不同接口类型存在的性能差异。<br>*表示采用稀疏技术</p>
 <h3 id="精度单位"><a href="#精度单位" class="headerlink" title="精度单位"></a>精度单位</h3><p>在上图中可以看见存在FP64、FP32、TF32、FP16、INT8等这些精度单位，不同精度对应的模型训练效果占用存储空间和训练时间都会存在不同。<br>图片对应的精度带用Tensor Core的意思是支持专用硬件Tensor Core进行运算加速和混合精度训练的。</p>
 <p>Tensor Core有两大优势：<br>优势一：性能增强<br>Tensor Core是NVIDIA在Volta架构引入的当时Tensor Core只为FP16进行优化，在Hopper架构 Tensor Core扩展了 TF32、FP64、FP16 和 INT8 精度，将性能提升3倍。</p>
 <p>优势二：实现混合精度</p>
@@ -413,7 +413,7 @@
 <p>根据英伟达官网的表述，AI训练场景为缩短训练时间，主要使用BF16、FP8、TF32 和FP16；AI推理厂家为在低延迟下实现高吞吐量，主要使用TF32、BF16、FP16、FP8 和INT8；HPC（高性能计算）为实现在所需的高准确性下进行科学计算的功能，主要使用FP64。<br>（来自韭研公社APP）</p>
 <h3 id="稀疏计算和稠密计算"><a href="#稀疏计算和稠密计算" class="headerlink" title="稀疏计算和稠密计算"></a>稀疏计算和稠密计算</h3><p>稀疏算力是指计算过程中，数据存储和传输中存在大量空缺或零值的计算方式。在稀疏算力中，数据通常以矩阵的形式存在，其中大部分元素为0。稀疏算力在处理大规模稀疏数据时具有很高的效率。</p>
 <p>稠密算力是指计算过程中，数据存储和传输中不存在大量空缺或零值的计算方式。在稠密算力中，数据通常以矩阵的形式存在，其中大部分元素不为0。稠密算力在处理大规模稠密数据时具有很高的效率。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu3-3.png"></p>
 <p>应用场景：</p>
 <p>稀疏算力：稀疏算力在图像处理、信号处理、推荐系统等领域具有广泛的应用。</p>
 <p>稠密算力：稠密算力在科学计算、机器学习、深度学习、智驾等领域具有广泛的应用。</p>
@@ -426,7 +426,7 @@
 <p>注：<br>6是训练过程中前向传播、反向传播两个步骤，共计 2 次浮点运算。因此对于每个 token、每个模型参数，需要进行 3 × 2 flops &#x3D; 6 次浮点运算</p>
 <p>这是一个经验公式，表示对于每一个 token，进行一次完整的前向和反向传播大约需要 6 倍于模型参数数量的浮点运算量。</p>
 <p>以LLama3 65B，1.4T数据量为例，计算H100 SXM需要的卡数和耗时，Llama属于 采用的是稠密（Dense）模型，65B的参数都激活了。非MoE模型，MoE模型需要额外考虑激活的参数量。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu3-1.png"></p>
 <p>总算力需求：6<em>1.4T</em>65B&#x3D;5.46*10^23 FLOPS</p>
 <p>以H100为例BF16稀疏计算对应1.9PFLOPS，稠密计算约为1PFLOPS，GPU实际利用率按百分之50计算，约0.5PFLOPS，假设使用2048卡规模</p>
 <p>2048<em>0.5≈1024PFLOPS，PFLOPS换算FLOPS需要</em>10^15</p>
@@ -501,7 +501,7 @@
 <p>占用显存为32<em>12</em>1024<em>4096</em>4&#x3D;6GB</p>
 <p>在混合精度训练时，以上三项总共需要 6N + 4N + 8N &#x3D; 18N 字节，以 7B 模型为例，约为 126G。<br>加上激活值显存占用6GB&#x3D;132G</p>
 <p>实际在训练中，会使用多卡并行的分布式训练使用ZeRO技术进行显存优化，现在也集成到DeepSpeed库中了。另外当前也很多场景也都是使用PEFT（微调技术）进行部分参数训练比如使用Lora和QLoRA进行训练。这个可以在对应的微调框架内如LLaMA-Factory（<code>https://github.com/hiyouga/LLaMA-Factory</code>）Unsloth查看</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/gpu3-2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/gpu3-2.png"></p>
 <p><a href="https://llm-system-requirements.streamlit.app/">https://llm-system-requirements.streamlit.app/</a></p>
 <p><a href="https://github.com/hiyouga/LLaMA-Factory">https://github.com/hiyouga/LLaMA-Factory</a></p>
 <p>总结：</p>

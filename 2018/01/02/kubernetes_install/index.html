@@ -448,15 +448,15 @@ rpm -ivh kubeadm-1.9.0-0.x86_64.rpm
 systemctl enable kubelet &amp;&amp; sudo systemctl start kubelet
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">开始初始化master</span><br></pre></td></tr></table></figure>
 kubeadm init --kubernetes-version=v1.9.0 --pod-network-cidr=10.244.0.0/16
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kubernetes默认支持多重网络插件如flannel、weave、calico，这里使用flanne，就必须要设置--pod-network-cidr参数，10.244.0.0/16是kube-flannel.yml里面配置的默认网段，如果需要修改的话，需要把kubeadm init的--pod-network-cidr参数和后面的kube-flannel.yml里面修改成一样的网段就可以了。</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_1.png)</span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_2.png)</span><br><span class="line"></span><br><span class="line">发现kubelet启动不了</span><br><span class="line">查看日志/var/log/message</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_4.png)</span><br><span class="line"></span><br><span class="line">发现原来是kubelet默认的cgroup的driver和docker的不一样，docker默认的cgroupfs，kubelet默认为systemd</span><br><span class="line">修改</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kubernetes默认支持多重网络插件如flannel、weave、calico，这里使用flanne，就必须要设置--pod-network-cidr参数，10.244.0.0/16是kube-flannel.yml里面配置的默认网段，如果需要修改的话，需要把kubeadm init的--pod-network-cidr参数和后面的kube-flannel.yml里面修改成一样的网段就可以了。</span><br><span class="line"></span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_1.png)</span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_2.png)</span><br><span class="line"></span><br><span class="line">发现kubelet启动不了</span><br><span class="line">查看日志/var/log/message</span><br><span class="line"></span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_4.png)</span><br><span class="line"></span><br><span class="line">发现原来是kubelet默认的cgroup的driver和docker的不一样，docker默认的cgroupfs，kubelet默认为systemd</span><br><span class="line">修改</span><br></pre></td></tr></table></figure>
 vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_5.png)</span><br><span class="line"></span><br><span class="line">重启reload</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_5.png)</span><br><span class="line"></span><br><span class="line">重启reload</span><br></pre></td></tr></table></figure>
  systemctl daemon-reload &amp;&amp; systemctl restart kubelet
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">查看状态</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_6.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">此时记得将环境reset一下</span><br><span class="line">执行</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">查看状态</span><br><span class="line"></span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_6.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">此时记得将环境reset一下</span><br><span class="line">执行</span><br></pre></td></tr></table></figure>
 kubeadm reset
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">在重新执行</span><br></pre></td></tr></table></figure>
 kubeadm init --kubernetes-version=v1.9.0 --pod-network-cidr=10.244.0.0/16
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_7.png)</span><br><span class="line"></span><br><span class="line">将kubeadm join xxx保存下来，等下node节点需要使用</span><br><span class="line">如果忘记了，可以在master上通过kubeadmin token list得到</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_8.png)</span><br><span class="line"></span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_9.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">默认token 24小时就会过期，后续的机器要加入集群需要重新生成token   </span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_7.png)</span><br><span class="line"></span><br><span class="line">将kubeadm join xxx保存下来，等下node节点需要使用</span><br><span class="line">如果忘记了，可以在master上通过kubeadmin token list得到</span><br><span class="line"></span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_8.png)</span><br><span class="line"></span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_9.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">默认token 24小时就会过期，后续的机器要加入集群需要重新生成token   </span><br></pre></td></tr></table></figure>
 kubeadm token create   
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后在执行   </span><br></pre></td></tr></table></figure>
 kubeadm join --token xxx master_ip:6443    
@@ -470,7 +470,7 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 echo &quot;export KUBECONFIG=/etc/kubernetes/admin.conf&quot; &gt;&gt; ~/.bash_profile
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source一下环境变量</span><br></pre></td></tr></table></figure>
 source ~/.bash_profile
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl version测试</span><br><span class="line">![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_10.png)</span><br><span class="line"></span><br><span class="line">安装网络，可以使用flannel、calico、weave、macvlan这里我们用flannel。</span><br><span class="line"></span><br><span class="line">下载此文件</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubectl version测试</span><br><span class="line">![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_10.png)</span><br><span class="line"></span><br><span class="line">安装网络，可以使用flannel、calico、weave、macvlan这里我们用flannel。</span><br><span class="line"></span><br><span class="line">下载此文件</span><br></pre></td></tr></table></figure>
 wget https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">或直接使用离线包里面的</span><br><span class="line">若要修改网段，需要kubeadm --pod-network-cidr=和这里同步</span><br><span class="line">vim kube-flannel.yml</span><br><span class="line">修改network项</span><br></pre></td></tr></table></figure>
 &quot;Network&quot;: &quot;10.244.0.0/16&quot;,
@@ -486,19 +486,19 @@ systemctl daemon-reload
 
 多次加入报错查看/var/log/message日志.
 这个错是因为没有配置前面sysctl的router的环境变量
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_26.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_26.png)
 
 
 发现node节点启动不了flannel容器，查看容器log发现是host上没有默认路由，在网卡配置文件里面设置好默认路由。
 
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_11.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_11.png)
 
 加入成功
 在master节点上check一下
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_27.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_27.png)
 
 kubernetes会在每个node节点创建flannel和kube-proxy的pod
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_14.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_14.png)
 
 
 ### 测试集群
@@ -506,16 +506,16 @@ kubernetes会在每个node节点创建flannel和kube-proxy的pod
 这里我们创建个名为httpd-app的应用，镜像为httpd，有两个副本pod
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run httpd-app --image=httpd --replicas=2</span><br></pre></td></tr></table></figure>
 
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_15.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_15.png)
 
 
 检查pod
 可以看见pod分布在node-1和node-2上
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_16.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_16.png)
 
 因为创建的资源不是service所以不会调用kube-proxy
 直接访问测试
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_17.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_17.png)
 
 至此kubernetes基本集群安装完成。
 
@@ -527,7 +527,7 @@ kubernetes-dashboard是可选组件，因为，实在不好用，功能太弱了
 修改kubernetes-dashboard.yaml
 
 如果需要让外面访问需要修改这个yaml文件端口类型为NodePort默认为clusterport外部访问不了，
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_18.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_18.png)
 
 nodeport默认端口范围30000-32767
 32666就是我的映射端口，根docker run -d xxx:xxx差不多
@@ -537,7 +537,7 @@ nodeport默认端口范围30000-32767
 访问
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://master_ip:NodePort</span><br></pre></td></tr></table></figure>
 
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_19.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_19.png)
 
 默认验证方式有kubeconfig和token，这里我们都不用。
 这里我们使用basicauth的方式进行apiserver的验证
@@ -547,7 +547,7 @@ admin,admin,2
 
 给kube-apiserver添加basic_auth验证
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/kubernetes/manifests/kube-apiserver.yaml</span><br></pre></td></tr></table></figure>
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_20.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_20.png)
 
 加上这行
 
@@ -559,28 +559,28 @@ k8s1.6后版本都采用RBAC授权模型
 默认cluster-admin是拥有全部权限的，将admin和cluster-admin bind这样admin就有cluster-admin的权限。
 
 
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_21.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_21.png)
 
 那我们将admin和cluster-admin bind在一起这样admin也拥用cluster-admin的权限了
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create clusterrolebinding login-on-dashboard-with-cluster-admin --clusterrole=cluster-admin --user=admin</span><br></pre></td></tr></table></figure>
 查看
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get clusterrolebinding/login-on-dashboard-with-cluster-admin -o yaml</span><br></pre></td></tr></table></figure>
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_22.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_22.png)
 
 
 在此访问https://master:32666
 
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_28.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_28.png)
 选基本，就可以通过用户名和密码访问了
 
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_23.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_23.png)
 
 
 创建个应用测试
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_24.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_24.png)
 
 部署成功
-![](https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/kubernetes_install_25.png)
+![](https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/kubernetes_install_25.png)
 
 
 

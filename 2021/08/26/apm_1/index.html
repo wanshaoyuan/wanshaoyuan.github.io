@@ -24,22 +24,22 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述随着应用功能越来越多，从单体架构发展到现在微服务架构，拆分的模块越来越细粒化，需要定位应用模块之间的问题困难越来越大，需要通过一些第三方工具去帮助我们快速定位和发现应用模块的问题，实现以下功能：1、监控模块间响应时间展示2、应用模块间调用链路展示3、慢响应识别市面上也有非常多的APM软件提供。主流开源的如SkyWalking、ZipKin、CAT、PinPoint、ElasticAPM。这些都">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-1.jpg">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-2.jpg">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-9.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-6.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-7.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-8.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-1.jpg">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-2.jpg">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-9.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-6.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-7.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-8.png">
 <meta property="article:published_time" content="2021-08-26T13:45:59.000Z">
 <meta property="article:modified_time" content="2021-08-26T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="应用上云">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-1.jpg">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-1.jpg">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2021/08/26/apm_1/index.html">
   
@@ -410,8 +410,8 @@
       
         <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>随着应用功能越来越多，从单体架构发展到现在微服务架构，拆分的模块越来越细粒化，需要定位应用模块之间的问题困难越来越大，需要通过一些第三方工具去帮助我们快速定位和发现应用模块的问题，实现以下功能：<br>1、监控模块间响应时间展示<br>2、应用模块间调用链路展示<br>3、慢响应识别<br>市面上也有非常多的APM软件提供。主流开源的如SkyWalking、ZipKin、CAT、PinPoint、ElasticAPM。这些都是根开发语言有强绑定关系，并且需要业务加载对应的开发包和引入SDK，对业务具有一定的侵入性。目前还有新兴的解决方案，基于云原生ServiceMesh方式，对应用没有侵入性和开发语言绑定。</p>
 <h2 id="SkyWalking介绍"><a href="#SkyWalking介绍" class="headerlink" title="SkyWalking介绍"></a>SkyWalking介绍</h2><p>基于Google分布式链路追踪论文Dapper开发，由中国工程师吴晟开发并开源贡献给Apache基金会，支持多种开发语言如Java、PHP、Go、C++、Node.js、Python、.NET、Lua……</p>
-<h2 id="SkyWalking组件介绍"><a href="#SkyWalking组件介绍" class="headerlink" title="SkyWalking组件介绍"></a>SkyWalking组件介绍</h2><p>总体架构如下<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-1.jpg"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-2.jpg"></p>
+<h2 id="SkyWalking组件介绍"><a href="#SkyWalking组件介绍" class="headerlink" title="SkyWalking组件介绍"></a>SkyWalking组件介绍</h2><p>总体架构如下<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-1.jpg"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-2.jpg"></p>
 <p>SkyWalking架构总体分为四部分：</p>
 <p>Agent：探针负责与各类开发语言和平台集成如ServiceMesh，进行Tracing和Metric数据收集。发送给Server端。<br>Server端（OAP)：接受Agent采集发送过来的数据，进行数据分析、处理、聚合、查询以及将数据发送到后端存储。<br>Storage：支持多种后端存储（ElasticSearch、Mysql、Tidb…)，接收Server端发送过来的数据。<br>UI:  进行数据计算后的结果统一展示和调用链路展示。</p>
 <h2 id="SkyWalking安装"><a href="#SkyWalking安装" class="headerlink" title="SkyWalking安装"></a>SkyWalking安装</h2><p>环境信息</p>
@@ -446,27 +446,27 @@
 <p>为了方便访问，我们将Skywalking的UI通过NodePort对外暴露出来。  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch  svc skywalking-ui  --type=&#x27;json&#x27; -p &#x27;[&#123;&quot;op&quot;:&quot;replace&quot;,&quot;path&quot;:&quot;/spec/type&quot;,&quot;value&quot;:&quot;NodePort&quot;&#125;,&#123;&quot;op&quot;:&quot;add&quot;,&quot;path&quot;:&quot;/spec/ports/0/nodePort&quot;,&quot;value&quot;:30930&#125;]&#x27;</span><br></pre></td></tr></table></figure>
 
-<p>访问http:&#x2F;&#x2F;节点ip:30930，此时默认UI界面如下：<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-9.png"></p>
+<p>访问http:&#x2F;&#x2F;节点ip:30930，此时默认UI界面如下：<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-9.png"></p>
 <h2 id="与应用集成方式"><a href="#与应用集成方式" class="headerlink" title="与应用集成方式"></a>与应用集成方式</h2><p>方式一：应用启动加载agent依赖包。<br>比如通过<a href="http://skywalking.apache.org/downloads/%E4%B8%8B%E8%BD%BD%E5%AF%B9%E5%BA%94%E5%8F%91%E8%A1%8C%E7%89%88%E6%9C%ACtar%E5%8C%85%E9%87%8C%E9%9D%A2%E5%8C%85%E5%90%AB%E7%9A%84agent%E6%96%87%E4%BB%B6%EF%BC%8C%E7%84%B6%E5%90%8E%E5%BA%94%E7%94%A8%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4%E5%8A%A0%E8%BD%BD%E6%AD%A4agent%E4%BE%9D%E8%B5%96%E6%96%87%E4%BB%B6%E5%8D%B3%E5%8F%AF%E3%80%82%E5%A6%82%E4%BB%A5%E4%B8%8B%E9%80%9A%E8%BF%87%E5%AE%B9%E5%99%A8%E5%BA%94%E7%94%A8%E6%9E%84%E5%BB%BADockerfile%E6%96%B9%E5%BC%8F%E5%8A%A0%E8%BD%BD%E3%80%82">http://skywalking.apache.org/downloads/下载对应发行版本tar包里面包含的agent文件，然后应用启动命令加载此agent依赖文件即可。如以下通过容器应用构建Dockerfile方式加载。</a>  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM registry.cn-shenzhen.aliyuncs.com/yedward/openjdk:8-jre-slim</span><br><span class="line">USER appuser</span><br><span class="line">EXPOSE 8080</span><br><span class="line">COPY --from=build /usr/src/app/target/*.jar /app/</span><br><span class="line">WORKDIR /app</span><br><span class="line">CMD java -jar -Xms1024m -Xmx1024m /app/spring-petclinic.jar -javaagent:/opt/skywalking/agent/skywalking-agent.jar</span><br></pre></td></tr></table></figure>
 <p>方式二：通过外部挂载和参数引用方式。下面Demo主要就是对这种方式的演示。  </p>
 <p>这两种方式最大的区别在于，方式一需要改动应用启动命令，方式二对应用本身不需要进行改动，就需要进行升级即可。</p>
 <h2 id="应用Demo演示"><a href="#应用Demo演示" class="headerlink" title="应用Demo演示"></a>应用Demo演示</h2><p>以spring-petclinic为Demo进行演示，一个简单的应用，前面有一个Gateway做为统一流量入口，通过Web模块将对应的服务请求转发到后端不同的其他服务上，进行服务调用。</p>
 <p><a href="https://github.com/wanshaoyuan/spring-petclinic-msa.git">https://github.com/wanshaoyuan/spring-petclinic-msa.git</a></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-3.png"></p>
 <p>部署Demo应用</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">下载</span><br><span class="line">git clone https://github.com/wanshaoyuan/spring-petclinic-msa.git</span><br><span class="line"></span><br><span class="line">部署yaml</span><br><span class="line"></span><br><span class="line">kubectl apply -f k8s/local-skywalking/ </span><br></pre></td></tr></table></figure>
 
 <p>访问服务</p>
 <p><a href="http://host_ip:31080/">http://host_ip:31080</a></p>
 <p>一个宠物医院系统，可以点击进行一些资料的添加和修改。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-10.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-10.png"></p>
 <p>查看Skywalking的数据，点击右上角自动的按钮进行自动的刷新</p>
-<p>调用Top耗时显示和响应耗时范围展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-5.png"></p>
-<p>服务响应时间和调用成功率<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-6.png"></p>
-<p>全局调用链路展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-4.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-7.png"></p>
-<p>调用关系和路径耗时展示<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/apm1-8.png"></p>
+<p>调用Top耗时显示和响应耗时范围展示<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-5.png"></p>
+<p>服务响应时间和调用成功率<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-6.png"></p>
+<p>全局调用链路展示<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-4.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-7.png"></p>
+<p>调用关系和路径耗时展示<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/apm1-8.png"></p>
 <p>总结：<br>Skywalking UI做的非常精美，做为一款开源产品功能覆盖还是非常全面的，APM系统对于目前微服务体系的应用进行故障排查还是有非常大的帮助。但这种非常对开发语言还是有一定依赖性，另外一种不需要开发语言依赖的方式就是ServiceMesh的实现<br>完全不侵入应用，也不需要加载Jar包，ServiceMesh主要是通过做应用透明代理和流量劫持去实现链路追踪，如Istio，但他的缺点是只能追踪HTTP请求，覆盖范围有限，并且相对追踪的数据也比埋点的要少一些。  </p>
 
       

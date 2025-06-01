@@ -24,15 +24,15 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="Rook概述Rook（https:&#x2F;&#x2F;rook.io&#x2F;）是由CNCF社区管理的云原生存储编排系统，rook并不是一个实际的存储软件，它做的是将存储软件的部署和运维动作通过Kubernetes来实现自动化。比如rook-ceph项目实际上是在Kubernetes中定义了对应的operator和CRD资源对象来对ceph集群进行操作。 rook目前支持的存储  Ceph EdgeFS Cockroac">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-3.png">
 <meta property="article:published_time" content="2020-05-25T13:45:59.000Z">
 <meta property="article:modified_time" content="2020-05-25T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="分布式存储">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2020/05/25/rook_ceph/index.html">
   
@@ -412,8 +412,8 @@
 <li>Yugabyte DB</li>
 </ul>
 <p>目前比较成熟的是rook-ceph。通过rook-ceph可以将ceph非常简单方便的部署到Kubernetes，通过Kubernetes的资源对象来对ceph进行控制。  </p>
-<p>rook架构<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-1.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-2.png"></p>
+<p>rook架构<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-2.png"></p>
 <h3 id="使用Rook部署ceph"><a href="#使用Rook部署ceph" class="headerlink" title="使用Rook部署ceph"></a>使用Rook部署ceph</h3><p>环境概述</p>
 <table>
 <thead>
@@ -465,7 +465,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath=&#x27;&#123;.data.password&#125;&#x27;  |  base64 --decode</span><br></pre></td></tr></table></figure>
 
 
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/rook-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/rook-3.png"></p>
 <h4 id="查看集群健康状态"><a href="#查看集群健康状态" class="headerlink" title="查看集群健康状态"></a>查看集群健康状态</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get CephCluster -n rook-ceph</span><br><span class="line">NAME        DATADIRHOSTPATH   MONCOUNT   AGE   PHASE   MESSAGE                        HEALTH</span><br><span class="line">rook-ceph   /var/lib/rook     3          20m   Ready   Cluster updated successfully   HEALTH_OK</span><br></pre></td></tr></table></figure>
 
 <h4 id="创建存储池和storageclass"><a href="#创建存储池和storageclass" class="headerlink" title="创建存储池和storageclass"></a>创建存储池和storageclass</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: ceph.rook.io/v1</span><br><span class="line">kind: CephBlockPool</span><br><span class="line">metadata:</span><br><span class="line">  name: replicapool</span><br><span class="line">  namespace: rook-ceph</span><br><span class="line">spec:</span><br><span class="line">  failureDomain: host</span><br><span class="line">  replicated:</span><br><span class="line">    size: 3</span><br><span class="line">---</span><br><span class="line">apiVersion: storage.k8s.io/v1</span><br><span class="line">kind: StorageClass</span><br><span class="line">metadata:</span><br><span class="line">   name: rook-ceph-block</span><br><span class="line"># Change &quot;rook-ceph&quot; provisioner prefix to match the operator namespace if needed</span><br><span class="line">provisioner: rook-ceph.rbd.csi.ceph.com</span><br><span class="line">parameters:</span><br><span class="line">    # clusterID is the namespace where the rook cluster is running</span><br><span class="line">    clusterID: rook-ceph</span><br><span class="line">    # Ceph pool into which the RBD image shall be created</span><br><span class="line">    pool: replicapool</span><br><span class="line"></span><br><span class="line">    # RBD image format. Defaults to &quot;2&quot;.</span><br><span class="line">    imageFormat: &quot;2&quot;</span><br><span class="line"></span><br><span class="line">    # RBD image features. Available for imageFormat: &quot;2&quot;. CSI RBD currently supports only `layering` feature.</span><br><span class="line">    imageFeatures: layering</span><br><span class="line"></span><br><span class="line">    # The secrets contain Ceph admin credentials.</span><br><span class="line">    csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner</span><br><span class="line">    csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph</span><br><span class="line">    csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node</span><br><span class="line">    csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph</span><br><span class="line"></span><br><span class="line">    # Specify the filesystem type of the volume. If not specified, csi-provisioner</span><br><span class="line">    # will set default as `ext4`.</span><br><span class="line">    csi.storage.k8s.io/fstype: xfs</span><br><span class="line"></span><br><span class="line"># Delete the rbd volume when a PVC is deleted</span><br><span class="line">reclaimPolicy: Delete</span><br></pre></td></tr></table></figure>

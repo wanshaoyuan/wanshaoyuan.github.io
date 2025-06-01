@@ -28,9 +28,9 @@
 <meta property="og:image" content="https://d2908q01vomqb2.cloudfront.net/fe2ef495a1152561572949784c16bf23abb28057/2021/07/21/envoy-spire.png">
 <meta property="og:image" content="https://pic3.zhimg.com/v2-cb8de4befb4b9fa5a0dd46fbb649d16e_b.jpg">
 <meta property="og:image" content="https://spiffe.io/img/checkouts/spiffe/spire-tutorials/k8s/envoy-x509/images/SPIRE_Envoy_diagram.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/spiffe-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/spiffe-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/spiffe-3.png">
 <meta property="article:published_time" content="2022-11-17T13:45:59.000Z">
 <meta property="article:modified_time" content="2022-11-17T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
@@ -473,7 +473,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line"></span><br><span class="line">NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line"></span><br><span class="line">backend-envoy   ClusterIP      None            &lt;none&gt;        9001/TCP         2d8h</span><br><span class="line"></span><br><span class="line">frontend        LoadBalancer   10.43.106.227   &lt;pending&gt;     3000:32082/TCP   2d8h</span><br><span class="line"></span><br><span class="line">frontend-2      LoadBalancer   10.43.203.167   &lt;pending&gt;     3002:30664/TCP   2d8h</span><br><span class="line"></span><br><span class="line">go-demo         NodePort       10.43.120.2     &lt;none&gt;        8080:30007/TCP   2d10h</span><br><span class="line"></span><br><span class="line">kubernetes      ClusterIP      10.43.0.1       &lt;none&gt;        443/TCP          2d10h</span><br></pre></td></tr></table></figure>
 <p>frontend对应的NodePort端口为32082</p>
 <p>frontend-2对应的NodePort端口为30664</p>
-<p>frontend显示Jacob Marley的账户情况<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-1.png"><br>frontend-2显示Alex Fergus的账户情况<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-2.png"></p>
+<p>frontend显示Jacob Marley的账户情况<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/spiffe-1.png"><br>frontend-2显示Alex Fergus的账户情况<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/spiffe-2.png"></p>
 <p>更新策略只允许frontend服务访问backend访问</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f backend-envoy-configmap-update.yaml</span><br></pre></td></tr></table></figure>
 
@@ -482,7 +482,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">match_subject_alt_names:</span><br><span class="line"></span><br><span class="line">                - exact: &quot;spiffe://example.org/ns/default/sa/default/frontend&quot;</span><br><span class="line"></span><br><span class="line">                - exact: &quot;spiffe://example.org/ns/default/sa/default/frontend-2&quot;</span><br></pre></td></tr></table></figure>
 <p>重启backend服务获取最新配置  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl scale deployment backend --replicas=0</span><br><span class="line"></span><br><span class="line">kubectl scale deployment backend --replicas=1</span><br></pre></td></tr></table></figure>
-<p>在次访问frontend正常显示，访问frontend-2<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/spiffe-3.png"></p>
+<p>在次访问frontend正常显示，访问frontend-2<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/spiffe-3.png"></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><a href="#%E6%80%BB%E7%BB%93" title="总结"></a>总结</h3><p>SPIFFE支持多种方式集成如和Istio的envoy-sidecar、OPA策略等方式，可以非常灵活细粒化控制应用访问权限。</p>
 <p>参考链接：<br><a href="https://jimmysong.io/blog/why-istio-need-spire/">https://jimmysong.io/blog/why-istio-need-spire/</a><br><a href="https://mp.weixin.qq.com/s/4eEEYb8RuOFOmLcdL3N6wA">https://mp.weixin.qq.com/s/4eEEYb8RuOFOmLcdL3N6wA</a><br><a href="https://atbug.com/what-is-spiffe-and-spire/">https://atbug.com/what-is-spiffe-and-spire/</a><br><a href="https://www.nginx-cn.net/blog/mtls-architecture-nginx-service-mesh/">https://www.nginx-cn.net/blog/mtls-architecture-nginx-service-mesh/</a></p>
 

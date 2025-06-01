@@ -24,19 +24,19 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="软件 版本    keda 2.3.0   Kubernetes 1.20.7   概述目前在Kubernetes中做POD弹性伸缩HPA有基于CPU、memory这种资源指标实现和通过custom-metrics-apiserver和Prometheus-adapter实现的自定义业务监控指标的弹性伸缩，但这些都不是很灵活有效，基于cpu、memory实际对业务带来价值并不大，并不能很准确">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-3.png">
 <meta property="og:image" content="https://cloudblogs.microsoft.com/uploads/prod/sites/37/2019/05/Build-KEDA-1-1024x879.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/prometheus1_10.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/prometheus1_10.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-5.png">
 <meta property="article:published_time" content="2021-06-18T13:45:59.000Z">
 <meta property="article:modified_time" content="2021-06-18T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-2.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-2.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2021/06/18/kubernetes_keda/index.html">
   
@@ -426,8 +426,8 @@
 <p>项目地址<br><a href="https://github.com/kedacore/keda">https://github.com/kedacore/keda</a></p>
 <p>文档地址<br><a href="https://keda.sh/">https://keda.sh/</a></p>
 <h4 id="什么是事件驱动？"><a href="#什么是事件驱动？" class="headerlink" title="什么是事件驱动？"></a>什么是事件驱动？</h4><p>举个简单例子，常见的消息队列系统，有生产者和消费者，生产者往消息队列中吐数据，消费者从消息队列中消费数据，当出现消息堆积时，此时是消费者处理不过来了，应该及时扩容消费者。这就是keda可以实现的，通过对应的接口去查看消息队列系统的情况，进行判断，调用HPA进行扩缩容。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-2.png"></p>
-<p>keda能做什么？<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-2.png"></p>
+<p>keda能做什么？<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-3.png"></p>
 <p>图片来源：<a href="https://developer.ibm.com/technologies/messaging/articles/introduction-to-keda/">https://developer.ibm.com/technologies/messaging/articles/introduction-to-keda/</a></p>
 <p><img src="https://cloudblogs.microsoft.com/uploads/prod/sites/37/2019/05/Build-KEDA-1-1024x879.png"><br>图片来源：<a href="https://keda.sh/docs/1.4/concepts/">https://keda.sh/docs/1.4/concepts/</a></p>
 <p>KEDA 监控定义的事件源，并定期检查是否有任何事件。达到设置的阈值后，KEDA 会根据部署的复制件计数设置为 1 或 0，根据配置最小副本计数，激活或停用POD，具体取决于是否有任何事件。<br>通过上面两幅架构图可以看见keda和HPA是相辅相成的，keda实现的是事件收集和pod副本数0-&gt;1，1-&gt;0的调整，HPA实现1-&gt;n,n-&gt;1的POD副本调整.</p>
@@ -453,7 +453,7 @@
 
 <p>看状态是否正常，也建议看看这两个组件的log是否有报错。</p>
 <p>接下来进行测试使用，直接使用官方github里面的例子。</p>
-<h4 id="RabbitMQ弹性"><a href="#RabbitMQ弹性" class="headerlink" title="RabbitMQ弹性"></a>RabbitMQ弹性</h4><p>实现效果<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-4.png"><br>图片来源:(<a href="https://jstobigdata.com/rabbitmq/direct-exchange-in-amqp-rabbitmq/">https://jstobigdata.com/rabbitmq/direct-exchange-in-amqp-rabbitmq/</a>)<br>当rabbimq队列达到设定的长度后扩容consumer副本数，当队列长度降下去后将副本数缩小为对应的配置值。</p>
+<h4 id="RabbitMQ弹性"><a href="#RabbitMQ弹性" class="headerlink" title="RabbitMQ弹性"></a>RabbitMQ弹性</h4><p>实现效果<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-4.png"><br>图片来源:(<a href="https://jstobigdata.com/rabbitmq/direct-exchange-in-amqp-rabbitmq/">https://jstobigdata.com/rabbitmq/direct-exchange-in-amqp-rabbitmq/</a>)<br>当rabbimq队列达到设定的长度后扩容consumer副本数，当队列长度降下去后将副本数缩小为对应的配置值。</p>
 <p>部署Rabbimq-server</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">helm repo add bitnami https://charts.bitnami.com/bitnami</span><br></pre></td></tr></table></figure>
 
@@ -534,13 +534,13 @@
 <p>查看prometheus  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n monitoring</span><br><span class="line">NAME                                        READY   STATUS    RESTARTS   AGE</span><br><span class="line">prometheus-64bc56989f-qcs4p                 1/1     Running   1          22h</span><br><span class="line"></span><br><span class="line">kubectl  get svc -n monitoring</span><br><span class="line">NAME                       TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE</span><br><span class="line">prometheus                 NodePort    10.104.215.207   &lt;none&gt;        9090:31190/TCP   22h</span><br></pre></td></tr></table></figure>
 <p>访问prometheus<br><a href="http://node_ip:31190/">http://node_ip:31190</a></p>
-<p>prometheus内prometheus-cfg.yaml 配置了自动发生规则，会自动将组件注册。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/prometheus1_10.png">  </p>
+<p>prometheus内prometheus-cfg.yaml 配置了自动发生规则，会自动将组件注册。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/prometheus1_10.png">  </p>
 <p>部署Podinfo应用测试custom-metric autoscale</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f ./podinfo/podinfo-svc.yaml,./podinfo/podinfo-dep.yaml</span><br></pre></td></tr></table></figure>
 <p>prometheus配置了自动发现规则，在podinfo-dep.yaml里面配置了对应的规则</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">annotations:</span><br><span class="line">        prometheus.io/scrape: &#x27;true&#x27;</span><br></pre></td></tr></table></figure>
 <p>所以应用一启动就能直接在prometheus-target中发现。  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-1.png"></p>
 <p>配置keda</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">apiVersion: keda.sh/v1alpha1</span><br><span class="line">kind: ScaledObject</span><br><span class="line">metadata:</span><br><span class="line">  name: prometheus-scaledobject</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  scaleTargetRef:</span><br><span class="line">    name: podinfo</span><br><span class="line">  pollingInterval: 5# Optional. Default: 30 seconds</span><br><span class="line">  cooldownPeriod: 30 # Optional. Default: 300 seconds</span><br><span class="line">  maxReplicaCount: 30 # Optional. Default: 100</span><br><span class="line"></span><br><span class="line">  triggers:</span><br><span class="line">  - type: prometheus</span><br><span class="line">    metadata:</span><br><span class="line">      serverAddress: http://192.168.0.32:31190/</span><br><span class="line">      metricName: http_requests_total</span><br><span class="line">      threshold: &#x27;10&#x27;</span><br><span class="line">      query: sum(rate(http_requests_total[1m]))</span><br></pre></td></tr></table></figure>
 
@@ -568,7 +568,7 @@
 
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总的感受下来，还是非常好用的，像之前配一些业务自定义指标的HPA监控还需要配置Prometheus-adapter<br>配置规则，但通过keda直接可以对接Prometheus，配置对应表达式尽快。其他一些集成的事件触发器也直接使用就可以了。</p>
 <p>keda支持的业务事件触发器</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/keda-5.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/keda-5.png"></p>
 <p>参考链接：</p>
 <p><a href="https://keda.sh/">https://keda.sh</a></p>
 

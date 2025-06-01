@@ -24,17 +24,17 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="前言：openstack在I版中增加了server group的概念，设置server group策略可以做为虚机调度的策略，目前支持的策略有”affinity”和”Anti-Affinity” 意思就是亲和性和非亲和性。 使用场景：我们知道nova创建虚机调度是通过nova-schedule的算法去筛选出对应的计算节点，然后调度到上面。在openstack上创建个app高可用集群，需要虚机分布在">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_5.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_4.png">
 <meta property="article:published_time" content="2017-08-12T05:15:26.000Z">
-<meta property="article:modified_time" content="2018-11-07T13:02:40.281Z">
+<meta property="article:modified_time" content="2025-06-01T07:24:35.360Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="openstack">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/08/12/openstack_nova_server_group/index.html">
   
@@ -405,17 +405,17 @@
       
         <h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>openstack在I版中增加了server group的概念，设置server group策略可以做为虚机调度的策略，目前支持的策略有”affinity”和”Anti-Affinity” 意思就是亲和性和非亲和性。</p>
 <h3 id="使用场景："><a href="#使用场景：" class="headerlink" title="使用场景："></a>使用场景：</h3><p>我们知道nova创建虚机调度是通过nova-schedule的算法去筛选出对应的计算节点，然后调度到上面。<br>在openstack上创建个app高可用集群，需要虚机分布在不同的本nova availability zone的不同的计算节点内，那么我们只需要创建个server group然后配置策略为anti-affinity，创建虚机时选择这个策略，这样创建出来的虚机就会落到不同的计算节点上。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_1.png"></p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_2.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_2.png"></p>
 <p>虽然默认的nova-schedule也支持affinity和anti-affinity但nova-schedule并不能支持持久化，只在虚机创建时生效，如果后面执行migration、evacute、resize那高可用就被破坏了。  </p>
 <p>server group会将group的信息持久化，每次重新调度都能获得正确的虚机。  </p>
 <h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>在nova库中增加了以下三张表instance_group_member、instance_group_policy             instance_groups。  </p>
 <p>1，在创建云主机时如果加入了server-group这将instances加入到server_group_member中；<br>2，conductor 从数据库中取得group信息，解析 group 的 policy 并设置调度参数，通过RPC让 scheduler 选择合适的宿主机；<br>3，nova-scheduler将创建请求通过rpc传递给对应的nova-compute；<br>4，nova-comput去访问nova-conductor去获取创建虚机的一些信息；  </p>
 <p>启用server_group<br>修改控制节点nova.conf<br>将scheduler_default_filters改成如下。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scheduler_default_filters=RetryFilter,AvailabilityZoneFilter,RamFilter,CoreFilter,DiskFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter</span><br></pre></td></tr></table></figure>
-<p>目前dashboard没有Server group接口，只能通过cli的方式。<br>CLI命令创建server_group<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_5.png"></p>
-<p>创建server-group 其中test-2为group的名字 affinity为policy<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_3.png"></p>
-<p>查看哪些云主机使用了此server_group<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/nova_server_group_4.png"></p>
+<p>目前dashboard没有Server group接口，只能通过cli的方式。<br>CLI命令创建server_group<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_5.png"></p>
+<p>创建server-group 其中test-2为group的名字 affinity为policy<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_3.png"></p>
+<p>查看哪些云主机使用了此server_group<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/nova_server_group_4.png"></p>
 <p>创建云主机时要指定server-group的方法<br>nova boot时加上–hint group&#x3D;server_group_id<br>如  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nova boot --image IMAGE_ID --flavor flavor_id --hint group=group-1  test3  </span><br></pre></td></tr></table></figure>
 

@@ -24,17 +24,17 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="docker 版本：Docker version 17.10.0-ce, build f4ffd25操作系统版本：centos7.3   物理网卡虚拟化技术，将一张物理网卡虚拟化出多个网卡，每个都用独立的mac地址和ip地址docker用macvlan优点：1、性能好，相比其他的实现，macvlan不需要创建linux bridge、直接通过物理网卡出去 缺点：vlan子接口和需要自己提前划出来，">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_4.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_5.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_5.png">
 <meta property="article:published_time" content="2017-12-07T13:45:59.000Z">
 <meta property="article:modified_time" content="2017-12-07T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/12/07/docker_macvlan/index.html">
   
@@ -417,7 +417,7 @@
 <p>创建macvlan网络<br>在container-1和container-2上执行  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create -d macvlan --subnet=192.168.100.0/24 --gateway=192.168.100.1 -o parent=eth0.100 mac_net100</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create -d macvlan --subnet=192.168.200.0/24 --gateway=192.168.200.1 -o parent=eth0.200 mac_net200</span><br></pre></td></tr></table></figure>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_1.png">    </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_1.png">    </p>
 <p>mac_net100和mac_net200本质上是独立的，为了避免ip冲突，在run时手动指定ip ;<br>container-1上运行容器</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name mac_net1 --ip=192.168.100.10 --network mac_net100 busybox</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name mac_net2 --ip=192.168.200.10 --network mac_net200 busybox</span><br></pre></td></tr></table></figure>
@@ -425,10 +425,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name mac_net3 --ip=192.168.100.20 --network mac_net100 busybox</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name mac_net4 --ip=192.168.200.20 --network mac_net200 busybox   </span><br></pre></td></tr></table></figure>
 <p>正常情况是container-1上的mac_net1能够container-2上的mac_net3通新，mac_net2能根mac_net4通信;</p>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_2.png">    </p>
-<p>1、mac_net100 ping mac_net300<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_3.png">    </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_4.png">    </p>
-<p>2、因为macvlan的包是直接走子接口出去的，所以不用桥，也不用通过封包。<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/docker_macvlan_5.png">    </p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_2.png">    </p>
+<p>1、mac_net100 ping mac_net300<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_3.png">    </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_4.png">    </p>
+<p>2、因为macvlan的包是直接走子接口出去的，所以不用桥，也不用通过封包。<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/docker_macvlan_5.png">    </p>
 <p>IPAM<br>MACVLAN需要用户自己管理subnet，自己分配地址，不同subnet通信依赖外部网关。</p>
 
       

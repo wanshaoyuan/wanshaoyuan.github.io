@@ -24,15 +24,15 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="概述stable diffusion做为目前AI绘图内开源的最强王者，本文主要在本地PC上部署使用是由Stability AI、CompVis與Runway合作开发，采用Apache2.0开源协议。https:&#x2F;&#x2F;github.com&#x2F;Stability-AI&#x2F;stablediffusion 本文用的是基于于stable diffusion封装的stable-diffusion-webui项目，简">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-3.png">
 <meta property="article:published_time" content="2023-10-03T13:45:59.000Z">
 <meta property="article:modified_time" content="2023-10-03T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2023/10/03/stablediffusion/index.html">
   
@@ -492,15 +492,15 @@
 <p>系统会自动执行下载对应的依赖包</p>
 <p>执行成功会自动打开浏览器访问<a href="http://127.0.0.1:7860/">http://127.0.0.1:7860/</a></p>
 <p>输入prompt生成图片</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-1.png"></p>
 <p>当然也可以使用此prompt生成器进行<br><a href="https://tinygeeker.github.io/menu/autocue/#/?from=tencent">https://tinygeeker.github.io/menu/autocue/#/?from=tencent</a></p>
 <h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><p>1、RuntimeError：Torch is not able to use GPU</p>
 <p>这个原因主要是因为pytorch没有连接到GPU，cuda与torch版本不兼容导致的<br>网上有通过参数跳过，但这样就变成用CPU生成了，效率太差。所以还是要成根本上解决。<br>可以进行以下操作进行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">先用pip uninstall torch</span><br></pre></td></tr></table></figure>
 
 <p>通过<a href="https://pytorch.org/get-started/locally/%E4%B8%8B%E8%BD%BD%E5%90%88%E9%80%82%E7%9A%84torch%E7%89%88%E6%9C%AC%EF%BC%8C%E6%88%91%E8%BF%99%E9%87%8C%E6%98%AFNVIDIA">https://pytorch.org/get-started/locally/下载合适的torch版本，我这里是NVIDIA</a> cuda12.2，但torch还没有对应的12.2版本，直接用11.8、12.1也能正常运行，目前1.6最高支持到11.8，可以向下兼容，正常pip配置了正常的源可以自动下载。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-2.png"></p>
-<p>验证<br><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/sd1-3.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-2.png"></p>
+<p>验证<br><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/sd1-3.png"></p>
 <p>参考链接：</p>
 <p><a href="https://zhuanlan.zhihu.com/p/610628741">https://zhuanlan.zhihu.com/p/610628741</a></p>
 <p><a href="https://www.uisdc.com/47-stable-diffusion-models">https://www.uisdc.com/47-stable-diffusion-models</a></p>

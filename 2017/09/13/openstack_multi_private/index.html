@@ -24,13 +24,13 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。    以上图的环境为例compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack_multi_private_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack_multi_private_1.png">
 <meta property="article:published_time" content="2017-09-13T03:50:44.000Z">
 <meta property="article:modified_time" content="2017-09-13T03:50:43.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="openstack">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack_multi_private_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack_multi_private_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2017/09/13/openstack_multi_private/index.html">
   
@@ -400,7 +400,7 @@
     <div class="article-entry markdown-body" itemprop="articleBody">
       
         <p>在生产环境中我们有些虚拟机需要同时需要接入两个二层网络，一个生产网络，一个DMZ网络，通常情况下这两个网络也是对应两个不同的物理交换机的，所以对应的计算节点也应该是两个不同的物理出口。  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/openstack_multi_private_1.png"></p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/openstack_multi_private_1.png"></p>
 <p>以上图的环境为例<br>compute-2上的虚拟机需要同时接入两个网络，生产网和DMZ网络，所以在对compute-2接完线后，还需要配置neutron，让br-int根对应的br-dmz桥通过ovs的patch口连接起来，同时生成对应的流表控制，修改openvswitch配置文件使得physnetX根br-dmz mapping。<br>需要注意的是<br>这里control-1接dmz的网络主要是为了dhcp 地址、metadata注入、和根三层网络的NAT。你可以通过neutron availability zone的方式把把dhcp和metadata和l3部署在网络能通的计算节点，这样就不需要控制节点接线了。  </p>
 <h3 id="配置方法（组件为openvswitch"><a href="#配置方法（组件为openvswitch" class="headerlink" title="配置方法（组件为openvswitch)"></a>配置方法（组件为openvswitch)</h3><p>这里假设compute-2的br-dmz物理出口为br-ovs-bond2<br>控制节点和计算节点都执行<br>创建ovs桥  </p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ovs-vsctl add-br br-dmz</span><br></pre></td></tr></table></figure>

@@ -24,16 +24,16 @@
 <meta property="og:site_name" content="我爱西红柿">
 <meta property="og:description" content="Harbor架构图片来源harbor官网   组件介绍：proxy: 通过nginx服务器来做反向代理 registry: docker官方的镜像存储服务。 ui: 前端UI入口 adminserver: 作为Harbor工程的配置数据管理器使用 DB: 存放用户信息、项目信息、用户权限和安全漏洞库，早期使用Mysql，目前采用Postgres。    job services: 通过状态机的形式">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_1.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_2.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_3.png">
-<meta property="og:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_4.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_1.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_2.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_3.png">
+<meta property="og:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_4.png">
 <meta property="article:published_time" content="2019-12-22T13:45:59.000Z">
 <meta property="article:modified_time" content="2019-12-22T13:45:59.000Z">
 <meta property="article:author" content="我爱西红柿">
 <meta property="article:tag" content="docker">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_1.png">
+<meta name="twitter:image" content="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_1.png">
   <!-- Canonical links -->
   <link rel="canonical" href="http://yoursite.com/2019/12/22/habor_ha/index.html">
   
@@ -402,7 +402,7 @@
     </div>
     <div class="article-entry markdown-body" itemprop="articleBody">
       
-        <h3 id="Harbor架构"><a href="#Harbor架构" class="headerlink" title="Harbor架构"></a>Harbor架构</h3><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_1.png" alt="image"><br>图片来源harbor官网  </p>
+        <h3 id="Harbor架构"><a href="#Harbor架构" class="headerlink" title="Harbor架构"></a>Harbor架构</h3><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_1.png" alt="image"><br>图片来源harbor官网  </p>
 <h4 id="组件介绍："><a href="#组件介绍：" class="headerlink" title="组件介绍："></a>组件介绍：</h4><p>proxy: 通过nginx服务器来做反向代理</p>
 <p>registry: docker官方的镜像存储服务。</p>
 <p>ui: 前端UI入口</p>
@@ -415,7 +415,7 @@
 <p>Postgres：用于存储用户信息，项目信息，用户权限信息和安全漏洞库。  </p>
 <p>Registry：实际镜像管理组件。  </p>
 <h4 id="双主HA模式"><a href="#双主HA模式" class="headerlink" title="双主HA模式"></a>双主HA模式</h4><p>通过共享存储实现高可用<br>Harbor默认全部数据存储在&#x2F;data目录中，所以通过共享存储实际上就是将data目录挂载到共享存储中，目前常用方式是使用一些开源的分布式文件系统存储如cephfs，glusterfs或放置在对象存储S3中。</p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_2.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_2.png">  </p>
 <ul>
 <li>底层使用共享存储用于保证镜像数据可靠性。</li>
 <li>将postgres独立出来，通过pgpool-II实现高可用集群。 </li>
@@ -430,7 +430,7 @@
 <li>门槛高，需要具备共享存储；</li>
 <li>需要搭建和维护postgres集群，维护成本高；</li>
 </ul>
-<h4 id="主备模式"><a href="#主备模式" class="headerlink" title="主备模式"></a>主备模式</h4><p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_3.png">  </p>
+<h4 id="主备模式"><a href="#主备模式" class="headerlink" title="主备模式"></a>主备模式</h4><p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_3.png">  </p>
 <ul>
 <li>底层使用共享存储用于保证镜像和postgres的数据可靠性。</li>
 <li>外部通过在两个Habor间通过Keepalived维持VIP，保证统一入口，但一个宕机后可以通过VIP漂移方式在将请求迅速转发到另外一个可用节点。</li>
@@ -440,7 +440,7 @@
 <li>架构简单，部署两个harbor，只需要通过共享存储和keepalived就可以实现HA；</li>
 </ul>
 <h2 id="缺点：-只能实现主备，没有全主，每次只能有一个harbor可以对外提供服务；"><a href="#缺点：-只能实现主备，没有全主，每次只能有一个harbor可以对外提供服务；" class="headerlink" title="缺点：- 只能实现主备，没有全主，每次只能有一个harbor可以对外提供服务； "></a>缺点：<br>- 只能实现主备，没有全主，每次只能有一个harbor可以对外提供服务； </h2><h3 id="基于镜像复制方式实现高可用"><a href="#基于镜像复制方式实现高可用" class="headerlink" title="基于镜像复制方式实现高可用"></a>基于镜像复制方式实现高可用</h3><p>但没有共享存储时可以使用Harbor本身的镜像同步方式  </p>
-<p><img src="https://image-1251900790.cos.ap-chengdu.myqcloud.com/image/harbor_ha_4.png">  </p>
+<p><img src="https://wanshaoyuan.oss-cn-hangzhou.aliyuncs.com/image/harbor_ha_4.png">  </p>
 <ul>
 <li>Harbor使用底层使用各自的本地存储；  </li>
 <li>两个Harbor之间配置双向同步镜像策略；</li>
